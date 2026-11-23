@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../LekhaBook.Domain/LekhaBook.Domain.csproj" />
+    <ProjectReference Include="../LekhaBook.Contracts/LekhaBook.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

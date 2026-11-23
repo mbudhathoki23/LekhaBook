@@ -1,0 +1,53 @@
+@inherits LayoutComponentBase
+@inject ISessionService Session
+
+<MudThemeProvider Theme="AppTheme.Theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Dense="true">
+        <MudHidden Breakpoint="Breakpoint.SmAndDown">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                           aria-label="Toggle menu" OnClick="ToggleDrawer" />
+        </MudHidden>
+        <MudText Typo="Typo.h6" Class="ml-2 text-nowrap">LekhaBook</MudText>
+        @if (Session.CompanyName is { } company)
+        {
+            <MudText Typo="Typo.body2" Class="ml-3 text-truncate company-name">@company</MudText>
+        }
+        <MudSpacer />
+        <SyncStatusChip />
+    </MudAppBar>
+
+    @* Desktop/tablet: side menu. Phones: bottom navigation instead (below). *@
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive"
+                   Breakpoint="Breakpoint.Md" Elevation="1">
+            <NavMenu />
+        </MudDrawer>
+    </MudHidden>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Large" Class="page-content">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+
+    <MudHidden Breakpoint="Breakpoint.MdAndUp">
+        <BottomNav />
+    </MudHidden>
+</MudLayout>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unexpected error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private bool _drawerOpen = true;
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+}

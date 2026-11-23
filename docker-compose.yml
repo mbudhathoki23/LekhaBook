@@ -1,0 +1,32 @@
+# Local development database. Start with:  docker compose up -d
+# (A locally installed PostgreSQL works just as well; point the API connection string at it.)
+services:
+  postgres:
+    image: postgres:17
+    container_name: lekhabook-postgres
+    environment:
+      POSTGRES_DB: lekhabook
+      POSTGRES_USER: lekhabook
+      POSTGRES_PASSWORD: lekhabook_dev   # development only
+    ports:
+      - "5433:5432"   # 5433 so it doesn't clash with a locally installed PostgreSQL on 5432
+    volumes:
+      - lekhabook-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lekhabook -d lekhabook"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: lekhabook-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: dev@lekhabook.local
+      PGADMIN_DEFAULT_PASSWORD: lekhabook_dev   # development only
+    ports:
+      - "5051:80"   # 5050 is taken by LekhaBook.Api
+    profiles: ["tools"]   # start with: docker compose --profile tools up -d
+
+volumes:
+  lekhabook-pgdata:

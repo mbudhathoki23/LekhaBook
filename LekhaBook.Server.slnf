@@ -1,0 +1,19 @@
+{
+  "solution": {
+    "path": "LekhaBook.sln",
+    "projects": [
+      "src\\LekhaBook.Api\\LekhaBook.Api.csproj",
+      "src\\LekhaBook.Application\\LekhaBook.Application.csproj",
+      "src\\LekhaBook.Contracts\\LekhaBook.Contracts.csproj",
+      "src\\LekhaBook.Data.Postgres\\LekhaBook.Data.Postgres.csproj",
+      "src\\LekhaBook.Data.Sqlite\\LekhaBook.Data.Sqlite.csproj",
+      "src\\LekhaBook.Domain\\LekhaBook.Domain.csproj",
+      "src\\LekhaBook.UI\\LekhaBook.UI.csproj",
+      "src\\LekhaBook.Web\\LekhaBook.Web.csproj",
+      "tests\\LekhaBook.Api.IntegrationTests\\LekhaBook.Api.IntegrationTests.csproj",
+      "tests\\LekhaBook.Application.Tests\\LekhaBook.Application.Tests.csproj",
+      "tests\\LekhaBook.Domain.Tests\\LekhaBook.Domain.Tests.csproj",
+      "tests\\LekhaBook.Sync.Tests\\LekhaBook.Sync.Tests.csproj"
+    ]
+  }
+}

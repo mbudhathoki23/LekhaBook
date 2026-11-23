@@ -1,9 +1,16 @@
 # Edge profile used for discovery (holds session cookies)
 .edge-profile/
 
+# Claude Code local settings
+.claude/settings.local.json
+
 # .NET
 bin/
 obj/
 *.user
 .vs/
 appsettings.Development.json
+TestResults/
+*.db
+*.db-shm
+*.db-wal

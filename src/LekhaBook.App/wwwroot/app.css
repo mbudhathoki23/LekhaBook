@@ -1,0 +1,18 @@
+/* MAUI-only styles. Shared styles live in LekhaBook.UI/wwwroot/app.css. */
+
+.status-bar-safe-area {
+    display: none;
+}
+
+/* iOS: keep content clear of the notch / status bar. */
+@supports (-webkit-touch-callout: none) {
+    .status-bar-safe-area {
+        display: flex;
+        position: sticky;
+        top: 0;
+        height: env(safe-area-inset-top);
+        background-color: var(--mud-palette-appbar-background, #3949AB);
+        width: 100%;
+        z-index: 1;
+    }
+}

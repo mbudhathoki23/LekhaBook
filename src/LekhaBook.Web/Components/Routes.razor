@@ -1,0 +1,9 @@
+﻿@* Web router: the shared UI pages plus this host's own Error page. *@
+<Router AppAssembly="typeof(LekhaBook.UI.Routes).Assembly"
+        AdditionalAssemblies="new[] { typeof(Program).Assembly }"
+        NotFoundPage="typeof(LekhaBook.UI.Pages.NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(LekhaBook.UI.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>

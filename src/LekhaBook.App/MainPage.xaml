@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ui="clr-namespace:LekhaBook.UI;assembly=LekhaBook.UI"
+             x:Class="LekhaBook.App.MainPage"
+             SafeAreaEdges="All"
+             BackgroundColor="#3949AB">
+    <!-- SafeAreaEdges keeps the web view clear of the status bar and gesture bar
+         (Android 15+ draws apps edge-to-edge). The background fills those bars with the app-bar colour. -->
+
+    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+        <BlazorWebView.RootComponents>
+            <RootComponent Selector="#app" ComponentType="{x:Type ui:Routes}" />
+        </BlazorWebView.RootComponents>
+    </BlazorWebView>
+
+</ContentPage>

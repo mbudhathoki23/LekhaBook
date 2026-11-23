@@ -1,0 +1,43 @@
+@implements IDisposable
+@inject ISyncService Sync
+@inject IConnectivityService Connectivity
+
+<MudChip T="string" Size="Size.Small" Color="@ChipColor" Icon="@ChipIcon" Class="sync-chip">@Label</MudChip>
+
+@code {
+    private string Label => (Connectivity.IsOnline, Sync.State) switch
+    {
+        (false, _) when Sync.PendingCount > 0 => $"Offline · {Sync.PendingCount} pending",
+        (false, _) => "Offline",
+        (_, SyncState.Syncing) => "Syncing…",
+        (_, SyncState.Error) => "Sync error",
+        (_, SyncState.Pending) => $"{Sync.PendingCount} pending",
+        _ => "Online · Synced",
+    };
+
+    private Color ChipColor => (Connectivity.IsOnline, Sync.State) switch
+    {
+        (false, _) => Color.Warning,
+        (_, SyncState.Error) => Color.Error,
+        (_, SyncState.Pending or SyncState.Syncing) => Color.Info,
+        _ => Color.Success,
+    };
+
+    private string ChipIcon => Connectivity.IsOnline ? Icons.Material.Filled.CloudDone : Icons.Material.Filled.CloudOff;
+
+    protected override void OnInitialized()
+    {
+        Sync.StateChanged += OnChanged;
+        Connectivity.OnlineChanged += OnOnlineChanged;
+    }
+
+    private void OnChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnOnlineChanged(object? sender, bool online) => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        Sync.StateChanged -= OnChanged;
+        Connectivity.OnlineChanged -= OnOnlineChanged;
+    }
+}

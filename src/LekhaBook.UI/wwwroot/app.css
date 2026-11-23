@@ -1,0 +1,87 @@
+/* Shared LekhaBook styles, used by both the MAUI app and the web app. */
+
+:root {
+    --bottom-nav-height: 60px;
+}
+
+h1:focus, .mud-typography:focus {
+    outline: none;
+}
+
+.page-content {
+    padding-top: 16px;
+    padding-bottom: 24px;
+}
+
+.text-nowrap {
+    white-space: nowrap;
+}
+
+.company-name {
+    max-width: 40vw;
+    opacity: .85;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- Phone bottom navigation ---------- */
+.bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    display: flex;
+    height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--mud-palette-surface);
+    border-top: 1px solid var(--mud-palette-lines-default);
+}
+
+.bottom-nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    min-height: 48px; /* touch target */
+    font-size: 11px;
+    color: var(--mud-palette-text-secondary);
+    text-decoration: none;
+}
+
+.bottom-nav-item.active {
+    color: var(--mud-palette-primary);
+    font-weight: 600;
+}
+
+/* Leave room above the bottom nav on phones (MudBlazor "md" breakpoint = 960px). */
+@media (max-width: 959.98px) {
+    .page-content {
+        padding-bottom: calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom));
+    }
+}
+
+/* ---------- Unhandled error bar ---------- */
+#blazor-error-ui {
+    color-scheme: light only;
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 2000;
+}
+
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}

@@ -1,0 +1,41 @@
+@page "/"
+@inject IPlatformInfo PlatformInfo
+
+<PageTitle>Dashboard · LekhaBook</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">Dashboard</MudText>
+
+<MudGrid Spacing="2">
+    @foreach (var tile in _tiles)
+    {
+        <MudItem xs="6" md="3">
+            <MudPaper Class="pa-3" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@tile.Label</MudText>
+                <MudText Typo="Typo.h6" Color="@tile.Color">Rs. 0</MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+<MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">Quick entry</MudText>
+<MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Disabled="true">Payment In</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Disabled="true">Payment Out</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Disabled="true">Expense</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Disabled="true">Transfer Money</MudButton>
+</MudStack>
+<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">Entry forms arrive in phase 6.</MudText>
+
+<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">
+    Running on @PlatformInfo.Platform (@PlatformInfo.FormFactor)
+</MudText>
+
+@code {
+    private readonly (string Label, Color Color)[] _tiles =
+    [
+        ("To Receive", Color.Success),
+        ("To Give", Color.Error),
+        ("Cash in Hand", Color.Default),
+        ("Bank Balance", Color.Default),
+    ];
+}
