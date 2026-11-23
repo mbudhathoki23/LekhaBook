@@ -1,0 +1,465 @@
+# LekhaBook: Agent Execution Plan
+
+> **Who this is for:** a coding agent such as Claude Code, working in this repository.
+> **What it delivers:** LekhaBook, a mobile-first bookkeeping app for **Party ledgers, Bank accounts and Petty Cash**, with photo or file proof attached to entries.
+> **How it is built:** Blazor UI shared across Android, iOS, Windows and the browser. It works offline on a local SQLite database and auto-syncs with an online PostgreSQL server through an API.
+> **Reference product:** https://my.karobarapp.com/ (Karobar). We copy its **workflow and usability**. We never copy its branding, logo, text, images or code.
+
+Work through the phases **in order**. Each phase lists what you **do**, what you **don't do**, and its **exit criteria**. Don't start a phase until the previous phase's exit criteria pass. When a decision in [§ 10](#10-decisions-recommended-defaults) is still open, use its default and note it in `docs/DECISIONS.md`.
+
+---
+
+## 0. Ground rules (apply to every phase)
+
+1. **Verify library facts, don't recall them.** Use Context7 (or official docs) before you pin any version or API: .NET, MAUI, MudBlazor, EF Core, Npgsql, Playwright. Record pinned versions in `Directory.Packages.props`.
+2. **The target is .NET 10 (LTS).** Check the current LTS first. Use the `maui-blazor-web` template (verify it with `dotnet new list maui`).
+3. **Use a classic `.sln` file** (`dotnet new sln --format sln`) so that Visual Studio 2022+, Rider and VS Code C# Dev Kit all open it.
+4. **Don't commit secrets.** Connection strings and JWT keys go in `appsettings.Development.json`, which is git-ignored, or in user-secrets. Commit `appsettings.Example.json`.
+5. **Write small commits per feature on a branch.** Never push to `main` without the user's OK.
+6. **Money is `decimal(18,2)`.** Never use `double` or `float`.
+7. **Never store or sync balances.** Always compute them from transactions (see [§ 5.3](#53-balances)).
+8. **Every table except global ones (Users) carries `CompanyId`,** and the server enforces it.
+
+---
+
+## Phase 1: Discover the reference app with Microsoft Edge (read-only)
+
+### 1.1 Browser setup (Edge through Playwright MCP)
+
+Neither the Claude desktop browser pane nor Claude in Chrome is Edge. Use **Playwright MCP on the Edge channel** with a persistent profile so the user's login survives restarts.
+
+Add this to the project's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "edge": {
+      "command": "npx",
+      "args": [
+        "@playwright/mcp@latest",
+        "--browser", "msedge",
+        "--user-data-dir", "./.edge-profile",
+        "--viewport-size", "390,844"
+      ]
+    }
+  }
+}
+```
+
+- First run `npx @playwright/mcp@latest --help` and confirm the flag names and the `--viewport-size` format. Adjust the config if they differ.
+- Add `.edge-profile/` to `.gitignore`. It holds session cookies.
+- Explore **twice**: first at a phone viewport (390×844), then at desktop size (1440×900). Reopen with a different `--viewport-size`, or use the resize tool.
+
+### 1.2 Login (the user does this, the agent doesn't)
+
+The reference app signs in with **+977 phone number and OTP**, **Google**, or **QR code**.
+
+- Open `https://my.karobarapp.com/login` in the Edge session, then **stop and ask the user to sign in themselves** in that window.
+- **Never** type a phone number, OTP, Google password or QR approval. Wait until the user says "done".
+- Ask the user which **business** to explore. If they agree, they can create a throwaway test business; that is the only place where saving is allowed.
+
+### 1.3 Safety rules during discovery
+
+| Allowed | Not allowed |
+|---|---|
+| Open every menu, tab, dialog and form | Saving forms in a real business |
+| Open dropdowns and date pickers; read validation messages by tabbing through empty required fields | Deleting anything |
+| Save test entries **only in the approved test business** | Sending WhatsApp or SMS reminders, which reach real people |
+| Take screenshots, read the DOM and record network calls (URLs and shapes, no tokens) | Changing account, subscription or staff settings |
+| | Copying customer names or phone numbers into the repo, because they are personal data |
+
+### 1.4 What to capture
+
+Walk **every** menu item. For each **screen** or **form**, write one file at `docs/discovery/<NN>-<slug>.md` using this template:
+
+```markdown
+# <Screen name>
+- Path / menu: Home > Parties > Add Party
+- Purpose:
+- Viewport notes (mobile vs desktop differences):
+- Screenshot: ./img/<NN>-<slug>-mobile.png, ./img/<NN>-<slug>-desktop.png
+## Fields
+| Label | Type | Required | Default | Validation / limits | Notes |
+## Actions / buttons (and keyboard shortcuts, if any)
+## Workflow (step-by-step, incl. what happens after Save)
+## Lists / filters / search / sort / date-range
+## Reports or totals shown and how they are calculated
+## Attachments (camera / gallery / file? size? count?)
+## Edge cases observed (empty state, errors, offline banner)
+```
+
+Mask personal data in screenshots: blur or crop names and phone numbers.
+
+**Checklist. Confirm each item explicitly** in `docs/discovery/00-summary.md`:
+
+- [ ] Full menu tree (sidebar, bottom nav, settings), at both viewports
+- [ ] Business/company: create, switch, edit profile, fiscal year
+- [ ] Staff/multi-user: invite flow, roles, and the permission matrix for each module
+- [ ] Parties: customer vs supplier, add/edit fields, opening balance (receivable/payable), ledger view, statement, reminders
+- [ ] Transactions: "You Gave / You Got" style or receipt/payment, cash in/out, expense, and any transfer between accounts
+- [ ] Bank accounts: add, opening balance, deposit, withdraw, transfer, cheque fields (if any)
+- [ ] Cash / petty cash: in, out, adjust, cash-in-hand
+- [ ] Attachments: where they can be added, camera vs gallery, preview, delete
+- [ ] Reports: party statement, day book, cash book, bank book, summary, export formats (PDF/Excel), share
+- [ ] Search, filters, date ranges, sorting
+- [ ] **Localization:** English/Nepali toggle, **BS (Bikram Sambat) vs AD dates**, NPR formatting (lakh grouping `1,00,000.00`)
+- [ ] Offline behavior of the web version, if any
+- [ ] Keyboard behavior on desktop web (Tab/Enter, shortcuts)
+- [ ] Out-of-scope modules (sales, purchase, inventory, invoices): **list them only**, with one line each, for a future version
+
+### 1.5 Phase 1 outputs and exit criteria
+
+- `docs/discovery/00-summary.md`: menu tree, module list, and a scope table (In v1 / Later / Not doing).
+- `docs/discovery/NN-*.md`: one file per screen.
+- `docs/discovery/workflows.md`: the main end-to-end flows written as numbered steps (add party → record payment with photo → view ledger → share statement).
+- `docs/discovery/gap-notes.md`: things that are confusing or slow in the reference app that we will do better.
+- **Exit:** the user reviews `00-summary.md` and approves the v1 scope.
+
+---
+
+## 2. Scope of v1
+
+**In scope (v1):**
+1. Auth, companies, company users and permissions
+2. Party ledger (customers and suppliers): receivable/payable, opening balance, statement
+3. Bank accounts: deposit, withdrawal, transfer, statement
+4. Petty cash / cash in hand: in, out, statement
+5. Transfers between cash and bank (contra)
+6. Attachments on every transaction: camera, gallery or file
+7. Reports: party statement, cash book, bank book, day book, and a dashboard with totals; PDF export and share
+8. Offline-first on Android, iOS and Windows, with auto-sync
+9. Browser version with the same UI and workflow (online in v1; see [D1](#10-decisions-recommended-defaults))
+
+**Out of scope for v1** (design must not block these): sales and purchase invoices, inventory, tax/VAT, SMS/WhatsApp reminders, multi-currency.
+
+---
+
+## 3. Solution architecture
+
+### 3.1 Projects (one `LekhaBook.sln`)
+
+```
+LekhaBook.sln
+├─ src/
+│  ├─ LekhaBook.Domain/          # Entities, enums, business rules (no EF, no UI), net10.0
+│  ├─ LekhaBook.Contracts/       # DTOs + sync contracts shared by API and clients
+│  ├─ LekhaBook.Application/     # Use-cases/services (PostTransaction, GetLedger…), validation (FluentValidation)
+│  ├─ LekhaBook.Data.Sqlite/     # EF Core SQLite DbContext + local repositories + outbox (client side)
+│  ├─ LekhaBook.Data.Postgres/   # EF Core Npgsql DbContext + migrations (server side)
+│  ├─ LekhaBook.UI/              # Razor Class Library: ALL pages, components, layouts, JS (enter-nav), CSS
+│  ├─ LekhaBook.Api/             # ASP.NET Core Web API: auth, sync, attachments, reports
+│  ├─ LekhaBook.Web/             # Blazor Web App host for browsers (uses LekhaBook.UI)
+│  └─ LekhaBook.App/             # .NET MAUI Blazor Hybrid host: Android, iOS, Windows (uses LekhaBook.UI)
+├─ tests/
+│  ├─ LekhaBook.Domain.Tests/
+│  ├─ LekhaBook.Application.Tests/
+│  ├─ LekhaBook.Sync.Tests/      # two simulated devices + server, conflict scenarios
+│  └─ LekhaBook.Api.IntegrationTests/  # Testcontainers PostgreSQL
+├─ docs/ (this plan, discovery, decisions)
+├─ docker-compose.yml           # postgres:17 + pgadmin for local dev
+├─ Directory.Build.props        # nullable, warnings-as-errors, LangVersion
+├─ Directory.Packages.props     # central package versions
+├─ global.json                  # pin SDK
+├─ .vscode/ (launch.json, tasks.json, extensions.json)
+└─ .editorconfig
+```
+
+### 3.2 Hosting abstraction (makes the browser work like the app)
+
+`LekhaBook.UI` must depend **only on interfaces**, never on SQLite, MAUI or HttpClient directly:
+
+| Interface | MAUI app (`LekhaBook.App`) | Browser (`LekhaBook.Web`) |
+|---|---|---|
+| `IDataService` (parties, accounts, transactions, reports) | Local SQLite through `Data.Sqlite`, plus the outbox | HTTP calls to `LekhaBook.Api` |
+| `IAttachmentService` (capture, pick, store, get) | MAUI `MediaPicker` (camera/gallery) and `FilePicker`, saved to app data, upload queued | `<InputFile accept="image/*,application/pdf" capture="environment">` with direct upload |
+| `IConnectivityService` | MAUI `Connectivity` | `navigator.onLine` through JS interop |
+| `ISessionService` (current user, company, token, PIN lock) | `SecureStorage` | Auth cookie or token in memory |
+| `ISyncService` | Real background sync | No-op (always online) |
+| `IShareService` (share a PDF statement) | MAUI `Share` | Browser download, or `navigator.share` |
+
+The same Razor pages run in both hosts. Only the DI registrations differ.
+
+### 3.3 Tech choices (confirm versions with Context7 before you pin them)
+
+- **UI:** MudBlazor (v9.x at the time of writing) for responsive, touch-friendly Material components. Alternative in [D3](#10-decisions-recommended-defaults).
+- **Validation:** FluentValidation, shared by client and server.
+- **ORM:** EF Core 10 with `Microsoft.EntityFrameworkCore.Sqlite` (client) and `Npgsql.EntityFrameworkCore.PostgreSQL` (server).
+- **Auth:** ASP.NET Core Identity with JWT access tokens and rotating refresh tokens.
+- **PDF:** QuestPDF (check its license terms) or a lightweight HTML-to-PDF option.
+- **Images:** compress on the device before saving (max 1600 px on the long edge, JPEG quality around 75).
+- **Logging:** Serilog on the API; local log file on the device for sync errors.
+
+---
+
+## 4. Multi-company, multi-user and permissions
+
+### 4.1 Entities
+
+- `User` (global): Id, Name, Phone, Email, PasswordHash / external login, IsActive
+- `Company`: Id, Name, Address, Phone, PAN/VAT no., FiscalYearStart, DateMode (BS/AD), Currency (NPR), CreatedBy
+- `CompanyUser`: CompanyId, UserId, Role, Permissions (JSON or join table), Status (Invited/Active/Revoked)
+- `Invitation`: CompanyId, phone or email, Role, Token, ExpiresAt
+
+### 4.2 Roles (defaults, editable per user)
+
+| Permission | Owner | Admin | Accountant | Data Entry | Viewer |
+|---|---|---|---|---|---|
+| Manage company settings | ✔ | ✔ | | | |
+| Add/remove users, change roles | ✔ | ✔ (not Owner) | | | |
+| Create parties, banks, cash accounts | ✔ | ✔ | ✔ | ✔ | |
+| Create transactions | ✔ | ✔ | ✔ | ✔ | |
+| Edit/delete **own** transactions | ✔ | ✔ | ✔ | ✔ (same day only) | |
+| Edit/delete **others'** transactions | ✔ | ✔ | ✔ | | |
+| View reports | ✔ | ✔ | ✔ | balances + own entries | ✔ |
+| Export/share | ✔ | ✔ | ✔ | | ✔ |
+
+- **Every member's device pulls the full company data.** Locally computed balances must be correct, so sync is never filtered by role. Role restrictions on *viewing* are enforced in the UI and on the API's report endpoints. Restrictions on *writing* are always enforced on the server during push.
+- "Same day only" is judged by the server's `CreatedAtUtc`, not the device clock.
+
+- A user can belong to many companies. After login, they pick a company from a switcher in the app bar.
+- **Owners and Admins can add users:** they invite by phone or email; the invitee accepts after logging in.
+- **The server checks every permission.** The client only hides buttons.
+- **Revocation:** when a user is removed, the server rejects their sync for that company (403). The client then **wipes that company's local data** on its next connect.
+
+---
+
+## 5. Accounting domain (simple, correct and sync-safe)
+
+### 5.1 Accounts
+
+One `Account` table with `AccountType` = `Party` | `Bank` | `Cash` | `Income` | `Expense`.
+
+- **Income / Expense heads:** seeded per company (Sales/Goods, Other Income, Purchase/Goods, Petty Expenses, Rent, Salary, Transport…). Users can add more heads. These are what petty-cash entries and credit sales/purchases post against.
+- **Party:** PartyType (Customer/Supplier/Both), Phone, Address, PAN, OpeningBalance, OpeningSide (Receivable/Payable), CreditLimit (optional)
+- **Bank:** BankName, AccountNo (masked in lists), Branch, OpeningBalance
+- **Cash:** Name ("Petty Cash", "Main Cash"), OpeningBalance
+
+### 5.2 Transactions
+
+`Transaction`: Id (UUIDv7), CompanyId, VoucherNo, Date, Type, Amount, FromAccountId, ToAccountId, PartyId?, Narration, Reference/ChequeNo, CreatedBy, CreatedOnDevice, Status (Posted/Void), plus the sync fields in [§ 6.1](#61-sync-columns-on-every-syncable-table).
+
+Types:
+
+| Type | Meaning | Debit | Credit |
+|---|---|---|---|
+| `Receipt` | Got money from a party | Cash/Bank | Party |
+| `Payment` | Gave money to a party | Party | Cash/Bank |
+| `CashIn` | Petty cash received (no party) | Cash | Income head |
+| `CashOut` | Petty cash spent (no party) | Expense head | Cash |
+| `BankDeposit` | Cash put into bank | Bank | Cash |
+| `BankWithdraw` | Cash taken from bank | Cash | Bank |
+| `Transfer` | Bank to bank | To bank | From bank |
+| `PartyCredit` | Credit sale / "you gave goods" (no cash yet) | Party | Sales/Goods (Income) |
+| `PartyDebit` | Credit purchase / "you got goods" (no cash yet) | Purchase/Goods (Expense) | Party |
+| `Opening` | Opening balance | Account (or Opening Equity) | Opening Equity (or account) |
+
+An `Opening Equity` system account is seeded per company so that opening balances also balance.
+
+Store each transaction as **one row with From and To accounts**. That gives you double entry without a journal-lines table, which keeps sync and conflicts simple. Exact labels and screens follow the Phase 1 findings.
+
+`Attachment`: Id, CompanyId, TransactionId, FileName, ContentType, SizeBytes, LocalPath (client only), ServerKey, UploadStatus, sync fields.
+
+`AuditLog`: who changed what, with before/after JSON, on every edit or void of a transaction.
+
+### 5.3 Balances
+
+- **Never store a running balance.** Compute it with `SUM` over transactions (indexed on `CompanyId, AccountId, Date`).
+- Ledger screens compute the running balance in the query, for example with a window function on Postgres or in memory for one account's page on SQLite.
+- Optionally cache per-day snapshots locally, rebuilt after each sync. Never sync them.
+
+### 5.4 Voucher numbers offline
+
+- On the device, give a **provisional** number such as `TMP-<DeviceShort>-0007`.
+- On sync, the server assigns the final per-company, per-fiscal-year sequence (for example `RC-2082-0153`) and returns it. The client updates the record.
+- The UI shows "Pending" next to provisional numbers.
+
+### 5.5 Dates
+
+- Store dates as `DateOnly` in AD; store timestamps in UTC.
+- If discovery confirms BS dates ([D2](#10-decisions-recommended-defaults)), display and enter dates in BS through a BS↔AD conversion service with a tested lookup table, and use a BS date picker component. Fiscal year follows the company setting (Nepal: Shrawan 1).
+
+---
+
+## 6. Offline-first sync design
+
+### 6.1 Sync columns on every syncable table
+
+| Column | Purpose |
+|---|---|
+| `Id` (UUIDv7, client-generated) | No ID clashes across devices |
+| `CompanyId` | Tenant scope |
+| `Version` (bigint, server-assigned, monotonic per company, **in commit order**, see [§ 6.2](#62-flow)) | Change tracking for pull |
+| `CreatedAtUtc` (server time) | Time rules such as "same-day edit" use this, never the device clock |
+| `UpdatedAtUtc`, `UpdatedBy`, `UpdatedOnDevice` | Audit and tie-breaks |
+| `IsDeleted` (soft delete) | Deletes sync like edits |
+| `BaseVersion` (client only) | The server version this local edit started from, used to detect conflicts |
+
+### 6.2 Flow
+
+1. **Every local write** goes into the SQLite table **and** into an `Outbox` row (entity, id, operation, payload, attempt count), in one local transaction.
+2. **Push:** `POST /api/sync/{companyId}/push` with a batch of outbox items and an idempotency key per item. The server applies each in a DB transaction, checks permissions, assigns a `Version`, and returns results per item (ok, final voucher no., conflict, rejected).
+   - **Versions must follow commit order, or pull skips rows.** Take the version from a per-company counter row (`CompanySyncState`) with `SELECT … FOR UPDATE` *inside* the push transaction. That serializes writes per company, so a version can never become visible before a lower one. Don't use a plain sequence or identity column for this.
+3. **Pull:** `GET /api/sync/{companyId}/pull?since={lastVersion}&take=500` returns changed rows (including deletes). The client upserts them and stores `lastVersion`. Repeat until done.
+4. **Triggers:** app start, regaining connectivity, after each save (debounced 5 s), every 5 minutes in the foreground, and pull-to-refresh. Use a background task where the platform allows it.
+5. **Order:** push, then pull. Master data (accounts) before transactions. Attachment metadata syncs with rows; attachment **files** upload separately (see [§ 7](#7-attachments-camera--gallery--file)).
+
+### 6.3 Conflict rules
+
+| Data | Rule |
+|---|---|
+| Master data (party name, phone, bank info) | Last writer wins on the server; the losing value goes to `AuditLog` |
+| **Posted transactions** (amount, date, accounts) | If `BaseVersion` ≠ the current server `Version`, **don't overwrite**. Mark it **Conflict**, keep both versions, and show it in a "Needs review" list for Accountant and above |
+| Delete vs edit | The delete wins only if the edit is older. Otherwise flag it as a conflict |
+| Revoked user or company | Reject with 403; the client wipes local data for that company |
+
+### 6.4 Device safety
+
+- Keep a local database **per user** (file `lekhabook_<userId>.db`), scoped by `CompanyId` inside.
+- **Offline login:** after one online login, allow offline unlock with a PIN or biometric. Keep the refresh token in `SecureStorage`.
+- **Logout:** if the outbox has unsynced items, warn the user and offer "Sync now" or "Log out anyway (data stays on device)".
+- Show a status chip in the app bar: **Online · Synced** / **Offline · 3 pending** / **Sync error**. Tapping it shows details.
+
+---
+
+## 7. Attachments (camera / gallery / file)
+
+- On every transaction form there is a paperclip button with **Take photo**, **Choose from gallery** and **Choose file (PDF)**. Allow several per transaction (default limit 5).
+- **MAUI:** use `MediaPicker.CapturePhotoAsync` / `PickPhotoAsync` and `FilePicker`. Compress, save under `FileSystem.AppDataDirectory/attachments/<companyId>/`, and create an `Attachment` row with `UploadStatus=Pending`.
+- **Browser:** `<InputFile>` with `capture="environment"` opens the phone camera in mobile browsers. Upload immediately.
+- **Upload queue:** `POST /api/attachments` (multipart) with retry and backoff, only after the parent transaction is synced. Optionally upload only on Wi-Fi (a setting).
+- **Server:** check type (jpeg/png/webp/pdf) and size (max 5 MB after compression), store in object storage (S3-compatible or Azure Blob) or a local folder in dev, and serve through short-lived signed URLs with permission checks.
+- **Permissions:** add camera and photo usage descriptions to `Info.plist` (iOS) and declare camera and media permissions in the Android manifest.
+- Thumbnails show in the transaction list; tapping one opens a full-screen viewer with zoom.
+
+---
+
+## 8. UI / UX requirements
+
+### 8.1 Responsive, mobile first
+
+- **Phone (<600 px):** bottom navigation (Home, Parties, Cash & Bank, Reports, More), a floating "+" button opening a quick-add sheet (Got / Gave / Cash In / Cash Out / Transfer), full-screen forms, lists as cards.
+- **Tablet and desktop (≥960 px):** left sidebar, data grids with sorting and filtering, forms in a side panel or dialog, a ledger with a running-balance column.
+- Test on 360×640, 390×844, 768×1024 and 1440×900.
+
+### 8.2 Touch mode and keyboard mode
+
+- **Auto-detect** with `matchMedia('(pointer: coarse)')`, with a manual override in Settings ("Touch mode / Desktop mode") stored per device.
+- **Touch mode:** targets at least 48 px, larger fonts, swipe actions on list items (edit / attachment / delete with confirmation), pull-to-refresh.
+- **Desktop mode:** dense rows and keyboard shortcuts.
+
+### 8.3 Enter-key navigation (like a Windows app)
+
+Build a JS module `wwwroot/js/enterNav.js` in `LekhaBook.UI` and attach it to every form with a `<EnterNavForm>` wrapper component:
+
+- **Enter** moves focus to the next focusable, enabled, visible field in DOM order.
+- **Shift+Enter** moves to the previous field.
+- **Enter on the last field, or Ctrl+S,** saves. **Esc** cancels or closes.
+- **Textarea:** Enter inserts a new line; Ctrl+Enter moves on.
+- **Dropdown/autocomplete:** when its list is open, Enter selects; when it is closed, Enter moves on.
+- **Amount fields** select all their text on focus.
+- **Mobile soft keyboards:** set `enterkeyhint="next"` on every field except the last, which gets `enterkeyhint="done"`. Set `inputmode="decimal"` on amounts and `inputmode="tel"` on phone numbers. This makes the Android and iOS keyboards show **Next**, which goes through the same handler.
+- **Global shortcuts (desktop):** `Alt+N` new transaction, `Alt+P` parties, `F3` or `/` search, `Alt+1…5` main sections. Show them in a "?" help dialog.
+- The same JS runs in the browser and inside the MAUI BlazorWebView. Test both.
+
+### 8.4 Forms (the quick-entry flow)
+
+Field order on a transaction form: **Date** (defaults to today) → **Party / Account** (autocomplete with "+ Add new" inline) → **Amount** → **Paid via** (Cash / bank list) → **Narration** → **Attachments** → **Save**. Also add **Save & New**, which keeps the date and payment mode.
+
+### 8.5 Localization and formatting
+
+- `IStringLocalizer` resources for English and Nepali (`.resx`). Language switch in Settings.
+- Amounts use NPR with Indian/Nepali digit grouping (`1,23,456.00`), and optionally Devanagari digits.
+- Dates in BS or AD per the company setting (see [§ 5.5](#55-dates)).
+
+### 8.6 Accessibility and polish
+
+Labels on every input, visible focus rings, color contrast AA, empty states with a clear next action, skeleton loaders, light/dark theme.
+
+---
+
+## 9. API (server)
+
+- `POST /api/auth/register`, `/login`, `/refresh`, `/logout` (and OTP endpoints if [D5](#10-decisions-recommended-defaults) is chosen)
+- `GET/POST/PUT /api/companies`, `/api/companies/{id}/users`, `/invitations`, `/invitations/{token}/accept`
+- `POST /api/sync/{companyId}/push`, `GET /api/sync/{companyId}/pull`
+- `POST /api/attachments`, `GET /api/attachments/{id}` (signed URL)
+- `GET /api/companies/{id}/reports/{party-statement|cash-book|bank-book|day-book|summary}` (used by the browser and for server-side PDFs)
+- Cross-cutting: tenant filter middleware, permission policies, rate limiting, ProblemDetails errors, health checks, OpenAPI/Swagger UI in Development.
+- PostgreSQL: one database, with `CompanyId` on every tenant table and composite indexes `(CompanyId, Version)` and `(CompanyId, AccountId, Date)`. EF global query filters for `CompanyId` and `IsDeleted`.
+
+---
+
+## 10. Decisions (recommended defaults)
+
+Use the default unless the user says otherwise. Record each final choice in `docs/DECISIONS.md`.
+
+| # | Decision | Recommended default | Alternatives |
+|---|---|---|---|
+| D1 | Browser offline | ✅ **Decided: the browser is online-only in v1** (Blazor Web App calling the API). Phones and Windows use the MAUI app for offline | Blazor WASM PWA with SQLite-in-browser (OPFS) or IndexedDB, plus the same sync engine (phase 2) |
+| D2 | Date system | **Store AD; display BS or AD per company** (confirm in discovery) | AD only |
+| D3 | UI library | **MudBlazor** (free, MIT, responsive) | DevExpress Blazor (needs a license), Radzen, Fluent UI Blazor |
+| D4 | Server hosting | **Docker on a VPS** (API + PostgreSQL + Caddy for TLS) | Azure App Service + Azure Database for PostgreSQL; AWS |
+| D5 | Login method | **Phone/email + password, with optional PIN or biometric unlock on the device** | Phone OTP through an SMS gateway (costs per SMS), Google sign-in |
+| D6 | Attachment storage | **S3-compatible object storage** (MinIO in dev) | Postgres `bytea` (simple, but the DB grows fast) |
+
+---
+
+## 11. Build phases and exit criteria
+
+| Phase | Work | Exit criteria |
+|---|---|---|
+| **1. Discovery** | [§ 1](#phase-1-discover-the-reference-app-with-microsoft-edge-read-only) | User approves `docs/discovery/00-summary.md` and the v1 scope |
+| **2. Skeleton** | Solution and projects from [§ 3.1](#31-projects-one-lekhabooksln), `global.json`, central packages, docker-compose Postgres, `.vscode` launch/tasks, README run steps, CI workflow (build + test) | `dotnet build` passes; the API, Web and Windows app all launch from VS **and** VS Code; the Android emulator shows the shared home page |
+| **3. Domain and data** | Entities, EF configurations, Postgres migrations, SQLite `EnsureCreated`/migrations, seed data | Domain tests for the debit/credit and balance rules pass; migrations apply to a fresh Postgres |
+| **4. Auth and tenancy** | Identity, JWT/refresh, companies, invites, roles, permission policies, company switcher UI | Integration tests: a user without membership gets 403; Data Entry cannot edit others' entries |
+| **5. Masters UI** | Party, Bank and Cash account list and form pages (responsive, enter-nav) | Works in the browser and the Android emulator; the keyboard-only flow completes a party creation |
+| **6. Transactions UI** | Quick-add sheet, all transaction types, Save & New, edit/void with audit | Ledger balances match a hand-calculated test sheet (add to tests) |
+| **7. Attachments** | Camera, gallery and file on MAUI and browser; compression; upload queue; viewer | Photo taken on Android offline appears on the web after reconnect |
+| **8. Sync engine** | Outbox, push/pull, provisional voucher numbers, conflicts, revocation wipe, status chip | `LekhaBook.Sync.Tests`: 2 devices offline edit the same party and the same transaction, then reconnect, with the expected results from [§ 6.3](#63-conflict-rules); no duplicates after retrying a push; **concurrent pushes from 2 devices to one company, with a pull in between, lose no rows** |
+| **9. Reports** | Party statement, cash book, bank book, day book, dashboard; PDF export and share | Report totals equal the domain balance functions in tests |
+| **10. Polish** | Nepali localization, BS dates, touch/desktop mode toggle, dark mode, empty states, shortcuts help | Manual checklist at 4 viewport sizes; Lighthouse accessibility ≥ 90 on Web |
+| **11. Release** | Android signed AAB, iOS (needs a Mac with Xcode and an Apple developer account), Windows MSIX, API deployment per D4 | The user installs and uses it on a real Android phone and an iPhone with airplane-mode testing |
+
+---
+
+## 12. Opening the project in Visual Studio and VS Code
+
+**Visual Studio (the version that supports .NET 10 MAUI, expected to be VS 2026; verify this) with the ".NET MAUI" and "ASP.NET and web development" workloads:**
+- Open `LekhaBook.sln`. Use **multiple startup projects**: `LekhaBook.Api` + `LekhaBook.Web`, or `LekhaBook.Api` + `LekhaBook.App` (Android emulator or Windows Machine).
+
+**VS Code:**
+- Extensions (put them in `.vscode/extensions.json`): C# Dev Kit, .NET MAUI, and optionally Docker and PostgreSQL.
+- `.vscode/launch.json` contains **API**, **Web** and a compound **API + Web** configuration. Run the MAUI app with the .NET MAUI extension's target picker.
+- `.vscode/tasks.json` has: `db:up` (`docker compose up -d`), `build`, `test`, `ef:migrate`.
+
+**Command line:**
+
+```powershell
+docker compose up -d
+dotnet run --project src/LekhaBook.Api
+dotnet run --project src/LekhaBook.Web
+dotnet build src/LekhaBook.App -t:Run -f net10.0-android
+```
+
+**Prerequisites in the README:** .NET 10 SDK, `dotnet workload install maui`, Android SDK/emulator, Docker Desktop; for iOS, a Mac with Xcode (pair it from Visual Studio, or build on the Mac).
+
+---
+
+## 13. Testing strategy
+
+- **Unit:** domain rules, BS↔AD conversion, voucher numbering, permission matrix.
+- **Integration:** API with Testcontainers PostgreSQL: auth, tenancy isolation, sync push/pull idempotency.
+- **Sync simulation:** in-memory SQLite "devices" against a test server; scripted offline/online sequences.
+- **UI:** bUnit for components (enter-nav wrapper, forms); Playwright (Edge) end-to-end against `LekhaBook.Web` at phone and desktop viewports.
+- **Manual device checklist:** airplane mode → add 3 entries with photos → kill the app → reopen → go online → verify on the web.
+
+---
+
+## 14. Definition of done (v1)
+
+- Every in-scope workflow from `docs/discovery/workflows.md` works on Android, iOS, Windows (offline + online) and in the browser (online).
+- No data loss or duplicates in the sync test suite; conflicts surface for review.
+- Balances are always computed, never stored, and match the reports.
+- Multi-company and multi-user with server-enforced permissions; revocation wipes local data.
+- Enter-key navigation and shortcuts work on desktop; Next/Done works on phone keyboards; touch mode is usable one-handed.
+- The project opens and runs from Visual Studio and VS Code using the README alone.
