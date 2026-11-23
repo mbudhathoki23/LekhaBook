@@ -119,6 +119,8 @@ Mask personal data in screenshots: blur or crop names and phone numbers.
 
 ## 2. Scope of v1
 
+> ✅ **Approved by the user on 2026-11-23.** The detailed scope table is in [discovery/00-summary.md § 4](discovery/00-summary.md#4-proposed-v1-scope-for-approval). Where the list below differs from it, the table wins.
+
 **In scope (v1):**
 1. Auth, companies, company users and permissions
 2. Party ledger (customers and suppliers): receivable/payable, opening balance, statement
@@ -200,24 +202,46 @@ The same Razor pages run in both hosts. Only the DI registrations differ.
 - `CompanyUser`: CompanyId, UserId, Role, Permissions (JSON or join table), Status (Invited/Active/Revoked)
 - `Invitation`: CompanyId, phone or email, Role, Token, ExpiresAt
 
-### 4.2 Roles (defaults, editable per user)
+### 4.2 Roles and permissions
 
-| Permission | Owner | Admin | Accountant | Data Entry | Viewer |
-|---|---|---|---|---|---|
-| Manage company settings | ✔ | ✔ | | | |
-| Add/remove users, change roles | ✔ | ✔ (not Owner) | | | |
-| Create parties, banks, cash accounts | ✔ | ✔ | ✔ | ✔ | |
-| Create transactions | ✔ | ✔ | ✔ | ✔ | |
-| Edit/delete **own** transactions | ✔ | ✔ | ✔ | ✔ (same day only) | |
-| Edit/delete **others'** transactions | ✔ | ✔ | ✔ | | |
-| View reports | ✔ | ✔ | ✔ | balances + own entries | ✔ |
-| Export/share | ✔ | ✔ | ✔ | | ✔ |
+Use a **per-module permission set**, the same model as Karobar ([discovery 06](discovery/06-staff-permissions.md)). Each role is a **template**; an Owner or Partner can customize any member's permissions ("Edit Permission").
 
+**Modules × actions (v1):**
+
+| Module | Actions |
+|---|---|
+| Parties: customers | Create, View, Edit, Delete |
+| Parties: suppliers | Create, View, Edit, Delete |
+| Payment In | Create, View, Edit, Delete |
+| Payment Out | Create, View, Edit, Delete |
+| Income & Expenses | Create, View, Edit, Delete |
+| Money accounts | View, Add, Edit, Delete account; Create adjustment / transfer; Edit/Delete adjustment |
+| Party adjustments | Manage |
+| Reports | View party, transaction, income/expense and business-status reports; view dashboard stats; export/share |
+| Staff | Create, View, Edit, Delete |
+| Business settings | Edit business profile; edit party/transaction settings (incl. prefixes, serial reset); delete business |
+| Restrictions | **Lock Transaction Date** (can only enter today's date); same-day-only edits |
+
+**Role templates (defaults):**
+
+| Role | Default |
+|---|---|
+| **Owner** | Everything, including delete business and transferring ownership. Exactly one per company |
+| **Partner** | Everything except delete business |
+| **Manager** | Create, view and edit everywhere; **no deletes**; no staff or settings; can't add/edit/delete accounts |
+| **Accountant** | Everything except staff management, business edit/delete and delete account |
+| **Entry Person** | **Create + View** parties, payments, income/expense and adjustments; **sees party and account balances** in pickers and ledgers (needed while taking payments); edits/deletes only **own** entries, **same day only**; no reports export, staff or settings; Lock Transaction Date **on** |
+
+Differences from Karobar, on purpose:
+- Their Entry Person can edit transaction settings, including resetting serial numbers. Ours can't.
+- Their Entry Person can't see any balance. Ours sees balances, because a phone user taking a payment needs the party's due amount.
+- Sales Person and Stock Manager are dropped while sales and inventory are out of scope.
+
+Server rules:
 - **Every member's device pulls the full company data.** Locally computed balances must be correct, so sync is never filtered by role. Role restrictions on *viewing* are enforced in the UI and on the API's report endpoints. Restrictions on *writing* are always enforced on the server during push.
-- "Same day only" is judged by the server's `CreatedAtUtc`, not the device clock.
-
-- A user can belong to many companies. After login, they pick a company from a switcher in the app bar.
-- **Owners and Admins can add users:** they invite by phone or email; the invitee accepts after logging in.
+- "Same day only" and "Lock Transaction Date" are judged by the server's `CreatedAtUtc`, not the device clock.
+- A user can belong to many companies. After login, they pick a company from a switcher (in the sidebar on desktop, the app bar on phones).
+- **Members with Staff → Create permission (Owner and Partner by default) can add users:** they invite by phone or email; the invitee accepts after logging in, and the status goes from Invited to Accepted.
 - **The server checks every permission.** The client only hides buttons.
 - **Revocation:** when a user is removed, the server rejects their sync for that company (403). The client then **wipes that company's local data** on its next connect.
 
@@ -227,31 +251,38 @@ The same Razor pages run in both hosts. Only the DI registrations differ.
 
 ### 5.1 Accounts
 
-One `Account` table with `AccountType` = `Party` | `Bank` | `Cash` | `Income` | `Expense`.
+One `Account` table with `AccountType` = `Party` | `Cash` | `Bank` | `Cheque` | `Wallet` | `Income` | `Expense`.
+
+**Money accounts** are `Cash`, `Bank`, `Cheque` and `Wallet`. They are what forms call **"Payment Method"**. Seed every new company with **Cash**, **Cheque** and **Online Wallet**; bank accounts are added by the user. Petty cash is just another `Cash` account. (Source: [discovery 03](discovery/03-accounts.md).)
 
 - **Income / Expense heads:** seeded per company (Sales/Goods, Other Income, Purchase/Goods, Petty Expenses, Rent, Salary, Transport…). Users can add more heads. These are what petty-cash entries and credit sales/purchases post against.
-- **Party:** PartyType (Customer/Supplier/Both), Phone, Address, PAN, OpeningBalance, OpeningSide (Receivable/Payable), CreditLimit (optional)
-- **Bank:** BankName, AccountNo (masked in lists), Branch, OpeningBalance
-- **Cash:** Name ("Petty Cash", "Main Cash"), OpeningBalance
+- **Party:** FullName (required), Phone, PartyCategoryId, PartyType (Customer/Supplier), PhotoAttachmentId, Address, Email, PAN, OpeningBalance, OpeningSide (**To Receive / To Give**), OpeningAsOfDate
+- **Bank / Wallet:** Name (bank or wallet name), AccountHolderName, AccountNumber (masked in lists), OpeningBalance ("Current Account Balance")
+- **Cash / Cheque:** Name ("Cash", "Petty Cash", "Cheque"), OpeningBalance. Cheque entries may carry an optional Cheque No. and Cheque Date (an improvement over Karobar, [gap G4](discovery/gap-notes.md))
+- `PartyCategory`, `IncomeCategory` and `ExpenseCategory` are user-managed lists. Seed expense categories: General, Health, Recharge, Food, Entertainment, Fuel, Shopping, Travel. Seed income categories: Salary, Investment, Commission.
 
 ### 5.2 Transactions
 
-`Transaction`: Id (UUIDv7), CompanyId, VoucherNo, Date, Type, Amount, FromAccountId, ToAccountId, PartyId?, Narration, Reference/ChequeNo, CreatedBy, CreatedOnDevice, Status (Posted/Void), plus the sync fields in [§ 6.1](#61-sync-columns-on-every-syncable-table).
+`Transaction`: Id (UUIDv7), CompanyId, VoucherNo, IsManualNo, Date, Type, Amount, FromAccountId, ToAccountId, PartyId?, CategoryId?, Remarks, ChequeNo?, ChequeDate?, CreatedBy, CreatedOnDevice, Status (Posted/Void), plus the sync fields in [§ 6.1](#61-sync-columns-on-every-syncable-table).
 
 Types:
 
 | Type | Meaning | Debit | Credit |
 |---|---|---|---|
-| `Receipt` | Got money from a party | Cash/Bank | Party |
-| `Payment` | Gave money to a party | Party | Cash/Bank |
-| `CashIn` | Petty cash received (no party) | Cash | Income head |
-| `CashOut` | Petty cash spent (no party) | Expense head | Cash |
-| `BankDeposit` | Cash put into bank | Bank | Cash |
-| `BankWithdraw` | Cash taken from bank | Cash | Bank |
-| `Transfer` | Bank to bank | To bank | From bank |
-| `PartyCredit` | Credit sale / "you gave goods" (no cash yet) | Party | Sales/Goods (Income) |
-| `PartyDebit` | Credit purchase / "you got goods" (no cash yet) | Purchase/Goods (Expense) | Party |
+| `PaymentIn` | Got money from a party | Money account | Party |
+| `PaymentOut` | Gave money to a party | Party | Money account |
+| `PartyAdjustAdd` | Party Adjust Balance → **Add Balance** (more receivable from the party) | Party | Adjustment (system) |
+| `PartyAdjustReduce` | Party Adjust Balance → **Reduce Balance** | Adjustment (system) | Party |
+| `Expense` | Expense paid (petty cash bills, fuel…) | Expense category | Money account |
+| `OtherIncome` | Income received without a party | Money account | Income category |
+| `AddMoney` | Account Adjust → **Add Money** | Money account | Adjustment (system) |
+| `ReduceMoney` | Account Adjust → **Reduce Money** | Adjustment (system) | Money account |
+| `TransferMoney` | Move money between accounts (cash → bank deposit, bank → cash withdrawal, bank → wallet…) | To account | From account |
 | `Opening` | Opening balance | Account (or Opening Equity) | Opening Equity (or account) |
+
+Type names and labels match what Karobar users already use ([discovery workflows](discovery/workflows.md)). Credit sales and purchases (invoices) are out of v1 scope. The `Account` model already allows adding them later.
+
+`Adjustment` is a seeded system account per company, like `Opening Equity`.
 
 An `Opening Equity` system account is seeded per company so that opening balances also balance.
 
@@ -272,6 +303,8 @@ Store each transaction as **one row with From and To accounts**. That gives you 
 - On the device, give a **provisional** number such as `TMP-<DeviceShort>-0007`.
 - On sync, the server assigns the final per-company, per-fiscal-year sequence (for example `RC-2082-0153`) and returns it. The client updates the record.
 - The UI shows "Pending" next to provisional numbers.
+- Like Karobar, every number field has a **Manual ↔ Auto-Generate** toggle. A manual number is kept as typed; the server only checks it is unique for that type and fiscal year, and a clash is reported as a conflict.
+- **Per-type prefixes** (Payment In, Payment Out, Expense, Income…) and "Reset serial number" live in Settings → Transactions, and only Accountant and above can change them.
 
 ### 5.5 Dates
 
@@ -337,7 +370,7 @@ Store each transaction as **one row with From and To accounts**. That gives you 
 
 ### 8.1 Responsive, mobile first
 
-- **Phone (<600 px):** bottom navigation (Home, Parties, Cash & Bank, Reports, More), a floating "+" button opening a quick-add sheet (Got / Gave / Cash In / Cash Out / Transfer), full-screen forms, lists as cards.
+- **Phone (<600 px):** bottom navigation (Home, Parties, Cash & Bank, Reports, More), a floating "+" button opening a quick-add sheet (Payment In / Payment Out / Expense / Income / Transfer Money), full-screen forms, lists as cards.
 - **Tablet and desktop (≥960 px):** left sidebar, data grids with sorting and filtering, forms in a side panel or dialog, a ledger with a running-balance column.
 - Test on 360×640, 390×844, 768×1024 and 1440×900.
 
@@ -358,12 +391,19 @@ Build a JS module `wwwroot/js/enterNav.js` in `LekhaBook.UI` and attach it to ev
 - **Dropdown/autocomplete:** when its list is open, Enter selects; when it is closed, Enter moves on.
 - **Amount fields** select all their text on focus.
 - **Mobile soft keyboards:** set `enterkeyhint="next"` on every field except the last, which gets `enterkeyhint="done"`. Set `inputmode="decimal"` on amounts and `inputmode="tel"` on phone numbers. This makes the Android and iOS keyboards show **Next**, which goes through the same handler.
-- **Global shortcuts (desktop):** `Alt+N` new transaction, `Alt+P` parties, `F3` or `/` search, `Alt+1…5` main sections. Show them in a "?" help dialog.
+- **Global shortcuts (desktop):** use the same keys as Karobar so switching users feel at home ([discovery 07](discovery/07-settings-and-ui.md)):
+  - **Add data:** `Alt+I` Payment In, `Alt+O` Payment Out, `Alt+E` Expense, `Alt+N` new Party, `Alt+T` Transfer Money, `Alt+A` Add/Reduce Money. Other Income has no Karobar key; pick a free one.
+  - **Go to:** `Shift+D` Dashboard, `Shift+P` Parties, `Shift+E` Expense, `Shift+R` Reports, `Shift+S` Settings, `Shift+M` toggle sidebar.
+  - `/` focuses search. `Shift+K` (or `?`) opens the shortcuts dialog.
+  - Shift-shortcuts must not fire while focus is in a text field.
 - The same JS runs in the browser and inside the MAUI BlazorWebView. Test both.
 
 ### 8.4 Forms (the quick-entry flow)
 
-Field order on a transaction form: **Date** (defaults to today) → **Party / Account** (autocomplete with "+ Add new" inline) → **Amount** → **Paid via** (Cash / bank list) → **Narration** → **Attachments** → **Save**. Also add **Save & New**, which keeps the date and payment mode.
+Field order on a Payment In / Payment Out form (same as Karobar, [discovery 02](discovery/02-payments.md)): **Receipt No.** (auto, with a Manual toggle) → **Date** (today) → **Party** (autocomplete with "+ Add new" inline; the party's current balance shows beside the label) → **Amount** → **Payment Method** (money accounts listed **by name with balance**) → **Remarks** → **Attachments** → **Save**.
+- When the party is already chosen (opened from its ledger), focus starts on **Amount**.
+- **Save & New** keeps the date and payment method.
+- Expense and Income forms use the same order, with **Category** in place of Party.
 
 ### 8.5 Localization and formatting
 
@@ -396,7 +436,7 @@ Use the default unless the user says otherwise. Record each final choice in `doc
 | # | Decision | Recommended default | Alternatives |
 |---|---|---|---|
 | D1 | Browser offline | ✅ **Decided: the browser is online-only in v1** (Blazor Web App calling the API). Phones and Windows use the MAUI app for offline | Blazor WASM PWA with SQLite-in-browser (OPFS) or IndexedDB, plus the same sync engine (phase 2) |
-| D2 | Date system | **Store AD; display BS or AD per company** (confirm in discovery) | AD only |
+| D2 | Date system | ✅ **Decided: store AD; display BS by default, AD selectable per company** (confirmed in discovery) | AD only |
 | D3 | UI library | **MudBlazor** (free, MIT, responsive) | DevExpress Blazor (needs a license), Radzen, Fluent UI Blazor |
 | D4 | Server hosting | **Docker on a VPS** (API + PostgreSQL + Caddy for TLS) | Azure App Service + Azure Database for PostgreSQL; AWS |
 | D5 | Login method | **Phone/email + password, with optional PIN or biometric unlock on the device** | Phone OTP through an SMS gateway (costs per SMS), Google sign-in |
@@ -408,10 +448,10 @@ Use the default unless the user says otherwise. Record each final choice in `doc
 
 | Phase | Work | Exit criteria |
 |---|---|---|
-| **1. Discovery** | [§ 1](#phase-1-discover-the-reference-app-with-microsoft-edge-read-only) | User approves `docs/discovery/00-summary.md` and the v1 scope |
+| **1. Discovery** ✅ | [§ 1](#phase-1-discover-the-reference-app-with-microsoft-edge-read-only) | User approves `docs/discovery/00-summary.md` and the v1 scope. **Done 2026-11-23.** Items not covered are listed in the summary's checklist; check them in a test business later |
 | **2. Skeleton** | Solution and projects from [§ 3.1](#31-projects-one-lekhabooksln), `global.json`, central packages, docker-compose Postgres, `.vscode` launch/tasks, README run steps, CI workflow (build + test) | `dotnet build` passes; the API, Web and Windows app all launch from VS **and** VS Code; the Android emulator shows the shared home page |
 | **3. Domain and data** | Entities, EF configurations, Postgres migrations, SQLite `EnsureCreated`/migrations, seed data | Domain tests for the debit/credit and balance rules pass; migrations apply to a fresh Postgres |
-| **4. Auth and tenancy** | Identity, JWT/refresh, companies, invites, roles, permission policies, company switcher UI | Integration tests: a user without membership gets 403; Data Entry cannot edit others' entries |
+| **4. Auth and tenancy** | Identity, JWT/refresh, companies, invites, roles, permission policies, company switcher UI | Integration tests: a user without membership gets 403; Entry Person cannot edit others' entries or edit after the same day; Lock Transaction Date rejects back-dated entries; a customized permission overrides the role template |
 | **5. Masters UI** | Party, Bank and Cash account list and form pages (responsive, enter-nav) | Works in the browser and the Android emulator; the keyboard-only flow completes a party creation |
 | **6. Transactions UI** | Quick-add sheet, all transaction types, Save & New, edit/void with audit | Ledger balances match a hand-calculated test sheet (add to tests) |
 | **7. Attachments** | Camera, gallery and file on MAUI and browser; compression; upload queue; viewer | Photo taken on Android offline appears on the web after reconnect |

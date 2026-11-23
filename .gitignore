@@ -1,0 +1,9 @@
+# Edge profile used for discovery (holds session cookies)
+.edge-profile/
+
+# .NET
+bin/
+obj/
+*.user
+.vs/
+appsettings.Development.json
