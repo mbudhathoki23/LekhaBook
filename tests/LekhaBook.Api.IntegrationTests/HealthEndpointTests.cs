@@ -9,7 +9,10 @@ public sealed class HealthEndpointTests(WebApplicationFactory<Program> factory)
     [Fact]
     public async Task Health_returns_200_Healthy()
     {
-        using var client = factory.CreateClient();
+        // Don't touch a developer's local database from this test.
+        using var client = factory
+            .WithWebHostBuilder(b => b.UseSetting("Database:MigrateOnStartup", "false"))
+            .CreateClient();
 
         var response = await client.GetAsync("/health");
 

@@ -3,20 +3,27 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>LekhaBook</title>
+    <title>Lekha Books</title>
+    <meta name="application-name" content="Lekha Books" />
+    <meta name="theme-color" content="#3949AB" />
     <base href="/" />
     <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
     <link rel="stylesheet" href="_content/LekhaBook.UI/app.css" />
     <link rel="stylesheet" href="app.css" />
     <link rel="stylesheet" href="LekhaBook.App.styles.css" />
-    <link rel="icon" href="data:,">
+    <link rel="icon" type="image/x-icon" href="_content/LekhaBook.UI/branding/favicon.ico" />
 </head>
 
 <body>
 
     <div class="status-bar-safe-area"></div>
 
-    <div id="app">Loading...</div>
+    <div id="app">
+        <div class="brand-loading" role="status" aria-label="Loading Lekha Books">
+            <img src="_content/LekhaBook.UI/branding/lekha_books_mark.png" alt="" width="128" height="128" />
+            <span aria-hidden="true">Lekha Books</span>
+        </div>
+    </div>
 
     <script src="_framework/blazor.webview.js" autostart="false"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>

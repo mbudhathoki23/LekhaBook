@@ -15,7 +15,7 @@
     <MauiXamlInflator>SourceGen</MauiXamlInflator>
 
     <!-- Display name -->
-    <ApplicationTitle>LekhaBook</ApplicationTitle>
+    <ApplicationTitle>Lekha Books</ApplicationTitle>
 
     <!-- App Identifier -->
     <ApplicationId>com.lekhabook.app</ApplicationId>
@@ -35,14 +35,18 @@
 
   <ItemGroup>
     <!-- App Icon -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#3949AB" />
+    <!-- Use the shared master artwork; MAUI generates each platform's icon sizes. -->
+    <MauiIcon Include="Resources\AppIcon\appicon.svg"
+              ForegroundFile="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png"
+              ForegroundScale="0.75" Color="#FFFFFF" />
 
     <!-- Splash Screen -->
-    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#3949AB" BaseSize="128,128" />
+    <MauiSplashScreen Include="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png"
+                      Link="Resources\Splash\lekha_books_mark.png"
+                      Color="#FFFFFF" BaseSize="160,160" Resize="true" />
 
     <!-- Images -->
     <MauiImage Include="Resources\Images\*" />
-    <MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
 
     <!-- Custom Fonts -->
     <MauiFont Include="Resources\Fonts\*" />

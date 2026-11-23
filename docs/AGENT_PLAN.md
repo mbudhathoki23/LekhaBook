@@ -146,6 +146,7 @@ LekhaBook.sln
 │  ├─ LekhaBook.Domain/          # Entities, enums, business rules (no EF, no UI), net10.0
 │  ├─ LekhaBook.Contracts/       # DTOs + sync contracts shared by API and clients
 │  ├─ LekhaBook.Application/     # Use-cases/services (PostTransaction, GetLedger…), validation (FluentValidation)
+│  ├─ LekhaBook.Data/            # EF Core model shared by both databases + balance queries (depends on Domain only)
 │  ├─ LekhaBook.Data.Sqlite/     # EF Core SQLite DbContext + local repositories + outbox (client side)
 │  ├─ LekhaBook.Data.Postgres/   # EF Core Npgsql DbContext + migrations (server side)
 │  ├─ LekhaBook.UI/              # Razor Class Library: ALL pages, components, layouts, JS (enter-nav), CSS
@@ -155,6 +156,7 @@ LekhaBook.sln
 ├─ tests/
 │  ├─ LekhaBook.Domain.Tests/
 │  ├─ LekhaBook.Application.Tests/
+│  ├─ LekhaBook.Data.Tests/      # migrations on real SQLite + PostgreSQL; SQL sums = domain balances
 │  ├─ LekhaBook.Sync.Tests/      # two simulated devices + server, conflict scenarios
 │  └─ LekhaBook.Api.IntegrationTests/  # Testcontainers PostgreSQL
 ├─ docs/ (this plan, discovery, decisions)
@@ -259,11 +261,14 @@ One `Account` table with `AccountType` = `Party` | `Cash` | `Bank` | `Cheque` | 
 - **Party:** FullName (required), Phone, PartyCategoryId, PartyType (Customer/Supplier), PhotoAttachmentId, Address, Email, PAN, OpeningBalance, OpeningSide (**To Receive / To Give**), OpeningAsOfDate
 - **Bank / Wallet:** Name (bank or wallet name), AccountHolderName, AccountNumber (masked in lists), OpeningBalance ("Current Account Balance")
 - **Cash / Cheque:** Name ("Cash", "Petty Cash", "Cheque"), OpeningBalance. Cheque entries may carry an optional Cheque No. and Cheque Date (an improvement over Karobar, [gap G4](discovery/gap-notes.md))
-- `PartyCategory`, `IncomeCategory` and `ExpenseCategory` are user-managed lists. Seed expense categories: General, Health, Recharge, Food, Entertainment, Fuel, Shopping, Travel. Seed income categories: Salary, Investment, Commission.
+- **Income and expense categories are accounts** of type `Income` / `Expense` (decision D7). Seeded expense heads: General, Health, Recharge, Food, Entertainment, Fuel, Shopping, Travel. Seeded income heads: Salary, Investment, Commission. The "Expense Category" report is simply balances by Expense account.
+- `PartyCategory` is a plain user-managed lookup (not an accounting account).
+- **Opening balances live on the account** (`OpeningBalance`, `OpeningSide`, `OpeningAsOf`); there is no opening transaction (decision D8). Opening equity is implicit: −Σ signed openings, so all balances plus it sum to zero.
+- Seeding is done by `CompanySeeder` in the domain (not EF `HasData`): Cash, Cheque, Online Wallet, the system `Adjustment` account, and the category heads. System accounts are flagged `IsSystem` and can't be deleted.
 
 ### 5.2 Transactions
 
-`Transaction`: Id (UUIDv7), CompanyId, VoucherNo, IsManualNo, Date, Type, Amount, FromAccountId, ToAccountId, PartyId?, CategoryId?, Remarks, ChequeNo?, ChequeDate?, CreatedBy, CreatedOnDevice, Status (Posted/Void), plus the sync fields in [§ 6.1](#61-sync-columns-on-every-syncable-table).
+`Transaction`: Id (UUIDv7), CompanyId, VoucherNo, IsManualNo, Date, Type, Amount, FromAccountId, ToAccountId, Remarks, ChequeNo?, ChequeDate?, CreatedBy, CreatedOnDevice, Status (Posted/Void), plus the sync fields in [§ 6.1](#61-sync-columns-on-every-syncable-table).
 
 Types:
 
@@ -278,13 +283,10 @@ Types:
 | `AddMoney` | Account Adjust → **Add Money** | Money account | Adjustment (system) |
 | `ReduceMoney` | Account Adjust → **Reduce Money** | Adjustment (system) | Money account |
 | `TransferMoney` | Move money between accounts (cash → bank deposit, bank → cash withdrawal, bank → wallet…) | To account | From account |
-| `Opening` | Opening balance | Account (or Opening Equity) | Opening Equity (or account) |
 
 Type names and labels match what Karobar users already use ([discovery workflows](discovery/workflows.md)). Credit sales and purchases (invoices) are out of v1 scope. The `Account` model already allows adding them later.
 
-`Adjustment` is a seeded system account per company, like `Opening Equity`.
-
-An `Opening Equity` system account is seeded per company so that opening balances also balance.
+A party or category is identified by the From/To account itself, so transactions have no separate `PartyId` or `CategoryId` columns. `Adjustment` is a seeded system account per company. The rules are implemented and tested in `LekhaBook.Domain/PostingRules.cs` and `Balances.cs`.
 
 Store each transaction as **one row with From and To accounts**. That gives you double entry without a journal-lines table, which keeps sync and conflicts simple. Exact labels and screens follow the Phase 1 findings.
 
@@ -341,6 +343,7 @@ Store each transaction as **one row with From and To accounts**. That gives you 
 | Data | Rule |
 |---|---|
 | Master data (party name, phone, bank info) | Last writer wins on the server; the losing value goes to `AuditLog` |
+| **Opening balance fields** on an account (amount, side, as-of date) | Treated as money: a concurrent change goes to "Needs review", like a posted transaction (D8) |
 | **Posted transactions** (amount, date, accounts) | If `BaseVersion` ≠ the current server `Version`, **don't overwrite**. Mark it **Conflict**, keep both versions, and show it in a "Needs review" list for Accountant and above |
 | Delete vs edit | The delete wins only if the edit is older. Otherwise flag it as a conflict |
 | Revoked user or company | Reject with 403; the client wipes local data for that company |
@@ -450,7 +453,7 @@ Use the default unless the user says otherwise. Record each final choice in `doc
 |---|---|---|
 | **1. Discovery** ✅ | [§ 1](#phase-1-discover-the-reference-app-with-microsoft-edge-read-only) | User approves `docs/discovery/00-summary.md` and the v1 scope. **Done 2026-11-23.** Items not covered are listed in the summary's checklist; check them in a test business later |
 | **2. Skeleton** 🟡 | Solution and projects from [§ 3.1](#31-projects-one-lekhabooksln), `global.json`, central packages, docker-compose Postgres, `.vscode` launch/tasks, README run steps, CI workflow (build + test) | `dotnet build` passes; the API, Web and Windows app all launch from VS **and** VS Code; the Android emulator shows the shared home page. **Status 2026-11-23:** solution builds (0 warnings), `/health` test passes, Web renders at phone + desktop sizes, Windows app opens on the dashboard, **Android emulator (API 36, `LekhaBook_Pixel`) shows the shared home page** with correct system-bar insets, and the sync chip switches to Offline when the network is cut. **Still open:** launching from VS/VS Code by hand, first CI run, docker-compose (Docker not installed on the dev PC) |
-| **3. Domain and data** | Entities, EF configurations, Postgres migrations, SQLite `EnsureCreated`/migrations, seed data | Domain tests for the debit/credit and balance rules pass; migrations apply to a fresh Postgres |
+| **3. Domain and data** 🟡 | Entities, EF configurations, Postgres migrations, SQLite `EnsureCreated`/migrations, seed data | Domain tests for the debit/credit and balance rules pass; migrations apply to a fresh Postgres. **Status 2026-11-24:** 44 domain tests pass; SQLite migrations + SQL-vs-domain balance checks pass; the app creates its device database on the Android emulator; Android Release build is clean. **Still open:** the PostgreSQL test (`LekhaBook.Data.Tests`) needs a local server configured (README "Local database"); CI runs it against a PostgreSQL service |
 | **4. Auth and tenancy** | Identity, JWT/refresh, companies, invites, roles, permission policies, company switcher UI | Integration tests: a user without membership gets 403; Entry Person cannot edit others' entries or edit after the same day; Lock Transaction Date rejects back-dated entries; a customized permission overrides the role template |
 | **5. Masters UI** | Party, Bank and Cash account list and form pages (responsive, enter-nav) | Works in the browser and the Android emulator; the keyboard-only flow completes a party creation |
 | **6. Transactions UI** | Quick-add sheet, all transaction types, Save & New, edit/void with audit | Ledger balances match a hand-calculated test sheet (add to tests) |

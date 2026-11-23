@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <!-- Shared with LekhaBook.Data.Tests: holds ConnectionStrings:LekhaBook for development. -->
+    <UserSecretsId>lekhabook-dev</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,6 +1,8 @@
 ﻿using LekhaBook.App.Services;
+using LekhaBook.Data.Sqlite;
 using LekhaBook.UI;
 using LekhaBook.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace LekhaBook.App;
@@ -25,11 +27,22 @@ public static class MauiProgram
         builder.Services.AddSingleton<IConnectivityService, MauiConnectivityService>();
         builder.Services.AddSingleton<ISyncService, PendingSyncEngine>();
 
+        // Device database. One file per signed-in user arrives with sign-in (phase 4).
+        builder.Services.AddLekhaBookSqlite(Path.Combine(FileSystem.AppDataDirectory, "lekhabook.db"));
+
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        var app = builder.Build();
+
+        // Create or upgrade the device database before the first screen loads.
+        using (var db = app.Services.GetRequiredService<IDbContextFactory<SqliteDbContext>>().CreateDbContext())
+        {
+            db.Database.Migrate();
+        }
+
+        return app;
     }
 }

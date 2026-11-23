@@ -12,6 +12,21 @@ jobs:
   server-and-tests:
     name: API, Web, libraries + tests (Linux)
     runs-on: ubuntu-latest
+    services:
+      # Throwaway PostgreSQL for the migration tests (each test creates and drops its own database).
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: lekhabook
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U lekhabook"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -21,6 +36,8 @@ jobs:
         run: dotnet build LekhaBook.Server.slnf -c Release
       - name: Test
         run: dotnet test LekhaBook.Server.slnf -c Release --no-build
+        env:
+          LEKHABOOK_TEST_PG: Host=localhost;Port=5432;Database=postgres;Username=lekhabook;Password=ci_only_password
 
   mobile-app:
     name: MAUI app (Android + Windows)

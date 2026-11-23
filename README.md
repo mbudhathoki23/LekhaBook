@@ -1,4 +1,8 @@
-# LekhaBook
+# Lekha Books
+
+<img src="src/LekhaBook.UI/wwwroot/branding/lekha_books_logo.png" alt="Lekha Books" width="360" />
+
+The shared [brand assets and usage notes](docs/branding/README.md) cover the web and native apps.
 
 Mobile-first bookkeeping for **party ledgers, bank accounts and petty cash**, with photo proof attached to entries.
 
@@ -19,6 +23,7 @@ The build plan is in [docs/AGENT_PLAN.md](docs/AGENT_PLAN.md), decisions in [doc
 | `src/LekhaBook.Domain` | Entities and business rules |
 | `src/LekhaBook.Contracts` | DTOs shared by the API and clients |
 | `src/LekhaBook.Application` | Use cases and validation |
+| `src/LekhaBook.Data` | EF Core model shared by both databases, plus balance queries |
 | `src/LekhaBook.Data.Sqlite` | Device database (EF Core SQLite) and sync outbox |
 | `src/LekhaBook.Data.Postgres` | Server database (EF Core Npgsql) and migrations |
 | `tests/*` | Unit, sync-simulation and API integration tests |
@@ -32,6 +37,43 @@ The UI only talks to the device or server through interfaces in `LekhaBook.UI/Se
 - **Android:** Android SDK + an emulator (Android Studio's Device Manager) or a USB-connected phone
 - **iOS:** a Mac with Xcode and an Apple developer account. Pair it from Visual Studio, or build on the Mac
 - **PostgreSQL** 16+: either a local install, or Docker Desktop with `docker compose up -d` (from phase 3)
+
+## Local database (PostgreSQL)
+
+Do this once per machine. Choose your own password for the `lekhabook` role. It stays in your local user-secrets store and never goes in the repo.
+
+**Easiest:** run the setup script from the repo folder. It asks for the password with hidden input; add `-CreateRole` the first time to also create the role:
+
+```powershell
+./scripts/set-dev-database.ps1 -CreateRole
+```
+
+Or do the same steps by hand:
+
+1. Create a login role that can create databases (the tests create and drop a fresh database each run). You'll be asked for the `postgres` password:
+
+   ```powershell
+   & "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h localhost -U postgres -c "CREATE ROLE lekhabook LOGIN CREATEDB PASSWORD 'your-dev-password';"
+   ```
+
+2. Store the connection string as a user secret. `LekhaBook.Api` and `LekhaBook.Data.Tests` share it:
+
+   ```powershell
+   dotnet user-secrets set "ConnectionStrings:LekhaBook" "Host=localhost;Port=5432;Database=lekhabook;Username=lekhabook;Password=your-dev-password" --project src/LekhaBook.Api
+   ```
+
+3. Check it: `dotnet test tests/LekhaBook.Data.Tests` should report the PostgreSQL test as passed, not skipped. Running the API in Development creates the `lekhabook` database and applies migrations automatically.
+
+With Docker instead, `docker compose up -d` starts PostgreSQL on port **5433** (user `lekhabook`, password `lekhabook_dev`). Use `Port=5433` in the connection string.
+
+**Migrations** (run from the repo root after changing the model; `dotnet tool restore` installs `dotnet-ef`):
+
+```powershell
+dotnet ef migrations add <Name> --project src/LekhaBook.Data.Postgres --startup-project src/LekhaBook.Data.Postgres
+dotnet ef migrations add <Name> --project src/LekhaBook.Data.Sqlite --startup-project src/LekhaBook.Data.Sqlite
+```
+
+Always add a migration to **both** projects. The app applies SQLite migrations on start.
 
 ## Open the project
 

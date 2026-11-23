@@ -6,6 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Company>LekhaBook</Company>
-    <Product>LekhaBook</Product>
+    <Product>Lekha Books</Product>
   </PropertyGroup>
 </Project>
