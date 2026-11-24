@@ -30,9 +30,16 @@ if ([string]::IsNullOrWhiteSpace($password)) { throw 'Password is empty.' }
 if ($password.Contains("'") -or $password.Contains(';')) { throw "Please choose a password without ' or ; characters." }
 
 if ($CreateRole) {
-    Write-Host "Creating role '$Username' (psql will ask for the postgres password)..."
-    & $Psql -h $DbHost -p $Port -U postgres -v ON_ERROR_STOP=1 -c "CREATE ROLE $Username LOGIN CREATEDB PASSWORD '$password';"
-    if ($LASTEXITCODE -ne 0) { throw "psql failed (exit $LASTEXITCODE). If the role already exists, run again without -CreateRole." }
+    # Creates the role, or (if it already exists) resets its password to the one just entered,
+    # so the saved connection string always matches.
+    Write-Host "Creating or updating role '$Username' (psql will ask for the postgres password)..."
+    $sql = 'DO $do$ BEGIN ' +
+        "IF EXISTS (SELECT FROM pg_roles WHERE rolname = '$Username') THEN " +
+        "ALTER ROLE $Username LOGIN CREATEDB PASSWORD '$password'; " +
+        "ELSE CREATE ROLE $Username LOGIN CREATEDB PASSWORD '$password'; END IF; " +
+        'END $do$;'
+    & $Psql -h $DbHost -p $Port -U postgres -v ON_ERROR_STOP=1 -c $sql
+    if ($LASTEXITCODE -ne 0) { throw "psql failed (exit $LASTEXITCODE)." }
 }
 
 $connectionString = "Host=$DbHost;Port=$Port;Database=$Database;Username=$Username;Password=$password"

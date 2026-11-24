@@ -64,6 +64,8 @@ Or do the same steps by hand:
 
 3. Check it: `dotnet test tests/LekhaBook.Data.Tests` should report the PostgreSQL test as passed, not skipped. Running the API in Development creates the `lekhabook` database and applies migrations automatically.
 
+To run only the PostgreSQL tests against some other server (for example a throwaway one), set `LEKHABOOK_TEST_PG` to a connection string whose user has CREATEDB. It takes priority over the user secret.
+
 With Docker instead, `docker compose up -d` starts PostgreSQL on port **5433** (user `lekhabook`, password `lekhabook_dev`). Use `Port=5433` in the connection string.
 
 **Migrations** (run from the repo root after changing the model; `dotnet tool restore` installs `dotnet-ef`):
