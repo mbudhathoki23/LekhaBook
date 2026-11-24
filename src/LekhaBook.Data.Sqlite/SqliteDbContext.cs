@@ -99,14 +99,42 @@ public sealed class SyncCheckpoint
     public long LastPulledVersion { get; set; }
 }
 
-public static class SqliteServiceCollectionExtensions
+/// <summary>
+/// One device database per signed-in user (<c>lekhabook_{userId}.db</c>), so two people sharing a phone
+/// never see each other's books (AGENT_PLAN § 6.4). Blazor components outlive a unit of work, so each
+/// operation creates and disposes its own context.
+/// </summary>
+public sealed class UserDatabaseFactory(string directory) : IDbContextFactory<SqliteDbContext>
 {
-    /// <summary>
-    /// Registers a context factory: Blazor components live longer than a unit of work, so each
-    /// operation creates and disposes its own context.
-    /// </summary>
-    public static IServiceCollection AddLekhaBookSqlite(this IServiceCollection services, string databasePath) =>
-        services.AddDbContextFactory<SqliteDbContext>(o => o.UseSqlite($"Data Source={databasePath}"));
+    private readonly Lock _gate = new();
+    private DbContextOptions<SqliteDbContext>? _options;
+
+    public Guid? UserId { get; private set; }
+
+    public static string FileName(Guid userId) => $"lekhabook_{userId:N}.db";
+
+    /// <summary>Switches to <paramref name="userId"/>'s database (creating or upgrading it), or closes it when null.</summary>
+    public void OpenForUser(Guid? userId)
+    {
+        lock (_gate)
+        {
+            UserId = userId;
+            _options = userId is { } id
+                ? new DbContextOptionsBuilder<SqliteDbContext>()
+                    .UseSqlite($"Data Source={Path.Combine(directory, FileName(id))}")
+                    .Options
+                : null;
+        }
+
+        if (_options is not null)
+        {
+            using var db = CreateDbContext();
+            db.Database.Migrate();
+        }
+    }
+
+    public SqliteDbContext CreateDbContext() =>
+        new(_options ?? throw new InvalidOperationException("No user is signed in, so there is no device database."));
 }
 
 /// <summary>Used by `dotnet ef migrations add`; doesn't need a real database.</summary>

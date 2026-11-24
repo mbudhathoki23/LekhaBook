@@ -64,6 +64,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../LekhaBook.UI/LekhaBook.UI.csproj" />
+    <ProjectReference Include="../LekhaBook.Client/LekhaBook.Client.csproj" />
     <ProjectReference Include="../LekhaBook.Data.Sqlite/LekhaBook.Data.Sqlite.csproj" />
   </ItemGroup>
 

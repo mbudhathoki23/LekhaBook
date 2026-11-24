@@ -14,3 +14,6 @@ TestResults/
 *.db
 *.db-shm
 *.db-wal
+
+# Local developer notes (test accounts for the throwaway test database)
+.dev/

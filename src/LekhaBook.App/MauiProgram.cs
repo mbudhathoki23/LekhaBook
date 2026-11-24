@@ -1,4 +1,5 @@
 ﻿using LekhaBook.App.Services;
+using LekhaBook.Client;
 using LekhaBook.Data.Sqlite;
 using LekhaBook.UI;
 using LekhaBook.UI.Services;
@@ -27,22 +28,22 @@ public static class MauiProgram
         builder.Services.AddSingleton<IConnectivityService, MauiConnectivityService>();
         builder.Services.AddSingleton<ISyncService, PendingSyncEngine>();
 
-        // Device database. One file per signed-in user arrives with sign-in (phase 4).
-        builder.Services.AddLekhaBookSqlite(Path.Combine(FileSystem.AppDataDirectory, "lekhabook.db"));
+        // Sign-in: one user per app install, so the session is a singleton. Tokens live in SecureStorage.
+        builder.Services.AddLekhaBookClient(ApiEndpoint.BaseAddress, perUserScope: false);
+        builder.Services.AddSingleton<ITokenStore, SecureTokenStore>();
+        builder.Services.AddSingleton<ILocalSettings, PreferencesSettings>();
+
+        // Device database: one file per signed-in user, opened (and migrated) at sign-in.
+        var databases = new UserDatabaseFactory(FileSystem.AppDataDirectory);
+        builder.Services.AddSingleton(databases);
+        builder.Services.AddSingleton<IDbContextFactory<SqliteDbContext>>(databases);
+        builder.Services.AddSingleton<IUserChangeListener, DeviceDatabaseOpener>();
 
 #if DEBUG
         builder.Services.AddBlazorWebViewDeveloperTools();
         builder.Logging.AddDebug();
 #endif
 
-        var app = builder.Build();
-
-        // Create or upgrade the device database before the first screen loads.
-        using (var db = app.Services.GetRequiredService<IDbContextFactory<SqliteDbContext>>().CreateDbContext())
-        {
-            db.Database.Migrate();
-        }
-
-        return app;
+        return builder.Build();
     }
 }

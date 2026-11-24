@@ -1,0 +1,83 @@
+@page "/signup"
+@layout AuthLayout
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+<PageTitle>Create account · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Create your account</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">Free to start. You can add your staff later.</MudText>
+
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+}
+
+<form @onsubmit="RegisterAsync">
+    <MudStack Spacing="3">
+        <MudTextField @bind-Value="_name" Label="Your name" Variant="Variant.Outlined" Immediate="true" Required="true"
+                      AutoFocus="true" MaxLength="200"
+                      UserAttributes="@(new() { ["autocomplete"] = "name", ["enterkeyhint"] = "next" })" />
+        <MudTextField @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined"
+                      Immediate="true" Required="true"
+                      UserAttributes="@(new() { ["autocomplete"] = "email", ["enterkeyhint"] = "next", ["inputmode"] = "email" })" />
+        <MudTextField @bind-Value="_password" Label="Password" InputType="InputType.Password" Variant="Variant.Outlined"
+                      Immediate="true" Required="true"
+                      HelperText="At least 8 characters, with a number and a lowercase letter."
+                      UserAttributes="@(new() { ["autocomplete"] = "new-password", ["enterkeyhint"] = "next" })" />
+        <MudTextField @bind-Value="_confirm" Label="Confirm password" InputType="InputType.Password" Variant="Variant.Outlined"
+                      Immediate="true" Required="true"
+                      UserAttributes="@(new() { ["autocomplete"] = "new-password", ["enterkeyhint"] = "go" })" />
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                   FullWidth="true" Disabled="_busy">
+            @if (_busy)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+            }
+            Create account
+        </MudButton>
+    </MudStack>
+</form>
+
+<MudText Typo="Typo.body2" Class="mt-5" Align="Align.Center">
+    Already have an account? <MudLink Href="@SignInHref">Sign in</MudLink>
+</MudText>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _confirm = string.Empty;
+    private string? _error;
+    private bool _busy;
+
+    private string SignInHref => ReturnUrl is { Length: > 0 } r ? $"signin?returnUrl={Uri.EscapeDataString(r)}" : "signin";
+
+    private async Task RegisterAsync()
+    {
+        _error = (string.IsNullOrWhiteSpace(_name), string.IsNullOrWhiteSpace(_email), _password.Length < 8, _password != _confirm) switch
+        {
+            (true, _, _, _) => "Enter your name.",
+            (_, true, _, _) => "Enter your email.",
+            (_, _, true, _) => "Password must be at least 8 characters.",
+            (_, _, _, true) => "The two passwords don't match.",
+            _ => null,
+        };
+        if (_error is not null)
+        {
+            return;
+        }
+
+        _busy = true;
+        var outcome = await Session.RegisterAsync(_name, _email, _password, SignIn.SafeReturnUrl(ReturnUrl));
+        _error = outcome.Error;
+        _busy = outcome.Ok && outcome.HostNavigated; // keep the spinner while the page reloads
+        if (outcome.Ok && !outcome.HostNavigated)
+        {
+            Navigation.NavigateTo(SignIn.SafeReturnUrl(ReturnUrl));
+        }
+    }
+}

@@ -10,6 +10,7 @@
       "src\\LekhaBook.Data.Sqlite\\LekhaBook.Data.Sqlite.csproj",
       "src\\LekhaBook.Domain\\LekhaBook.Domain.csproj",
       "src\\LekhaBook.UI\\LekhaBook.UI.csproj",
+      "src\\LekhaBook.Client\\LekhaBook.Client.csproj",
       "src\\LekhaBook.Web\\LekhaBook.Web.csproj",
       "tests\\LekhaBook.Api.IntegrationTests\\LekhaBook.Api.IntegrationTests.csproj",
       "tests\\LekhaBook.Application.Tests\\LekhaBook.Application.Tests.csproj",

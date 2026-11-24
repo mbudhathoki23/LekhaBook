@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using LekhaBook.Web.Services
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -19,10 +22,28 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveServer" />
+    @* No prerendering: the session needs the circuit (tokens, local settings) before the first screen. *@
+    <Routes @rendermode="new InteractiveServerRenderMode(prerender: false)"
+            InitialRefreshToken="@_refreshToken" BrowserBinding="@_binding" />
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
 </body>
 
 </html>
+
+@code {
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = null!;
+
+    private string? _refreshToken;
+    private string? _binding;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Read during the plain HTTP request (the only time HttpContext is reliable) and handed to the
+        // circuit as encrypted component parameters.
+        _refreshToken = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, "refresh_token");
+        _binding = WebSignIn.CurrentBinding(HttpContext);
+    }
+}

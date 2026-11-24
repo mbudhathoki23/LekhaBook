@@ -150,6 +150,7 @@ LekhaBook.sln
 │  ├─ LekhaBook.Data.Sqlite/     # EF Core SQLite DbContext + local repositories + outbox (client side)
 │  ├─ LekhaBook.Data.Postgres/   # EF Core Npgsql DbContext + migrations (server side)
 │  ├─ LekhaBook.UI/              # Razor Class Library: ALL pages, components, layouts, JS (enter-nav), CSS
+│  ├─ LekhaBook.Client/          # API client + session (ISessionService, ICompanyApi) for both hosts; hosts plug in token/settings storage
 │  ├─ LekhaBook.Api/             # ASP.NET Core Web API: auth, sync, attachments, reports
 │  ├─ LekhaBook.Web/             # Blazor Web App host for browsers (uses LekhaBook.UI)
 │  └─ LekhaBook.App/             # .NET MAUI Blazor Hybrid host: Android, iOS, Windows (uses LekhaBook.UI)
@@ -199,10 +200,11 @@ The same Razor pages run in both hosts. Only the DI registrations differ.
 
 ### 4.1 Entities
 
-- `User` (global): Id, Name, Phone, Email, PasswordHash / external login, IsActive
-- `Company`: Id, Name, Address, Phone, PAN/VAT no., FiscalYearStart, DateMode (BS/AD), Currency (NPR), CreatedBy
-- `CompanyUser`: CompanyId, UserId, Role, Permissions (JSON or join table), Status (Invited/Active/Revoked)
-- `Invitation`: CompanyId, phone or email, Role, Token, ExpiresAt
+- `AppUser` (ASP.NET Core Identity, global, in `AuthDbContext`): Id, Email, DisplayName, password hash, lockout. Identity roles/claims are **not** used for company access.
+- `Company`: Id, Name, Address, Phone, PAN/VAT no., FiscalYearStartMonth, Calendar (BS/AD), Currency (NPR), **TimeZoneId** (default `Asia/Kathmandu`, used for "today")
+- `CompanyMember` (server-only, D11): CompanyId, UserId, DisplayName, Role, CustomPermissions (text[]; null = role template), Status (Active/Revoked). Exactly one Owner per company (partial unique index).
+- `Invitation` (server-only): CompanyId, normalized email, DisplayName, Role, CustomPermissions, **SHA-256 of the token** (the token itself is shown once), 7-day expiry, single use. In v1 the inviter passes the token on; email delivery comes later.
+- Implemented in `LekhaBook.Domain/Permissions.cs`, `Membership.cs`, `AccessRules.cs` (EntryRules, StaffRules, CompanyClock).
 
 ### 4.2 Roles and permissions
 
@@ -422,8 +424,12 @@ Labels on every input, visible focus rings, color contrast AA, empty states with
 
 ## 9. API (server)
 
-- `POST /api/auth/register`, `/login`, `/refresh`, `/logout` (and OTP endpoints if [D5](#10-decisions-recommended-defaults) is chosen)
-- `GET/POST/PUT /api/companies`, `/api/companies/{id}/users`, `/invitations`, `/invitations/{token}/accept`
+- **Auth** (ASP.NET Core Identity API endpoints, D5/D10): `POST /api/auth/register`, `/api/auth/login` (returns bearer `accessToken` + `refreshToken`), `/api/auth/refresh`, `/api/auth/manage/info`, … Rate-limited per IP (`RateLimits:AuthPerMinute`, default 10).
+- **Me:** `GET /api/me` (user + companies with role and effective permissions), `PUT /api/me` (display name)
+- **Companies:** `POST /api/companies` (creates, seeds default accounts, caller becomes Owner), `GET /api/companies/{companyId}`
+- **Staff:** `GET /api/companies/{companyId}/members`, `PUT …/members/{memberId}` (role/permissions), `DELETE …/members/{memberId}` (revoke)
+- **Invitations:** `GET/POST /api/companies/{companyId}/invitations`, `DELETE …/invitations/{invitationId}`, `POST /api/invitations/accept` (signed in with the invited email)
+- Every `{companyId}` route requires active membership (+ permission) as an **authorization policy**, so non-members get 403 before the body is read. A test walks all `{companyId}` endpoints to keep this true.
 - `POST /api/sync/{companyId}/push`, `GET /api/sync/{companyId}/pull`
 - `POST /api/attachments`, `GET /api/attachments/{id}` (signed URL)
 - `GET /api/companies/{id}/reports/{party-statement|cash-book|bank-book|day-book|summary}` (used by the browser and for server-side PDFs)
@@ -441,8 +447,8 @@ Use the default unless the user says otherwise. Record each final choice in `doc
 | D1 | Browser offline | ✅ **Decided: the browser is online-only in v1** (Blazor Web App calling the API). Phones and Windows use the MAUI app for offline | Blazor WASM PWA with SQLite-in-browser (OPFS) or IndexedDB, plus the same sync engine (phase 2) |
 | D2 | Date system | ✅ **Decided: store AD; display BS by default, AD selectable per company** (confirmed in discovery) | AD only |
 | D3 | UI library | **MudBlazor** (free, MIT, responsive) | DevExpress Blazor (needs a license), Radzen, Fluent UI Blazor |
-| D4 | Server hosting | **Docker on a VPS** (API + PostgreSQL + Caddy for TLS) | Azure App Service + Azure Database for PostgreSQL; AWS |
-| D5 | Login method | **Phone/email + password, with optional PIN or biometric unlock on the device** | Phone OTP through an SMS gateway (costs per SMS), Google sign-in |
+| D4 | Server hosting | **Docker on a VPS** (API + PostgreSQL + Caddy for TLS). The API **and the web host** must persist ASP.NET data-protection keys (or bearer tokens, the web auth cookie and its encrypted state break on restart) and use `UseForwardedHeaders` with the proxy's address (or the sign-in rate limit sees one IP) | Azure App Service + Azure Database for PostgreSQL; AWS |
+| D5 | Login method | ✅ **Decided: email + password (ASP.NET Core Identity), optional PIN/biometric unlock on the device later.** Phone OTP / Google sign-in in a later version | Phone OTP through an SMS gateway (costs per SMS), Google sign-in |
 | D6 | Attachment storage | **S3-compatible object storage** (MinIO in dev) | Postgres `bytea` (simple, but the DB grows fast) |
 
 ---
@@ -454,7 +460,9 @@ Use the default unless the user says otherwise. Record each final choice in `doc
 | **1. Discovery** ✅ | [§ 1](#phase-1-discover-the-reference-app-with-microsoft-edge-read-only) | User approves `docs/discovery/00-summary.md` and the v1 scope. **Done 2026-11-23.** Items not covered are listed in the summary's checklist; check them in a test business later |
 | **2. Skeleton** 🟡 | Solution and projects from [§ 3.1](#31-projects-one-lekhabooksln), `global.json`, central packages, docker-compose Postgres, `.vscode` launch/tasks, README run steps, CI workflow (build + test) | `dotnet build` passes; the API, Web and Windows app all launch from VS **and** VS Code; the Android emulator shows the shared home page. **Status 2026-11-23:** solution builds (0 warnings), `/health` test passes, Web renders at phone + desktop sizes, Windows app opens on the dashboard, **Android emulator (API 36, `LekhaBook_Pixel`) shows the shared home page** with correct system-bar insets, and the sync chip switches to Offline when the network is cut. **Still open:** launching from VS/VS Code by hand, first CI run, docker-compose (Docker not installed on the dev PC) |
 | **3. Domain and data** ✅ | Entities, EF configurations, Postgres migrations, SQLite `EnsureCreated`/migrations, seed data | Domain tests for the debit/credit and balance rules pass; migrations apply to a fresh Postgres. **Done 2026-11-24:** 44 domain tests pass; migrations apply to a fresh PostgreSQL 18.3 and to SQLite, and SQL balances equal the domain calculator on both (`LekhaBook.Data.Tests`, 4/4); the app creates its device database on the Android emulator; Android Release build installs and starts. CI runs the PostgreSQL test against a service container. The developer's persistent dev database (README "Local database") is still to be set up before phase 4 needs it |
-| **4. Auth and tenancy** | Identity, JWT/refresh, companies, invites, roles, permission policies, company switcher UI | Integration tests: a user without membership gets 403; Entry Person cannot edit others' entries or edit after the same day; Lock Transaction Date rejects back-dated entries; a customized permission overrides the role template |
+| **4a. Auth and tenancy (server)** ✅ | Identity, bearer/refresh tokens, companies, invites, roles, permission policies | Integration tests: a user without membership gets 403 (every `{companyId}` route); revoked member gets 403; a customized permission overrides the role template; no permission escalation (grants or managing someone with more access); invites are single-use tokens checked against the (unconfirmed) invited email; token refresh isn't rate-limited. Entry rules (Entry Person: own entries, same day; Lock Transaction Date) are **unit-tested** in `AccessRulesTests`. **Done 2026-11-24** (70 domain + 4 data + 11 API tests) |
+| **4b. Auth and tenancy (UI)** ✅ | Sign-in / sign-up screens, token storage (MAUI `SecureStorage`; web: HttpOnly cookie + per-circuit tokens, D13), create company, company switcher, staff + invite screens, **one device database per user** (`lekhabook_<userId>.db`) | Sign in on web and Android; create a company; switch companies; invite + accept; app refuses a revoked company. **Done 2026-11-24** against the throwaway test database: web sign-up → create company → invite → second user signs up via the invite link (return URL kept through the cookie redirect) → joins as Entry Person (no Staff access) → switches companies (choice survives reload) → owner revokes → company disappears (web, after reload). Android: sign-in via 10.0.2.2, per-user DB file created, stays signed in after restart and after an **offline** restart (cached profile + offline banner). Windows: app starts on the sign-in screen (SecureStorage read OK). 9 session/DI tests, incl. offline start with an expired token. **Not verified:** Windows sign-in / token save; revocation on Android; iOS; `Asia/Kathmandu` resolution on Android (no app code path uses it yet) |
+| *(moved)* | **Integration** checks for the entry rules (Entry Person can't edit others' entries or after the same day; Lock Transaction Date rejects back-dated entries) | Land with the first transaction write endpoint (phase 6 web CRUD / phase 8 sync push), using `EntryRules` |
 | **5. Masters UI** | Party, Bank and Cash account list and form pages (responsive, enter-nav) | Works in the browser and the Android emulator; the keyboard-only flow completes a party creation |
 | **6. Transactions UI** | Quick-add sheet, all transaction types, Save & New, edit/void with audit | Ledger balances match a hand-calculated test sheet (add to tests) |
 | **7. Attachments** | Camera, gallery and file on MAUI and browser; compression; upload queue; viewer | Photo taken on Android offline appears on the web after reconnect |

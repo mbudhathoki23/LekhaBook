@@ -8,12 +8,12 @@ public static class ServiceCollectionExtensions
 {
     /// <summary>
     /// Registers what the shared UI needs in every host. The host must also register its own
-    /// <see cref="IPlatformInfo"/>, <see cref="IConnectivityService"/> and <see cref="ISyncService"/>.
+    /// <see cref="IPlatformInfo"/>, <see cref="IConnectivityService"/>, <see cref="ISyncService"/>,
+    /// and the session/API services (see LekhaBook.Client).
     /// </summary>
     public static IServiceCollection AddLekhaBookUI(this IServiceCollection services)
     {
         services.AddMudServices();
-        services.AddScoped<ISessionService, PlaceholderSessionService>();
         return services;
     }
 }

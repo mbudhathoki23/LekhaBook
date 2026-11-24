@@ -1,0 +1,80 @@
+@page "/signin"
+@layout AuthLayout
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+<PageTitle>Sign in · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Sign in</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">Welcome back. Sign in to open your books.</MudText>
+
+@if (Error == "expired")
+{
+    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">That sign-in link has expired. Please sign in again.</MudAlert>
+}
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+}
+
+<form @onsubmit="SignInAsync">
+    <MudStack Spacing="3">
+        <MudTextField @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined"
+                      Immediate="true" Required="true" AutoFocus="true"
+                      UserAttributes="@(new() { ["autocomplete"] = "username", ["enterkeyhint"] = "next", ["inputmode"] = "email" })" />
+        <MudTextField @bind-Value="_password" Label="Password" InputType="InputType.Password" Variant="Variant.Outlined"
+                      Immediate="true" Required="true"
+                      UserAttributes="@(new() { ["autocomplete"] = "current-password", ["enterkeyhint"] = "go" })" />
+        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                   FullWidth="true" Disabled="_busy">
+            @if (_busy)
+            {
+                <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
+            }
+            Sign in
+        </MudButton>
+    </MudStack>
+</form>
+
+<MudText Typo="Typo.body2" Class="mt-5" Align="Align.Center">
+    New to Lekha Books? <MudLink Href="@SignUpHref">Create an account</MudLink>
+</MudText>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? Error { get; set; }
+
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string? _error;
+    private bool _busy;
+
+    private string SignUpHref => ReturnUrl is { Length: > 0 } r ? $"signup?returnUrl={Uri.EscapeDataString(r)}" : "signup";
+
+    private async Task SignInAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_email) || string.IsNullOrEmpty(_password))
+        {
+            _error = "Enter your email and password.";
+            return;
+        }
+
+        _busy = true;
+        var outcome = await Session.SignInAsync(_email, _password, SafeReturnUrl(ReturnUrl));
+        _error = outcome.Error;
+        _busy = outcome.Ok && outcome.HostNavigated; // keep the spinner while the page reloads
+        if (outcome.Ok && !outcome.HostNavigated)
+        {
+            Navigation.NavigateTo(SafeReturnUrl(ReturnUrl));
+        }
+    }
+
+    /// <summary>Only same-app relative paths, never another site.</summary>
+    internal static string SafeReturnUrl(string? returnUrl) =>
+        returnUrl is { Length: > 0 } r && !r.Contains("//", StringComparison.Ordinal) && !r.Contains(':') && !r.StartsWith('/') && !r.StartsWith('\\')
+            ? r
+            : string.Empty;
+}

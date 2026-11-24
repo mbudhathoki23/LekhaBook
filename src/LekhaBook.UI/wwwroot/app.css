@@ -149,3 +149,72 @@ h1:focus, .mud-typography:focus {
     right: 0.75rem;
     top: 0.5rem;
 }
+
+/* ---------- Sign-in / sign-up ---------- */
+.auth-page {
+    display: flex;
+    min-height: 100dvh;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: var(--mud-palette-background);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    border-radius: 12px;
+    background: var(--mud-palette-surface);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+}
+
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    color: var(--mud-palette-primary);
+    font-size: 22px;
+    font-weight: 700;
+}
+
+/* ---------- Company switcher in the app bar ---------- */
+.company-switcher-button {
+    min-width: 0;
+    text-transform: none;
+    font-weight: 400;
+}
+
+.company-switcher-button .company-name {
+    max-width: 38vw;
+}
+
+.company-switcher .mud-menu-button-activator {
+    min-width: 0;
+    max-width: 42vw;
+    text-transform: none;
+    font-weight: 400;
+}
+
+.company-switcher .mud-menu-button-activator .mud-button-label {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Phones: keep the app bar to one line. Icon-only sync chip (its label stays for screen readers
+   via aria-label) and the logo mark without the wordmark, so the company name has room. */
+@media (max-width: 599.98px) {
+    .sync-chip .sync-label {
+        display: none;
+    }
+
+    .sync-chip {
+        padding-inline: 4px;
+    }
+
+    .mud-appbar .brand-logo > span {
+        display: none;
+    }
+}

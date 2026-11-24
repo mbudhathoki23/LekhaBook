@@ -2,7 +2,8 @@
 @inject ISyncService Sync
 @inject IConnectivityService Connectivity
 
-<MudChip T="string" Size="Size.Small" Color="@ChipColor" Icon="@ChipIcon" Class="sync-chip">@Label</MudChip>
+<MudChip T="string" Size="Size.Small" Color="@ChipColor" Icon="@ChipIcon" Class="sync-chip"
+         title="@Label" aria-label="@Label"><span class="sync-label">@Label</span></MudChip>
 
 @code {
     private string Label => (Connectivity.IsOnline, Sync.State) switch

@@ -1,0 +1,70 @@
+@page "/companies/new"
+@inject ISessionService Session
+@inject ICompanyApi Companies
+@inject NavigationManager Navigation
+
+<PageTitle>Create company · Lekha Books</PageTitle>
+
+<MudPaper Class="pa-5 mx-auto" Style="max-width: 560px;" Elevation="1">
+    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Create a company</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">
+        You'll be its Owner. Cash, Cheque, Online Wallet and common income and expense heads are set up for you.
+    </MudText>
+
+    @if (_error is not null)
+    {
+        <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+    }
+
+    <form @onsubmit="CreateAsync">
+        <MudStack Spacing="3">
+            <MudTextField @bind-Value="_name" Label="Business name" Variant="Variant.Outlined" Immediate="true" Required="true"
+                          AutoFocus="true" MaxLength="200" UserAttributes="@(new() { ["enterkeyhint"] = "next" })" />
+            <MudTextField @bind-Value="_phone" Label="Phone (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="32"
+                          UserAttributes="@(new() { ["inputmode"] = "tel", ["enterkeyhint"] = "next" })" />
+            <MudTextField @bind-Value="_address" Label="Address (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="300"
+                          UserAttributes="@(new() { ["enterkeyhint"] = "next" })" />
+            <MudTextField @bind-Value="_pan" Label="PAN / VAT number (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="20"
+                          UserAttributes="@(new() { ["inputmode"] = "numeric", ["enterkeyhint"] = "done" })" />
+            <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                @if (Session.CurrentCompany is not null)
+                {
+                    <MudButton Variant="Variant.Text" Href="">Cancel</MudButton>
+                }
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">
+                    Create company
+                </MudButton>
+            </MudStack>
+        </MudStack>
+    </form>
+</MudPaper>
+
+@code {
+    private string _name = string.Empty;
+    private string? _phone;
+    private string? _address;
+    private string? _pan;
+    private string? _error;
+    private bool _busy;
+
+    private async Task CreateAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_name))
+        {
+            _error = "Enter the business name.";
+            return;
+        }
+
+        _busy = true;
+        var result = await Companies.CreateCompanyAsync(new CreateCompanyRequest(_name, _phone, _address, _pan));
+        if (result.Ok)
+        {
+            await Session.RefreshAsync();
+            await Session.SelectCompanyAsync(result.Value!.CompanyId);
+            Navigation.NavigateTo("");
+        }
+
+        _error = result.Error;
+        _busy = false;
+    }
+}

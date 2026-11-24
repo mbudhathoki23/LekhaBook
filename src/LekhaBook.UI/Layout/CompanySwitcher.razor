@@ -1,0 +1,30 @@
+@implements IDisposable
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@* Shows the current company; opens a list to switch, create or join another. *@
+
+<MudMenu AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="ml-2 company-switcher"
+         Label="@(Session.CompanyName ?? "No company")" EndIcon="@Icons.Material.Filled.ArrowDropDown"
+         Color="Color.Inherit" Variant="Variant.Text" AriaLabel="Switch company">
+    <ChildContent>
+        @foreach (var company in Session.Me?.Companies ?? [])
+        {
+            var isCurrent = company.CompanyId == Session.CurrentCompany?.CompanyId;
+            <MudMenuItem OnClick="() => Session.SelectCompanyAsync(company.CompanyId)"
+                         Icon="@(isCurrent ? Icons.Material.Filled.Check : Icons.Material.Filled.Business)">
+                @company.Name <MudText Typo="Typo.caption" Class="mud-text-secondary ml-1">@RoleLabels.For(company.Role)</MudText>
+            </MudMenuItem>
+        }
+        <MudDivider Class="my-1" />
+        <MudMenuItem Icon="@Icons.Material.Filled.AddBusiness" Href="companies/new">Create a company</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Filled.GroupAdd" Href="invite">Join with an invite code</MudMenuItem>
+    </ChildContent>
+</MudMenu>
+
+@code {
+    protected override void OnInitialized() => Session.Changed += OnChanged;
+
+    private void OnChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Session.Changed -= OnChanged;
+}

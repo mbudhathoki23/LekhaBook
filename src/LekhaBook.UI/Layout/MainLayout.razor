@@ -1,44 +1,66 @@
 @inherits LayoutComponentBase
+@implements IDisposable
 @inject ISessionService Session
+@inject NavigationManager Navigation
 
 <MudThemeProvider Theme="AppTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1" Dense="true">
+@if (!Session.IsInitialized || !Session.IsSignedIn)
+{
+    @* Restoring the session, or on the way to the sign-in page. *@
+    <div class="brand-loading" role="status" aria-label="Loading Lekha Books">
+        <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+    </div>
+}
+else
+{
+    <MudLayout>
+        <MudAppBar Elevation="1" Dense="true">
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                               aria-label="Toggle menu" OnClick="ToggleDrawer" />
+            </MudHidden>
+            <BrandLogo />
+            <CompanySwitcher />
+            <MudSpacer />
+            <SyncStatusChip />
+        </MudAppBar>
+
+        @* Desktop/tablet: side menu. Phones: bottom navigation instead (below). *@
         <MudHidden Breakpoint="Breakpoint.SmAndDown">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                           aria-label="Toggle menu" OnClick="ToggleDrawer" />
+            <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive"
+                       Breakpoint="Breakpoint.Sm" Elevation="1">
+                <NavMenu />
+            </MudDrawer>
         </MudHidden>
-        <BrandLogo />
-        @if (Session.CompanyName is { } company)
-        {
-            <MudText Typo="Typo.body2" Class="ml-3 text-truncate company-name">@company</MudText>
-        }
-        <MudSpacer />
-        <SyncStatusChip />
-    </MudAppBar>
 
-    @* Desktop/tablet: side menu. Phones: bottom navigation instead (below). *@
-    <MudHidden Breakpoint="Breakpoint.SmAndDown">
-        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive"
-                   Breakpoint="Breakpoint.Md" Elevation="1">
-            <NavMenu />
-        </MudDrawer>
-    </MudHidden>
+        <MudMainContent>
+            <MudContainer MaxWidth="MaxWidth.Large" Class="page-content">
+                @if (Session.IsOffline)
+                {
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+                        You're offline. Showing your saved company list; changes to staff need a connection.
+                    </MudAlert>
+                }
+                @if (Session.CurrentCompany is null && !AllowedWithoutCompany)
+                {
+                    <NoCompany />
+                }
+                else
+                {
+                    @Body
+                }
+            </MudContainer>
+        </MudMainContent>
 
-    <MudMainContent>
-        <MudContainer MaxWidth="MaxWidth.Large" Class="page-content">
-            @Body
-        </MudContainer>
-    </MudMainContent>
-
-    <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <BottomNav />
-    </MudHidden>
-</MudLayout>
+        <MudHidden Breakpoint="Breakpoint.MdAndUp">
+            <BottomNav />
+        </MudHidden>
+    </MudLayout>
+}
 
 <div id="blazor-error-ui" data-nosnippet>
     An unexpected error has occurred.
@@ -49,5 +71,47 @@
 @code {
     private bool _drawerOpen = true;
 
+    /// <summary>Pages that work before the user has a company.</summary>
+    private bool AllowedWithoutCompany
+    {
+        get
+        {
+            var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?')[0].TrimEnd('/');
+            return path is "companies/new" or "invite" or "settings";
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Session.Changed += OnSessionChanged;
+        Navigation.LocationChanged += OnLocationChanged;
+        await Session.InitializeAsync();
+        RequireSignIn();
+    }
+
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private void RequireSignIn()
+    {
+        if (Session.IsInitialized && !Session.IsSignedIn)
+        {
+            var here = Navigation.ToBaseRelativePath(Navigation.Uri);
+            Navigation.NavigateTo(string.IsNullOrEmpty(here) ? "signin" : $"signin?returnUrl={Uri.EscapeDataString(here)}");
+        }
+    }
+
+    private void OnSessionChanged(object? sender, EventArgs e) => _ = InvokeAsync(() =>
+    {
+        RequireSignIn();
+        StateHasChanged();
+    });
+
+    private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) =>
+        _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        Session.Changed -= OnSessionChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
+    }
 }

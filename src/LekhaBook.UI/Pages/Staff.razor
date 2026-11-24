@@ -1,0 +1,288 @@
+@page "/staff"
+@using P = LekhaBook.Domain.Permission
+@implements IDisposable
+@inject ISessionService Session
+@inject ICompanyApi Companies
+@inject IPlatformInfo Platform
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>Staff · Lekha Books</PageTitle>
+
+<MudStack Row="true" AlignItems="AlignItems.Center" Class="mb-4">
+    <MudText Typo="Typo.h5" tabindex="-1">Staff</MudText>
+    <MudSpacer />
+    @if (Session.Can(P.StaffCreate) && !_showInvite)
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd"
+                   OnClick="() => _showInvite = true">Invite</MudButton>
+    }
+</MudStack>
+
+@if (!Session.Can(P.StaffView))
+{
+    <MudAlert Severity="Severity.Info">You don't have permission to see the staff of @Session.CompanyName.</MudAlert>
+    return;
+}
+
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3" ShowCloseIcon="true" CloseIconClicked="() => _error = null">@_error</MudAlert>
+}
+
+@if (_newInvite is { } invite)
+{
+    <MudAlert Severity="Severity.Success" Class="mb-4" ShowCloseIcon="true" CloseIconClicked="() => _newInvite = null">
+        <MudText Typo="Typo.subtitle2">Invite created for @_invitedEmail</MudText>
+        <MudText Typo="Typo.body2" Class="mb-2">
+            Send them this code. It works once and expires on @invite.ExpiresAtUtc.ToLocalTime().ToString("d MMM yyyy").
+            They sign in with that email, then choose <b>Join with an invite code</b>.
+        </MudText>
+        <MudTextField Value="@InviteText" ReadOnly="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.ContentCopy"
+                      OnAdornmentClick="CopyInviteAsync" AdornmentAriaLabel="Copy invite" />
+    </MudAlert>
+}
+
+@if (_showInvite)
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Class="mb-3">Invite someone</MudText>
+        <form @onsubmit="InviteAsync">
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="_inviteName" Label="Name" Variant="Variant.Outlined" Immediate="true" Required="true"
+                                  AutoFocus="true" UserAttributes="@(new() { ["enterkeyhint"] = "next" })" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="_inviteEmail" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined"
+                                  Immediate="true" Required="true"
+                                  UserAttributes="@(new() { ["inputmode"] = "email", ["enterkeyhint"] = "next" })" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="_inviteRole" Label="Role" Variant="Variant.Outlined"
+                               HelperText="@RoleLabels.Describe(_inviteRole)">
+                        @foreach (var role in RoleLabels.Assignable)
+                        {
+                            <MudSelectItem Value="@role">@RoleLabels.For(role)</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6" Class="d-flex align-center justify-end gap-2">
+                    <MudButton Variant="Variant.Text" OnClick="() => _showInvite = false">Cancel</MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">Create invite</MudButton>
+                </MudItem>
+            </MudGrid>
+        </form>
+    </MudPaper>
+}
+
+@if (_members is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    <MudTable Items="_members" Hover="true" Dense="true" Breakpoint="Breakpoint.Sm" Elevation="1" Class="mb-6">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Role</MudTh>
+            <MudTh>Status</MudTh>
+            <MudTh>Joined</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">@context.DisplayName @(context.UserId == Session.Me?.UserId ? "(you)" : "")</MudTd>
+            <MudTd DataLabel="Role">
+                @RoleLabels.For(context.Role)
+                @if (context.CustomPermissions is not null)
+                {
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Class="ml-1">custom</MudChip>
+                }
+            </MudTd>
+            <MudTd DataLabel="Status">
+                <MudChip T="string" Size="Size.Small" Color="@(context.Status == "Active" ? Color.Success : Color.Default)">@context.Status</MudChip>
+            </MudTd>
+            <MudTd DataLabel="Joined">@context.JoinedAtUtc.ToLocalTime().ToString("d MMM yyyy")</MudTd>
+            <MudTd>
+                @if (CanManage(context))
+                {
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="@($"Manage {context.DisplayName}")" Dense="true">
+                        @if (Session.Can(P.StaffEdit))
+                        {
+                            @foreach (var role in RoleLabels.Assignable.Where(r => r != context.Role))
+                            {
+                                <MudMenuItem OnClick="() => ChangeRoleAsync(context, role)">Make @RoleLabels.For(role)</MudMenuItem>
+                            }
+                        }
+                        @if (Session.Can(P.StaffDelete))
+                        {
+                            <MudMenuItem OnClick="() => RevokeAsync(context)" Icon="@Icons.Material.Filled.PersonRemove" IconColor="Color.Error">
+                                Remove access
+                            </MudMenuItem>
+                        }
+                    </MudMenu>
+                }
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+    @if (_invitations is { Count: > 0 })
+    {
+        <MudText Typo="Typo.subtitle1" Class="mb-2">Pending invites</MudText>
+        <MudTable Items="_invitations" Dense="true" Breakpoint="Breakpoint.Sm" Elevation="1">
+            <HeaderContent>
+                <MudTh>Name</MudTh>
+                <MudTh>Email</MudTh>
+                <MudTh>Role</MudTh>
+                <MudTh>Expires</MudTh>
+                <MudTh></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Name">@context.DisplayName</MudTd>
+                <MudTd DataLabel="Email">@context.Email</MudTd>
+                <MudTd DataLabel="Role">@RoleLabels.For(context.Role)</MudTd>
+                <MudTd DataLabel="Expires">@context.ExpiresAtUtc.ToLocalTime().ToString("d MMM yyyy")</MudTd>
+                <MudTd>
+                    @if (Session.Can(P.StaffCreate))
+                    {
+                        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Error" OnClick="() => CancelInviteAsync(context)">Cancel</MudButton>
+                    }
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}
+
+@code {
+    private List<MemberDto>? _members;
+    private List<InvitationDto>? _invitations;
+    private string? _error;
+    private bool _busy;
+
+    private bool _showInvite;
+    private string _inviteName = string.Empty;
+    private string _inviteEmail = string.Empty;
+    private string _inviteRole = "EntryPerson";
+    private InviteResponse? _newInvite;
+    private string? _invitedEmail;
+
+    private Guid CompanyId => Session.CurrentCompany!.CompanyId;
+
+    /// <summary>The web app can share a link; the phone app shares the code.</summary>
+    private string InviteText => Platform.Platform == "Web"
+        ? $"{Navigation.BaseUri}invite?token={_newInvite!.Token}"
+        : _newInvite!.Token;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Session.Changed += OnSessionChanged;
+        await LoadAsync();
+    }
+
+    private bool CanManage(MemberDto member) =>
+        member.Role != "Owner" && member.UserId != Session.Me?.UserId && member.Status == "Active"
+        && (Session.Can(P.StaffEdit) || Session.Can(P.StaffDelete));
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is null || !Session.Can(P.StaffView))
+        {
+            return;
+        }
+
+        var members = await Companies.GetMembersAsync(CompanyId);
+        if (await HandleAsync(members))
+        {
+            _members = members.Value;
+        }
+
+        var invitations = await Companies.GetInvitationsAsync(CompanyId);
+        _invitations = invitations.Ok ? invitations.Value : [];
+    }
+
+    private async Task InviteAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_inviteName) || string.IsNullOrWhiteSpace(_inviteEmail))
+        {
+            _error = "Enter a name and email.";
+            return;
+        }
+
+        _busy = true;
+        var result = await Companies.InviteAsync(CompanyId, new InviteRequest(_inviteEmail.Trim(), _inviteName.Trim(), _inviteRole));
+        _busy = false;
+        if (await HandleAsync(result))
+        {
+            _newInvite = result.Value;
+            _invitedEmail = _inviteEmail.Trim();
+            _showInvite = false;
+            _inviteName = _inviteEmail = string.Empty;
+            await LoadAsync();
+        }
+    }
+
+    private async Task ChangeRoleAsync(MemberDto member, string role)
+    {
+        var result = await Companies.UpdateMemberAsync(CompanyId, member.MemberId, new UpdateMemberRequest(role));
+        if (await HandleAsync(result))
+        {
+            Snackbar.Add($"{member.DisplayName} is now {RoleLabels.For(role)}.", Severity.Success);
+            await LoadAsync();
+        }
+    }
+
+    private async Task RevokeAsync(MemberDto member)
+    {
+        var result = await Companies.RevokeMemberAsync(CompanyId, member.MemberId);
+        if (await HandleAsync(result))
+        {
+            Snackbar.Add($"{member.DisplayName} can no longer open {Session.CompanyName}.", Severity.Info);
+            await LoadAsync();
+        }
+    }
+
+    private async Task CancelInviteAsync(InvitationDto invitation)
+    {
+        if (await HandleAsync(await Companies.CancelInvitationAsync(CompanyId, invitation.InvitationId)))
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task CopyInviteAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", InviteText);
+            Snackbar.Add("Copied.", Severity.Success);
+        }
+        catch (JSException)
+        {
+            Snackbar.Add("Couldn't copy. Select the text and copy it instead.", Severity.Warning);
+        }
+    }
+
+    /// <summary>Shows the error; on 403 the user's access may have changed, so reload it.</summary>
+    private async Task<bool> HandleAsync<T>(ApiResult<T> result)
+    {
+        _error = result.Error;
+        if (result.IsForbidden)
+        {
+            await Session.RefreshAsync();
+        }
+
+        return result.Ok;
+    }
+
+    private void OnSessionChanged(object? sender, EventArgs e) => _ = InvokeAsync(async () =>
+    {
+        _members = null;
+        _invitations = null;
+        await LoadAsync();
+        StateHasChanged();
+    });
+
+    public void Dispose() => Session.Changed -= OnSessionChanged;
+}

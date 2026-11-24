@@ -1,0 +1,42 @@
+@page "/settings"
+@inject ISessionService Session
+@inject IPlatformInfo Platform
+
+<PageTitle>More · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">More</MudText>
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <MudText Typo="Typo.subtitle1">@Session.UserName</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary">@Session.Me?.Email</MudText>
+    @if (Session.CurrentCompany is { } company)
+    {
+        <MudText Typo="Typo.body2" Class="mt-2">
+            @company.Name · <b>@RoleLabels.For(company.Role)</b>
+        </MudText>
+    }
+</MudPaper>
+
+<MudList T="string" Class="mb-4">
+    <MudListItem T="string" Icon="@Icons.Material.Filled.Group" Href="staff">Staff</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.AddBusiness" Href="companies/new">Create a company</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.GroupAdd" Href="invite">Join with an invite code</MudListItem>
+</MudList>
+
+<MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Logout" OnClick="SignOutAsync"
+           Disabled="_busy">Sign out</MudButton>
+<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">
+    Signs you out on this @(Platform.Platform == "Web" ? "browser" : "device").
+</MudText>
+
+<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">Running on @Platform.Platform (@Platform.FormFactor)</MudText>
+
+@code {
+    private bool _busy;
+
+    private async Task SignOutAsync()
+    {
+        _busy = true;
+        await Session.SignOutAsync(); // the layout sends signed-out users to the sign-in page
+    }
+}

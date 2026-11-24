@@ -39,6 +39,8 @@ public abstract class LekhaBookDbContext(DbContextOptions options) : DbContext(o
         StoreAsString<TransactionType>(configurationBuilder);
         StoreAsString<TransactionStatus>(configurationBuilder);
         StoreAsString<CalendarMode>(configurationBuilder);
+        StoreAsString<CompanyRole>(configurationBuilder);
+        StoreAsString<MemberStatus>(configurationBuilder);
     }
 
     private static void StoreAsString<TEnum>(ModelConfigurationBuilder builder)
@@ -59,6 +61,7 @@ public abstract class LekhaBookDbContext(DbContextOptions options) : DbContext(o
             e.Property(x => x.Address).HasMaxLength(300);
             e.Property(x => x.Pan).HasMaxLength(20);
             e.Property(x => x.Currency).HasMaxLength(3);
+            e.Property(x => x.TimeZoneId).HasMaxLength(64);
         });
 
         modelBuilder.Entity<PartyCategory>(e =>

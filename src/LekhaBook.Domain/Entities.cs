@@ -55,6 +55,9 @@ public sealed class Company
 
     public string Currency { get; set; } = "NPR";
 
+    /// <summary>IANA time zone used for "today" (date locks, same-day edits).</summary>
+    public string TimeZoneId { get; set; } = CompanyClock.DefaultTimeZoneId;
+
     public long Version { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }

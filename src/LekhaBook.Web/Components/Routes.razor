@@ -1,4 +1,6 @@
-﻿@* Web router: the shared UI pages plus this host's own Error page. *@
+﻿@using LekhaBook.Web.Services
+@inject WebTokenStore TokenStore
+@* Web router: the shared UI pages plus this host's own Error page. *@
 <Router AppAssembly="typeof(LekhaBook.UI.Routes).Assembly"
         AdditionalAssemblies="new[] { typeof(Program).Assembly }"
         NotFoundPage="typeof(LekhaBook.UI.Pages.NotFound)">
@@ -7,3 +9,18 @@
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+
+@code {
+    /// <summary>From the auth cookie, read by App.razor during the HTTP request.</summary>
+    [Parameter]
+    public string? InitialRefreshToken { get; set; }
+
+    [Parameter]
+    public string? BrowserBinding { get; set; }
+
+    protected override void OnInitialized()
+    {
+        TokenStore.InitialRefreshToken = InitialRefreshToken;
+        TokenStore.BrowserBinding = BrowserBinding;
+    }
+}

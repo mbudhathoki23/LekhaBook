@@ -66,6 +66,21 @@ Or do the same steps by hand:
 
 To run only the PostgreSQL tests against some other server (for example a throwaway one), set `LEKHABOOK_TEST_PG` to a connection string whose user has CREATEDB. It takes priority over the user secret.
 
+**Throwaway test server, no password needed.** This uses the installed PostgreSQL binaries and keeps its own data folder under `%LOCALAPPDATA%\LekhaBook\test-postgres`, listening on localhost:5440 only:
+
+```powershell
+./scripts/test-postgres.ps1 start
+$env:LEKHABOOK_TEST_PG = 'Host=localhost;Port=5440;Database=postgres;Username=postgres'
+dotnet test
+./scripts/test-postgres.ps1 stop
+```
+
+Without either setting, the database tests show as **skipped** (not failed).
+
+**The API needs a database to start.** Without `ConnectionStrings:LekhaBook` it stops with a message pointing here. To try it quickly against the throwaway test server (test data only), run `$env:ConnectionStrings__LekhaBook = 'Host=localhost;Port=5440;Database=lekhabook;Username=postgres'` in the same shell, then `dotnet run --project src/LekhaBook.Api`.
+
+**API sign-in (development).** Register and sign in with `POST /api/auth/register` and `POST /api/auth/login` (email + password). Then send `Authorization: Bearer <accessToken>`. The full list is in the OpenAPI document at `/openapi/v1.json`.
+
 With Docker instead, `docker compose up -d` starts PostgreSQL on port **5433** (user `lekhabook`, password `lekhabook_dev`). Use `Port=5433` in the connection string.
 
 **Migrations** (run from the repo root after changing the model; `dotnet tool restore` installs `dotnet-ef`):
@@ -119,6 +134,11 @@ dotnet build src/LekhaBook.App -t:Run -f net10.0-android
 |---|---|
 | API | http://localhost:5050 (health: `/health`, OpenAPI: `/openapi/v1.json`) |
 | Web | http://localhost:5121 |
+
+**Signing in from the apps (development).** Both clients need the API running with the `http` profile on port 5050:
+- **Web:** `Api:BaseUrl` (default `http://localhost:5050/`). Sign up at http://localhost:5121/signup.
+- **App:** Debug builds call `http://10.0.2.2:5050/` on the Android emulator (the host PC) and `http://localhost:5050/` on Windows. Plain HTTP is allowed only to those hosts (`Platforms/Android/Resources/xml/network_security_config.xml`).
+- Put any test accounts you create in `.dev/test-accounts.md`, which is gitignored.
 
 **Android emulator:** the dev PC has an AVD named `LekhaBook_Pixel` (Pixel 7, Android 36, x86_64). Start it, then deploy:
 

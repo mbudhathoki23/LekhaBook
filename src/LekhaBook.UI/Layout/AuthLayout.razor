@@ -1,0 +1,37 @@
+@inherits LayoutComponentBase
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@* Layout for sign-in and sign-up: no navigation, centred card. Signed-in users go to the app. *@
+
+<MudThemeProvider Theme="AppTheme.Theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-brand">
+            <img src="_content/LekhaBook.UI/branding/lekha_books_mark_small.png" alt="" width="48" height="48" />
+            <span>Lekha <span class="brand-logo-books">Books</span></span>
+        </div>
+        @if (Session.IsInitialized)
+        {
+            @Body
+        }
+        else
+        {
+            <div class="d-flex justify-center pa-6"><MudProgressCircular Indeterminate="true" Color="Color.Primary" /></div>
+        }
+    </div>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await Session.InitializeAsync();
+        if (Session.IsSignedIn)
+        {
+            Navigation.NavigateTo("");
+        }
+    }
+}
