@@ -1,0 +1,36 @@
+@*
+    A load that failed: says why, and offers Retry. Network failures get their own message, because until
+    device sync arrives (phase 8) parties and accounts need a connection in the app too (D14).
+*@
+<MudAlert Severity="@(Offline ? Severity.Info : Severity.Error)" Class="my-3" role="alert">
+    <div>
+        @if (Offline)
+        {
+            <span>@What need a connection for now. Connect to the internet and try again.</span>
+        }
+        else
+        {
+            <span>@Message</span>
+        }
+    </div>
+    @if (OnRetry.HasDelegate)
+    {
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" Class="mt-1" OnClick="OnRetry">Try again</MudButton>
+    }
+</MudAlert>
+
+@code {
+    [Parameter, EditorRequired]
+    public string? Message { get; set; }
+
+    /// <summary>The request couldn't reach the server.</summary>
+    [Parameter]
+    public bool Offline { get; set; }
+
+    /// <summary>What needs the connection, e.g. "Parties".</summary>
+    [Parameter]
+    public string What { get; set; } = "These screens";
+
+    [Parameter]
+    public EventCallback OnRetry { get; set; }
+}

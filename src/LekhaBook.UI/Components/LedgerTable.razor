@@ -1,0 +1,55 @@
+@using LekhaBook.UI.Formatting
+
+@* An account statement: the opening balance, then each entry with the running balance after it. *@
+<MudTable T="LedgerRow" Items="Rows" Dense="true" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="0" Class="ledger-table">
+    <HeaderContent>
+        <MudTh>Date</MudTh>
+        <MudTh>Particulars</MudTh>
+        <MudTh Class="text-right">@DebitTitle</MudTh>
+        <MudTh Class="text-right">@CreditTitle</MudTh>
+        <MudTh Class="text-right">Balance</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Date" Class="text-nowrap">@context.Date?.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd DataLabel="Particulars">
+            <div>@context.Title</div>
+            @if (!string.IsNullOrEmpty(context.Detail))
+            {
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@context.Detail</MudText>
+            }
+        </MudTd>
+        <MudTd DataLabel="@DebitTitle" Class="text-right text-nowrap">@(context.Debit > 0 ? Money.Number(context.Debit) : "")</MudTd>
+        <MudTd DataLabel="@CreditTitle" Class="text-right text-nowrap">@(context.Credit > 0 ? Money.Number(context.Credit) : "")</MudTd>
+        <MudTd DataLabel="Balance" Class="text-right text-nowrap">@FormatBalance(context.Balance)</MudTd>
+    </RowTemplate>
+</MudTable>
+@if (Ledger.Lines.Count == 0)
+{
+    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">No transactions yet. Entry forms arrive in the next phase.</MudText>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public LedgerDto Ledger { get; set; } = null!;
+
+    /// <summary>Column for entries that raise the balance (e.g. "Money in").</summary>
+    [Parameter]
+    public string DebitTitle { get; set; } = "Debit";
+
+    /// <summary>Column for entries that lower the balance (e.g. "Money out").</summary>
+    [Parameter]
+    public string CreditTitle { get; set; } = "Credit";
+
+    [Parameter]
+    public Func<decimal, string> FormatBalance { get; set; } = Money.Format;
+
+    private IEnumerable<LedgerRow> Rows =>
+        Ledger.Lines.Select(l => new LedgerRow(
+                l.Date,
+                $"{MasterLabels.TransactionType(l.Type)} #{l.VoucherNo}",
+                string.Join(" · ", new[] { l.OtherAccount, l.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s))),
+                l.Debit, l.Credit, l.Balance))
+            .Prepend(new LedgerRow(Ledger.OpeningAsOf, "Opening balance", null, 0, 0, Ledger.OpeningBalance));
+
+    private sealed record LedgerRow(DateOnly? Date, string Title, string? Detail, decimal Debit, decimal Credit, decimal Balance);
+}

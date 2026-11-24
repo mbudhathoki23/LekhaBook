@@ -22,8 +22,33 @@ internal static class DatabaseChecks
 
         await using (var db = newContext())
         {
+            await LedgersMatchDomainAsync(db, books);
+        }
+
+        await using (var db = newContext())
+        {
             await ValuesRoundTripAsync(db, books);
         }
+    }
+
+    /// <summary>Statements and single-account balances (used by the party and account screens) agree with the domain.</summary>
+    private static async Task LedgersMatchDomainAsync(LekhaBookDbContext db, SampleBooks.Result books)
+    {
+        foreach (var account in books.Accounts.Where(a => a.Type is AccountType.Party or AccountType.Cash or AccountType.Bank))
+        {
+            var ledger = await db.GetLedgerAsync(books.Company.Id, account.Id);
+            var expected = Balances.Ledger(account, books.Transactions);
+
+            Assert.NotNull(ledger);
+            Assert.Equal(expected.Select(l => (l.Transaction.Id, l.Balance)), ledger.Lines.Select(l => (l.Transaction.Id, l.Balance)));
+            Assert.Equal(Balances.Of(account, books.Transactions), ledger.ClosingBalance);
+            Assert.Equal(ledger.ClosingBalance, await db.GetBalanceAsync(account));
+            Assert.All(ledger.Lines, l => Assert.NotNull(ledger.OtherSide(l.Transaction)));
+        }
+
+        // Another company's id finds nothing.
+        Assert.Null(await db.GetLedgerAsync(Guid.CreateVersion7(), books.Named("Cash").Id));
+        Assert.True(await db.IsUsedByTransactionsAsync(books.Company.Id, books.Named("Cash").Id));
     }
 
     private static async Task SqlBalancesMatchDomainAsync(LekhaBookDbContext db, SampleBooks.Result books)

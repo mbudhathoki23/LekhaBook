@@ -30,6 +30,7 @@ public static class ClientServiceCollectionExtensions
             services.AddScoped<SessionService>();
             services.AddScoped<ISessionService>(sp => sp.GetRequiredService<SessionService>());
             services.AddScoped<ICompanyApi, CompanyApi>();
+            services.AddScoped<IDataService, ApiDataService>();
         }
         else
         {
@@ -37,6 +38,7 @@ public static class ClientServiceCollectionExtensions
             services.AddSingleton<SessionService>();
             services.AddSingleton<ISessionService>(sp => sp.GetRequiredService<SessionService>());
             services.AddSingleton<ICompanyApi, CompanyApi>();
+            services.AddSingleton<IDataService, ApiDataService>();
         }
 
         return services;

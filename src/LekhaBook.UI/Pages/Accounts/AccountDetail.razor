@@ -1,0 +1,120 @@
+@page "/accounts/{AccountId:guid}"
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@(_account?.Name ?? "Account") · Lekha Books</PageTitle>
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="accounts" Class="mb-2">Cash &amp; Bank</MudButton>
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="Cash and bank accounts" OnRetry="LoadAsync" />
+}
+else if (_account is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <div class="detail-header">
+            <MudAvatar Color="Color.Primary" Size="Size.Large"><MudIcon Icon="@MasterLabels.AccountIcon(_account.Type)" /></MudAvatar>
+            <div class="row-main">
+                <MudText Typo="Typo.h6" tabindex="-1">@_account.Name</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                    @MasterLabels.AccountType(_account.Type)@(_account.AccountHolderName is null ? "" : $" · {_account.AccountHolderName}")@(MasterLabels.MaskNumber(_account.AccountNumber) is { } masked ? $" · {masked}" : "")
+                </MudText>
+            </div>
+            <div class="row-amount">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">Current balance</MudText>
+                <MudText Typo="Typo.h5" Color="@(_account.Balance < 0 ? Color.Error : Color.Default)" Class="text-nowrap">@Money.Format(_account.Balance)</MudText>
+            </div>
+        </div>
+
+        <MudStack Row="true" Spacing="2" Class="mt-3" Wrap="Wrap.Wrap">
+            @if (Session.Can(Permission.AccountsEdit))
+            {
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"accounts/{AccountId}/edit")">Edit</MudButton>
+            }
+            @if (Session.Can(Permission.AccountsDelete) && !_account.IsSystem)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">Delete</MudButton>
+            }
+        </MudStack>
+    </MudPaper>
+
+    <MudText Typo="Typo.subtitle1" Class="mb-2">Transactions</MudText>
+    @if (_ledger is not null)
+    {
+        <LedgerTable Ledger="_ledger" DebitTitle="Money in" CreditTitle="Money out" />
+    }
+}
+
+@code {
+    private MoneyAccountDto? _account;
+    private LedgerDto? _ledger;
+    private string? _error;
+    private bool _offline;
+    private bool _busy;
+
+    [Parameter]
+    public Guid AccountId { get; set; }
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _error = null;
+        _account = null;
+        var account = await Data.GetMoneyAccountAsync(company.CompanyId, AccountId);
+        if (!account.Ok)
+        {
+            (_error, _offline) = (account.Error, account.IsNetworkError);
+            return;
+        }
+
+        var ledger = await Data.GetAccountLedgerAsync(company.CompanyId, AccountId);
+        if (!ledger.Ok)
+        {
+            (_error, _offline) = (ledger.Error, ledger.IsNetworkError);
+            return;
+        }
+
+        (_account, _ledger) = (account.Value, ledger.Value);
+    }
+
+    private async Task DeleteAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            "Delete account?",
+            $"{_account!.Name} will be removed from Cash & Bank.",
+            yesText: "Delete", cancelText: "Cancel");
+        if (confirmed != true || Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _busy = true;
+        var result = await Data.DeleteMoneyAccountAsync(company.CompanyId, AccountId);
+        _busy = false;
+        if (result.Ok)
+        {
+            Snackbar.Add($"Deleted {_account.Name}.", Severity.Success);
+            Navigation.NavigateTo("accounts");
+        }
+        else
+        {
+            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+        }
+    }
+}

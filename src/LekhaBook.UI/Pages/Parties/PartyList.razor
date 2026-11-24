@@ -1,0 +1,193 @@
+@page "/parties"
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+<PageTitle>Parties · Lekha Books</PageTitle>
+
+<div class="page-header">
+    <MudText Typo="Typo.h5" tabindex="-1">Parties @(_parties is null ? "" : $"({_parties.Count})")</MudText>
+    <MudSpacer />
+    @if (CanAdd)
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Href="@NewPartyHref">Add Party</MudButton>
+    }
+</div>
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Parties" OnRetry="LoadAsync" />
+}
+else if (_parties is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="6">
+            <MudPaper Class="pa-3 summary-tile" Elevation="1" @onclick="@(() => SetSide("receive"))">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">To Receive</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Success">@Money.Format(_parties.Where(p => p.Balance > 0).Sum(p => p.Balance))</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6">
+            <MudPaper Class="pa-3 summary-tile" Elevation="1" @onclick="@(() => SetSide("give"))">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">To Give</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Error">@Money.Format(-_parties.Where(p => p.Balance < 0).Sum(p => p.Balance))</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <div class="list-toolbar">
+        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="Search name or phone"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
+                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="Search parties" />
+        <MudSelect T="string" @bind-Value="_type" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">All parties</MudSelectItem>
+            <MudSelectItem Value="@("Customer")">Customers</MudSelectItem>
+            <MudSelectItem Value="@("Supplier")">Suppliers</MudSelectItem>
+        </MudSelect>
+        <MudSelect T="string" @bind-Value="_side" Label="Balance" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">All balances</MudSelectItem>
+            <MudSelectItem Value="@("receive")">To Receive</MudSelectItem>
+            <MudSelectItem Value="@("give")">To Give</MudSelectItem>
+            <MudSelectItem Value="@("settled")">Settled</MudSelectItem>
+        </MudSelect>
+        <MudSelect T="string" @bind-Value="_sort" Label="Sort" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("name")">Name A→Z</MudSelectItem>
+            <MudSelectItem Value="@("name-desc")">Name Z→A</MudSelectItem>
+            <MudSelectItem Value="@("latest")">Latest</MudSelectItem>
+            <MudSelectItem Value="@("amount-desc")">Amount high→low</MudSelectItem>
+            <MudSelectItem Value="@("amount")">Amount low→high</MudSelectItem>
+        </MudSelect>
+    </div>
+
+    @if (_parties.Count == 0)
+    {
+        <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
+            <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Class="mud-text-secondary" />
+            <MudText Typo="Typo.subtitle1" Class="mt-2">No parties yet</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">Add your customers and suppliers to track what they owe you and what you owe them.</MudText>
+            @if (CanAdd)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewPartyHref">Add your first party</MudButton>
+            }
+        </MudPaper>
+    }
+    else if (!Shown.Any())
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No parties match.</MudText>
+    }
+    else
+    {
+        <MudPaper Elevation="1" Class="row-list">
+            @foreach (var party in Shown)
+            {
+                var (label, color) = MasterLabels.PartySide(party.Balance);
+                <a class="row-item" href="@($"parties/{party.Id}")">
+                    <MudAvatar Color="@(party.PartyType == "Supplier" ? Color.Secondary : Color.Primary)" Size="Size.Medium" Variant="Variant.Outlined">
+                        @MasterLabels.Initials(party.Name)
+                    </MudAvatar>
+                    <div class="row-main">
+                        <div class="row-title">@party.Name</div>
+                        <div class="row-sub">@(party.Phone ?? "---") · @(party.PartyType == "Supplier" ? "Supplier" : "Customer")</div>
+                    </div>
+                    <div class="row-amount">
+                        <MudText Typo="Typo.body1" Color="color" Class="text-nowrap">@Money.Format(Math.Abs(party.Balance))</MudText>
+                        <MudText Typo="Typo.caption" Color="color">@label</MudText>
+                    </div>
+                </a>
+            }
+        </MudPaper>
+    }
+}
+
+@code {
+    private List<PartyDto>? _parties;
+    private ApiResult<List<PartyDto>>? _error;
+    private string? _search;
+    private string _type = "all";
+    private string _side = "all";
+    private string _sort = "name";
+
+    [SupplyParameterFromQuery(Name = "balance")]
+    public string? BalanceFilter { get; set; }
+
+    private bool CanAdd =>
+        Session.Can(MasterRules.PartyPermission(PartyType.Customer, EntryAction.Create))
+        || Session.Can(MasterRules.PartyPermission(PartyType.Supplier, EntryAction.Create));
+
+    private string NewPartyHref =>
+        Session.Can(MasterRules.PartyPermission(PartyType.Customer, EntryAction.Create)) ? "parties/new" : "parties/new?type=Supplier";
+
+    private IEnumerable<PartyDto> Shown
+    {
+        get
+        {
+            var query = _parties!.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(_search))
+            {
+                var s = _search.Trim();
+                query = query.Where(p => p.Name.Contains(s, StringComparison.CurrentCultureIgnoreCase)
+                                         || (p.Phone?.Contains(s, StringComparison.Ordinal) ?? false));
+            }
+
+            if (_type != "all")
+            {
+                query = query.Where(p => p.PartyType == _type);
+            }
+
+            query = _side switch
+            {
+                "receive" => query.Where(p => p.Balance > 0),
+                "give" => query.Where(p => p.Balance < 0),
+                "settled" => query.Where(p => p.Balance == 0),
+                _ => query,
+            };
+
+            return _sort switch
+            {
+                "name-desc" => query.OrderByDescending(p => p.Name, StringComparer.CurrentCultureIgnoreCase),
+                "latest" => query.OrderByDescending(p => p.CreatedAtUtc),
+                "amount-desc" => query.OrderByDescending(p => Math.Abs(p.Balance)),
+                "amount" => query.OrderBy(p => Math.Abs(p.Balance)),
+                _ => query.OrderBy(p => p.Name, StringComparer.CurrentCultureIgnoreCase),
+            };
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (BalanceFilter is "receive" or "give" or "settled")
+        {
+            _side = BalanceFilter;
+        }
+
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _error = null;
+        _parties = null;
+        var result = await Data.GetPartiesAsync(company.CompanyId);
+        if (result.Ok)
+        {
+            _parties = result.Value!;
+        }
+        else
+        {
+            _error = result;
+        }
+    }
+
+    private void SetSide(string side) => _side = _side == side ? "all" : side;
+}

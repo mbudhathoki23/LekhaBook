@@ -1,0 +1,195 @@
+@page "/accounts/new"
+@page "/accounts/{AccountId:guid}/edit"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>@(IsNew ? "Add Account" : "Edit Account") · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Account" : "Edit Account")</MudText>
+
+@if (_loadError is not null)
+{
+    <LoadError Message="@_loadError" Offline="_offline" What="Cash and bank accounts" OnRetry="LoadAsync" />
+}
+else if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <EnterNavForm @ref="_form" Class="entry-form">
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            @if (_existing?.IsSystem == true)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@MasterLabels.AccountType(_type) (built-in account)</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Account type</MudText>
+                <MudRadioGroup T="string" @bind-Value="_type" Name="account-type">
+                    <MudRadio Value="@("Bank")" Color="Color.Primary">Bank account</MudRadio>
+                    <MudRadio Value="@("Wallet")" Color="Color.Primary">Wallet</MudRadio>
+                    <MudRadio Value="@("Cash")" Color="Color.Primary">Cash / petty cash</MudRadio>
+                </MudRadioGroup>
+            }
+
+            <MudTextField @bind-Value="_name" Label="@($"{NameLabel} *")" Variant="Variant.Outlined" Class="mt-2"
+                          MaxLength="MasterValidation.NameMax" Placeholder="@NamePlaceholder"
+                          Error="@Has("name")" ErrorText="@ErrorOf("name")" />
+            @if (HasBankDetails)
+            {
+                <MudTextField @bind-Value="_holder" Label="Account holder name" Variant="Variant.Outlined" Class="mt-3"
+                              MaxLength="MasterValidation.NameMax" Error="@Has("accountHolderName")" ErrorText="@ErrorOf("accountHolderName")" />
+                <MudTextField @bind-Value="_number" Label="@(_type == "Wallet" ? "Wallet ID / phone" : "Account number")" Variant="Variant.Outlined" Class="mt-3"
+                              MaxLength="MasterValidation.AccountNumberMax" Error="@Has("accountNumber")" ErrorText="@ErrorOf("accountNumber")" />
+            }
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudNumericField T="decimal?" @bind-Value="_opening" Label="Current account balance (Rs.)" Placeholder="0" HideSpinButtons="true"
+                             InputMode="InputModes.Decimal" Variant="Variant.Outlined"
+                             HelperText="The balance on the date below. Use a minus sign if the account is overdrawn."
+                             Error="@Has("openingBalance")" ErrorText="@ErrorOf("openingBalance")" />
+            <MudDatePicker @bind-Date="_asOf" Label="As of date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
+                           Variant="Variant.Outlined" Class="mt-3" Disabled="DateLocked"
+                           HelperText="@(DateLocked ? "You can only date an opening balance today." : null)" />
+        </MudPaper>
+
+        @if (_saveError is not null)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-3" role="alert">@_saveError</MudAlert>
+        }
+
+        <div class="form-actions">
+            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync" Disabled="_saving" data-enter-save>
+                @(_saving ? "Saving…" : IsNew ? "Add Account" : "Save")
+            </MudButton>
+        </div>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
+            Enter moves to the next field · Ctrl+S saves · Esc cancels
+        </MudText>
+    </EnterNavForm>
+}
+
+@code {
+    private EnterNavForm? _form;
+    private bool _loaded;
+    private string? _loadError;
+    private bool _offline;
+    private string? _saveError;
+    private bool _saving;
+    private Dictionary<string, string[]> _errors = [];
+    private MoneyAccountDto? _existing;
+
+    private string _type = "Bank";
+    private string? _name;
+    private string? _holder;
+    private string? _number;
+    private decimal? _opening;
+    private DateTime? _asOf = DateTime.Today;
+
+    // The picker starts on this device's today. Left untouched on a new entry, no date is sent and the
+    // server uses the company's today (D12); a locked date is always the server's today.
+    private DateOnly? SentAsOf =>
+        DateLocked || _asOf is null || (IsNew && _asOf == DateTime.Today) ? null : DateOnly.FromDateTime(_asOf.Value);
+
+    [Parameter]
+    public Guid? AccountId { get; set; }
+
+    private bool IsNew => AccountId is null;
+
+    private string CancelHref => IsNew ? "accounts" : $"accounts/{AccountId}";
+
+    private bool HasBankDetails => _type is "Bank" or "Wallet";
+
+    private bool DateLocked => Session.Can(Permission.RestrictLockDate);
+
+    private string NameLabel => _type switch
+    {
+        "Bank" => "Bank name",
+        "Wallet" => "Wallet name",
+        _ => "Account name",
+    };
+
+    private string NamePlaceholder => _type switch
+    {
+        "Bank" => "e.g. Nabil Bank",
+        "Wallet" => "e.g. eSewa",
+        _ => "e.g. Petty Cash",
+    };
+
+    private bool Has(string key) => _errors.ContainsKey(key);
+
+    private string? ErrorOf(string key) => _errors.TryGetValue(key, out var e) ? string.Join(" ", e) : null;
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loadError = null;
+        if (AccountId is { } id && Session.CurrentCompany is { } company)
+        {
+            var account = await Data.GetMoneyAccountAsync(company.CompanyId, id);
+            if (!account.Ok)
+            {
+                (_loadError, _offline) = (account.Error, account.IsNetworkError);
+                return;
+            }
+
+            _existing = account.Value!;
+            (_type, _name, _holder, _number) = (_existing.Type, _existing.Name, _existing.AccountHolderName, _existing.AccountNumber);
+            _opening = _existing.OpeningBalance == 0 ? null : _existing.OpeningBalance;
+            _asOf = _existing.OpeningAsOf?.ToDateTime(TimeOnly.MinValue);
+        }
+
+        _loaded = true;
+    }
+
+    private async Task SaveAsync()
+    {
+        if (Session.CurrentCompany is not { } company || _saving)
+        {
+            return;
+        }
+
+        _saveError = null;
+        var request = new SaveMoneyAccountRequest(
+            _name ?? string.Empty, _type,
+            HasBankDetails ? _holder : null,
+            HasBankDetails ? _number : null,
+            _opening ?? 0,
+            SentAsOf);
+        _errors = MasterValidation.Validate(request, IsNew);
+        if (_errors.Count > 0)
+        {
+            _form?.FocusFirstErrorAfterRender();
+            return;
+        }
+
+        _saving = true;
+        try
+        {
+            var result = IsNew
+                ? await Data.AddMoneyAccountAsync(company.CompanyId, request with { Id = Guid.CreateVersion7() })
+                : await Data.UpdateMoneyAccountAsync(company.CompanyId, AccountId!.Value, request);
+            if (!result.Ok)
+            {
+                _saveError = result.Error;
+                return;
+            }
+
+            Snackbar.Add($"Saved {result.Value!.Name}.", Severity.Success);
+            Navigation.NavigateTo($"accounts/{result.Value.Id}");
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

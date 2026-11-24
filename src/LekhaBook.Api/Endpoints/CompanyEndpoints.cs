@@ -106,9 +106,18 @@ public static class CompanyEndpoints
             UpdatedAtUtc = now,
         };
 
+        // A brand-new company: its counter row is created here, so versions 1..n can be assigned directly.
+        var accounts = CompanySeeder.DefaultAccounts(company.Id, now, userId);
+        long version = 0;
+        foreach (var account in accounts)
+        {
+            account.Version = ++version;
+        }
+
+        company.Version = ++version;
         db.Companies.Add(company);
-        db.Accounts.AddRange(CompanySeeder.DefaultAccounts(company.Id, now, userId));
-        db.CompanySyncStates.Add(new CompanySyncState { CompanyId = company.Id });
+        db.Accounts.AddRange(accounts);
+        db.CompanySyncStates.Add(new CompanySyncState { CompanyId = company.Id, LastVersion = version });
         db.CompanyMembers.Add(owner);
         await db.SaveChangesAsync();
 

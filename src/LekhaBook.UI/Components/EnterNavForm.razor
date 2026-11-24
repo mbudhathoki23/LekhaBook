@@ -1,0 +1,73 @@
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+@*
+    Enter-key navigation for the fields inside (see wwwroot/js/enterNav.js). Mark the save button with
+    data-enter-save and the cancel button with data-enter-cancel.
+*@
+<div @ref="_root" class="enter-nav @Class">
+    @ChildContent
+</div>
+
+@code {
+    private ElementReference _root;
+    private IJSObjectReference? _module;
+    private bool _focusErrorAfterRender;
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    /// <summary>Focus the first field on load (mouse/keyboard devices only; phones would pop up the keyboard).</summary>
+    [Parameter]
+    public bool AutoFocus { get; set; } = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/LekhaBook.UI/js/enterNav.js");
+            await _module.InvokeVoidAsync("attach", _root, AutoFocus);
+        }
+        else if (_focusErrorAfterRender && _module is not null)
+        {
+            _focusErrorAfterRender = false;
+            await _module.InvokeVoidAsync("focusFirstError", _root);
+        }
+    }
+
+    /// <summary>Moves focus back to the first field, for example after Save &amp; New.</summary>
+    public async Task FocusFirstAsync()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("focusFirstField", _root);
+        }
+    }
+
+    /// <summary>
+    /// Moves focus to the first field with a validation error once the errors have rendered
+    /// (this component re-renders with its parent, because its content is a render fragment).
+    /// </summary>
+    public void FocusFirstErrorAfterRender() => _focusErrorAfterRender = true;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is null)
+        {
+            return;
+        }
+
+        try
+        {
+            await _module.InvokeVoidAsync("detach", _root);
+            await _module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // The browser tab or app is closing; nothing to clean up.
+        }
+    }
+}

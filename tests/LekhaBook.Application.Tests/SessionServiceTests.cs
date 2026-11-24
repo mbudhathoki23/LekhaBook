@@ -25,6 +25,7 @@ public sealed class SessionServiceTests
 
         Assert.NotSame(circuitA.ServiceProvider.GetRequiredService<ISessionService>(), circuitB.ServiceProvider.GetRequiredService<ISessionService>());
         Assert.NotSame(circuitA.ServiceProvider.GetRequiredService<LekhaBookApi>(), circuitB.ServiceProvider.GetRequiredService<LekhaBookApi>());
+        Assert.NotSame(circuitA.ServiceProvider.GetRequiredService<IDataService>(), circuitB.ServiceProvider.GetRequiredService<IDataService>());
         Assert.Same(circuitA.ServiceProvider.GetRequiredService<ISessionService>(), circuitA.ServiceProvider.GetRequiredService<ISessionService>());
     }
 
@@ -36,6 +37,7 @@ public sealed class SessionServiceTests
         using var b = provider.CreateScope();
 
         Assert.Same(a.ServiceProvider.GetRequiredService<ISessionService>(), b.ServiceProvider.GetRequiredService<ISessionService>());
+        Assert.Same(a.ServiceProvider.GetRequiredService<IDataService>(), b.ServiceProvider.GetRequiredService<IDataService>());
     }
 
     // ---------------- Offline-first behaviour ----------------

@@ -1,0 +1,140 @@
+@page "/parties/{PartyId:guid}"
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<PageTitle>@(_party?.Name ?? "Party") · Lekha Books</PageTitle>
+
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="parties" Class="mb-2">Parties</MudButton>
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="Parties" OnRetry="LoadAsync" />
+}
+else if (_party is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    var (label, color) = MasterLabels.PartySide(_party.Balance);
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <div class="detail-header">
+            <MudAvatar Color="@(_party.PartyType == "Supplier" ? Color.Secondary : Color.Primary)" Size="Size.Large">@MasterLabels.Initials(_party.Name)</MudAvatar>
+            <div class="row-main">
+                <MudText Typo="Typo.h6" tabindex="-1">@_party.Name</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                    @_party.PartyType@(_party.CategoryName is null ? "" : $" · {_party.CategoryName}")@(_party.Phone is null ? "" : $" · {_party.Phone}")
+                </MudText>
+            </div>
+            <div class="row-amount">
+                <MudText Typo="Typo.caption" Color="color">@MasterLabels.PartyBalanceTitle(_party.Balance)</MudText>
+                <MudText Typo="Typo.h5" Color="color" Class="text-nowrap">@Money.Format(Math.Abs(_party.Balance))</MudText>
+            </div>
+        </div>
+
+        @if (_party.Address is not null || _party.Email is not null || _party.Pan is not null)
+        {
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mt-3">
+                @string.Join(" · ", new[] { _party.Address, _party.Email, _party.Pan is null ? null : $"PAN {_party.Pan}" }.Where(s => s is not null))
+            </MudText>
+        }
+
+        <MudStack Row="true" Spacing="2" Class="mt-3" Wrap="Wrap.Wrap">
+            @if (CanEdit)
+            {
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"parties/{PartyId}/edit")">Edit</MudButton>
+            }
+            @if (CanDelete)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">Delete</MudButton>
+            }
+        </MudStack>
+    </MudPaper>
+
+    <MudText Typo="Typo.subtitle1" Class="mb-2">Transactions</MudText>
+    @if (_ledger is not null)
+    {
+        <LedgerTable Ledger="_ledger" DebitTitle="Gave / Added" CreditTitle="Got / Reduced" FormatBalance="PartyBalance" />
+    }
+}
+
+@code {
+    private PartyDto? _party;
+    private LedgerDto? _ledger;
+    private string? _error;
+    private bool _offline;
+    private bool _busy;
+
+    [Parameter]
+    public Guid PartyId { get; set; }
+
+    private PartyType Type => _party?.PartyType == "Supplier" ? PartyType.Supplier : PartyType.Customer;
+
+    private bool CanEdit => Session.Can(MasterRules.PartyPermission(Type, EntryAction.Edit));
+
+    private bool CanDelete => Session.Can(MasterRules.PartyPermission(Type, EntryAction.Delete));
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _error = null;
+        _party = null;
+        var party = await Data.GetPartyAsync(company.CompanyId, PartyId);
+        if (!party.Ok)
+        {
+            (_error, _offline) = (party.Error, party.IsNetworkError);
+            return;
+        }
+
+        var ledger = await Data.GetPartyLedgerAsync(company.CompanyId, PartyId);
+        if (!ledger.Ok)
+        {
+            (_error, _offline) = (ledger.Error, ledger.IsNetworkError);
+            return;
+        }
+
+        (_party, _ledger) = (party.Value, ledger.Value);
+    }
+
+    private static string PartyBalance(decimal balance)
+    {
+        var (label, _) = MasterLabels.PartySide(balance);
+        return balance == 0 ? Money.Format(0) : $"{Money.Format(Math.Abs(balance))} {label}";
+    }
+
+    private async Task DeleteAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            "Delete party?",
+            $"{_party!.Name} will be removed from your party list.",
+            yesText: "Delete", cancelText: "Cancel");
+        if (confirmed != true || Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _busy = true;
+        var result = await Data.DeletePartyAsync(company.CompanyId, PartyId);
+        _busy = false;
+        if (result.Ok)
+        {
+            Snackbar.Add($"Deleted {_party.Name}.", Severity.Success);
+            Navigation.NavigateTo("parties");
+        }
+        else
+        {
+            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+        }
+    }
+}

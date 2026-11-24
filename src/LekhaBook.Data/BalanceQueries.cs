@@ -9,6 +9,17 @@ namespace LekhaBook.Data;
 /// </summary>
 public static class BalanceQueries
 {
+    /// <summary>Balance of one account, debit positive (opening + debits − credits).</summary>
+    public static async Task<decimal> GetBalanceAsync(
+        this LekhaBookDbContext db, Account account, CancellationToken cancellationToken = default)
+    {
+        var live = db.Transactions.AsNoTracking()
+            .Where(t => t.CompanyId == account.CompanyId && !t.IsDeleted && t.Status == TransactionStatus.Posted);
+        var debits = await live.Where(t => t.ToAccountId == account.Id).SumAsync(t => t.Amount, cancellationToken);
+        var credits = await live.Where(t => t.FromAccountId == account.Id).SumAsync(t => t.Amount, cancellationToken);
+        return Balances.SignedOpening(account) + debits - credits;
+    }
+
     /// <summary>Balance of every live account in a company, debit positive.</summary>
     public static async Task<Dictionary<Guid, decimal>> GetBalancesAsync(
         this LekhaBookDbContext db, Guid companyId, CancellationToken cancellationToken = default)

@@ -89,6 +89,7 @@ app.MapHealthChecks("/health");
 app.MapGroup("/api/auth").MapIdentityApi<AppUser>().RequireRateLimiting("auth");
 
 app.MapCompanyEndpoints();
+app.MapMasterEndpoints();
 
 app.Run();
 

@@ -5,7 +5,7 @@ namespace LekhaBook.UI.Services;
 // The shared UI talks to the device or server only through these interfaces
 // (AGENT_PLAN § 3.2). Each host registers its own implementations:
 // LekhaBook.App (MAUI, offline-first) and LekhaBook.Web (browser, online-only).
-// IDataService, IAttachmentService and IShareService are added in later phases.
+// IAttachmentService and IShareService are added in later phases.
 
 /// <summary>Where the UI is running, so layouts can adapt.</summary>
 public interface IPlatformInfo
@@ -110,6 +110,43 @@ public sealed record ApiResult<T>(T? Value, string? Error, int StatusCode)
     public bool IsNetworkError => StatusCode == 0;
 
     public bool IsForbidden => StatusCode == 403;
+}
+
+/// <summary>
+/// Books data for the current company: parties and money accounts now, transactions and reports in later phases.
+/// Until device sync lands (phase 8) both hosts use the server (D14); the MAUI app then switches to its local
+/// database plus outbox. New rows get their id on the client, so saving them again never duplicates them.
+/// </summary>
+public interface IDataService
+{
+    Task<ApiResult<List<PartyDto>>> GetPartiesAsync(Guid companyId);
+
+    Task<ApiResult<PartyDto>> GetPartyAsync(Guid companyId, Guid partyId);
+
+    /// <summary>Adds a party; <see cref="SavePartyRequest.Id"/> should be set (a new UUIDv7).</summary>
+    Task<ApiResult<PartyDto>> AddPartyAsync(Guid companyId, SavePartyRequest request);
+
+    Task<ApiResult<PartyDto>> UpdatePartyAsync(Guid companyId, Guid partyId, SavePartyRequest request);
+
+    Task<ApiResult<bool>> DeletePartyAsync(Guid companyId, Guid partyId);
+
+    Task<ApiResult<LedgerDto>> GetPartyLedgerAsync(Guid companyId, Guid partyId);
+
+    Task<ApiResult<List<PartyCategoryDto>>> GetPartyCategoriesAsync(Guid companyId);
+
+    Task<ApiResult<PartyCategoryDto>> AddPartyCategoryAsync(Guid companyId, SavePartyCategoryRequest request);
+
+    Task<ApiResult<List<MoneyAccountDto>>> GetMoneyAccountsAsync(Guid companyId);
+
+    Task<ApiResult<MoneyAccountDto>> GetMoneyAccountAsync(Guid companyId, Guid accountId);
+
+    Task<ApiResult<MoneyAccountDto>> AddMoneyAccountAsync(Guid companyId, SaveMoneyAccountRequest request);
+
+    Task<ApiResult<MoneyAccountDto>> UpdateMoneyAccountAsync(Guid companyId, Guid accountId, SaveMoneyAccountRequest request);
+
+    Task<ApiResult<bool>> DeleteMoneyAccountAsync(Guid companyId, Guid accountId);
+
+    Task<ApiResult<LedgerDto>> GetAccountLedgerAsync(Guid companyId, Guid accountId);
 }
 
 /// <summary>Company, staff and invitation calls (AGENT_PLAN § 9).</summary>

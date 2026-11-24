@@ -42,7 +42,7 @@ else
                 @if (Session.IsOffline)
                 {
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
-                        You're offline. Showing your saved company list; changes to staff need a connection.
+                        You're offline. Showing your saved company list; parties, accounts and staff need a connection until sync arrives.
                     </MudAlert>
                 }
                 @if (Session.CurrentCompany is null && !AllowedWithoutCompany)
@@ -51,14 +51,18 @@ else
                 }
                 else
                 {
-                    @Body
+                    <div @key="Session.CurrentCompany?.CompanyId">@Body</div>
                 }
             </MudContainer>
         </MudMainContent>
 
-        <MudHidden Breakpoint="Breakpoint.MdAndUp">
-            <BottomNav />
-        </MudHidden>
+        @* Forms are full screen on phones: the soft keyboard needs the room (AGENT_PLAN § 8.1). *@
+        @if (!IsFormPage)
+        {
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <BottomNav />
+            </MudHidden>
+        }
     </MudLayout>
 }
 
@@ -71,15 +75,13 @@ else
 @code {
     private bool _drawerOpen = true;
 
+    private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
+
     /// <summary>Pages that work before the user has a company.</summary>
-    private bool AllowedWithoutCompany
-    {
-        get
-        {
-            var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?')[0].TrimEnd('/');
-            return path is "companies/new" or "invite" or "settings";
-        }
-    }
+    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings";
+
+    /// <summary>Add and edit forms (…/new, …/edit).</summary>
+    private bool IsFormPage => CurrentPath.EndsWith("/new", StringComparison.Ordinal) || CurrentPath.EndsWith("/edit", StringComparison.Ordinal);
 
     protected override async Task OnInitializedAsync()
     {

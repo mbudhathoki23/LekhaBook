@@ -1,0 +1,288 @@
+@page "/parties/new"
+@page "/parties/{PartyId:guid}/edit"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>@(IsNew ? "Add Party" : "Edit Party") · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Party" : "Edit Party")</MudText>
+
+@if (_loadError is not null)
+{
+    <LoadError Message="@_loadError" Offline="_offline" What="Parties" OnRetry="LoadAsync" />
+}
+else if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <EnterNavForm @ref="_form" Class="entry-form">
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudTextField @bind-Value="_name" Label="Full name *" Placeholder="Enter the name of the party"
+                          Variant="Variant.Outlined" MaxLength="MasterValidation.NameMax"
+                          Error="@Has("name")" ErrorText="@ErrorOf("name")" />
+            <MudTextField @bind-Value="_phone" Label="Phone number" InputType="InputType.Telephone" InputMode="InputMode.tel"
+                          Variant="Variant.Outlined" Class="mt-3" MaxLength="MasterValidation.PhoneMax"
+                          Error="@Has("phone")" ErrorText="@ErrorOf("phone")" />
+            <MudAutocomplete T="string" @bind-Value="_category" Label="Party category" SearchFunc="SearchCategories"
+                             CoerceValue="true" Clearable="true" ResetValueOnEmptyText="true" OpenOnFocus="false" SelectOnActivation="false" Variant="Variant.Outlined" Class="mt-3"
+                             HelperText="@(CanAddCategory ? "Pick one, or type a new name to add it." : null)"
+                             Error="@Has("categoryId")" ErrorText="@ErrorOf("categoryId")" />
+
+            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-3">Party type</MudText>
+            <MudRadioGroup T="string" @bind-Value="_type" Name="party-type">
+                <MudRadio Value="@("Customer")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Customer))">Customer</MudRadio>
+                <MudRadio Value="@("Supplier")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Supplier))">Supplier</MudRadio>
+            </MudRadioGroup>
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Opening balance</MudText>
+            <MudNumericField T="decimal?" @bind-Value="_opening" Label="Opening balance (Rs.)" Placeholder="0" HideSpinButtons="true"
+                             InputMode="InputModes.Decimal" Min="0" Variant="Variant.Outlined"
+                             Error="@Has("openingBalance")" ErrorText="@ErrorOf("openingBalance")" />
+            <MudRadioGroup T="string" @bind-Value="_side" Name="opening-side" Class="mt-2">
+                <MudRadio Value="@("ToReceive")" Color="Color.Success">To Receive</MudRadio>
+                <MudRadio Value="@("ToGive")" Color="Color.Error">To Give</MudRadio>
+            </MudRadioGroup>
+            <MudDatePicker @bind-Date="_asOf" Label="As of date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
+                           Variant="Variant.Outlined" Class="mt-2" Disabled="DateLocked"
+                           HelperText="@(DateLocked ? "You can only date an opening balance today." : null)" />
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">More details</MudText>
+            <MudTextField @bind-Value="_address" Label="Address" Variant="Variant.Outlined" MaxLength="MasterValidation.AddressMax"
+                          Error="@Has("address")" ErrorText="@ErrorOf("address")" />
+            <MudTextField @bind-Value="_email" Label="Email" InputType="InputType.Email" InputMode="InputMode.email"
+                          Variant="Variant.Outlined" Class="mt-3" MaxLength="MasterValidation.EmailMax"
+                          Error="@Has("email")" ErrorText="@ErrorOf("email")" />
+            <MudTextField @bind-Value="_pan" Label="PAN number" InputMode="InputMode.numeric" Variant="Variant.Outlined" Class="mt-3"
+                          MaxLength="MasterValidation.PanMax" Error="@Has("pan")" ErrorText="@ErrorOf("pan")" />
+        </MudPaper>
+
+        @if (_saveError is not null)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-3" role="alert">@_saveError</MudAlert>
+        }
+
+        <div class="form-actions">
+            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            @if (IsNew)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save &amp; New</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
+                @(_saving ? "Saving…" : "Save")
+            </MudButton>
+        </div>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
+            Enter moves to the next field · Ctrl+S saves · Esc cancels
+        </MudText>
+    </EnterNavForm>
+}
+
+@code {
+    private EnterNavForm? _form;
+    private bool _loaded;
+    private string? _loadError;
+    private bool _offline;
+    private string? _saveError;
+    private bool _saving;
+    private Dictionary<string, string[]> _errors = [];
+    private List<PartyCategoryDto> _categories = [];
+    private PartyDto? _existing;
+
+    private string? _name;
+    private string? _phone;
+    private string? _category;
+    private string _type = "Customer";
+    private decimal? _opening;
+    private string _side = "ToReceive";
+    private DateTime? _asOf = DateTime.Today;
+
+    // The picker starts on this device's today. Left untouched on a new entry, no date is sent and the
+    // server uses the company's today (D12); a locked date is always the server's today.
+    private DateOnly? SentAsOf =>
+        DateLocked || _asOf is null || (IsNew && _asOf == DateTime.Today) ? null : DateOnly.FromDateTime(_asOf.Value);
+    private string? _address;
+    private string? _email;
+    private string? _pan;
+
+    [Parameter]
+    public Guid? PartyId { get; set; }
+
+    /// <summary>?type=Supplier opens the form for a supplier.</summary>
+    [SupplyParameterFromQuery(Name = "type")]
+    public string? TypeQuery { get; set; }
+
+    private bool IsNew => PartyId is null;
+
+    private string CancelHref => IsNew ? "parties" : $"parties/{PartyId}";
+
+    private bool CanAddCategory => Session.Can(Permission.SettingsFeatures);
+
+    private bool DateLocked => Session.Can(Permission.RestrictLockDate);
+
+    private bool CanUseType(PartyType type) =>
+        IsNew || _existing?.PartyType != type.ToString()
+            ? Session.Can(MasterRules.PartyPermission(type, EntryAction.Create))
+            : Session.Can(MasterRules.PartyPermission(type, EntryAction.Edit));
+
+    private bool Has(string key) => _errors.ContainsKey(key);
+
+    private string? ErrorOf(string key) => _errors.TryGetValue(key, out var e) ? string.Join(" ", e) : null;
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _loadError = null;
+        var categories = await Data.GetPartyCategoriesAsync(company.CompanyId);
+        if (!categories.Ok)
+        {
+            (_loadError, _offline) = (categories.Error, categories.IsNetworkError);
+            return;
+        }
+
+        _categories = categories.Value!;
+
+        if (PartyId is { } id)
+        {
+            var party = await Data.GetPartyAsync(company.CompanyId, id);
+            if (!party.Ok)
+            {
+                (_loadError, _offline) = (party.Error, party.IsNetworkError);
+                return;
+            }
+
+            _existing = party.Value!;
+            (_name, _phone, _type, _address, _email, _pan) =
+                (_existing.Name, _existing.Phone, _existing.PartyType, _existing.Address, _existing.Email, _existing.Pan);
+            _category = _existing.CategoryName;
+            _opening = _existing.OpeningBalance == 0 ? null : _existing.OpeningBalance;
+            _side = _existing.OpeningSide;
+            _asOf = _existing.OpeningAsOf?.ToDateTime(TimeOnly.MinValue);
+        }
+        else
+        {
+            _type = string.Equals(TypeQuery, "Supplier", StringComparison.OrdinalIgnoreCase) || !CanUseType(PartyType.Customer)
+                ? "Supplier"
+                : "Customer";
+        }
+
+        _loaded = true;
+    }
+
+    private Task<IEnumerable<string>> SearchCategories(string? text, CancellationToken cancellationToken)
+    {
+        var names = _categories.Select(c => c.Name);
+        return Task.FromResult(string.IsNullOrWhiteSpace(text)
+            ? names
+            : names.Where(n => n.Contains(text.Trim(), StringComparison.CurrentCultureIgnoreCase)));
+    }
+
+    private async Task SaveAsync(bool andNew)
+    {
+        if (Session.CurrentCompany is not { } company || _saving)
+        {
+            return;
+        }
+
+        _saveError = null;
+        var request = new SavePartyRequest(
+            _name ?? string.Empty, _type, _phone, _email, _address, _pan,
+            CategoryId: null,
+            OpeningBalance: _opening ?? 0,
+            OpeningSide: _side,
+            OpeningAsOf: SentAsOf);
+        _errors = MasterValidation.Validate(request);
+        if (_errors.Count > 0)
+        {
+            _form?.FocusFirstErrorAfterRender();
+            return;
+        }
+
+        _saving = true;
+        try
+        {
+            if (await ResolveCategoryAsync(company.CompanyId) is not (true, var categoryId))
+            {
+                return;
+            }
+
+            request = request with { CategoryId = categoryId };
+            var result = IsNew
+                ? await Data.AddPartyAsync(company.CompanyId, request with { Id = Guid.CreateVersion7() })
+                : await Data.UpdatePartyAsync(company.CompanyId, PartyId!.Value, request);
+            if (!result.Ok)
+            {
+                _saveError = result.Error;
+                return;
+            }
+
+            Snackbar.Add($"Saved {result.Value!.Name}.", Severity.Success);
+            if (andNew)
+            {
+                (_name, _phone, _category, _opening, _address, _email, _pan) = (null, null, null, null, null, null, null);
+                _side = "ToReceive";
+                StateHasChanged();
+                if (_form is not null)
+                {
+                    await _form.FocusFirstAsync();
+                }
+            }
+            else
+            {
+                Navigation.NavigateTo($"parties/{result.Value.Id}");
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    /// <summary>The chosen category's id; a new name is added first if the user may add categories.</summary>
+    private async Task<(bool Ok, Guid? Id)> ResolveCategoryAsync(Guid companyId)
+    {
+        var name = _category?.Trim();
+        if (string.IsNullOrEmpty(name))
+        {
+            return (true, null);
+        }
+
+        if (_categories.FirstOrDefault(c => string.Equals(c.Name, name, StringComparison.CurrentCultureIgnoreCase)) is { } existing)
+        {
+            return (true, existing.Id);
+        }
+
+        if (!CanAddCategory)
+        {
+            _errors = new() { ["categoryId"] = ["Pick a category from the list."] };
+            _form?.FocusFirstErrorAfterRender();
+            return (false, null);
+        }
+
+        var added = await Data.AddPartyCategoryAsync(companyId, new SavePartyCategoryRequest(name, Guid.CreateVersion7()));
+        if (!added.Ok)
+        {
+            _errors = new() { ["categoryId"] = [added.Error ?? "Couldn't add the category."] };
+            _form?.FocusFirstErrorAfterRender();
+            return (false, null);
+        }
+
+        _categories.Add(added.Value!);
+        return (true, added.Value!.Id);
+    }
+}

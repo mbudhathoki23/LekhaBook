@@ -1,18 +1,28 @@
 @page "/"
+@using LekhaBook.Domain
 @inject IPlatformInfo PlatformInfo
+@inject IDataService Data
+@inject ISessionService Session
 
 <PageTitle>Dashboard · Lekha Books</PageTitle>
 
 <MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">Dashboard</MudText>
 
+@if (_error is not null)
+{
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Dashboard totals" OnRetry="LoadAsync" />
+}
+
 <MudGrid Spacing="2">
-    @foreach (var tile in _tiles)
+    @foreach (var tile in Tiles)
     {
         <MudItem xs="6" md="3">
-            <MudPaper Class="pa-3" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@tile.Label</MudText>
-                <MudText Typo="Typo.h6" Color="@tile.Color">Rs. 0</MudText>
-            </MudPaper>
+            <a class="tile-link" href="@tile.Href">
+                <MudPaper Class="pa-3" Elevation="1">
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@tile.Label</MudText>
+                    <MudText Typo="Typo.h6" Color="@tile.Color">@(tile.Amount is { } amount ? Money.Format(amount) : "—")</MudText>
+                </MudPaper>
+            </a>
         </MudItem>
     }
 </MudGrid>
@@ -31,11 +41,42 @@
 </MudText>
 
 @code {
-    private readonly (string Label, Color Color)[] _tiles =
+    private List<PartyDto>? _parties;
+    private List<MoneyAccountDto>? _accounts;
+    private ApiError? _error;
+
+    private IEnumerable<(string Label, decimal? Amount, Color Color, string Href)> Tiles =>
     [
-        ("To Receive", Color.Success),
-        ("To Give", Color.Error),
-        ("Cash in Hand", Color.Default),
-        ("Bank Balance", Color.Default),
+        ("To Receive", _parties?.Where(p => p.Balance > 0).Sum(p => p.Balance), Color.Success, "parties?balance=receive"),
+        ("To Give", _parties is null ? null : -_parties.Where(p => p.Balance < 0).Sum(p => p.Balance), Color.Error, "parties?balance=give"),
+        ("Cash in Hand", _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance), Color.Default, "accounts"),
+        ("Bank Balance", _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance), Color.Default, "accounts"),
     ];
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _error = null;
+        if (Session.Can(Permission.CustomersView) || Session.Can(Permission.SuppliersView))
+        {
+            var parties = await Data.GetPartiesAsync(company.CompanyId);
+            _parties = parties.Value;
+            _error ??= parties.Ok ? null : new ApiError(parties.Error, parties.IsNetworkError);
+        }
+
+        if (Session.Can(Permission.AccountsView))
+        {
+            var accounts = await Data.GetMoneyAccountsAsync(company.CompanyId);
+            _accounts = accounts.Value;
+            _error ??= accounts.Ok ? null : new ApiError(accounts.Error, accounts.IsNetworkError);
+        }
+    }
+
+    private sealed record ApiError(string? Error, bool IsNetworkError);
 }

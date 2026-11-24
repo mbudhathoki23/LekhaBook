@@ -1,6 +1,7 @@
 ﻿namespace LekhaBook.App;
 
-public partial class App : Application
+// Fully qualified: inside namespace LekhaBook.App, a bare "Application" would mean the LekhaBook.Application namespace.
+public partial class App : Microsoft.Maui.Controls.Application
 {
 	public App()
 	{
