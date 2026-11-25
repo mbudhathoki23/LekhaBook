@@ -4,11 +4,15 @@
 @using LekhaBook.Domain
 @using LekhaBook.Contracts
 @using LekhaBook.UI.Formatting
+@using LekhaBook.UI.Components
+@using LekhaBook.UI
+@using System.IO
 @inject IDataService Data
 @inject ISessionService Session
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 @inject IDialogService Dialogs
+@inject IAttachmentService Attachments
 
 <PageTitle>@(IsNew ? "Add Transaction" : "Edit Transaction") · Lekha Books</PageTitle>
 
@@ -79,6 +83,50 @@ else
                            HelperText="@(string.IsNullOrWhiteSpace(_chequeNo) ? "Enter a cheque no. to enable date picker." : null)" />
         </MudPaper>
 
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Attachments</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">Max 5 files · 5 MB each · JPEG, PNG, WebP, PDF</MudText>
+
+            @if (IsNew)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Save the transaction first, then add attachments.</MudText>
+            }
+            else
+            {
+                <InputFile OnChange="OnFileSelected" accept="image/*,application/pdf" multiple class="mb-3" />
+                @if (_uploading)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mb-3" />
+                }
+
+                @if (_attachments.Count > 0)
+                {
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Current Attachments</MudText>
+                    <MudStack Spacing="1">
+                        @foreach (var att in _attachments)
+                        {
+                            <MudPaper Class="pa-2 d-flex align-center" Elevation="0" Outlined="true">
+                                @if (att.ContentType.StartsWith("image/"))
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Medium" Class="mr-2" />
+                                }
+                                else
+                                {
+                                    <MudIcon Icon="@Icons.Material.Filled.PictureAsPdf" Size="Size.Medium" Class="mr-2" />
+                                }
+                                <div class="flex-grow-1">
+                                    <MudText>@att.FileName</MudText>
+                                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@FormatFileSize(att.SizeBytes)</MudText>
+                                </div>
+                                <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="@(() => ViewAttachment(att))">View</MudButton>
+                                <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Error" OnClick="@(() => DeleteAttachment(att.Id))">Delete</MudButton>
+                            </MudPaper>
+                        }
+                    </MudStack>
+                }
+            }
+        </MudPaper>
+
         @if (_saveError is not null)
         {
             <MudAlert Severity="Severity.Error" Class="mb-3" role="alert">@_saveError</MudAlert>
@@ -119,6 +167,8 @@ else
     private string? _remarks;
     private string? _chequeNo;
     private DateTime? _chequeDate;
+    private List<AttachmentDto> _attachments = [];
+    private bool _uploading;
 
     [Parameter] public Guid? TransactionId { get; set; }
 
@@ -175,6 +225,12 @@ else
             _remarks = existing.Remarks;
             _chequeNo = existing.ChequeNo;
             _chequeDate = existing.ChequeDate?.ToDateTime(TimeOnly.MinValue);
+
+            var atts = await Attachments.GetAttachmentsAsync(company.CompanyId, id);
+            if (atts.Ok)
+            {
+                _attachments = atts.Value ?? [];
+            }
         }
 
         _loaded = true;
@@ -242,4 +298,57 @@ else
             _saving = false;
         }
     }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        if (Session.CurrentCompany is not { } company || _uploading)
+        {
+            return;
+        }
+
+        if (e.FileCount == 0 || _attachments.Count >= 5)
+        {
+            return;
+        }
+
+        _uploading = true;
+        StateHasChanged();
+        try
+        {
+            foreach (var file in e.GetMultipleFiles(5))
+            {
+                using var stream = file.OpenReadStream(5 * 1024 * 1024);
+                var result = await Attachments.UploadAttachmentAsync(company.CompanyId, stream, file.Name, file.ContentType, TransactionId, CancellationToken.None);
+                if (result.Ok)
+                {
+                    Snackbar.Add($"Uploaded {file.Name}.", Severity.Success);
+                }
+                else
+                {
+                    Snackbar.Add($"Upload failed: {result.Error}", Severity.Error);
+                }
+            }
+
+            if (TransactionId is { } tid)
+            {
+                var list = await Attachments.GetAttachmentsAsync(company.CompanyId, tid);
+                if (list.Ok)
+                {
+                    _attachments = list.Value ?? [];
+                }
+            }
+        }
+        finally
+        {
+            _uploading = false;
+            StateHasChanged();
+        }
+    }
+
+    private Task ViewAttachment(AttachmentDto att) => Task.CompletedTask;
+
+    private Task DeleteAttachment(Guid id) => Task.CompletedTask;
+
+    private static string FormatFileSize(long bytes) =>
+        bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024} KB" : $"{bytes / (1024 * 1024)} MB";
 }

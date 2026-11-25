@@ -107,6 +107,17 @@ public sealed record CreateTransactionRequest(
     DateOnly? ChequeDate,
     Guid? CreatedBy);
 
+/// <summary>A photo or PDF proof attached to a transaction or party.</summary>
+public sealed record AttachmentDto(
+    Guid Id,
+    Guid? TransactionId,
+    Guid? AccountId,
+    string FileName,
+    string ContentType,
+    long SizeBytes,
+    string? StorageKey,
+    DateTime CreatedAtUtc);
+
 /// <summary>Transaction update request (edit/void). Only the editable fields are sent; to void, set <c>Status</c> to Void.</summary>
 public sealed record UpdateTransactionRequest(
     Guid? Id,

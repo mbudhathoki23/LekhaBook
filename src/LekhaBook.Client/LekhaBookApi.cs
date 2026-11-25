@@ -125,6 +125,54 @@ public sealed class LekhaBookApi(HttpClient http, ITokenStore tokenStore, TimePr
         }
     }
 
+    public async Task<ApiResult<T>> SendContentAsync<T>(HttpMethod method, string path, HttpContent content)
+    {
+        try
+        {
+            if (_tokens is { } t && (t.AccessToken is null || t.AccessTokenExpiresAtUtc <= clock.GetUtcNow().UtcDateTime.AddSeconds(30)))
+            {
+                if (!await RefreshAsync())
+                {
+                    return new(default, "Please sign in again.", 401);
+                }
+            }
+
+            using var request = new HttpRequestMessage(method, path) { Content = content };
+            if (_tokens?.AccessToken is { } token)
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            }
+
+            using var response = await http.SendAsync(request);
+            if (response.StatusCode == HttpStatusCode.Unauthorized && _tokens is not null)
+            {
+                if (!await RefreshAsync())
+                {
+                    return new(default, "Please sign in again.", 401);
+                }
+
+                using var retry = new HttpRequestMessage(method, path) { Content = content };
+                if (_tokens?.AccessToken is { } retryToken)
+                {
+                    retry.Headers.Authorization = new AuthenticationHeaderValue("Bearer", retryToken);
+                }
+
+                using var retryResponse = await http.SendAsync(retry);
+                return await ReadAsync<T>(retryResponse);
+            }
+
+            return await ReadAsync<T>(response);
+        }
+        catch (HttpRequestException)
+        {
+            return new(default, "Can't reach the server. Check your internet connection.", 0);
+        }
+        catch (TaskCanceledException)
+        {
+            return new(default, "The server took too long to answer.", 0);
+        }
+    }
+
     private Task<HttpResponseMessage> SendOnceAsync(HttpMethod method, string path, object? body, bool authenticated)
     {
         var request = new HttpRequestMessage(method, path);

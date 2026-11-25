@@ -1,5 +1,6 @@
 using LekhaBook.Contracts;
 using LekhaBook.UI.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace LekhaBook.Client;
 
@@ -75,4 +76,38 @@ public sealed class ApiDataService(LekhaBookApi api) : IDataService
 
     public Task<ApiResult<LedgerDto>> GetTransactionLedgerAsync(Guid companyId, Guid transactionId) =>
         api.GetAsync<LedgerDto>($"{Company(companyId)}/transactions/{transactionId}/ledger");
+}
+
+/// <summary>Attachments via the API (Phase 7).</summary>
+public sealed class ApiAttachmentService(LekhaBookApi api) : IAttachmentService
+{
+    private static string Company(Guid companyId) => $"/api/companies/{companyId}";
+
+    public Task<ApiResult<AttachmentDto>> CapturePhotoAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default) =>
+        Task.FromResult(new ApiResult<AttachmentDto>(null, "Capture requires platform camera. Use UploadAttachmentAsync with an InputFile.", 0));
+
+    public Task<ApiResult<AttachmentDto>> PickAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default) =>
+        Task.FromResult(new ApiResult<AttachmentDto>(null, "Pick requires platform UI. Use UploadAttachmentAsync with an InputFile.", 0));
+
+    public async Task<ApiResult<AttachmentDto>> UploadAttachmentAsync(Guid companyId, Stream fileStream, string fileName, string contentType, Guid? transactionId = null, CancellationToken ct = default)
+    {
+        using var content = new MultipartFormDataContent();
+        var fileContent = new StreamContent(fileStream);
+        fileContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
+        content.Add(fileContent, "file", fileName);
+        if (transactionId.HasValue)
+        {
+            content.Add(new StringContent(transactionId.Value.ToString()), "transactionId");
+        }
+        return await api.SendContentAsync<AttachmentDto>(HttpMethod.Post, $"{Company(companyId)}/attachments", content);
+    }
+
+    public Task<ApiResult<List<AttachmentDto>>> GetAttachmentsAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default)
+    {
+        var qs = transactionId.HasValue ? $"?transactionId={transactionId.Value}" : "";
+        return api.GetAsync<List<AttachmentDto>>($"{Company(companyId)}/attachments{qs}");
+    }
+
+    public Task<ApiResult<bool>> DeleteAttachmentAsync(Guid companyId, Guid attachmentId, CancellationToken ct = default) =>
+        api.SendAsync<bool>(HttpMethod.Delete, $"{Company(companyId)}/attachments/{attachmentId}", null);
 }

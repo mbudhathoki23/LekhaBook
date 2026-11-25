@@ -5,7 +5,7 @@ namespace LekhaBook.UI.Services;
 // The shared UI talks to the device or server only through these interfaces
 // (AGENT_PLAN § 3.2). Each host registers its own implementations:
 // LekhaBook.App (MAUI, offline-first) and LekhaBook.Web (browser, online-only).
-// IAttachmentService and IShareService are added in later phases.
+// IAttachmentService and IShareService are added in phase 7.
 
 /// <summary>Where the UI is running, so layouts can adapt.</summary>
 public interface IPlatformInfo
@@ -181,4 +181,30 @@ public interface ICompanyApi
     Task<ApiResult<bool>> CancelInvitationAsync(Guid companyId, Guid invitationId);
 
     Task<ApiResult<CompanySummary>> AcceptInvitationAsync(string token);
+}
+
+/// <summary>Attachments: capture, pick, store, get (AGENT_PLAN § 7).</summary>
+public interface IAttachmentService
+{
+    /// <summary>Capture a photo from camera (MAUI only).</summary>
+    Task<ApiResult<AttachmentDto>> CapturePhotoAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default);
+
+    /// <summary>Pick a photo from gallery / choose a file (MAUI / Browser).</summary>
+    Task<ApiResult<AttachmentDto>> PickAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default);
+
+    /// <summary>Upload an attachment file (multipart) and create Attachment row.</summary>
+    Task<ApiResult<AttachmentDto>> UploadAttachmentAsync(Guid companyId, Stream fileStream, string fileName, string contentType, Guid? transactionId = null, CancellationToken ct = default);
+
+    /// <summary>Get attachments for a transaction or company.</summary>
+    Task<ApiResult<List<AttachmentDto>>> GetAttachmentsAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default);
+
+    /// <summary>Delete an attachment (soft-delete via IsDeleted; syncs like edits).</summary>
+    Task<ApiResult<bool>> DeleteAttachmentAsync(Guid companyId, Guid attachmentId, CancellationToken ct = default);
+}
+
+/// <summary>Share a PDF statement or other file (AGENT_PLAN § 7).</summary>
+public interface IShareService
+{
+    /// <summary>Share a file via platform share target (MAUI) or navigator.share (Browser).</summary>
+    Task<ApiResult<bool>> ShareAsync(string title, string text, Stream? fileStream = null, string? fileName = null, CancellationToken ct = default);
 }

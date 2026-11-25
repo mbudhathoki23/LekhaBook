@@ -5,6 +5,7 @@ using LekhaBook.Contracts;
 using LekhaBook.Data;
 using LekhaBook.Data.Postgres;
 using LekhaBook.Domain;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
@@ -46,6 +47,11 @@ public static class MasterEndpoints
         company.MapPost("/transactions", CreateTransaction).RequirePermission(Permission.TransactionsEdit); // Create uses edit permission as it writes
         company.MapPut("/transactions/{id:guid}", UpdateTransaction).RequirePermission(Permission.TransactionsEdit);
         company.MapDelete("/transactions/{id:guid}", DeleteTransaction).RequirePermission(Permission.TransactionsDelete);
+
+        // Attachments (AGENT_PLAN § 7)
+        company.MapPost("/attachments", CreateAttachment).RequirePermission(Permission.TransactionsEdit);
+        company.MapGet("/attachments/{id:guid}", GetAttachment).RequirePermission(Permission.TransactionsView);
+        company.MapGet("/attachments", ListAttachments).RequirePermission(Permission.TransactionsView);
     }
 
     // ---------------- Parties ----------------
@@ -489,6 +495,111 @@ public static class MasterEndpoints
             ? TypedResults.NotFound()
             : TypedResults.Ok(ToDto(ledger));
     }
+
+    // ---------------- Attachments (AGENT_PLAN § 7) ----------------
+
+    private static async Task<Results<Created<AttachmentDto>, ValidationProblem, ProblemHttpResult>> CreateAttachment(
+        Guid companyId, HttpRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+
+        if (!request.HasFormContentType)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["file"] = ["Expected multipart form data."] });
+        }
+
+        var form = await request.ReadFormAsync();
+        var file = form.Files.GetFile("file") ?? form.Files.FirstOrDefault();
+        if (file is null || file.Length == 0)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["file"] = ["A file is required."] });
+        }
+
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "application/pdf" };
+        if (!allowedTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["file"] = ["File type not allowed. Use JPEG, PNG, WebP or PDF."] });
+        }
+
+        if (file.Length > 5 * 1024 * 1024)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["file"] = ["File too large. Maximum 5 MB."] });
+        }
+
+        Guid? txnId = null;
+        var txnValue = form["transactionId"].ToString();
+        if (Guid.TryParse(txnValue, out var parsed))
+        {
+            txnId = parsed;
+            if (!await db.Transactions.AnyAsync(t => t.Id == txnId && t.CompanyId == companyId && !t.IsDeleted))
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transactionId"] = ["Transaction not found."] });
+            }
+        }
+
+        var storageKey = $"{Guid.CreateVersion7()}{Path.GetExtension(file.FileName)}";
+        var folder = Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString());
+        Directory.CreateDirectory(folder);
+        var storagePath = Path.Combine(folder, storageKey);
+        await using (var stream = File.Create(storagePath))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var now = clock.GetUtcNow().UtcDateTime;
+        var attachment = new Attachment
+        {
+            Id = Guid.CreateVersion7(),
+            CompanyId = companyId,
+            TransactionId = txnId,
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            SizeBytes = file.Length,
+            StorageKey = storageKey,
+            CreatedAtUtc = now,
+            UpdatedAtUtc = now,
+        };
+
+        db.Attachments.Add(attachment);
+        await db.SaveWithVersionsAsync(companyId, [attachment], member.UserId, now);
+        return TypedResults.Created($"/api/companies/{companyId}/attachments/{attachment.Id}", ToAttachmentDto(attachment));
+    }
+
+    private static async Task<IResult> GetAttachment(
+        Guid companyId, Guid id, CompanyAccess access, PostgresDbContext db)
+    {
+        var member = await access.RequireMemberAsync();
+        var attachment = await db.Attachments.SingleOrDefaultAsync(a => a.Id == id && a.CompanyId == companyId && !a.IsDeleted);
+        if (attachment is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var storagePath = Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString(), attachment.StorageKey ?? attachment.Id.ToString());
+        if (!File.Exists(storagePath))
+        {
+            return TypedResults.NotFound();
+        }
+
+        var bytes = await File.ReadAllBytesAsync(storagePath);
+        return TypedResults.File(bytes, attachment.ContentType, attachment.FileName);
+    }
+
+    private static async Task<Results<Ok<List<AttachmentDto>>, NotFound>> ListAttachments(
+        Guid companyId, PostgresDbContext db, Guid? transactionId)
+    {
+        var query = db.Attachments.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && !a.IsDeleted);
+        if (transactionId is { } tid)
+        {
+            query = query.Where(a => a.TransactionId == tid);
+        }
+        var attachments = await query.OrderByDescending(a => a.CreatedAtUtc).ToListAsync();
+        return TypedResults.Ok(attachments.Select(ToAttachmentDto).ToList());
+    }
+
+    private static AttachmentDto ToAttachmentDto(Attachment a) =>
+        new(a.Id, a.TransactionId, a.AccountId, a.FileName, a.ContentType, a.SizeBytes, a.StorageKey, a.CreatedAtUtc);
 
     private static async Task<Transaction?> ValidateAndCreateTransactionAsync(Guid companyId, CompanyMember member, CreateTransactionRequest request, PostgresDbContext db, TimeProvider clock, DateOnly today)
     {
