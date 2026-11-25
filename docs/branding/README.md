@@ -2,7 +2,7 @@
 
 <img src="../../src/LekhaBook.UI/wwwroot/branding/lekha_books_logo.png" alt="Lekha Books" width="480" />
 
-Original ledger-and-check artwork generated with the built-in imagegen tool on 2026-11-24. The design uses the existing indigo (`#3949AB`) and teal (`#00897B`) palette. [The complete generation prompts](PROMPTS.md) are retained for future revisions.
+Original ledger-and-check artwork created on 2026-11-24. The design uses the existing indigo (`#3949AB`) and teal (`#00897B`) palette. [The complete design prompts](PROMPTS.md) are retained for future revisions.
 
 ## Delivered files
 

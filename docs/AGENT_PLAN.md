@@ -1,6 +1,6 @@
 # LekhaBook: Agent Execution Plan
 
-> **Who this is for:** a coding agent such as Claude Code, working in this repository.
+> **Who this is for:** a coding agent working in this repository.
 > **What it delivers:** LekhaBook, a mobile-first bookkeeping app for **Party ledgers, Bank accounts and Petty Cash**, with photo or file proof attached to entries.
 > **How it is built:** Blazor UI shared across Android, iOS, Windows and the browser. It works offline on a local SQLite database and auto-syncs with an online PostgreSQL server through an API.
 > **Reference product:** https://my.karobarapp.com/ (Karobar). We copy its **workflow and usability**. We never copy its branding, logo, text, images or code.
@@ -26,7 +26,7 @@ Work through the phases **in order**. Each phase lists what you **do**, what you
 
 ### 1.1 Browser setup (Edge through Playwright MCP)
 
-Neither the Claude desktop browser pane nor Claude in Chrome is Edge. Use **Playwright MCP on the Edge channel** with a persistent profile so the user's login survives restarts.
+Neither the built-in browser pane nor the Chrome extension is Edge. Use **Playwright MCP on the Edge channel** with a persistent profile so the user's login survives restarts.
 
 Add this to the project's `.mcp.json`:
 

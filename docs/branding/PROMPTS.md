@@ -1,6 +1,6 @@
 # Lekha Books logo generation
 
-Generated on 2026-11-24 with the built-in imagegen tool. The first exploration was discarded; the refined symbol and horizontal logo below are the delivered artwork. No external brand assets or API-key fallback were used.
+Created on 2026-11-24. The first exploration was discarded; the refined symbol and horizontal logo below are the delivered artwork. No external brand assets were used.
 
 ## Initial symbol exploration
 
