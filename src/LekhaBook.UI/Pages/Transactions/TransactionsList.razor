@@ -1,0 +1,180 @@
+@page "/transactions"
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+<PageTitle>Transactions · Lekha Books</PageTitle>
+
+<div class="page-header">
+    <MudText Typo="Typo.h5" tabindex="-1">Transactions @(_transactions is null ? "" : $"({_transactions.Count})")</MudText>
+    <MudSpacer />
+    @if (CanAdd)
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="@NewTransactionHref">Add Transaction</MudButton>
+    }
+</div>
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Transactions" OnRetry="LoadAsync" />
+}
+else if (_transactions is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="6">
+            <MudPaper Class="pa-3 summary-tile" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">Total</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Success">@Money.Format(TotalBalance)</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="6">
+            <MudPaper Class="pa-3 summary-tile" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">Count</MudText>
+                <MudText Typo="Typo.h6" Color="Color.Primary">@_transactions.Count</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <div class="list-toolbar">
+        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="Search type, remarks, date"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
+                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="Search transactions" />
+        <MudSelect T="string" @bind-Value="_type" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">All types</MudSelectItem>
+            <MudSelectItem Value="@("PaymentIn")">Payment In</MudSelectItem>
+            <MudSelectItem Value="@("PaymentOut")">Payment Out</MudSelectItem>
+            <MudSelectItem Value="@("Expense")">Expense</MudSelectItem>
+            <MudSelectItem Value="@("OtherIncome")">Other Income</MudSelectItem>
+            <MudSelectItem Value="@("TransferMoney")">Transfer</MudSelectItem>
+        </MudSelect>
+        <MudSelect T="string" @bind-Value="_sort" Label="Sort" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("latest")">Latest first</MudSelectItem>
+            <MudSelectItem Value="@("oldest")">Oldest first</MudSelectItem>
+            <MudSelectItem Value="@("amount-desc")">Amount high→low</MudSelectItem>
+            <MudSelectItem Value="@("amount")">Amount low→high</MudSelectItem>
+        </MudSelect>
+    </div>
+
+    @if (_transactions.Count == 0)
+    {
+        <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
+            <MudIcon Icon="@Icons.Material.Filled.Receipt" Size="Size.Large" Class="mud-text-secondary" />
+            <MudText Typo="Typo.subtitle1" Class="mt-2">No transactions yet</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">Add your first transaction to start tracking.</MudText>
+            @if (CanAdd)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewTransactionHref">Add transaction</MudButton>
+            }
+        </MudPaper>
+    }
+    else if (!Shown.Any())
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No transactions match.</MudText>
+    }
+    else
+    {
+        <MudPaper Elevation="1" Class="row-list">
+            @foreach (var txn in Shown)
+            {
+                <a class="row-item" href="@($"transactions/{txn.Id}")">
+                    <MudAvatar Color="@TransactionColor(txn.Type)" Size="Size.Medium" Variant="Variant.Outlined">
+                        @MasterLabels.TransactionType(txn.Type)
+                    </MudAvatar>
+                    <div class="row-main">
+                        <div class="row-title">@MasterLabels.TransactionType(txn.Type)</div>
+                        <div class="row-sub">@(txn.Remarks ?? "---") · @txn.Date.ToString("yyyy-MM-dd")</div>
+                    </div>
+                    <div class="row-amount">
+                        <MudText Typo="Typo.body1" Color="@TransactionAmountColor(txn)" Class="text-nowrap">@Money.Format(txn.Amount)</MudText>
+                    </div>
+                    @if (txn.Status == "Void")
+                    {
+                        <MudText Typo="Typo.caption" Color="Color.Error" Class="ms-2">Void</MudText>
+                    }
+                </a>
+            }
+        </MudPaper>
+    }
+}
+
+@code {
+    private List<TransactionDto>? _transactions;
+    private ApiResult<List<TransactionDto>>? _error;
+    private string? _search;
+    private string _type = "all";
+    private string _sort = "latest";
+
+    private bool CanAdd => Session.Can(Permission.TransactionsEdit);
+
+    private string NewTransactionHref => "transactions/new";
+
+    private IEnumerable<TransactionDto> Shown
+    {
+        get
+        {
+            var query = _transactions!.AsEnumerable();
+            if (!string.IsNullOrWhiteSpace(_search))
+            {
+                var s = _search.Trim();
+                query = query.Where(t => t.Type.Contains(s, StringComparison.CurrentCultureIgnoreCase)
+                                         || (t.Remarks?.Contains(s, StringComparison.CurrentCultureIgnoreCase) ?? false));
+            }
+
+            if (_type != "all")
+            {
+                query = query.Where(t => t.Type == _type);
+            }
+
+            return _sort switch
+            {
+                "oldest" => query.OrderBy(t => t.Date).ThenBy(t => t.Id),
+                "amount-desc" => query.OrderByDescending(t => t.Amount),
+                "amount" => query.OrderBy(t => t.Amount),
+                _ => query.OrderByDescending(t => t.Date).ThenByDescending(t => t.Id),
+            };
+        }
+    }
+
+    private decimal TotalBalance =>
+        _transactions?.Sum(t => t.Type is "PaymentIn" or "OtherIncome" ? t.Amount : -t.Amount) ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _error = null;
+        _transactions = null;
+        var result = await Data.GetTransactionsAsync(company.CompanyId);
+        if (result.Ok)
+        {
+            _transactions = result.Value!;
+        }
+        else
+        {
+            _error = result;
+        }
+    }
+
+    private static Color TransactionColor(string type) => type switch
+    {
+        "PaymentIn" or "OtherIncome" => Color.Success,
+        "PaymentOut" or "Expense" => Color.Error,
+        _ => Color.Primary,
+    };
+
+    private static Color TransactionAmountColor(TransactionDto txn) => TransactionColor(txn.Type);
+}

@@ -1,0 +1,245 @@
+@page "/transactions/new"
+@page "/transactions/{TransactionId:guid}/edit"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@using LekhaBook.Contracts
+@using LekhaBook.UI.Formatting
+@inject IDataService Data
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<PageTitle>@(IsNew ? "Add Transaction" : "Edit Transaction") · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Transaction" : "Edit Transaction")</MudText>
+
+@if (_loadError is not null)
+{
+    <LoadError Message="@_loadError" Offline="_offline" What="Transactions" OnRetry="LoadAsync" />
+}
+else if (!_loaded)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <EnterNavForm @ref="_form" Class="entry-form">
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Transaction type</MudText>
+            <MudRadioGroup T="string" @bind-Value="_type" Name="transaction-type">
+                <MudRadio Value="@("PaymentIn")" Color="Color.Success">Payment In</MudRadio>
+                <MudRadio Value="@("PaymentOut")" Color="Color.Error">Payment Out</MudRadio>
+                <MudRadio Value="@("Expense")" Color="Color.Secondary">Expense</MudRadio>
+                <MudRadio Value="@("OtherIncome")" Color="Color.Success">Other Income</MudRadio>
+                <MudRadio Value="@("TransferMoney")" Color="Color.Primary">Transfer</MudRadio>
+            </MudRadioGroup>
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Accounts</MudText>
+            <MudSelect T="Guid" @bind-Value="_fromAccountId" Label="From account" Variant="Variant.Outlined"
+                       Class="mt-3" Error="@Has("fromAccountId")" ErrorText="@ErrorOf("fromAccountId")">
+                @foreach (var account in _fromAccounts)
+                {
+                    <MudSelectItem Value="@account.Id">@account.Name (@MasterLabels.AccountType(account.Type))</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="Guid" @bind-Value="_toAccountId" Label="To account" Variant="Variant.Outlined"
+                       Class="mt-3" Error="@Has("toAccountId")" ErrorText="@ErrorOf("toAccountId")">
+                @foreach (var account in _toAccounts)
+                {
+                    <MudSelectItem Value="@account.Id">@account.Name (@MasterLabels.AccountType(account.Type))</MudSelectItem>
+                }
+            </MudSelect>
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Amount (Rs.)</MudText>
+            <MudNumericField T="decimal" @bind-Value="_amount" Label="Amount" Placeholder="0" HideSpinButtons="true"
+                             InputMode="InputModes.Decimal" Min="0" Variant="Variant.Outlined"
+                             Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Date</MudText>
+            <MudDatePicker @bind-Date="_date" Label="Transaction date" Editable="true" DateFormat="yyyy-MM-dd"
+                           Variant="Variant.Outlined" Class="mt-2" Disabled="DateLocked"
+                           HelperText="@(DateLocked ? "You can only date a transaction today." : null)" />
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-3" Elevation="1">
+            <MudText Typo="Typo.subtitle2" Class="mb-2">Details</MudText>
+            <MudTextField @bind-Value="_remarks" Label="Remarks" Variant="Variant.Outlined" MaxLength="MasterValidation.RemarksMax"
+                          Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
+            <MudTextField @bind-Value="_chequeNo" Label="Cheque no." InputMode="InputMode.numeric" Variant="Variant.Outlined" Class="mt-3"
+                          MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
+            <MudDatePicker @bind-Date="_chequeDate" Label="Cheque date" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
+                           Variant="Variant.Outlined" Class="mt-3" Disabled="string.IsNullOrWhiteSpace(_chequeNo)"
+                           HelperText="@(string.IsNullOrWhiteSpace(_chequeNo) ? "Enter a cheque no. to enable date picker." : null)" />
+        </MudPaper>
+
+        @if (_saveError is not null)
+        {
+            <MudAlert Severity="Severity.Error" Class="mb-3" role="alert">@_saveError</MudAlert>
+        }
+
+        <div class="form-actions">
+            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            @if (IsNew)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save & New</MudButton>
+            }
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
+                @(_saving ? "Saving…" : "Save")
+            </MudButton>
+        </div>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
+            Enter moves to the next field · Ctrl+S saves · Esc cancels
+        </MudText>
+    </EnterNavForm>
+}
+
+@code {
+    private EnterNavForm? _form;
+    private bool _loaded;
+    private string? _loadError;
+    private bool _offline;
+    private string? _saveError;
+    private bool _saving;
+    private Dictionary<string, string[]> _errors = [];
+    private List<MoneyAccountDto> _fromAccounts = [];
+    private List<MoneyAccountDto> _toAccounts = [];
+
+    private string _type = "PaymentIn";
+    private Guid _fromAccountId = Guid.Empty;
+    private Guid _toAccountId = Guid.Empty;
+    private decimal _amount;
+    private DateTime? _date;
+    private string? _remarks;
+    private string? _chequeNo;
+    private DateTime? _chequeDate;
+
+    [Parameter] public Guid? TransactionId { get; set; }
+
+    private bool IsNew => TransactionId is null;
+
+    private string CancelHref => IsNew ? "transactions" : $"transactions/{TransactionId}";
+
+    private bool DateLocked => Session.Can(Permission.RestrictLockDate);
+
+    private bool Has(string key) => _errors.ContainsKey(key);
+
+    private string? ErrorOf(string key) => _errors.TryGetValue(key, out var e) ? string.Join(" ", e) : null;
+
+    protected override Task OnParametersSetAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        _loadError = null;
+        _loaded = false;
+
+        // Load accounts
+        var fromAccs = await Data.GetMoneyAccountsAsync(company.CompanyId);
+        if (fromAccs.Ok)
+        {
+            _fromAccounts = fromAccs.Value!.Where(a => !a.IsSystem).ToList();
+        }
+
+        var toAccs = await Data.GetMoneyAccountsAsync(company.CompanyId);
+        if (toAccs.Ok)
+        {
+            _toAccounts = toAccs.Value!.Where(a => !a.IsSystem).ToList();
+        }
+
+        if (TransactionId is { } id)
+        {
+            var txn = await Data.GetTransactionAsync(company.CompanyId, id);
+            if (!txn.Ok)
+            {
+                (_loadError, _offline) = (txn.Error, txn.IsNetworkError);
+                return;
+            }
+
+            var existing = txn.Value!;
+            _type = existing.Type;
+            _fromAccountId = existing.FromAccountId;
+            _toAccountId = existing.ToAccountId;
+            _amount = existing.Amount;
+            _date = existing.Date.ToDateTime(TimeOnly.MinValue);
+            _remarks = existing.Remarks;
+            _chequeNo = existing.ChequeNo;
+            _chequeDate = existing.ChequeDate?.ToDateTime(TimeOnly.MinValue);
+        }
+
+        _loaded = true;
+    }
+
+    private async Task SaveAsync(bool andNew)
+    {
+        if (Session.CurrentCompany is not { } company || _saving)
+        {
+            return;
+        }
+
+        _saveError = null;
+        var request = new CreateTransactionRequest(
+            Guid.CreateVersion7(),
+            _type,
+            DateOnly.FromDateTime(_date ?? DateTime.Today),
+            _amount,
+            _fromAccountId,
+            _toAccountId,
+            _remarks,
+            _chequeNo,
+            _chequeDate is { } cd ? DateOnly.FromDateTime(cd) : null,
+            Session.Me?.UserId);
+
+        _errors = MasterValidation.Validate(request);
+        if (_errors.Count > 0)
+        {
+            _form?.FocusFirstErrorAfterRender();
+            return;
+        }
+
+        _saving = true;
+        try
+        {
+            var result = IsNew
+                ? await Data.AddTransactionAsync(company.CompanyId, request)
+                : await Data.UpdateTransactionAsync(company.CompanyId, TransactionId!.Value, new UpdateTransactionRequest(
+                    request.Id, request.Type, request.Date, request.Amount,
+                    request.FromAccountId, request.ToAccountId, request.Remarks,
+                    request.ChequeNo, request.ChequeDate, null));
+            if (!result.Ok)
+            {
+                _saveError = result.Error;
+                return;
+            }
+
+            Snackbar.Add($"Saved transaction.", Severity.Success);
+            if (andNew)
+            {
+                (_type, _fromAccountId, _toAccountId, _amount, _date, _remarks, _chequeNo, _chequeDate) = ("PaymentIn", Guid.Empty, Guid.Empty, 0, null, null, null, null);
+                StateHasChanged();
+                if (_form is not null)
+                {
+                    await _form.FocusFirstAsync();
+                }
+            }
+            else
+            {
+                Navigation.NavigateTo($"transactions/{result.Value!.Id}");
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}

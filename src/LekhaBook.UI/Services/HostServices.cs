@@ -113,7 +113,7 @@ public sealed record ApiResult<T>(T? Value, string? Error, int StatusCode)
 }
 
 /// <summary>
-/// Books data for the current company: parties and money accounts now, transactions and reports in later phases.
+/// Books data for the current company: parties, money accounts and transactions.
 /// Until device sync lands (phase 8) both hosts use the server (D14); the MAUI app then switches to its local
 /// database plus outbox. New rows get their id on the client, so saving them again never duplicates them.
 /// </summary>
@@ -147,6 +147,20 @@ public interface IDataService
     Task<ApiResult<bool>> DeleteMoneyAccountAsync(Guid companyId, Guid accountId);
 
     Task<ApiResult<LedgerDto>> GetAccountLedgerAsync(Guid companyId, Guid accountId);
+
+    // Transactions (Phase 6)
+    Task<ApiResult<List<TransactionDto>>> GetTransactionsAsync(Guid companyId, Guid? accountId = null, DateTime? fromDate = null, DateTime? toDate = null);
+
+    Task<ApiResult<TransactionDto>> GetTransactionAsync(Guid companyId, Guid transactionId);
+
+    /// <summary>Adds a transaction; <see cref="CreateTransactionRequest.Id"/> should be set (a new UUIDv7).</summary>
+    Task<ApiResult<TransactionDto>> AddTransactionAsync(Guid companyId, CreateTransactionRequest request);
+
+    Task<ApiResult<TransactionDto>> UpdateTransactionAsync(Guid companyId, Guid transactionId, UpdateTransactionRequest request);
+
+    Task<ApiResult<bool>> DeleteTransactionAsync(Guid companyId, Guid transactionId);
+
+    Task<ApiResult<LedgerDto>> GetTransactionLedgerAsync(Guid companyId, Guid transactionId);
 }
 
 /// <summary>Company, staff and invitation calls (AGENT_PLAN § 9).</summary>

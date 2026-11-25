@@ -1,4 +1,4 @@
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 @implements IDisposable
 @inject ISessionService Session
 @inject NavigationManager Navigation
@@ -21,9 +21,12 @@ else
         <MudAppBar Elevation="1" Dense="true">
             <MudHidden Breakpoint="Breakpoint.SmAndDown">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                               aria-label="Toggle menu" OnClick="ToggleDrawer" />
+                       aria-label="Toggle menu" OnClick="ToggleDrawer" />
             </MudHidden>
             <BrandLogo />
+            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary"
+                     aria-label="Add transaction" Class="quick-add-fab"
+                     OnClick="NavigateToAddTransaction" />
             <CompanySwitcher />
             <MudSpacer />
             <SyncStatusChip />
@@ -92,6 +95,8 @@ else
     }
 
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private void NavigateToAddTransaction() => Navigation.NavigateTo("/transactions/new");
 
     private void RequireSignIn()
     {

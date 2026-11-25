@@ -45,6 +45,11 @@ public static class Permission
     /// <summary>Party Adjust Balance (add/reduce).</summary>
     public const string PartyAdjustmentsManage = "party_adjustments.manage";
 
+    /// <summary>Transactions (all types: PaymentIn, PaymentOut, Expense, Income, AddMoney, ReduceMoney, TransferMoney).</summary>
+    public const string TransactionsView = "transactions.view";
+    public const string TransactionsEdit = "transactions.edit";
+    public const string TransactionsDelete = "transactions.delete";
+
     /// <summary>Edit or delete entries created by someone else.</summary>
     public const string EntriesEditOthers = "entries.edit_others";
 

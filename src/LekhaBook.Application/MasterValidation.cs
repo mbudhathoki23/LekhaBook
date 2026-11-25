@@ -16,6 +16,9 @@ public static class MasterValidation
     public const int AddressMax = 500;
     public const int PanMax = 15;
     public const int AccountNumberMax = 50;
+    public const int RemarksMax = 500;
+    public const int ChequeNoMax = 50;
+    public const int VoucherNoMax = 50;
 
     /// <summary>Account types a user can add on the Cash &amp; Bank screen (Cheque is built in).</summary>
     public static readonly AccountType[] AddableMoneyTypes = [AccountType.Bank, AccountType.Wallet, AccountType.Cash];
@@ -77,6 +80,32 @@ public static class MasterValidation
     {
         var errors = new Dictionary<string, string[]>();
         Required(errors, "name", r.Name, NameMax, "Category name");
+        return errors;
+    }
+
+    public static Dictionary<string, string[]> Validate(CreateTransactionRequest r)
+    {
+        var errors = new Dictionary<string, string[]>();
+        Required(errors, "voucherNo", r.Id?.ToString() ?? string.Empty, VoucherNoMax, "Voucher no");
+        Required(errors, "type", r.Type, 50, "Type");
+        if (!PostingRules.IsValidAmount(r.Amount))
+        {
+            errors["amount"] = ["Amount must be a positive number with at most 2 decimals."];
+        }
+
+
+        if (r.FromAccountId == Guid.Empty)
+        {
+            errors["fromAccountId"] = ["From account is required."];
+        }
+
+        if (r.ToAccountId == Guid.Empty)
+        {
+            errors["toAccountId"] = ["To account is required."];
+        }
+
+        Optional(errors, "remarks", r.Remarks, RemarksMax, "Remarks");
+
         return errors;
     }
 

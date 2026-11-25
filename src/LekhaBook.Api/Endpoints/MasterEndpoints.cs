@@ -38,6 +38,14 @@ public static class MasterEndpoints
         company.MapPut("/accounts/{id:guid}", UpdateAccount).RequirePermission(Permission.AccountsEdit);
         company.MapDelete("/accounts/{id:guid}", DeleteAccount).RequirePermission(Permission.AccountsDelete);
         company.MapGet("/accounts/{id:guid}/ledger", AccountLedger).RequirePermission(Permission.AccountsView);
+
+        // Transactions (AGENT_PLAN § 6)
+        company.MapGet("/transactions", ListTransactions).RequirePermission(Permission.TransactionsView);
+        company.MapGet("/transactions/{id:guid}", GetTransaction).RequirePermission(Permission.TransactionsView);
+        company.MapGet("/transactions/{id:guid}/ledger", TransactionLedger).RequirePermission(Permission.TransactionsView);
+        company.MapPost("/transactions", CreateTransaction).RequirePermission(Permission.TransactionsEdit); // Create uses edit permission as it writes
+        company.MapPut("/transactions/{id:guid}", UpdateTransaction).RequirePermission(Permission.TransactionsEdit);
+        company.MapDelete("/transactions/{id:guid}", DeleteTransaction).RequirePermission(Permission.TransactionsDelete);
     }
 
     // ---------------- Parties ----------------
@@ -383,6 +391,199 @@ public static class MasterEndpoints
             ? TypedResults.NotFound()
             : TypedResults.Ok(ToDto(ledger));
     }
+
+    // ---------------- Transactions ----------------
+
+    private static async Task<Results<Created<TransactionDto>, Ok<TransactionDto>, ValidationProblem, ProblemHttpResult>> CreateTransaction(
+        Guid companyId, CreateTransactionRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+        var today = await CompanyTodayAsync(db, companyId, clock);
+        var transaction = await ValidateAndCreateTransactionAsync(companyId, member, request, db, clock, today);
+        if (transaction is not { } txn)
+        {
+            return Conflict("Invalid transaction.");
+        }
+
+        return TypedResults.Created($"/api/companies/{companyId}/transactions/{txn.Id}", ToDto(txn));
+    }
+
+    private static async Task<Results<Ok<TransactionDto>, NotFound, ProblemHttpResult>> UpdateTransaction(
+        Guid companyId, Guid transactionId, UpdateTransactionRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+        var today = await CompanyTodayAsync(db, companyId, clock);
+        var transaction = await db.Transactions.SingleOrDefaultAsync(t => t.Id == transactionId && t.CompanyId == companyId && t.Status == TransactionStatus.Posted);
+        if (transaction is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (!member.Has(MasterRules.TransactionPermission(transaction.Type, EntryAction.Edit)) || MasterRules.CheckTransactionEdit(member, transaction.Type, request.Date ?? transaction.Date, request.Amount ?? transaction.Amount, true, today) is not null)
+        {
+            return Forbidden("You don't have permission to edit this transaction.");
+        }
+
+        ApplyTransactionEdit(transaction, request, db, clock);
+        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
+        return TypedResults.Ok(ToDto(transaction));
+    }
+
+    private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> DeleteTransaction(
+        Guid companyId, Guid transactionId, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+        var today = await CompanyTodayAsync(db, companyId, clock);
+        var transaction = await db.Transactions.SingleOrDefaultAsync(t => t.Id == transactionId && t.CompanyId == companyId && t.Status == TransactionStatus.Posted);
+        if (transaction is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (!member.Has(MasterRules.TransactionPermission(transaction.Type, EntryAction.Delete)) || MasterRules.CheckTransactionDelete(member, transaction.Type, transaction.Date, today) is not null)
+        {
+            return Forbidden("You don't have permission to delete this transaction.");
+        }
+
+        transaction.Status = TransactionStatus.Void;
+        transaction.UpdatedAtUtc = clock.GetUtcNow().UtcDateTime;
+        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<Ok<TransactionDto>, NotFound>> GetTransaction(
+        Guid companyId, Guid transactionId, PostgresDbContext db)
+    {
+        var transaction = await db.Transactions.SingleOrDefaultAsync(t => t.Id == transactionId && t.CompanyId == companyId);
+        return transaction is null
+            ? TypedResults.NotFound()
+            : TypedResults.Ok(ToDto(transaction));
+    }
+
+    private static async Task<Results<Ok<List<TransactionDto>>, ProblemHttpResult>> ListTransactions(
+        Guid companyId, CompanyAccess access, PostgresDbContext db, Guid? accountId, DateTime? fromDate, DateTime? toDate)
+    {
+        var member = await access.RequireMemberAsync();
+        var query = db.Transactions.Where(t => t.CompanyId == companyId && t.Status == TransactionStatus.Posted);
+        if (accountId is { } aid)
+        {
+            query = query.Where(t => t.FromAccountId == aid || t.ToAccountId == aid);
+        }
+        if (fromDate is { } fd)
+        {
+            query = query.Where(t => t.Date >= DateOnly.FromDateTime(fd));
+        }
+        if (toDate is { } td)
+        {
+            query = query.Where(t => t.Date <= DateOnly.FromDateTime(td));
+        }
+        var transactions = await query.OrderByDescending(t => t.Date).ToListAsync();
+        return TypedResults.Ok(transactions.Select(t => ToDto(t)).ToList());
+    }
+
+    private static async Task<Results<Ok<LedgerDto>, NotFound>> TransactionLedger(
+        Guid companyId, Guid transactionId, PostgresDbContext db)
+    {
+        var ledger = await db.GetLedgerAsync(companyId, transactionId);
+        return ledger is null
+            ? TypedResults.NotFound()
+            : TypedResults.Ok(ToDto(ledger));
+    }
+
+    private static async Task<Transaction?> ValidateAndCreateTransactionAsync(Guid companyId, CompanyMember member, CreateTransactionRequest request, PostgresDbContext db, TimeProvider clock, DateOnly today)
+    {
+        // Validate transaction type and accounts
+        if (!Enum.TryParse<TransactionType>(request.Type, true, out var type))
+        {
+            return null;
+        }
+
+        // Check permissions
+        if (!member.Has(MasterRules.TransactionPermission(type, EntryAction.Create)))
+        {
+            return null;
+        }
+
+        // Check business rules
+        if (MasterRules.CheckTransactionCreate(member, type, request.Amount, request.Date, today) is { } denied)
+        {
+            return null;
+        }
+
+        // Create transaction
+        var transaction = new Transaction
+        {
+            Id = request.Id ?? Guid.CreateVersion7(),
+            CompanyId = companyId,
+            Type = type,
+            VoucherNo = request.Id?.ToString() ?? Guid.CreateVersion7().ToString(),
+            Date = request.Date,
+            Amount = request.Amount,
+            FromAccountId = request.FromAccountId,
+            ToAccountId = request.ToAccountId,
+            Remarks = request.Remarks,
+            ChequeNo = request.ChequeNo,
+            ChequeDate = request.ChequeDate,
+            Status = TransactionStatus.Posted,
+            CreatedAtUtc = clock.GetUtcNow().UtcDateTime,
+            CreatedBy = member.UserId,
+            Version = 0
+        };
+
+        db.Transactions.Add(transaction);
+        Audit(db, member, transaction, "Create", before: null, clock);
+        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
+        return transaction;
+    }
+
+    private static void ApplyTransactionEdit(Transaction transaction, UpdateTransactionRequest request, PostgresDbContext db, TimeProvider clock)
+    {
+        var before = Snapshot(transaction);
+        transaction.Date = request.Date ?? transaction.Date;
+        transaction.Amount = request.Amount ?? transaction.Amount;
+        transaction.FromAccountId = request.FromAccountId ?? transaction.FromAccountId;
+        transaction.ToAccountId = request.ToAccountId ?? transaction.ToAccountId;
+        transaction.Remarks = request.Remarks ?? transaction.Remarks;
+        transaction.ChequeNo = request.ChequeNo ?? transaction.ChequeNo;
+        transaction.ChequeDate = request.ChequeDate ?? transaction.ChequeDate;
+        transaction.UpdatedAtUtc = clock.GetUtcNow().UtcDateTime;
+        Audit(db, null, transaction, "Update", before, clock);
+    }
+
+    private static void Audit(PostgresDbContext db, CompanyMember? member, Transaction transaction, string action, string? before, TimeProvider clock)
+    {
+        db.AuditLogs.Add(new AuditLog
+        {
+            CompanyId = transaction.CompanyId,
+            EntityType = nameof(Transaction),
+            EntityId = transaction.Id,
+            Action = action,
+            BeforeJson = before,
+            AfterJson = action == "Delete" ? null : Snapshot(transaction),
+            UserId = member?.UserId,
+            AtUtc = clock.GetUtcNow().UtcDateTime,
+        });
+    }
+
+    private static string Snapshot(Transaction t) => JsonSerializer.Serialize(new
+    {
+        t.Id, t.Type, t.Date, t.Amount, t.FromAccountId, t.ToAccountId, t.Remarks, t.ChequeNo, t.ChequeDate, t.Status
+    });
+
+    private static TransactionDto ToDto(Transaction t) => new(
+        t.Id,
+        t.CompanyId,
+        t.Type.ToString(),
+        t.Date,
+        t.Amount,
+        t.FromAccountId,
+        t.ToAccountId,
+        t.Remarks,
+        t.ChequeNo,
+        t.ChequeDate,
+        t.Status.ToString(),
+        t.CreatedBy ?? Guid.Empty,
+        t.CreatedAtUtc);
 
     // ---------------- Helpers ----------------
 
