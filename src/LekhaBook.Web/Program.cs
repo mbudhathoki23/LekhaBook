@@ -54,10 +54,13 @@ app.UseHttpsRedirection();
 
 // English unless the culture cookie (set by /culture/set) asks for Nepali.
 var supportedCultures = Languages.Supported.Select(l => l.Code).ToArray();
-app.UseRequestLocalization(new RequestLocalizationOptions()
+var localization = new RequestLocalizationOptions()
     .SetDefaultCulture(Languages.English)
     .AddSupportedCultures(supportedCultures)
-    .AddSupportedUICultures(supportedCultures));
+    .AddSupportedUICultures(supportedCultures);
+// Only the cookie chooses. The default providers would also follow ?culture= and the browser language.
+localization.RequestCultureProviders = [new CookieRequestCultureProvider()];
+app.UseRequestLocalization(localization);
 
 app.UseBrowserBinding();
 app.UseAuthentication();

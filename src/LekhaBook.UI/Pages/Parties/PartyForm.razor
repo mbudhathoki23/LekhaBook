@@ -55,7 +55,7 @@ else
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">More details</MudText>
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@Loc["Parties.Form.MoreDetails"]</MudText>
             <MudTextField @bind-Value="_address" Label="@Loc["Parties.Form.AddressLabel"]" Variant="Variant.Outlined" MaxLength="MasterValidation.AddressMax"
                           Error="@Has("address")" ErrorText="@ErrorOf("address")" />
             <MudTextField @bind-Value="_email" Label="@Loc["Common.Email"]" InputType="InputType.Email" InputMode="InputMode.email"

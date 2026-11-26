@@ -529,6 +529,9 @@
   <data name="Parties.Form.KeyboardHint" xml:space="preserve">
     <value>Enter moves to the next field · Ctrl+S saves · Esc cancels</value>
   </data>
+  <data name="Parties.Form.MoreDetails" xml:space="preserve">
+    <value>More details</value>
+  </data>
   <data name="Parties.Form.NameLabel" xml:space="preserve">
     <value>Full name *</value>
   </data>

@@ -16,7 +16,8 @@
       "tests\\LekhaBook.Application.Tests\\LekhaBook.Application.Tests.csproj",
       "tests\\LekhaBook.Data.Tests\\LekhaBook.Data.Tests.csproj",
       "tests\\LekhaBook.Domain.Tests\\LekhaBook.Domain.Tests.csproj",
-      "tests\\LekhaBook.Sync.Tests\\LekhaBook.Sync.Tests.csproj"
+      "tests\\LekhaBook.Sync.Tests\\LekhaBook.Sync.Tests.csproj",
+      "tests\\LekhaBook.UI.Tests\\LekhaBook.UI.Tests.csproj"
     ]
   }
 }

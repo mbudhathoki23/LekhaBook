@@ -601,6 +601,9 @@
   <data name="Parties.Form.KeyboardHint" xml:space="preserve">
     <value>Enter ले अर्को फिल्डमा जान्छ · Ctrl+S ले सेभ गर्छ · Esc ले रद्द गर्छ</value>
   </data>
+  <data name="Parties.Form.MoreDetails" xml:space="preserve">
+    <value>थप विवरण</value>
+  </data>
   <data name="Parties.Form.NameLabel" xml:space="preserve">
     <value>पूरा नाम *</value>
   </data>
