@@ -2,11 +2,6 @@
 @page "/transactions/{TransactionId:guid}/edit"
 @using LekhaBook.Application
 @using LekhaBook.Domain
-@using LekhaBook.Contracts
-@using LekhaBook.UI.Formatting
-@using LekhaBook.UI.Components
-@using LekhaBook.UI
-@using System.IO
 @inject IDataService Data
 @inject ISessionService Session
 @inject NavigationManager Navigation
@@ -14,9 +9,9 @@
 @inject IDialogService Dialogs
 @inject IAttachmentService Attachments
 
-<PageTitle>@(IsNew ? "Add Transaction" : "Edit Transaction") · Lekha Books</PageTitle>
+<PageTitle>@Title · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Transaction" : "Edit Transaction")</MudText>
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@Title</MudText>
 
 @if (_loadError is not null)
 {
@@ -26,103 +21,92 @@ else if (!_loaded)
 {
     <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
 }
+else if (IsNew && OfferedTypes.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">You don't have permission to add entries in this company.</MudAlert>
+}
+else if (_existing is not null && (_existing.Status == "Void" || !FormTypes.Contains(_type)))
+{
+    <MudAlert Severity="Severity.Info" Class="mb-3">
+        @(_existing.Status == "Void" ? "This entry was voided. It no longer counts toward any balance." : "This kind of entry can't be edited here yet.")
+    </MudAlert>
+    <MudText Class="mb-3">@MasterLabels.TransactionType(_existing.Type) · @_existing.Date.ToString("yyyy-MM-dd") · @Money.Format(_existing.Amount)</MudText>
+    <MudButton Variant="Variant.Text" Href="transactions">Back to transactions</MudButton>
+    @if (CanVoid && _existing.Status != "Void")
+    {
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">Void entry</MudButton>
+    }
+}
 else
 {
     <EnterNavForm @ref="_form" Class="entry-form">
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Transaction type</MudText>
-            <MudRadioGroup T="string" @bind-Value="_type" Name="transaction-type">
-                <MudRadio Value="@("PaymentIn")" Color="Color.Success">Payment In</MudRadio>
-                <MudRadio Value="@("PaymentOut")" Color="Color.Error">Payment Out</MudRadio>
-                <MudRadio Value="@("Expense")" Color="Color.Secondary">Expense</MudRadio>
-                <MudRadio Value="@("OtherIncome")" Color="Color.Success">Other Income</MudRadio>
-                <MudRadio Value="@("TransferMoney")" Color="Color.Primary">Transfer</MudRadio>
-            </MudRadioGroup>
-        </MudPaper>
+            @if (IsNew)
+            {
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Transaction type</MudText>
+                <MudRadioGroup T="TransactionType" Value="_type" ValueChanged="ChangeType" Name="transaction-type">
+                    @foreach (var type in OfferedTypes)
+                    {
+                        <MudRadio Value="@type" Color="Color.Primary">@Label(type)</MudRadio>
+                    }
+                </MudRadioGroup>
+            }
 
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Accounts</MudText>
-            <MudSelect T="Guid" @bind-Value="_fromAccountId" Label="From account" Variant="Variant.Outlined"
-                       Class="mt-3" Error="@Has("fromAccountId")" ErrorText="@ErrorOf("fromAccountId")">
-                @foreach (var account in _fromAccounts)
-                {
-                    <MudSelectItem Value="@account.Id">@account.Name (@MasterLabels.AccountType(account.Type))</MudSelectItem>
-                }
-            </MudSelect>
-            <MudSelect T="Guid" @bind-Value="_toAccountId" Label="To account" Variant="Variant.Outlined"
-                       Class="mt-3" Error="@Has("toAccountId")" ErrorText="@ErrorOf("toAccountId")">
-                @foreach (var account in _toAccounts)
-                {
-                    <MudSelectItem Value="@account.Id">@account.Name (@MasterLabels.AccountType(account.Type))</MudSelectItem>
-                }
-            </MudSelect>
-        </MudPaper>
-
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Amount (Rs.)</MudText>
-            <MudNumericField T="decimal" @bind-Value="_amount" Label="Amount" Placeholder="0" HideSpinButtons="true"
-                             InputMode="InputModes.Decimal" Min="0" Variant="Variant.Outlined"
-                             Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
-        </MudPaper>
-
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Date</MudText>
-            <MudDatePicker @bind-Date="_date" Label="Transaction date" Editable="true" DateFormat="yyyy-MM-dd"
+            <MudDatePicker @bind-Date="_date" Label="Date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
                            Variant="Variant.Outlined" Class="mt-2" Disabled="DateLocked"
-                           HelperText="@(DateLocked ? "You can only date a transaction today." : null)" />
-        </MudPaper>
+                           HelperText="@(DateLocked ? "You can only date entries today." : null)"
+                           Error="@Has("date")" ErrorText="@ErrorOf("date")" />
 
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Details</MudText>
-            <MudTextField @bind-Value="_remarks" Label="Remarks" Variant="Variant.Outlined" MaxLength="MasterValidation.RemarksMax"
-                          Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
-            <MudTextField @bind-Value="_chequeNo" Label="Cheque no." InputMode="InputMode.numeric" Variant="Variant.Outlined" Class="mt-3"
-                          MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
-            <MudDatePicker @bind-Date="_chequeDate" Label="Cheque date" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
-                           Variant="Variant.Outlined" Class="mt-3" Disabled="string.IsNullOrWhiteSpace(_chequeNo)"
-                           HelperText="@(string.IsNullOrWhiteSpace(_chequeNo) ? "Enter a cheque no. to enable date picker." : null)" />
+            <MudAutocomplete T="Choice" @bind-Value="_first" Label="@($"{FirstLabel} *")" SearchFunc="SearchFirst"
+                             ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
+                             ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
+                             HelperText="@BalanceText(_first)" Error="@Has(FirstKey)" ErrorText="@ErrorOf(FirstKey)">
+                <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
+            </MudAutocomplete>
+
+            <MudNumericField T="decimal?" @bind-Value="_amount" Label="Amount (Rs.) *" Placeholder="0" HideSpinButtons="true"
+                             InputMode="InputModes.Decimal" Variant="Variant.Outlined" Class="mt-3"
+                             Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
+
+            <MudAutocomplete T="Choice" @bind-Value="_second" Label="@($"{SecondLabel} *")" SearchFunc="SearchSecond"
+                             ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
+                             ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
+                             HelperText="@BalanceText(_second)" Error="@Has(SecondKey)" ErrorText="@ErrorOf(SecondKey)">
+                <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
+            </MudAutocomplete>
+
+            @if (ShowCheque)
+            {
+                <MudTextField @bind-Value="_chequeNo" Label="Cheque no." Variant="Variant.Outlined" Class="mt-3"
+                              MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
+                <MudDatePicker @bind-Date="_chequeDate" Label="Cheque date" Editable="true" DateFormat="yyyy-MM-dd"
+                               Placeholder="yyyy-mm-dd" Variant="Variant.Outlined" Class="mt-3" />
+            }
+
+            <MudTextField @bind-Value="_remarks" Label="Remarks" Variant="Variant.Outlined" Class="mt-3"
+                          MaxLength="MasterValidation.RemarksMax" Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
             <MudText Typo="Typo.subtitle2" Class="mb-2">Attachments</MudText>
-            <MudText Typo="Typo.caption" Class="mud-text-secondary mb-3">Max 5 files · 5 MB each · JPEG, PNG, WebP, PDF</MudText>
-
             @if (IsNew)
             {
-                <MudText Typo="Typo.body2" Class="mud-text-secondary">Save the transaction first, then add attachments.</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Save the entry first, then open it to add photos or PDFs.</MudText>
             }
             else
             {
-                <InputFile OnChange="OnFileSelected" accept="image/*,application/pdf" multiple class="mb-3" />
+                @foreach (var attachment in _attachments)
+                {
+                    <MudText Typo="Typo.body2">@attachment.FileName · @FileSize(attachment.SizeBytes)</MudText>
+                }
+                @if (CanEdit)
+                {
+                    <InputFile OnChange="OnFilesSelected" accept="image/*,application/pdf" multiple class="mt-2" aria-label="Add attachments" />
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Up to 5 files, 5 MB each: JPEG, PNG, WebP or PDF.</MudText>
+                }
                 @if (_uploading)
                 {
-                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mb-3" />
-                }
-
-                @if (_attachments.Count > 0)
-                {
-                    <MudText Typo="Typo.subtitle2" Class="mb-2">Current Attachments</MudText>
-                    <MudStack Spacing="1">
-                        @foreach (var att in _attachments)
-                        {
-                            <MudPaper Class="pa-2 d-flex align-center" Elevation="0" Outlined="true">
-                                @if (att.ContentType.StartsWith("image/"))
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.Image" Size="Size.Medium" Class="mr-2" />
-                                }
-                                else
-                                {
-                                    <MudIcon Icon="@Icons.Material.Filled.PictureAsPdf" Size="Size.Medium" Class="mr-2" />
-                                }
-                                <div class="flex-grow-1">
-                                    <MudText>@att.FileName</MudText>
-                                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@FormatFileSize(att.SizeBytes)</MudText>
-                                </div>
-                                <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="@(() => ViewAttachment(att))">View</MudButton>
-                                <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Error" OnClick="@(() => DeleteAttachment(att.Id))">Delete</MudButton>
-                            </MudPaper>
-                        }
-                    </MudStack>
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" />
                 }
             }
         </MudPaper>
@@ -133,14 +117,21 @@ else
         }
 
         <div class="form-actions">
-            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            <MudButton Variant="Variant.Text" Href="transactions" data-enter-cancel>Cancel</MudButton>
+            @if (!IsNew && CanVoid)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">Void entry</MudButton>
+            }
             @if (IsNew)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save & New</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save &amp; New</MudButton>
             }
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
-                @(_saving ? "Saving…" : "Save")
-            </MudButton>
+            @if (IsNew || CanEdit)
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
+                    @(_saving ? "Saving…" : "Save")
+                </MudButton>
+            }
         </div>
         <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
             Enter moves to the next field · Ctrl+S saves · Esc cancels
@@ -149,38 +140,119 @@ else
 }
 
 @code {
+    /// <summary>The entry types this form can record. Add/Reduce Money and party adjustments get their own screens.</summary>
+    private static readonly TransactionType[] FormTypes =
+    [
+        TransactionType.PaymentIn, TransactionType.PaymentOut, TransactionType.Expense,
+        TransactionType.OtherIncome, TransactionType.TransferMoney,
+    ];
+
     private EnterNavForm? _form;
     private bool _loaded;
     private string? _loadError;
     private bool _offline;
     private string? _saveError;
     private bool _saving;
+    private bool _uploading;
     private Dictionary<string, string[]> _errors = [];
-    private List<MoneyAccountDto> _fromAccounts = [];
-    private List<MoneyAccountDto> _toAccounts = [];
 
-    private string _type = "PaymentIn";
-    private Guid _fromAccountId = Guid.Empty;
-    private Guid _toAccountId = Guid.Empty;
-    private decimal _amount;
-    private DateTime? _date;
+    private List<PartyDto> _parties = [];
+    private List<MoneyAccountDto> _accounts = [];
+    private List<CategoryDto> _categories = [];
+    private List<AttachmentDto> _attachments = [];
+    private TransactionDto? _existing;
+
+    private TransactionType _type = TransactionType.PaymentIn;
+    private Choice? _first;  // party, category or "from" account
+    private Choice? _second; // payment method or "to" account
+    private decimal? _amount;
+    private DateTime? _date = DateTime.Today;
     private string? _remarks;
     private string? _chequeNo;
     private DateTime? _chequeDate;
-    private List<AttachmentDto> _attachments = [];
-    private bool _uploading;
 
-    [Parameter] public Guid? TransactionId { get; set; }
+    /// <summary>Kept until a save succeeds, so pressing Save again after a lost reply can't add the entry twice.</summary>
+    private Guid _newId = Guid.CreateVersion7();
+
+    [Parameter]
+    public Guid? TransactionId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "type")]
+    public string? TypeQuery { get; set; }
 
     private bool IsNew => TransactionId is null;
 
-    private string CancelHref => IsNew ? "transactions" : $"transactions/{TransactionId}";
+    private string Title => IsNew ? "Add Transaction" : $"Edit {MasterLabels.TransactionType(_type.ToString())}";
+
+    private List<TransactionType> OfferedTypes =>
+        FormTypes.Where(t => Session.Can(EntryRules.PermissionFor(t, EntryAction.Create))).ToList();
+
+    private bool CanEdit => Session.Can(EntryRules.PermissionFor(_type, EntryAction.Edit));
+
+    private bool CanVoid => Session.Can(EntryRules.PermissionFor(_type, EntryAction.Delete));
 
     private bool DateLocked => Session.Can(Permission.RestrictLockDate);
+
+    /// <summary>The money side is "From" when money leaves: Payment Out and Expense.</summary>
+    private bool MoneyIsFrom => _type is TransactionType.PaymentOut or TransactionType.Expense;
+
+    private string FirstLabel => _type switch
+    {
+        TransactionType.PaymentIn or TransactionType.PaymentOut => "Party",
+        TransactionType.Expense or TransactionType.OtherIncome => "Category",
+        _ => "From account",
+    };
+
+    private string SecondLabel => _type == TransactionType.TransferMoney ? "To account" : "Payment method";
+
+    private string FirstKey => MoneyIsFrom ? "toAccountId" : "fromAccountId";
+
+    private string SecondKey => MoneyIsFrom ? "fromAccountId" : "toAccountId";
+
+    private bool ShowCheque =>
+        !string.IsNullOrEmpty(_chequeNo)
+        || _accounts.Any(a => a.Type == "Cheque" && (a.Id == _second?.Id || (_type == TransactionType.TransferMoney && a.Id == _first?.Id)));
+
+    /// <summary>Choices for one side of the entry, from what the posting rules allow there.</summary>
+    private IEnumerable<Choice> ChoicesFor(PostingRules.AccountRole role) => role switch
+    {
+        PostingRules.AccountRole.Party => _parties.Select(p => new Choice(p.Id, p.Name, p.Balance, IsParty: true)),
+        PostingRules.AccountRole.Money => _accounts.Select(a => new Choice(a.Id, a.Name, a.Balance)),
+        PostingRules.AccountRole.Income => _categories.Where(c => c.Type == "Income").Select(c => new Choice(c.Id, c.Name)),
+        PostingRules.AccountRole.Expense => _categories.Where(c => c.Type == "Expense").Select(c => new Choice(c.Id, c.Name)),
+        _ => [],
+    };
+
+    private IEnumerable<Choice> FirstChoices =>
+        ChoicesFor(MoneyIsFrom ? PostingRules.RolesFor(_type).To : PostingRules.RolesFor(_type).From);
+
+    private IEnumerable<Choice> SecondChoices =>
+        ChoicesFor(MoneyIsFrom ? PostingRules.RolesFor(_type).From : PostingRules.RolesFor(_type).To);
 
     private bool Has(string key) => _errors.ContainsKey(key);
 
     private string? ErrorOf(string key) => _errors.TryGetValue(key, out var e) ? string.Join(" ", e) : null;
+
+    private static string Label(TransactionType type) => MasterLabels.TransactionType(type.ToString());
+
+    private static string? BalanceText(Choice? choice) => choice?.Balance is not { } balance ? null
+        : !choice.IsParty ? $"Balance: {Money.Format(balance)}"
+        : $"Balance: {Money.Format(Math.Abs(balance))} {MasterLabels.PartySide(balance).Label}";
+
+    private static string ItemText(Choice choice) =>
+        BalanceText(choice) is { } balance ? $"{choice.Name} · {balance.Replace("Balance: ", "")}" : choice.Name;
+
+    private static string FileSize(long bytes) =>
+        bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024} KB" : $"{bytes / (1024 * 1024)} MB";
+
+    private Task<IEnumerable<Choice>> SearchFirst(string? text, CancellationToken cancellationToken) => Search(FirstChoices, text);
+
+    private Task<IEnumerable<Choice>> SearchSecond(string? text, CancellationToken cancellationToken) => Search(SecondChoices, text);
+
+    private static Task<IEnumerable<Choice>> Search(IEnumerable<Choice> choices, string? text) =>
+        Task.FromResult(string.IsNullOrWhiteSpace(text)
+            ? choices
+            : choices.Where(c => c.Name.Contains(text.Trim(), StringComparison.CurrentCultureIgnoreCase)));
 
     protected override Task OnParametersSetAsync() => LoadAsync();
 
@@ -191,49 +263,110 @@ else
             return;
         }
 
-        _loadError = null;
         _loaded = false;
+        _loadError = null;
+        _existing = null;
 
-        // Load accounts
-        var fromAccs = await Data.GetMoneyAccountsAsync(company.CompanyId);
-        if (fromAccs.Ok)
+        if (Session.Can(Permission.CustomersView) || Session.Can(Permission.SuppliersView))
         {
-            _fromAccounts = fromAccs.Value!.Where(a => !a.IsSystem).ToList();
+            var parties = await Data.GetPartiesAsync(company.CompanyId);
+            if (!Loaded(parties))
+            {
+                return;
+            }
+
+            _parties = parties.Value!;
         }
 
-        var toAccs = await Data.GetMoneyAccountsAsync(company.CompanyId);
-        if (toAccs.Ok)
+        if (Session.Can(Permission.AccountsView))
         {
-            _toAccounts = toAccs.Value!.Where(a => !a.IsSystem).ToList();
+            var accounts = await Data.GetMoneyAccountsAsync(company.CompanyId);
+            if (!Loaded(accounts))
+            {
+                return;
+            }
+
+            _accounts = accounts.Value!;
+        }
+
+        if (Session.Can(Permission.IncomeExpenseView))
+        {
+            var categories = await Data.GetCategoriesAsync(company.CompanyId);
+            if (!Loaded(categories))
+            {
+                return;
+            }
+
+            _categories = categories.Value!;
         }
 
         if (TransactionId is { } id)
         {
-            var txn = await Data.GetTransactionAsync(company.CompanyId, id);
-            if (!txn.Ok)
+            var transaction = await Data.GetTransactionAsync(company.CompanyId, id);
+            if (!Loaded(transaction))
             {
-                (_loadError, _offline) = (txn.Error, txn.IsNetworkError);
                 return;
             }
 
-            var existing = txn.Value!;
-            _type = existing.Type;
-            _fromAccountId = existing.FromAccountId;
-            _toAccountId = existing.ToAccountId;
-            _amount = existing.Amount;
-            _date = existing.Date.ToDateTime(TimeOnly.MinValue);
-            _remarks = existing.Remarks;
-            _chequeNo = existing.ChequeNo;
-            _chequeDate = existing.ChequeDate?.ToDateTime(TimeOnly.MinValue);
-
-            var atts = await Attachments.GetAttachmentsAsync(company.CompanyId, id);
-            if (atts.Ok)
-            {
-                _attachments = atts.Value ?? [];
-            }
+            Show(transaction.Value!);
+            var attachments = await Attachments.GetAttachmentsAsync(company.CompanyId, id);
+            _attachments = attachments.Value ?? [];
+        }
+        else
+        {
+            var wanted = MasterValidation.ParseTransactionType(TypeQuery);
+            var offered = OfferedTypes;
+            _type = wanted is { } w && offered.Contains(w) ? w : offered.FirstOrDefault();
+            (_first, _amount, _remarks, _chequeNo, _chequeDate, _saveError) = (null, null, null, null, null, null);
+            _errors = [];
+            _date = DateTime.Today;
+            _second = DefaultSecond();
         }
 
         _loaded = true;
+    }
+
+    private bool Loaded<T>(ApiResult<T> result)
+    {
+        if (!result.Ok)
+        {
+            (_loadError, _offline) = (result.Error, result.IsNetworkError);
+        }
+
+        return result.Ok;
+    }
+
+    private void Show(TransactionDto existing)
+    {
+        _existing = existing;
+        _type = MasterValidation.ParseTransactionType(existing.Type)!.Value;
+        _amount = existing.Amount;
+        _date = existing.Date.ToDateTime(TimeOnly.MinValue);
+        _remarks = existing.Remarks;
+        _chequeNo = existing.ChequeNo;
+        _chequeDate = existing.ChequeDate?.ToDateTime(TimeOnly.MinValue);
+        if (!FormTypes.Contains(_type))
+        {
+            return;
+        }
+
+        var (firstId, secondId) = MoneyIsFrom
+            ? (existing.ToAccountId, existing.FromAccountId)
+            : (existing.FromAccountId, existing.ToAccountId);
+        _first = FirstChoices.FirstOrDefault(c => c.Id == firstId);
+        _second = SecondChoices.FirstOrDefault(c => c.Id == secondId);
+    }
+
+    /// <summary>The first money account (Cash) for a payment method; a transfer's destination is left to choose.</summary>
+    private Choice? DefaultSecond() => _type == TransactionType.TransferMoney ? null : SecondChoices.FirstOrDefault();
+
+    private void ChangeType(TransactionType type)
+    {
+        var method = _type == TransactionType.TransferMoney ? null : _second;
+        _type = type;
+        _first = null;
+        _second = type == TransactionType.TransferMoney ? null : method ?? DefaultSecond();
+        _errors = [];
     }
 
     private async Task SaveAsync(bool andNew)
@@ -244,19 +377,23 @@ else
         }
 
         _saveError = null;
-        var request = new CreateTransactionRequest(
-            Guid.CreateVersion7(),
-            _type,
-            DateOnly.FromDateTime(_date ?? DateTime.Today),
-            _amount,
-            _fromAccountId,
-            _toAccountId,
-            _remarks,
-            _chequeNo,
-            _chequeDate is { } cd ? DateOnly.FromDateTime(cd) : null,
-            Session.Me?.UserId);
+        var first = _first?.Id ?? Guid.Empty;
+        var second = _second?.Id ?? Guid.Empty;
+        var (from, to) = MoneyIsFrom ? (second, first) : (first, second);
+        var date = _date is { } d ? DateOnly.FromDateTime(d) : (DateOnly?)null;
+        var chequeDate = ShowCheque && _chequeDate is { } cd ? DateOnly.FromDateTime(cd) : (DateOnly?)null;
+        var chequeNo = ShowCheque ? _chequeNo : null;
 
-        _errors = MasterValidation.Validate(request);
+        // A new entry left on this device's today sends no date, so the server uses the company's today (D12).
+        var create = new CreateTransactionRequest(
+            _type.ToString(), DateLocked || _date == DateTime.Today ? null : date, _amount ?? 0, from, to,
+            _remarks, chequeNo, chequeDate, _newId);
+        _errors = MasterValidation.Validate(create);
+        if (!IsNew && date is null)
+        {
+            _errors["date"] = ["A date is required."];
+        }
+
         if (_errors.Count > 0)
         {
             _form?.FocusFirstErrorAfterRender();
@@ -267,30 +404,30 @@ else
         try
         {
             var result = IsNew
-                ? await Data.AddTransactionAsync(company.CompanyId, request)
-                : await Data.UpdateTransactionAsync(company.CompanyId, TransactionId!.Value, new UpdateTransactionRequest(
-                    request.Id, request.Type, request.Date, request.Amount,
-                    request.FromAccountId, request.ToAccountId, request.Remarks,
-                    request.ChequeNo, request.ChequeDate, null));
+                ? await Data.AddTransactionAsync(company.CompanyId, create)
+                : await Data.UpdateTransactionAsync(company.CompanyId, TransactionId!.Value,
+                    new UpdateTransactionRequest(date!.Value, _amount!.Value, from, to, _remarks, chequeNo, chequeDate));
             if (!result.Ok)
             {
                 _saveError = result.Error;
                 return;
             }
 
-            Snackbar.Add($"Saved transaction.", Severity.Success);
-            if (andNew)
+            Snackbar.Add($"Saved {Label(_type)} of {Money.Format(result.Value!.Amount)}.", Severity.Success);
+            if (!andNew)
             {
-                (_type, _fromAccountId, _toAccountId, _amount, _date, _remarks, _chequeNo, _chequeDate) = ("PaymentIn", Guid.Empty, Guid.Empty, 0, null, null, null, null);
-                StateHasChanged();
-                if (_form is not null)
-                {
-                    await _form.FocusFirstAsync();
-                }
+                Navigation.NavigateTo("transactions");
+                return;
             }
-            else
+
+            // Save & New keeps the type, date and payment method (plan § 8.4); balances are reloaded.
+            _newId = Guid.CreateVersion7();
+            (_first, _amount, _remarks, _chequeNo, _chequeDate) = (null, null, null, null, null);
+            await ReloadBalancesAsync(company.CompanyId);
+            StateHasChanged();
+            if (_form is not null)
             {
-                Navigation.NavigateTo($"transactions/{result.Value!.Id}");
+                await _form.FocusFirstAsync();
             }
         }
         finally
@@ -299,56 +436,82 @@ else
         }
     }
 
-    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    private async Task ReloadBalancesAsync(Guid companyId)
     {
-        if (Session.CurrentCompany is not { } company || _uploading)
+        if (Session.Can(Permission.CustomersView) || Session.Can(Permission.SuppliersView))
+        {
+            _parties = (await Data.GetPartiesAsync(companyId)).Value ?? _parties;
+        }
+
+        if (Session.Can(Permission.AccountsView))
+        {
+            _accounts = (await Data.GetMoneyAccountsAsync(companyId)).Value ?? _accounts;
+            _second = _second is null ? null : SecondChoices.FirstOrDefault(c => c.Id == _second.Id);
+        }
+    }
+
+    private async Task VoidAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            "Void this entry?",
+            "It stays on record but no longer counts toward any balance.",
+            yesText: "Void entry", cancelText: "Cancel");
+        if (confirmed != true || Session.CurrentCompany is not { } company || TransactionId is not { } id)
         {
             return;
         }
 
-        if (e.FileCount == 0 || _attachments.Count >= 5)
+        _saving = true;
+        var result = await Data.DeleteTransactionAsync(company.CompanyId, id);
+        _saving = false;
+        if (result.Ok)
         {
+            Snackbar.Add("Entry voided.", Severity.Success);
+            Navigation.NavigateTo("transactions");
+        }
+        else
+        {
+            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+        }
+    }
+
+    private async Task OnFilesSelected(InputFileChangeEventArgs e)
+    {
+        if (Session.CurrentCompany is not { } company || TransactionId is not { } id || _uploading)
+        {
+            return;
+        }
+
+        if (_attachments.Count + e.FileCount > 5)
+        {
+            Snackbar.Add("An entry can have at most 5 attachments.", Severity.Warning);
             return;
         }
 
         _uploading = true;
-        StateHasChanged();
         try
         {
             foreach (var file in e.GetMultipleFiles(5))
             {
-                using var stream = file.OpenReadStream(5 * 1024 * 1024);
-                var result = await Attachments.UploadAttachmentAsync(company.CompanyId, stream, file.Name, file.ContentType, TransactionId, CancellationToken.None);
-                if (result.Ok)
+                if (file.Size > 5 * 1024 * 1024)
                 {
-                    Snackbar.Add($"Uploaded {file.Name}.", Severity.Success);
+                    Snackbar.Add($"{file.Name} is larger than 5 MB.", Severity.Warning);
+                    continue;
                 }
-                else
-                {
-                    Snackbar.Add($"Upload failed: {result.Error}", Severity.Error);
-                }
+
+                await using var stream = file.OpenReadStream(5 * 1024 * 1024);
+                var result = await Attachments.UploadAttachmentAsync(company.CompanyId, stream, file.Name, file.ContentType, id);
+                Snackbar.Add(result.Ok ? $"Uploaded {file.Name}." : $"Upload failed: {result.Error}",
+                    result.Ok ? Severity.Success : Severity.Error);
             }
 
-            if (TransactionId is { } tid)
-            {
-                var list = await Attachments.GetAttachmentsAsync(company.CompanyId, tid);
-                if (list.Ok)
-                {
-                    _attachments = list.Value ?? [];
-                }
-            }
+            _attachments = (await Attachments.GetAttachmentsAsync(company.CompanyId, id)).Value ?? _attachments;
         }
         finally
         {
             _uploading = false;
-            StateHasChanged();
         }
     }
 
-    private Task ViewAttachment(AttachmentDto att) => Task.CompletedTask;
-
-    private Task DeleteAttachment(Guid id) => Task.CompletedTask;
-
-    private static string FormatFileSize(long bytes) =>
-        bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024} KB" : $"{bytes / (1024 * 1024)} MB";
+    private sealed record Choice(Guid Id, string Name, decimal? Balance = null, bool IsParty = false);
 }

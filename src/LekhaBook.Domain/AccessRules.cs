@@ -28,6 +28,20 @@ public enum EntryAction
 /// </summary>
 public static class EntryRules
 {
+    /// <summary>
+    /// The grant needed to see an entry of <paramref name="type"/>. Money movements follow account viewing; a party
+    /// adjustment has no view grant of its own, so it follows managing adjustments.
+    /// </summary>
+    public static string ViewPermissionFor(TransactionType type) => type switch
+    {
+        TransactionType.PaymentIn => Permission.PaymentInView,
+        TransactionType.PaymentOut => Permission.PaymentOutView,
+        TransactionType.Expense or TransactionType.OtherIncome => Permission.IncomeExpenseView,
+        TransactionType.AddMoney or TransactionType.ReduceMoney or TransactionType.TransferMoney => Permission.AccountsView,
+        TransactionType.PartyAdjustAdd or TransactionType.PartyAdjustReduce => Permission.PartyAdjustmentsManage,
+        _ => throw new ArgumentOutOfRangeException(nameof(type)),
+    };
+
     /// <summary>The grant needed for <paramref name="action"/> on an entry of <paramref name="type"/>.</summary>
     public static string PermissionFor(TransactionType type, EntryAction action) => (type, action) switch
     {

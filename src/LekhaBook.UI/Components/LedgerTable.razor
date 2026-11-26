@@ -25,7 +25,7 @@
 </MudTable>
 @if (Ledger.Lines.Count == 0)
 {
-    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">No transactions yet. Entry forms arrive in the next phase.</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">No transactions yet.</MudText>
 }
 
 @code {
@@ -46,10 +46,16 @@
     private IEnumerable<LedgerRow> Rows =>
         Ledger.Lines.Select(l => new LedgerRow(
                 l.Date,
-                $"{MasterLabels.TransactionType(l.Type)} #{l.VoucherNo}",
+                VoucherTitle(l),
                 string.Join(" · ", new[] { l.OtherAccount, l.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s))),
                 l.Debit, l.Credit, l.Balance))
             .Prepend(new LedgerRow(Ledger.OpeningAsOf, "Opening balance", null, 0, 0, Ledger.OpeningBalance));
+
+    /// <summary>"Payment In #615". A provisional (id-shaped) number isn't shown (D15).</summary>
+    private static string VoucherTitle(LedgerLineDto line) =>
+        Guid.TryParse(line.VoucherNo, out _)
+            ? MasterLabels.TransactionType(line.Type)
+            : $"{MasterLabels.TransactionType(line.Type)} #{line.VoucherNo}";
 
     private sealed record LedgerRow(DateOnly? Date, string Title, string? Detail, decimal Debit, decimal Credit, decimal Balance);
 }

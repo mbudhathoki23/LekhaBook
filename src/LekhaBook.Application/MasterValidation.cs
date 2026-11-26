@@ -17,8 +17,7 @@ public static class MasterValidation
     public const int PanMax = 15;
     public const int AccountNumberMax = 50;
     public const int RemarksMax = 500;
-    public const int ChequeNoMax = 50;
-    public const int VoucherNoMax = 50;
+    public const int ChequeNoMax = 40; // the database column
 
     /// <summary>Account types a user can add on the Cash &amp; Bank screen (Cheque is built in).</summary>
     public static readonly AccountType[] AddableMoneyTypes = [AccountType.Bank, AccountType.Wallet, AccountType.Cash];
@@ -85,27 +84,43 @@ public static class MasterValidation
 
     public static Dictionary<string, string[]> Validate(CreateTransactionRequest r)
     {
+        var errors = EntryFields(r.Amount, r.FromAccountId, r.ToAccountId, r.Remarks, r.ChequeNo);
+        if (ParseTransactionType(r.Type) is null)
+        {
+            errors["type"] = ["Choose a transaction type."];
+        }
+
+        return errors;
+    }
+
+    public static Dictionary<string, string[]> Validate(UpdateTransactionRequest r) =>
+        EntryFields(r.Amount, r.FromAccountId, r.ToAccountId, r.Remarks, r.ChequeNo);
+
+    /// <summary>A TransactionType name, or null. Numbers aren't accepted.</summary>
+    public static TransactionType? ParseTransactionType(string? value) =>
+        Enum.GetValues<TransactionType>().Cast<TransactionType?>()
+            .FirstOrDefault(t => string.Equals(t.ToString(), value, StringComparison.OrdinalIgnoreCase));
+
+    private static Dictionary<string, string[]> EntryFields(decimal amount, Guid from, Guid to, string? remarks, string? chequeNo)
+    {
         var errors = new Dictionary<string, string[]>();
-        Required(errors, "voucherNo", r.Id?.ToString() ?? string.Empty, VoucherNoMax, "Voucher no");
-        Required(errors, "type", r.Type, 50, "Type");
-        if (!PostingRules.IsValidAmount(r.Amount))
+        if (!PostingRules.IsValidAmount(amount))
         {
-            errors["amount"] = ["Amount must be a positive number with at most 2 decimals."];
+            errors["amount"] = ["Amount must be more than 0 with at most 2 decimals."];
         }
 
-
-        if (r.FromAccountId == Guid.Empty)
+        if (from == Guid.Empty)
         {
-            errors["fromAccountId"] = ["From account is required."];
+            errors["fromAccountId"] = ["Choose an account."];
         }
 
-        if (r.ToAccountId == Guid.Empty)
+        if (to == Guid.Empty)
         {
-            errors["toAccountId"] = ["To account is required."];
+            errors["toAccountId"] = ["Choose an account."];
         }
 
-        Optional(errors, "remarks", r.Remarks, RemarksMax, "Remarks");
-
+        Optional(errors, "remarks", remarks, RemarksMax, "Remarks");
+        Optional(errors, "chequeNo", chequeNo, ChequeNoMax, "Cheque no.");
         return errors;
     }
 

@@ -82,9 +82,9 @@ else
         <MudPaper Elevation="1" Class="row-list">
             @foreach (var txn in Shown)
             {
-                <a class="row-item" href="@($"transactions/{txn.Id}")">
+                <a class="row-item" href="@($"transactions/{txn.Id}/edit")">
                     <MudAvatar Color="@TransactionColor(txn.Type)" Size="Size.Medium" Variant="Variant.Outlined">
-                        @MasterLabels.TransactionType(txn.Type)
+                        <MudIcon Icon="@Icons.Material.Filled.Receipt" />
                     </MudAvatar>
                     <div class="row-main">
                         <div class="row-title">@MasterLabels.TransactionType(txn.Type)</div>
@@ -110,7 +110,7 @@ else
     private string _type = "all";
     private string _sort = "latest";
 
-    private bool CanAdd => Session.Can(Permission.TransactionsEdit);
+    private bool CanAdd => Enum.GetValues<TransactionType>().Any(t => Session.Can(EntryRules.PermissionFor(t, EntryAction.Create)));
 
     private string NewTransactionHref => "transactions/new";
 

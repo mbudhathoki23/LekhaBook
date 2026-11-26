@@ -148,19 +148,21 @@ public interface IDataService
 
     Task<ApiResult<LedgerDto>> GetAccountLedgerAsync(Guid companyId, Guid accountId);
 
-    // Transactions (Phase 6)
-    Task<ApiResult<List<TransactionDto>>> GetTransactionsAsync(Guid companyId, Guid? accountId = null, DateTime? fromDate = null, DateTime? toDate = null);
+    /// <summary>Income and expense heads.</summary>
+    Task<ApiResult<List<CategoryDto>>> GetCategoriesAsync(Guid companyId);
+
+    /// <summary>Posted entries the user may see, newest first.</summary>
+    Task<ApiResult<List<TransactionDto>>> GetTransactionsAsync(Guid companyId);
 
     Task<ApiResult<TransactionDto>> GetTransactionAsync(Guid companyId, Guid transactionId);
 
-    /// <summary>Adds a transaction; <see cref="CreateTransactionRequest.Id"/> should be set (a new UUIDv7).</summary>
+    /// <summary>Adds an entry; <see cref="CreateTransactionRequest.Id"/> should be set (a new UUIDv7).</summary>
     Task<ApiResult<TransactionDto>> AddTransactionAsync(Guid companyId, CreateTransactionRequest request);
 
     Task<ApiResult<TransactionDto>> UpdateTransactionAsync(Guid companyId, Guid transactionId, UpdateTransactionRequest request);
 
+    /// <summary>Voids the entry.</summary>
     Task<ApiResult<bool>> DeleteTransactionAsync(Guid companyId, Guid transactionId);
-
-    Task<ApiResult<LedgerDto>> GetTransactionLedgerAsync(Guid companyId, Guid transactionId);
 }
 
 /// <summary>Company, staff and invitation calls (AGENT_PLAN § 9).</summary>

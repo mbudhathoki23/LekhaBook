@@ -17,6 +17,7 @@ const FIELD_SELECTOR = [
 ].join(',');
 
 const attached = new WeakMap();
+const movedByEnter = new WeakSet();
 
 function isVisible(el) {
     if (!(el.offsetWidth || el.offsetHeight || el.getClientRects().length)) {
@@ -90,6 +91,10 @@ function onKeyDown(e) {
         return;
     }
 
+    if (e.key === 'Enter') {
+        movedByEnter.delete(root); // a new press: forget any release that never arrived
+    }
+
     if (e.key === 'Escape') {
         if (!listIsOpen(target) && press(root, '[data-enter-cancel]')) {
             e.preventDefault();
@@ -125,6 +130,8 @@ function onKeyDown(e) {
     // Stop here (capture phase), so the field's own Enter handling doesn't also run.
     e.preventDefault();
     e.stopPropagation();
+    // The key is released on the field we move to; keep that release from acting there (see onKeyUp).
+    movedByEnter.add(root);
 
     if (e.shiftKey) {
         if (i > 0) {
@@ -134,6 +141,17 @@ function onKeyDown(e) {
         press(root, '[data-enter-save]');
     } else {
         focusField(fields[i + 1]);
+    }
+}
+
+/**
+ * Swallows the release of an Enter that moved focus. Without this, a pre-filled autocomplete receives the
+ * key-up, opens its list, and the next Enter only closes it instead of moving on.
+ */
+function onKeyUp(e) {
+    if (e.key === 'Enter' && movedByEnter.delete(e.currentTarget)) {
+        e.preventDefault();
+        e.stopPropagation();
     }
 }
 
@@ -160,6 +178,7 @@ export function attach(root, focusFirst) {
         return;
     }
     root.addEventListener('keydown', onKeyDown, true);
+    root.addEventListener('keyup', onKeyUp, true);
     root.addEventListener('focusin', onFocusIn);
     attached.set(root, true);
     updateHints(root);
@@ -188,6 +207,7 @@ export function detach(root) {
         return;
     }
     root.removeEventListener('keydown', onKeyDown, true);
+    root.removeEventListener('keyup', onKeyUp, true);
     root.removeEventListener('focusin', onFocusIn);
     attached.delete(root);
 }

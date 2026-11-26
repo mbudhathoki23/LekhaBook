@@ -1,6 +1,5 @@
 using LekhaBook.Contracts;
 using LekhaBook.UI.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace LekhaBook.Client;
 
@@ -51,16 +50,11 @@ public sealed class ApiDataService(LekhaBookApi api) : IDataService
     public Task<ApiResult<LedgerDto>> GetAccountLedgerAsync(Guid companyId, Guid accountId) =>
         api.GetAsync<LedgerDto>($"{Company(companyId)}/accounts/{accountId}/ledger");
 
-    // Transactions (Phase 6)
-    public Task<ApiResult<List<TransactionDto>>> GetTransactionsAsync(Guid companyId, Guid? accountId = null, DateTime? fromDate = null, DateTime? toDate = null)
-    {
-        var query = new List<string>();
-        if (accountId is { } aid) query.Add($"accountId={aid}");
-        if (fromDate is { } fd) query.Add($"fromDate={fd:yyyy-MM-dd}");
-        if (toDate is { } td) query.Add($"toDate={td:yyyy-MM-dd}");
-        var qs = query.Count > 0 ? "?" + string.Join("&", query) : "";
-        return api.GetAsync<List<TransactionDto>>($"{Company(companyId)}/transactions{qs}");
-    }
+    public Task<ApiResult<List<CategoryDto>>> GetCategoriesAsync(Guid companyId) =>
+        api.GetAsync<List<CategoryDto>>($"{Company(companyId)}/categories");
+
+    public Task<ApiResult<List<TransactionDto>>> GetTransactionsAsync(Guid companyId) =>
+        api.GetAsync<List<TransactionDto>>($"{Company(companyId)}/transactions");
 
     public Task<ApiResult<TransactionDto>> GetTransactionAsync(Guid companyId, Guid transactionId) =>
         api.GetAsync<TransactionDto>($"{Company(companyId)}/transactions/{transactionId}");
@@ -73,9 +67,6 @@ public sealed class ApiDataService(LekhaBookApi api) : IDataService
 
     public Task<ApiResult<bool>> DeleteTransactionAsync(Guid companyId, Guid transactionId) =>
         api.SendAsync<bool>(HttpMethod.Delete, $"{Company(companyId)}/transactions/{transactionId}", null);
-
-    public Task<ApiResult<LedgerDto>> GetTransactionLedgerAsync(Guid companyId, Guid transactionId) =>
-        api.GetAsync<LedgerDto>($"{Company(companyId)}/transactions/{transactionId}/ledger");
 }
 
 /// <summary>Attachments via the API (Phase 7).</summary>

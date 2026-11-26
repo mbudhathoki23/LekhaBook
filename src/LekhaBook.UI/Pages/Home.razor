@@ -29,12 +29,12 @@
 
 <MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">Quick entry</MudText>
 <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
-    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Disabled="true">Payment In</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Disabled="true">Payment Out</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Disabled="true">Expense</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Disabled="true">Transfer Money</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Href="transactions/new?type=PaymentIn" Disabled="@(!CanAdd(TransactionType.PaymentIn))">Payment In</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Href="transactions/new?type=PaymentOut" Disabled="@(!CanAdd(TransactionType.PaymentOut))">Payment Out</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Href="transactions/new?type=Expense" Disabled="@(!CanAdd(TransactionType.Expense))">Expense</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Savings" Href="transactions/new?type=OtherIncome" Disabled="@(!CanAdd(TransactionType.OtherIncome))">Other Income</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney" Disabled="@(!CanAdd(TransactionType.TransferMoney))">Transfer Money</MudButton>
 </MudStack>
-<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">Entry forms arrive in phase 6.</MudText>
 
 <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">
     Running on @PlatformInfo.Platform (@PlatformInfo.FormFactor)
@@ -52,6 +52,8 @@
         ("Cash in Hand", _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance), Color.Default, "accounts"),
         ("Bank Balance", _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance), Color.Default, "accounts"),
     ];
+
+    private bool CanAdd(TransactionType type) => Session.Can(EntryRules.PermissionFor(type, EntryAction.Create));
 
     protected override Task OnInitializedAsync() => LoadAsync();
 
