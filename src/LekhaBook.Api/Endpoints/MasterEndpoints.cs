@@ -226,33 +226,22 @@ public static class MasterEndpoints
     private static async Task<Results<Created<PartyCategoryDto>, Ok<PartyCategoryDto>, ValidationProblem, ProblemHttpResult>> CreateCategory(
         Guid companyId, SavePartyCategoryRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
     {
-        var member = await access.RequireMemberAsync();
-        if (MasterValidation.Validate(request) is { Count: > 0 } errors)
+        var writer = new BooksWriter(db, clock, companyId, await access.RequireMemberAsync());
+        var result = await writer.CreateCategoryAsync(request);
+        if (result.Row is not PartyCategory category)
         {
-            return TypedResults.ValidationProblem(errors);
+            return result.Status switch
+            {
+                WriteStatus.Invalid => TypedResults.ValidationProblem(result.Errors!.ToDictionary()),
+                WriteStatus.Forbidden => Forbidden(result.Error!),
+                _ => Conflict(result.Error!),
+            };
         }
 
-        if (request.Id is { } requestedId && await db.PartyCategories.AsNoTracking().SingleOrDefaultAsync(c => c.Id == requestedId) is { } existing)
-        {
-            return existing.CompanyId == companyId && !existing.IsDeleted
-                ? TypedResults.Ok(new PartyCategoryDto(existing.Id, existing.Name))
-                : Conflict("That id is already in use.");
-        }
-
-        var name = request.Name.Trim();
-        var names = await db.PartyCategories.AsNoTracking()
-            .Where(c => c.CompanyId == companyId && !c.IsDeleted)
-            .Select(c => c.Name)
-            .ToListAsync();
-        if (names.Contains(name, StringComparer.OrdinalIgnoreCase))
-        {
-            return Conflict($"The category \"{name}\" already exists.");
-        }
-
-        var category = new PartyCategory { Id = request.Id ?? Guid.CreateVersion7(), CompanyId = companyId, Name = name };
-        db.PartyCategories.Add(category);
-        await db.SaveWithVersionsAsync(companyId, [category], member.UserId, clock.GetUtcNow().UtcDateTime);
-        return TypedResults.Created($"/api/companies/{companyId}/party-categories/{category.Id}", new PartyCategoryDto(category.Id, category.Name));
+        var dto = new PartyCategoryDto(category.Id, category.Name);
+        return result.Status == WriteStatus.Created
+            ? TypedResults.Created($"/api/companies/{companyId}/party-categories/{category.Id}", dto)
+            : TypedResults.Ok(dto);
     }
 
     // ---------------- Money accounts ----------------

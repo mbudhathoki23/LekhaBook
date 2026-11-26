@@ -141,12 +141,25 @@ public sealed record AttachmentDto(
     DateTime CreatedAtUtc);
 
 
-/// <summary>One item in a sync push batch.</summary>
+// Sync (AGENT_PLAN § 6, D17).
+
+/// <summary>
+/// One queued device change. <paramref name="EntityType"/> is "Transaction" or "PartyCategory";
+/// <paramref name="Operation"/> is "Create", "Update" or "Void". <paramref name="Payload"/> is JSON: a
+/// <see cref="CreateTransactionRequest"/> (with its id), a <see cref="SyncUpdatePayload"/>, a
+/// <see cref="SyncVoidPayload"/> or a <see cref="SavePartyCategoryRequest"/> (with its id).
+/// <paramref name="BaseVersion"/> is the server version an update or void was made from.
+/// </summary>
 public sealed record PushItem(
     string EntityType,
     string Operation,
     string Payload,
-    string IdempotencyKey);
+    string IdempotencyKey,
+    long BaseVersion = 0);
+
+public sealed record SyncUpdatePayload(Guid Id, UpdateTransactionRequest Entry);
+
+public sealed record SyncVoidPayload(Guid Id);
 
 /// <summary>Result of processing one push item.</summary>
 public sealed record PushItemResult(
@@ -173,7 +186,10 @@ public sealed record PulledRow(
     bool IsDeleted,
     string Payload);
 
-/// <summary>Pull response: rows changed since the given version, plus the latest server version.</summary>
+/// <summary>
+/// Rows changed since the given version, oldest first. <paramref name="LatestVersion"/> is the cursor to ask from
+/// next: the last row's version when the page is full, otherwise the company's latest version.
+/// </summary>
 public sealed record PullResponse(
     long LatestVersion,
     IReadOnlyList<PulledRow> Rows);

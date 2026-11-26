@@ -147,7 +147,8 @@ public sealed class MauiSyncEngine : ISyncService, IDisposable
             o.EntityType,
             o.Operation,
             o.PayloadJson,
-            o.Id.ToString())).ToList();
+            o.Id.ToString(),
+            o.BaseVersion)).ToList();
 
         var request = new PushRequest(pushItems);
         var result = await _api.SendAsync<PushResponse>(HttpMethod.Post,
@@ -252,6 +253,18 @@ public sealed class MauiSyncEngine : ISyncService, IDisposable
 
         _logger.LogInformation("Pulled {Count} rows, latest version {Version}", pulledRows.Count, latestVersion);
 
+        // Every synced row points at its company, which pull doesn't send: make sure the device has it.
+        if (!await db.Companies.AnyAsync(c => c.Id == companyId, ct))
+        {
+            db.Companies.Add(new Company
+            {
+                Id = companyId,
+                Name = _session.CurrentCompany!.Name,
+                CreatedAtUtc = DateTime.UtcNow,
+                UpdatedAtUtc = DateTime.UtcNow,
+            });
+        }
+
         foreach (var row in pulledRows)
         {
             await UpsertPulledRowAsync(db, row, ct);
@@ -299,7 +312,7 @@ public sealed class MauiSyncEngine : ISyncService, IDisposable
         if (entity is null)
             return;
 
-        var existing = await db.FindAsync<T>(row.Id, ct);
+        var existing = await db.FindAsync<T>([row.Id], ct);
         if (existing is null)
         {
             typeof(T).GetProperty("Version")?.SetValue(entity, row.Version);

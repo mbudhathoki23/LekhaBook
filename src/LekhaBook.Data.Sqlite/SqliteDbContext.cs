@@ -58,7 +58,7 @@ public sealed class OutboxItem
 
     public Guid EntityId { get; set; }
 
-    /// <summary>Upsert or Delete.</summary>
+    /// <summary>Create, Update or Void (see PushItem, D17).</summary>
     public required string Operation { get; set; }
 
     public required string PayloadJson { get; set; }

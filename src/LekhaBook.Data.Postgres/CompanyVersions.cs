@@ -12,15 +12,22 @@ public static class CompanyVersions
 {
     /// <summary>
     /// Stamps <paramref name="rows"/> with consecutive new versions and the server's time and user, then saves
-    /// everything in one transaction. New rows (<paramref name="isNew"/>) also get their created fields.
+    /// everything in one transaction. New rows also get their created fields. <paramref name="stillValid"/> runs once
+    /// the counter row is locked (so no other write to the company can slip in); if it returns false nothing is saved.
     /// </summary>
-    public static async Task SaveWithVersionsAsync(
+    /// <returns>False if <paramref name="stillValid"/> refused.</returns>
+    public static async Task<bool> SaveWithVersionsAsync(
         this PostgresDbContext db, Guid companyId, IReadOnlyList<SyncEntity> rows, Guid userId, DateTime nowUtc,
-        CancellationToken cancellationToken = default)
+        Func<Task<bool>>? stillValid = null, CancellationToken cancellationToken = default)
     {
         await using var tx = await db.Database.BeginTransactionAsync(cancellationToken);
 
         var last = await ClaimAsync(db, companyId, rows.Count, cancellationToken);
+        if (stillValid is not null && !await stillValid())
+        {
+            return false; // disposing the transaction rolls the claim back
+        }
+
         var next = last - rows.Count + 1;
         foreach (var row in rows)
         {
@@ -38,6 +45,7 @@ public static class CompanyVersions
 
         await db.SaveChangesAsync(cancellationToken);
         await tx.CommitAsync(cancellationToken);
+        return true;
     }
 
     /// <summary>Reserves <paramref name="count"/> versions and returns the highest one. Must run inside a transaction.</summary>

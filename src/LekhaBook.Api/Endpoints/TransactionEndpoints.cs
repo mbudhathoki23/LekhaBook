@@ -1,4 +1,3 @@
-using System.Text.Json;
 using LekhaBook.Api.Security;
 using LekhaBook.Application;
 using LekhaBook.Contracts;
@@ -6,7 +5,6 @@ using LekhaBook.Data.Postgres;
 using LekhaBook.Domain;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace LekhaBook.Api.Endpoints;
 
@@ -94,153 +92,46 @@ public static class TransactionEndpoints
     private static async Task<Results<Created<TransactionDto>, Ok<TransactionDto>, ValidationProblem, ProblemHttpResult>> CreateTransaction(
         Guid companyId, CreateTransactionRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
     {
-        var member = await access.RequireMemberAsync();
-        if (MasterValidation.Validate(request) is { Count: > 0 } errors)
+        var writer = new BooksWriter(db, clock, companyId, await access.RequireMemberAsync());
+        var result = await writer.CreateTransactionAsync(request);
+        return result.Status switch
         {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        var type = MasterValidation.ParseTransactionType(request.Type)!.Value;
-
-        // A retried create (same client-generated id) returns what the first attempt saved.
-        if (request.Id is { } requestedId && await FindByIdAsync(db, requestedId) is { } existing)
-        {
-            return Replay(companyId, member, existing);
-        }
-
-        var zone = await TimeZoneAsync(db, companyId);
-        var today = CompanyClock.Today(zone, clock);
-        var date = request.Date ?? today;
-        if (date > today)
-        {
-            return Invalid("date", "The date can't be in the future.");
-        }
-
-        if (EntryRules.CheckCreate(member, type, date, today) is { } denied)
-        {
-            return Forbidden(denied);
-        }
-
-        var id = request.Id ?? Guid.CreateVersion7();
-        var transaction = new Transaction
-        {
-            Id = id,
-            CompanyId = companyId,
-            Type = type,
-            VoucherNo = id.ToString(), // provisional until voucher numbering (D15)
-            IsProvisionalNo = true,
-            Date = date,
-            Amount = request.Amount,
-            FromAccountId = request.FromAccountId,
-            ToAccountId = request.ToAccountId,
-            Remarks = MasterValidation.Clean(request.Remarks),
-            ChequeNo = MasterValidation.Clean(request.ChequeNo),
-            ChequeDate = request.ChequeDate,
+            WriteStatus.Created => TypedResults.Created(
+                $"/api/companies/{companyId}/transactions/{result.Row!.Id}", ToDto((Transaction)result.Row)),
+            WriteStatus.Replayed => TypedResults.Ok(ToDto((Transaction)result.Row!)),
+            WriteStatus.Invalid => Invalid(result),
+            WriteStatus.Forbidden => Forbidden(result.Error!),
+            _ => Conflict(result.Error!),
         };
-        if (await PostingProblemAsync(db, transaction) is { } problem)
-        {
-            return problem;
-        }
-
-        db.Transactions.Add(transaction);
-        Audit(db, member, transaction, "Create", before: null, clock);
-        try
-        {
-            await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
-        }
-        catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
-        {
-            // The same create arrived twice at once: the other request saved it first.
-            db.ChangeTracker.Clear();
-            if (await FindByIdAsync(db, id) is not { } saved)
-            {
-                throw;
-            }
-
-            return Replay(companyId, member, saved);
-        }
-
-        return TypedResults.Created($"/api/companies/{companyId}/transactions/{transaction.Id}", ToDto(transaction));
     }
 
     private static async Task<Results<Ok<TransactionDto>, NotFound, ValidationProblem, ProblemHttpResult>> UpdateTransaction(
         Guid companyId, Guid transactionId, UpdateTransactionRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
     {
-        var member = await access.RequireMemberAsync();
-        var transaction = await FindAsync(db, companyId, transactionId, tracked: true);
-        if (transaction is null || transaction.Status != TransactionStatus.Posted)
+        var writer = new BooksWriter(db, clock, companyId, await access.RequireMemberAsync());
+        var result = await writer.UpdateTransactionAsync(transactionId, request, expectedVersion: null);
+        return result.Status switch
         {
-            return TypedResults.NotFound();
-        }
-
-        if (MasterValidation.Validate(request) is { Count: > 0 } errors)
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        if (request.Type is not null && MasterValidation.ParseTransactionType(request.Type) != transaction.Type)
-        {
-            return Invalid("type", "An entry's type can't be changed. Void it and add a new one.");
-        }
-
-        var zone = await TimeZoneAsync(db, companyId);
-        var today = CompanyClock.Today(zone, clock);
-        if (request.Date > today)
-        {
-            return Invalid("date", "The date can't be in the future.");
-        }
-
-        if (EntryRules.CheckChange(member, transaction, EntryAction.Edit, request.Date, today, zone) is { } denied)
-        {
-            return Forbidden(denied);
-        }
-
-        var before = Snapshot(transaction);
-        transaction.Date = request.Date;
-        transaction.Amount = request.Amount;
-        transaction.FromAccountId = request.FromAccountId;
-        transaction.ToAccountId = request.ToAccountId;
-        transaction.Remarks = MasterValidation.Clean(request.Remarks);
-        transaction.ChequeNo = MasterValidation.Clean(request.ChequeNo);
-        transaction.ChequeDate = request.ChequeDate;
-        if (await PostingProblemAsync(db, transaction) is { } problem)
-        {
-            return problem;
-        }
-
-        Audit(db, member, transaction, "Update", before, clock);
-        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
-        return TypedResults.Ok(ToDto(transaction));
+            WriteStatus.Saved => TypedResults.Ok(ToDto((Transaction)result.Row!)),
+            WriteStatus.NotFound => TypedResults.NotFound(),
+            WriteStatus.Invalid => Invalid(result),
+            WriteStatus.Forbidden => Forbidden(result.Error!),
+            _ => Conflict(result.Error!),
+        };
     }
 
-    /// <summary>"Delete" voids: the row is kept, and balances and statements skip it (D15).</summary>
     private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> VoidTransaction(
         Guid companyId, Guid transactionId, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
     {
-        var member = await access.RequireMemberAsync();
-        var transaction = await FindAsync(db, companyId, transactionId, tracked: true);
-        if (transaction is null)
+        var writer = new BooksWriter(db, clock, companyId, await access.RequireMemberAsync());
+        var result = await writer.VoidTransactionAsync(transactionId, expectedVersion: null);
+        return result.Status switch
         {
-            return TypedResults.NotFound();
-        }
-
-        var zone = await TimeZoneAsync(db, companyId);
-        var today = CompanyClock.Today(zone, clock);
-        if (EntryRules.CheckChange(member, transaction, EntryAction.Delete, null, today, zone) is { } denied)
-        {
-            return Forbidden(denied);
-        }
-
-        if (transaction.Status == TransactionStatus.Void)
-        {
-            return TypedResults.NoContent(); // a retried void
-        }
-
-        var before = Snapshot(transaction);
-        transaction.Status = TransactionStatus.Void;
-        Audit(db, member, transaction, "Void", before, clock);
-        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime);
-        return TypedResults.NoContent();
+            WriteStatus.Saved or WriteStatus.Replayed => TypedResults.NoContent(),
+            WriteStatus.NotFound => TypedResults.NotFound(),
+            WriteStatus.Forbidden => Forbidden(result.Error!),
+            _ => Conflict(result.Error!),
+        };
     }
 
     // ---------------- Attachments (AGENT_PLAN § 7) ----------------
@@ -288,7 +179,7 @@ public static class TransactionEndpoints
         }
 
         var storageKey = $"{Guid.CreateVersion7()}{Path.GetExtension(file.FileName)}";
-        var folder = Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString());
+        var folder = CompanyFolder(companyId);
         Directory.CreateDirectory(folder);
         await using (var stream = File.Create(Path.Combine(folder, storageKey)))
         {
@@ -326,8 +217,8 @@ public static class TransactionEndpoints
             return Forbidden("You don't have permission to view this entry.");
         }
 
-        var storagePath = Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString(), attachment.StorageKey ?? attachment.Id.ToString());
-        return File.Exists(storagePath)
+        var storagePath = StoragePath(companyId, attachment.StorageKey ?? attachment.Id.ToString());
+        return storagePath is not null && File.Exists(storagePath)
             ? TypedResults.File(await File.ReadAllBytesAsync(storagePath), attachment.ContentType, attachment.FileName)
             : TypedResults.NotFound();
     }
@@ -361,47 +252,17 @@ public static class TransactionEndpoints
         return query.SingleOrDefaultAsync(t => t.Id == id && t.CompanyId == companyId && !t.IsDeleted);
     }
 
-    /// <summary>By id across companies: only to tell a retry from an id that is already taken.</summary>
-    private static Task<Transaction?> FindByIdAsync(PostgresDbContext db, Guid id) =>
-        db.Transactions.AsNoTracking().SingleOrDefaultAsync(t => t.Id == id);
-
-    private static Results<Created<TransactionDto>, Ok<TransactionDto>, ValidationProblem, ProblemHttpResult> Replay(
-        Guid companyId, CompanyMember member, Transaction existing)
-    {
-        if (existing.CompanyId != companyId || existing.IsDeleted || existing.CreatedBy != member.UserId)
-        {
-            return Conflict("That id is already in use.");
-        }
-
-        return TypedResults.Ok(ToDto(existing));
-    }
+    private static string CompanyFolder(Guid companyId) =>
+        Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString());
 
     /// <summary>
-    /// Loads both accounts <em>from this company only</em> and applies the posting rules, so an unknown or
-    /// another company's account is a bad request.
+    /// Where a stored file lives, or null if the key isn't a plain file name: a path (absolute or with "..") must
+    /// never be able to reach another file on the server.
     /// </summary>
-    private static async Task<ValidationProblem?> PostingProblemAsync(PostgresDbContext db, Transaction transaction)
-    {
-        var ids = new[] { transaction.FromAccountId, transaction.ToAccountId };
-        var accounts = await db.Accounts.AsNoTracking()
-            .Where(a => a.CompanyId == transaction.CompanyId && !a.IsDeleted && ids.Contains(a.Id))
-            .ToDictionaryAsync(a => a.Id);
-
-        if (!accounts.TryGetValue(transaction.FromAccountId, out var from))
-        {
-            return Invalid("fromAccountId", "That account doesn't exist.");
-        }
-
-        if (!accounts.TryGetValue(transaction.ToAccountId, out var to))
-        {
-            return Invalid("toAccountId", "That account doesn't exist.");
-        }
-
-        var errors = PostingRules.Validate(transaction, from, to);
-        return errors.Count == 0
-            ? null
-            : TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transaction"] = [.. errors] });
-    }
+    private static string? StoragePath(Guid companyId, string key) =>
+        key.Length > 0 && key is not ("." or "..") && key == Path.GetFileName(key)
+            ? Path.Combine(CompanyFolder(companyId), key)
+            : null;
 
     private static Task<string> TimeZoneAsync(PostgresDbContext db, Guid companyId) =>
         db.Companies.Where(c => c.Id == companyId).Select(c => c.TimeZoneId).SingleAsync();
@@ -413,25 +274,8 @@ public static class TransactionEndpoints
     private static AttachmentDto ToDto(Attachment a) =>
         new(a.Id, a.TransactionId, a.AccountId, a.FileName, a.ContentType, a.SizeBytes, a.StorageKey, a.CreatedAtUtc);
 
-    private static string Snapshot(Transaction t) => JsonSerializer.Serialize(new
-    {
-        Type = t.Type.ToString(), t.VoucherNo, t.Date, t.Amount, t.FromAccountId, t.ToAccountId,
-        t.Remarks, t.ChequeNo, t.ChequeDate, Status = t.Status.ToString(),
-    });
-
-    private static void Audit(
-        PostgresDbContext db, CompanyMember member, Transaction transaction, string action, string? before, TimeProvider clock) =>
-        db.AuditLogs.Add(new AuditLog
-        {
-            CompanyId = transaction.CompanyId,
-            EntityType = nameof(Transaction),
-            EntityId = transaction.Id,
-            Action = action,
-            BeforeJson = before,
-            AfterJson = Snapshot(transaction),
-            UserId = member.UserId,
-            AtUtc = clock.GetUtcNow().UtcDateTime,
-        });
+    private static ValidationProblem Invalid(WriteResult result) =>
+        TypedResults.ValidationProblem(result.Errors!.ToDictionary());
 
     private static ValidationProblem Invalid(string field, string message) =>
         TypedResults.ValidationProblem(new Dictionary<string, string[]> { [field] = [message] });
