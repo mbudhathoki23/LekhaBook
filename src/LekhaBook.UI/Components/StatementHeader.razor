@@ -83,20 +83,28 @@
     private CompanyDetails? _company;
     private Guid _loadedFor;
 
-    /// <summary>From the opening-as-of date (or the first line) to the last line's date; a dash when there are no lines.</summary>
-    private string PeriodText
-    {
-        get
-        {
-            if (Ledger.Lines.Count == 0)
-            {
-                return "–";
-            }
+    private string PeriodText => PeriodOf(Ledger) is var (from, to)
+        ? Loc["Statement.PeriodValue", Session.FormatDate(from), Session.FormatDate(to)].Value
+        : "–";
 
-            var from = Ledger.OpeningAsOf ?? Ledger.Lines[0].Date;
-            var to = Ledger.Lines[^1].Date;
-            return Loc["Statement.PeriodValue", Session.FormatDate(from), Session.FormatDate(to)].Value;
+    /// <summary>
+    /// The earliest and latest date on the statement, opening-as-of included; null when there are no lines.
+    /// An entry may be dated before the opening-as-of date, so neither end is taken from a fixed row.
+    /// </summary>
+    public static (DateOnly From, DateOnly To)? PeriodOf(LedgerDto ledger)
+    {
+        if (ledger.Lines.Count == 0)
+        {
+            return null;
         }
+
+        var dates = ledger.Lines.Select(l => l.Date).ToList();
+        if (ledger.OpeningAsOf is { } openingAsOf)
+        {
+            dates.Add(openingAsOf);
+        }
+
+        return (dates.Min(), dates.Max());
     }
 
     protected override async Task OnParametersSetAsync()
