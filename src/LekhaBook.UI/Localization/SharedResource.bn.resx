@@ -1345,4 +1345,128 @@
   <data name="MudTablePager_PreviousPage" xml:space="preserve">
     <value>আগের পৃষ্ঠা</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>শেয়ার করুন</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>বিবরণী শেয়ার করুন</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>লিঙ্কটি যার কাছে থাকবে সে সাইন ইন ছাড়াই এই বিবরণী দেখতে পারবে, যতক্ষণ না মেয়াদ শেষ হয় বা আপনি বন্ধ করেন।</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>লিঙ্ক কার্যকর থাকবে</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0} দিন</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>বিল ও ভাউচারের ছবি যুক্ত করুন</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>লিঙ্ক তৈরি করুন</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>রিপোর্ট লিঙ্ক</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>লিঙ্কটি শুধু এখনই দেখানো হচ্ছে। বন্ধ করার আগে পাঠান বা কপি করুন।</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>{0}-কে WhatsApp করুন</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>WhatsApp-এ ফরোয়ার্ড করুন</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>ইমেইলে পাঠান</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>বার্তা কপি করুন</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>বার্তা কপি হয়েছে।</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>কপি করা যায়নি। লিঙ্কটি নির্বাচন করে কপি করুন।</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>যে লিঙ্কগুলো এখনো কার্যকর</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>তৈরি {0} · শেষ {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>শেয়ার বন্ধ করুন</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>লিঙ্কটি আর কাজ করবে না।</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>{1} থেকে {0}-এর বিবরণী</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+{1}-এর বিবরণী
+এখানে দেখুন: {2}
+লিঙ্কটি {3} পর্যন্ত কার্যকর।
+Lekha Books-এ সাইন ইন: {4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>শেয়ার করা বিবরণী</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>এই বিবরণী আপনার খোলার মতো কোনো ব্যবসায় নেই, অথবা লিঙ্কটি আর কাজ করে না।</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>রিপোর্ট দেখুন</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>ড্যাশবোর্ডে যান</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>Lekha Books থেকে শেয়ার করা শুধু-পঠনযোগ্য বিবরণী।</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>লিঙ্কটি আর কাজ করে না</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>এর মেয়াদ শেষ বা বন্ধ করা হয়েছে। প্রেরকের কাছে নতুন লিঙ্ক চান।</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>রিপোর্ট লোড করা যায়নি</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>কয়েক মিনিট পরে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>Lekha Books-এ সাইন ইন করুন</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>সমাপনী ব্যালেন্স</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{1}-এর কাছে {0}-এর বকেয়া আছে।</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>হিসাবগুলো {0}-এর খাতা থেকে নেওয়া।</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>প্রিন্ট বা PDF সংরক্ষণ করুন</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>Excel-এর জন্য ডাউনলোড (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>Lekha Books-এ খুলুন</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>Lekha Books-এ খুলতে সাইন ইন করুন</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>লিঙ্কটি {0} পর্যন্ত কার্যকর।</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>বিস্তারিত</value>
+  </data>
 </root>

@@ -1273,4 +1273,128 @@
   <data name="Validation.Field.ChequeNo" xml:space="preserve">
     <value>Cheque no.</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>Share statement</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>Anyone who has the link can see this statement, without signing in, until it expires or you stop it.</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>Link works for</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0} days</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>Include bill and voucher photos</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>Create link</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>Report link</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>This link is shown only now. Send or copy it before closing.</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>WhatsApp {0}</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>Forward on WhatsApp</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>Send by email</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>Copy message</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>Message copied.</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>Couldn't copy. Select the link and copy it.</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>Links that still work</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>Made {0} · ends {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>Stop sharing</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>The link no longer works.</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>Statement for {0} from {1}</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+Statement for {1}
+View it here: {2}
+The link works until {3}.
+Sign in to Lekha Books: {4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>Shared statement</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>This statement isn't in a business you can open, or the link no longer works.</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>View the report</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>Go to dashboard</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>A read-only statement shared from Lekha Books.</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>This link no longer works</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>It has expired or was stopped. Ask the sender for a new one.</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>Couldn't load the report</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>Please try again in a few minutes.</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>Sign in to Lekha Books</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>Closing balance</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{0} owes {1}.</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>Figures are from the books of {0}.</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>Print or save as PDF</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>Download for Excel (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>Open in Lekha Books</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>Sign in to open in Lekha Books</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>This link works until {0}.</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
 </root>

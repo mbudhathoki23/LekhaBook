@@ -41,6 +41,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         o.LoginPath = "/signin";
     });
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddPublicReports(); // public report links, see PublicReports
 
 var app = builder.Build();
 
@@ -67,11 +68,13 @@ app.UseRequestLocalization(localization);
 
 app.UseBrowserBinding();
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapWebSignInEndpoints();
 app.MapWebCultureEndpoints();
+app.MapPublicReports();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(LekhaBook.UI.Routes).Assembly);

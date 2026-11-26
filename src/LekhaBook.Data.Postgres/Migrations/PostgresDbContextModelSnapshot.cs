@@ -475,6 +475,50 @@ namespace LekhaBook.Data.Postgres.Migrations
                     b.ToTable("PartyCategories", (string)null);
                 });
 
+            modelBuilder.Entity("LekhaBook.Domain.ReportShareLink", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("AccountId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IncludeFiles")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("RevokedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.HasIndex("CompanyId", "AccountId");
+
+                    b.ToTable("ReportShareLinks", (string)null);
+                });
+
             modelBuilder.Entity("LekhaBook.Domain.Transaction", b =>
                 {
                     b.Property<Guid>("Id")
@@ -623,6 +667,21 @@ namespace LekhaBook.Data.Postgres.Migrations
 
             modelBuilder.Entity("LekhaBook.Domain.PartyCategory", b =>
                 {
+                    b.HasOne("LekhaBook.Domain.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("LekhaBook.Domain.ReportShareLink", b =>
+                {
+                    b.HasOne("LekhaBook.Domain.Account", null)
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("LekhaBook.Domain.Company", null)
                         .WithMany()
                         .HasForeignKey("CompanyId")

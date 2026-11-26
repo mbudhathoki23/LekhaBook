@@ -1345,4 +1345,128 @@
   <data name="MudTablePager_PreviousPage" xml:space="preserve">
     <value>前のページ</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>共有</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>明細書を共有</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>このリンクを知っている人は、期限が切れるか停止されるまで、サインインせずに明細書を閲覧できます。</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>リンクの有効期間</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0}日間</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>請求書と伝票の写真を含める</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>リンクを作成</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>レポートのリンク</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>このリンクは今だけ表示されます。閉じる前に送信するかコピーしてください。</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>{0} に WhatsApp で送る</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>WhatsApp で転送</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>メールで送る</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>メッセージをコピー</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>メッセージをコピーしました。</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>コピーできませんでした。リンクを選択してコピーしてください。</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>有効なリンク</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>作成 {0} · 期限 {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>共有を停止</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>リンクは無効になりました。</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>{1} からの {0} の明細書</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+{1} の明細書
+こちらで確認: {2}
+リンクの期限は {3} です。
+Lekha Books にサインイン: {4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>共有された明細書</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>この明細書はあなたが開ける事業のものではないか、リンクが無効です。</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>レポートを見る</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>ダッシュボードへ</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>Lekha Books から共有された閲覧専用の明細書です。</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>このリンクは無効です</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>期限切れか停止されています。送信者に新しいリンクを依頼してください。</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>レポートを読み込めませんでした</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>数分後にもう一度お試しください。</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>Lekha Books にサインイン</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>期末残高</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{0} は {1} に支払う残高があります。</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>金額は {0} の帳簿に基づきます。</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>印刷または PDF 保存</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>Excel 用にダウンロード (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>Lekha Books で開く</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>サインインして Lekha Books で開く</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>このリンクの期限は {0} です。</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>詳細</value>
+  </data>
 </root>

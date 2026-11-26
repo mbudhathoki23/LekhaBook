@@ -1,0 +1,53 @@
+@page "/shared-report/{Token}"
+@inject IReportLinkApi Links
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+@* "Open in Lekha Books" from a public report: a member who may see the statement goes to its live ledger. *@
+<PageTitle>@Loc["Share.Open.PageTitle"] · Lekha Books</PageTitle>
+
+@if (_message is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    <MudPaper Class="pa-4" Elevation="1">
+        <MudText Typo="Typo.body1" Class="mb-3">@_message</MudText>
+        <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenPublic">@Loc["Share.Open.ViewPublic"]</MudButton>
+            <MudButton Variant="Variant.Text" Href="">@Loc["Share.Open.Dashboard"]</MudButton>
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    private string? _message;
+
+    [Parameter]
+    public string Token { get; set; } = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await Links.ResolveReportLinkAsync(Token);
+        if (result.Value is not { } target)
+        {
+            _message = result.StatusCode == 404 ? Loc["Share.Open.NotYours"].Value : result.Error;
+            return;
+        }
+
+        if (Session.Me?.Companies.Any(c => c.CompanyId == target.CompanyId) != true)
+        {
+            await Session.RefreshAsync(); // joined since the app started
+        }
+
+        if (Session.CurrentCompany?.CompanyId != target.CompanyId)
+        {
+            await Session.SelectCompanyAsync(target.CompanyId);
+        }
+
+        Navigation.NavigateTo($"{(target.IsParty ? "parties" : "accounts")}/{target.AccountId}", replace: true);
+    }
+
+    private void OpenPublic() => Navigation.NavigateTo($"r/{Uri.EscapeDataString(Token)}", forceLoad: true);
+}

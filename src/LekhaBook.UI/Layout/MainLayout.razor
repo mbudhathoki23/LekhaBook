@@ -89,7 +89,8 @@ else
     private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
     /// <summary>Pages that work before the user has a company.</summary>
-    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings";
+    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings"
+        || CurrentPath.StartsWith("shared-report/", StringComparison.Ordinal);
 
     /// <summary>Add and edit forms (…/new, …/edit).</summary>
     private bool IsFormPage => CurrentPath.EndsWith("/new", StringComparison.Ordinal) || CurrentPath.EndsWith("/edit", StringComparison.Ordinal);

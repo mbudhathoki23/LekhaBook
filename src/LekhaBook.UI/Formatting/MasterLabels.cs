@@ -42,10 +42,7 @@ public static class MasterLabels
     };
 
     /// <summary>Only the last 4 digits of an account number: "•••• 6789".</summary>
-    public static string? MaskNumber(string? number) =>
-        string.IsNullOrWhiteSpace(number) ? null
-        : number.Length <= 4 ? number
-        : "•••• " + number[^4..];
+    public static string? MaskNumber(string? number) => LekhaBook.Domain.AccountNumbers.Mask(number);
 
     /// <summary>Up to two initials for an avatar.</summary>
     public static string Initials(string name)

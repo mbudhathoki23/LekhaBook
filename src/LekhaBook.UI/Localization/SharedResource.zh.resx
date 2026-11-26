@@ -1345,4 +1345,128 @@
   <data name="MudTablePager_PreviousPage" xml:space="preserve">
     <value>上一页</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>分享</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>分享对账单</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>任何拥有此链接的人无需登录即可查看这份对账单，直到链接过期或您停止分享。</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>链接有效期</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0} 天</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>包含账单和凭证照片</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>创建链接</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>报告链接</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>此链接仅在此时显示。请在关闭前发送或复制。</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>通过 WhatsApp 发给 {0}</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>通过 WhatsApp 转发</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>通过电子邮件发送</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>复制消息</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>消息已复制。</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>无法复制。请选中链接后复制。</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>仍有效的链接</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>创建于 {0} · 截止 {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>停止分享</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>链接已失效。</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>{1} 发给 {0} 的对账单</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+{1} 的对账单
+在此查看：{2}
+链接有效期至 {3}。
+登录 Lekha Books：{4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>分享的对账单</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>这份对账单不在您可以打开的商家中，或链接已失效。</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>查看报告</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>前往仪表板</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>由 Lekha Books 分享的只读对账单。</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>此链接已失效</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>链接已过期或被停止。请向发送者索取新链接。</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>无法加载报告</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>请几分钟后重试。</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>登录 Lekha Books</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>期末余额</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{0} 欠 {1}。</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>数据来自 {0} 的账簿。</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>打印或另存为 PDF</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>下载 Excel 文件 (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>在 Lekha Books 中打开</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>登录后在 Lekha Books 中打开</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>此链接有效期至 {0}。</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>详情</value>
+  </data>
 </root>

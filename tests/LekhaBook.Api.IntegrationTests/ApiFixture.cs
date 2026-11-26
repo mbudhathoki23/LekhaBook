@@ -32,6 +32,8 @@ public sealed class ApiFixture : IAsyncLifetime
             ["ConnectionStrings:LekhaBook"] = connectionString,
             ["Database:MigrateOnStartup"] = "true",
             ["RateLimits:AuthPerMinute"] = "10000",
+            // Pinned, so a developer's PublicSite__BaseUrl override doesn't change what the tests see.
+            ["PublicSite:BaseUrl"] = "https://lekhabooknepal.com",
         });
         _ = Factory.Server; // start now: runs the migrations
         return Task.CompletedTask;

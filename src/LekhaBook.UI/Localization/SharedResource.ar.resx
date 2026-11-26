@@ -1345,4 +1345,128 @@
   <data name="MudTablePager_PreviousPage" xml:space="preserve">
     <value>الصفحة السابقة</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>مشاركة</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>مشاركة كشف الحساب</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>يمكن لأي شخص لديه الرابط رؤية كشف الحساب هذا دون تسجيل الدخول، إلى أن تنتهي صلاحيته أو توقفه.</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>مدة صلاحية الرابط</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0} يومًا</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>تضمين صور الفواتير والسندات</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>إنشاء رابط</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>رابط التقرير</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>يظهر هذا الرابط الآن فقط. أرسله أو انسخه قبل الإغلاق.</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>واتساب إلى {0}</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>إعادة توجيه عبر واتساب</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>إرسال بالبريد الإلكتروني</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>نسخ الرسالة</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>تم نسخ الرسالة.</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>تعذّر النسخ. حدد الرابط وانسخه.</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>الروابط التي ما زالت تعمل</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>أُنشئ {0} · ينتهي {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>إيقاف المشاركة</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>لم يعد الرابط يعمل.</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>كشف حساب {0} من {1}</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+كشف حساب {1}
+اعرضه هنا: {2}
+يعمل الرابط حتى {3}.
+تسجيل الدخول إلى Lekha Books: {4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>كشف حساب مشترك</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>كشف الحساب هذا ليس ضمن نشاط تجاري يمكنك فتحه، أو أن الرابط لم يعد يعمل.</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>عرض التقرير</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>الانتقال إلى لوحة التحكم</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>كشف حساب للقراءة فقط مشارك من Lekha Books.</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>لم يعد هذا الرابط يعمل</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>انتهت صلاحيته أو أُوقف. اطلب رابطًا جديدًا من المرسل.</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>تعذّر تحميل التقرير</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>يرجى المحاولة مرة أخرى بعد بضع دقائق.</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>تسجيل الدخول إلى Lekha Books</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>الرصيد الختامي</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{0} مدين لـ {1}.</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>الأرقام من دفاتر {0}.</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>طباعة أو حفظ كملف PDF</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>تنزيل لبرنامج Excel (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>فتح في Lekha Books</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>سجّل الدخول للفتح في Lekha Books</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>يعمل هذا الرابط حتى {0}.</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
 </root>

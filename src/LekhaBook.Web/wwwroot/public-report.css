@@ -1,0 +1,222 @@
+/* The public report page (/r/{token}). It has no app shell, so it styles itself. */
+:root {
+    --ink: #1d2233;
+    --muted: #5d6478;
+    --paper: #ffffff;
+    --back: #f2f4f8;
+    --line: #dfe3ec;
+    --primary: #3949ab;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: var(--back);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Noto Sans Devanagari", sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.35rem;
+}
+
+h2 {
+    margin: 0 0 4px;
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.company {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.name {
+    font-weight: 700;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 0.86rem;
+}
+
+.amount {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.languages {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+}
+
+.languages a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.languages a[aria-current="true"] {
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 8px 16px;
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--primary);
+    font: inherit;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button.primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.table-card {
+    padding: 8px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 8px;
+    border-bottom: 1px solid var(--line);
+    text-align: start;
+    vertical-align: top;
+}
+
+th {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+.num {
+    text-align: end;
+    white-space: nowrap;
+}
+
+.nowrap {
+    white-space: nowrap;
+}
+
+.files {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.files img {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+}
+
+footer {
+    text-align: center;
+}
+
+@media (max-width: 599px) {
+    main {
+        padding: 10px;
+    }
+
+    th,
+    td {
+        padding: 6px 4px;
+        font-size: 0.78rem;
+    }
+
+    .num {
+        white-space: normal;
+    }
+
+    .nowrap {
+        font-size: 0.74rem;
+    }
+}
+
+@media print {
+    body {
+        background: #fff;
+        font-size: 11pt;
+    }
+
+    main {
+        max-width: none;
+        padding: 0;
+    }
+
+    .card {
+        border: 0;
+        padding: 6px 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    tr {
+        break-inside: avoid;
+    }
+}

@@ -15,6 +15,8 @@ public sealed class PostgresDbContext(DbContextOptions<PostgresDbContext> option
 
     public DbSet<Invitation> Invitations => Set<Invitation>();
 
+    public DbSet<ReportShareLink> ReportShareLinks => Set<ReportShareLink>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -48,6 +50,17 @@ public sealed class PostgresDbContext(DbContextOptions<PostgresDbContext> option
             e.HasOne<Company>().WithMany().HasForeignKey(x => x.CompanyId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => x.TokenHash).IsUnique();
             e.HasIndex(x => new { x.CompanyId, x.NormalizedEmail });
+        });
+
+        modelBuilder.Entity<ReportShareLink>(e =>
+        {
+            e.ToTable("ReportShareLinks");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.TokenHash).HasMaxLength(64);
+            e.HasOne<Company>().WithMany().HasForeignKey(x => x.CompanyId).OnDelete(DeleteBehavior.Restrict);
+            e.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => x.TokenHash).IsUnique();
+            e.HasIndex(x => new { x.CompanyId, x.AccountId });
         });
     }
 }

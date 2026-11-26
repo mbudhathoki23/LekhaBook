@@ -1345,4 +1345,128 @@
   <data name="Validation.Field.ChequeNo" xml:space="preserve">
     <value>चेक नं.</value>
   </data>
+  <data name="Share.Button" xml:space="preserve">
+    <value>सेयर गर्नुहोस्</value>
+  </data>
+  <data name="Share.Title" xml:space="preserve">
+    <value>विवरण सेयर गर्नुहोस्</value>
+  </data>
+  <data name="Share.Intro" xml:space="preserve">
+    <value>लिङ्क पाउने जो कोहीले साइन इन नगरी यो विवरण हेर्न सक्छ, लिङ्कको म्याद नसकिएसम्म वा तपाईंले बन्द नगरेसम्म।</value>
+  </data>
+  <data name="Share.Expires" xml:space="preserve">
+    <value>लिङ्क चल्ने अवधि</value>
+  </data>
+  <data name="Share.Days" xml:space="preserve">
+    <value>{0} दिन</value>
+  </data>
+  <data name="Share.IncludeFiles" xml:space="preserve">
+    <value>बिल र भौचरका फोटो समावेश गर्नुहोस्</value>
+  </data>
+  <data name="Share.Create" xml:space="preserve">
+    <value>लिङ्क बनाउनुहोस्</value>
+  </data>
+  <data name="Share.LinkLabel" xml:space="preserve">
+    <value>प्रतिवेदन लिङ्क</value>
+  </data>
+  <data name="Share.OnceNote" xml:space="preserve">
+    <value>यो लिङ्क अहिले मात्र देखिन्छ। बन्द गर्नुअघि पठाउनुहोस् वा कपी गर्नुहोस्।</value>
+  </data>
+  <data name="Share.WhatsAppTo" xml:space="preserve">
+    <value>{0} लाई WhatsApp गर्नुहोस्</value>
+  </data>
+  <data name="Share.WhatsAppForward" xml:space="preserve">
+    <value>WhatsApp मा फर्वार्ड गर्नुहोस्</value>
+  </data>
+  <data name="Share.Email" xml:space="preserve">
+    <value>इमेलबाट पठाउनुहोस्</value>
+  </data>
+  <data name="Share.Copy" xml:space="preserve">
+    <value>सन्देश कपी गर्नुहोस्</value>
+  </data>
+  <data name="Share.Copied" xml:space="preserve">
+    <value>सन्देश कपी भयो।</value>
+  </data>
+  <data name="Share.CopyFailed" xml:space="preserve">
+    <value>कपी गर्न सकिएन। लिङ्क छानेर कपी गर्नुहोस्।</value>
+  </data>
+  <data name="Share.Active" xml:space="preserve">
+    <value>अहिले चलिरहेका लिङ्कहरू</value>
+  </data>
+  <data name="Share.LinkDates" xml:space="preserve">
+    <value>बनेको {0} · सकिने {1}</value>
+  </data>
+  <data name="Share.Stop" xml:space="preserve">
+    <value>सेयर बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Share.Stopped" xml:space="preserve">
+    <value>लिङ्क अब चल्दैन।</value>
+  </data>
+  <data name="Share.Subject" xml:space="preserve">
+    <value>{1} बाट {0} को विवरण</value>
+  </data>
+  <data name="Share.Message" xml:space="preserve">
+    <value>{0}
+{1} को विवरण
+यहाँ हेर्नुहोस्: {2}
+लिङ्क {3} सम्म चल्छ।
+Lekha Books मा साइन इन: {4}</value>
+  </data>
+  <data name="Share.Open.PageTitle" xml:space="preserve">
+    <value>सेयर गरिएको विवरण</value>
+  </data>
+  <data name="Share.Open.NotYours" xml:space="preserve">
+    <value>यो विवरण तपाईंले खोल्न सक्ने व्यवसायमा छैन, वा लिङ्क अब चल्दैन।</value>
+  </data>
+  <data name="Share.Open.ViewPublic" xml:space="preserve">
+    <value>प्रतिवेदन हेर्नुहोस्</value>
+  </data>
+  <data name="Share.Open.Dashboard" xml:space="preserve">
+    <value>ड्यासबोर्डमा जानुहोस्</value>
+  </data>
+  <data name="PublicReport.Preview" xml:space="preserve">
+    <value>Lekha Books बाट सेयर गरिएको हेर्न मात्र मिल्ने विवरण।</value>
+  </data>
+  <data name="PublicReport.GoneTitle" xml:space="preserve">
+    <value>यो लिङ्क अब चल्दैन</value>
+  </data>
+  <data name="PublicReport.Gone" xml:space="preserve">
+    <value>यसको म्याद सकियो वा बन्द गरियो। पठाउनेसँग नयाँ लिङ्क माग्नुहोस्।</value>
+  </data>
+  <data name="PublicReport.TryLaterTitle" xml:space="preserve">
+    <value>प्रतिवेदन लोड गर्न सकिएन</value>
+  </data>
+  <data name="PublicReport.TryLater" xml:space="preserve">
+    <value>केही मिनेटपछि फेरि प्रयास गर्नुहोस्।</value>
+  </data>
+  <data name="PublicReport.SignIn" xml:space="preserve">
+    <value>Lekha Books मा साइन इन गर्नुहोस्</value>
+  </data>
+  <data name="PublicReport.Closing" xml:space="preserve">
+    <value>अन्तिम मौज्दात</value>
+  </data>
+  <data name="PublicReport.Owes" xml:space="preserve">
+    <value>{0} ले {1} लाई तिर्न बाँकी छ।</value>
+  </data>
+  <data name="PublicReport.FromBooks" xml:space="preserve">
+    <value>अङ्कहरू {0} को हिसाब किताबबाट लिइएका हुन्।</value>
+  </data>
+  <data name="PublicReport.Print" xml:space="preserve">
+    <value>प्रिन्ट वा PDF सेभ गर्नुहोस्</value>
+  </data>
+  <data name="PublicReport.Csv" xml:space="preserve">
+    <value>Excel का लागि डाउनलोड (CSV)</value>
+  </data>
+  <data name="PublicReport.OpenInApp" xml:space="preserve">
+    <value>Lekha Books मा खोल्नुहोस्</value>
+  </data>
+  <data name="PublicReport.SignInToOpen" xml:space="preserve">
+    <value>Lekha Books मा खोल्न साइन इन गर्नुहोस्</value>
+  </data>
+  <data name="PublicReport.Expires" xml:space="preserve">
+    <value>यो लिङ्क {0} सम्म चल्छ।</value>
+  </data>
+  <data name="PublicReport.Details" xml:space="preserve">
+    <value>थप विवरण</value>
+  </data>
 </root>

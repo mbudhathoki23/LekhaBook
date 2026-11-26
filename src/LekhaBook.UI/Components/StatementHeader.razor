@@ -2,6 +2,7 @@
 @inject ICompanyApi Companies
 @inject ISessionService Session
 @inject IJSRuntime JS
+@inject IDialogService Dialogs
 
 @* The heading of a party or account statement: who issued it, who it is for, the period and when it was printed. *@
 <div class="statement-header">
@@ -62,7 +63,13 @@
         <div class="statement-field">@Loc["Statement.PrintDate", Session.FormatDate(DateOnly.FromDateTime(DateTime.Today))]</div>
     </div>
 
-    <MudButton Class="no-print" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintAsync">@Loc["Statement.Print"]</MudButton>
+    <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" Class="no-print">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintAsync">@Loc["Statement.Print"]</MudButton>
+        @if (Session.Can(LekhaBook.Domain.Permission.ReportsExport) && (Party is not null || Account is not null))
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Share" OnClick="ShareAsync">@Loc["Share.Button"]</MudButton>
+        }
+    </MudStack>
 </div>
 
 @code {
@@ -125,4 +132,18 @@
     }
 
     private async Task PrintAsync() => await JS.InvokeVoidAsync("window.print");
+
+    private async Task ShareAsync()
+    {
+        var parameters = new DialogParameters<ShareReportDialog>
+        {
+            { x => x.CompanyId, CompanyId },
+            { x => x.AccountId, Ledger.AccountId },
+            { x => x.Name, Party?.Name ?? Account!.Name },
+            { x => x.Phone, Party?.Phone },
+            { x => x.Email, Party?.Email },
+        };
+        await Dialogs.ShowAsync<ShareReportDialog>(Loc["Share.Title"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true, CloseButton = true });
+    }
 }

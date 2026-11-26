@@ -52,6 +52,16 @@ builder.Services.AddRateLimiter(o =>
                 Window = TimeSpan.FromMinutes(1),
             })
         : RateLimitPartition.GetNoLimiter("unlimited"));
+
+    // Public report links. The web host calls these for all its visitors, so the limit is generous;
+    // it limits visitors one by one itself.
+    o.AddPolicy(ReportLinkEndpoints.RateLimitPolicy, http => RateLimitPartition.GetFixedWindowLimiter(
+        http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = http.RequestServices.GetRequiredService<IConfiguration>().GetValue("RateLimits:PublicReportsPerMinute", 1200),
+            Window = TimeSpan.FromMinutes(1),
+        }));
 });
 
 var app = builder.Build();
@@ -92,6 +102,7 @@ app.MapCompanyEndpoints();
 app.MapMasterEndpoints();
 app.MapTransactionEndpoints();
 app.MapSyncEndpoints();
+app.MapReportLinkEndpoints();
 
 app.Run();
 

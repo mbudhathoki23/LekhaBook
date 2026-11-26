@@ -1,0 +1,169 @@
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IReportLinkApi Links
+@inject ISessionService Session
+@inject ISnackbar Snackbar
+@inject IJSRuntime JS
+
+@* Makes a public link to one statement and hands it to WhatsApp or email. Also lists and stops earlier links. *@
+<MudDialog>
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Loc["Share.Intro"]</MudText>
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+        }
+
+        @if (_created is null)
+        {
+            <MudSelect T="int" @bind-Value="_days" Label="@Loc["Share.Expires"]" Variant="Variant.Outlined" Margin="Margin.Dense">
+                @foreach (var days in DayChoices)
+                {
+                    <MudSelectItem T="int" Value="days">@Loc["Share.Days", days]</MudSelectItem>
+                }
+            </MudSelect>
+            <MudCheckBox T="bool" @bind-Value="_includeFiles" Label="@Loc["Share.IncludeFiles"]" Color="Color.Primary" Dense="true" />
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Class="mt-2" Disabled="_busy"
+                       StartIcon="@Icons.Material.Filled.Link" OnClick="CreateAsync">@Loc["Share.Create"]</MudButton>
+        }
+        else
+        {
+            <MudTextField T="string" Value="_created.ReportUrl" ReadOnly="true" Label="@Loc["Share.LinkLabel"]"
+                          Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Share.OnceNote"]</MudText>
+            <MudStack Spacing="2" Class="mt-3">
+                @if (ShareLinks.WhatsAppNumber(Phone) is not null)
+                {
+                    <MudButton Variant="Variant.Filled" Color="Color.Success" FullWidth="true" StartIcon="@Icons.Material.Filled.Chat"
+                               Href="@ShareLinks.WhatsApp(Message, Phone)" Target="_blank" rel="noopener noreferrer"
+                               Class="share-whatsapp">@Loc["Share.WhatsAppTo", Name]</MudButton>
+                }
+                <MudButton Variant="Variant.Outlined" Color="Color.Success" FullWidth="true" StartIcon="@Icons.Material.Filled.Forward"
+                           Href="@ShareLinks.WhatsApp(Message)" Target="_blank" rel="noopener noreferrer"
+                           Class="share-whatsapp-forward">@Loc["Share.WhatsAppForward"]</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" StartIcon="@Icons.Material.Filled.Email"
+                           Href="@ShareLinks.Email(Subject, Message, Email)" Target="_blank" Class="share-email">@Loc["Share.Email"]</MudButton>
+                <MudButton Variant="Variant.Text" FullWidth="true" StartIcon="@Icons.Material.Filled.ContentCopy" OnClick="CopyAsync">@Loc["Share.Copy"]</MudButton>
+            </MudStack>
+        }
+
+        @if (_links is { Count: > 0 })
+        {
+            <MudDivider Class="my-3" />
+            <MudText Typo="Typo.subtitle2">@Loc["Share.Active"]</MudText>
+            @foreach (var link in _links)
+            {
+                <div class="d-flex align-center justify-space-between py-1">
+                    <MudText Typo="Typo.body2">
+                        @Loc["Share.LinkDates", Session.FormatDate(link.CreatedOn), Session.FormatDate(link.ExpiresOn)]
+                        @if (link.IncludeFiles)
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small" Title="@Loc["Share.IncludeFiles"]" />
+                        }
+                    </MudText>
+                    <MudButton Variant="Variant.Text" Color="Color.Error" Size="Size.Small" Disabled="_busy"
+                               OnClick="() => RevokeAsync(link)">@Loc["Share.Stop"]</MudButton>
+                </div>
+            }
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">@Loc["Common.Close"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private static readonly int[] DayChoices = [7, ReportShareLink.DefaultDays, ReportShareLink.MaxDays];
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    [Parameter, EditorRequired]
+    public Guid AccountId { get; set; }
+
+    /// <summary>The party or account the statement is for.</summary>
+    [Parameter, EditorRequired]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public string? Phone { get; set; }
+
+    [Parameter]
+    public string? Email { get; set; }
+
+    private int _days = ReportShareLink.DefaultDays;
+    private bool _includeFiles = true;
+    private bool _busy;
+    private string? _error;
+    private CreatedReportLinkDto? _created;
+    private List<ReportLinkDto>? _links;
+
+    private string Subject => Loc["Share.Subject", Name, Session.CompanyName ?? string.Empty];
+
+    private string Message => Loc["Share.Message",
+        Session.CompanyName ?? string.Empty,
+        Name,
+        _created!.ReportUrl,
+        Session.FormatDate(_created.Link.ExpiresOn),
+        _created.SignInUrl];
+
+    protected override Task OnInitializedAsync() => LoadLinksAsync();
+
+    private async Task LoadLinksAsync()
+    {
+        var result = await Links.GetReportLinksAsync(CompanyId, AccountId);
+        _links = result.Value;
+        _error ??= result.Error;
+    }
+
+    private async Task CreateAsync()
+    {
+        _busy = true;
+        _error = null;
+        var result = await Links.CreateReportLinkAsync(CompanyId, new CreateReportLinkRequest(AccountId, _days, _includeFiles));
+        (_created, _error) = (result.Value, result.Error);
+        if (result.Ok)
+        {
+            await LoadLinksAsync();
+        }
+
+        _busy = false;
+    }
+
+    private async Task RevokeAsync(ReportLinkDto link)
+    {
+        _busy = true;
+        var result = await Links.RevokeReportLinkAsync(CompanyId, link.Id);
+        _error = result.Error;
+        if (result.Ok)
+        {
+            if (_created?.Link.Id == link.Id)
+            {
+                _created = null;
+            }
+
+            Snackbar.Add(Loc["Share.Stopped"], Severity.Success);
+            await LoadLinksAsync();
+        }
+
+        _busy = false;
+    }
+
+    private async Task CopyAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("navigator.clipboard.writeText", Message);
+            Snackbar.Add(Loc["Share.Copied"], Severity.Success);
+        }
+        catch (JSException)
+        {
+            Snackbar.Add(Loc["Share.CopyFailed"], Severity.Warning);
+        }
+    }
+
+    private void Close() => MudDialog.Close();
+}

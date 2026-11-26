@@ -1,0 +1,243 @@
+@using System.Globalization
+@using LekhaBook.Contracts
+@using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
+@using LekhaBook.UI.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<SharedResource> Loc
+
+@* The page behind a public report link. Rendered once on the server, with no sign-in and no Blazor circuit. *@
+<!DOCTYPE html>
+<html lang="@Code" dir="@(Languages.IsRightToLeft(Code) ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@Title</title>
+    @* What a chat app shows as the link preview: no names of parties and no amounts. *@
+    <meta property="og:title" content="@Title" />
+    <meta property="og:description" content="@Loc["PublicReport.Preview"]" />
+    <link rel="icon" type="image/x-icon" href="/_content/LekhaBook.UI/branding/favicon.ico" />
+    <link rel="stylesheet" href="/public-report.css" />
+</head>
+<body>
+    <main>
+        <nav class="languages no-print" aria-label="@Loc["Language.Label"]">
+            @foreach (var (tag, name) in Languages.Supported)
+            {
+                <a href="@LanguageHref(tag)" lang="@tag" aria-current="@(tag == Code ? "true" : null)">@name</a>
+            }
+        </nav>
+
+        @if (Report is null)
+        {
+            <section class="card">
+                <h1>@(Unavailable ? Loc["PublicReport.TryLaterTitle"] : Loc["PublicReport.GoneTitle"])</h1>
+                <p>@(Unavailable ? Loc["PublicReport.TryLater"] : Loc["PublicReport.Gone"])</p>
+                <p><a class="button primary" href="/signin">@Loc["PublicReport.SignIn"]</a></p>
+            </section>
+        }
+        else
+        {
+            <header class="card heading">
+                <div class="company">
+                    @if (Report.HasLogo)
+                    {
+                        <img class="logo" src="@($"{Path}/logo")" alt="" />
+                    }
+                    <div>
+                        <h1>@Report.CompanyName</h1>
+                        @foreach (var line in CompanyLines)
+                        {
+                            <div class="muted">@line</div>
+                        }
+                    </div>
+                </div>
+                <div class="meta">
+                    <h2>@(IsParty ? Loc["Statement.PartyTitle"] : Loc["Statement.AccountTitle"])</h2>
+                    <div class="name">@Report.Name</div>
+                    @if (Report.Address is not null)
+                    {
+                        <div class="muted">@Report.Address</div>
+                    }
+                    @if (Report.Pan is not null)
+                    {
+                        <div class="muted">@Loc["Statement.Pan"] @Report.Pan</div>
+                    }
+                    @if (Report.AccountHolderName is not null)
+                    {
+                        <div class="muted">@Loc["Statement.AccountHolder"] @Report.AccountHolderName</div>
+                    }
+                    @if (Report.AccountNumber is not null)
+                    {
+                        <div class="muted">@Loc["Statement.AccountNumber"] @Report.AccountNumber</div>
+                    }
+                    <div class="muted">@Loc["Statement.PrintDate", Date(Report.GeneratedOn)]</div>
+                </div>
+            </header>
+
+            <section class="card summary">
+                <div class="muted">@Loc["PublicReport.Closing"]</div>
+                <div class="amount">@Money.Format(IsParty ? Math.Abs(Report.ClosingBalance) : Report.ClosingBalance)</div>
+                @if (IsParty)
+                {
+                    <div>@PartySummary</div>
+                    <div class="muted">@Loc["PublicReport.FromBooks", Report.CompanyName]</div>
+                }
+            </section>
+
+            <div class="actions no-print">
+                <button type="button" class="button primary" onclick="lbPrint()">@Loc["PublicReport.Print"]</button>
+                <a class="button" href="@($"{Path}/csv")">@Loc["PublicReport.Csv"]</a>
+                <a class="button" href="@($"/shared-report/{Uri.EscapeDataString(Token)}")">@(SignedIn ? Loc["PublicReport.OpenInApp"] : Loc["PublicReport.SignInToOpen"])</a>
+            </div>
+
+            <section class="card table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>@Loc["Common.Date"]</th>
+                            <th>@Loc["Ledger.Particulars"]</th>
+                            <th class="num">@DebitTitle</th>
+                            <th class="num">@CreditTitle</th>
+                            <th class="num">@Loc["Common.Balance"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="nowrap">@(Report.OpeningAsOf is { } asOf ? Date(asOf) : null)</td>
+                            <td>@Loc["Ledger.OpeningBalance"]</td>
+                            <td></td>
+                            <td></td>
+                            <td class="num">@Balance(Report.OpeningBalance)</td>
+                        </tr>
+                        @foreach (var line in Report.Lines)
+                        {
+                            <tr>
+                                <td class="nowrap">@Date(line.Date)</td>
+                                <td>
+                                    <div>@VoucherTitle(line)</div>
+                                    @if (Detail(line) is { Length: > 0 } detail)
+                                    {
+                                        <div class="muted">@detail</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(line.ChequeNo))
+                                    {
+                                        <div class="muted">@Loc["Ledger.ChequeNo", line.ChequeNo]</div>
+                                    }
+                                    @if (line.Files.Count > 0)
+                                    {
+                                        <div class="files">
+                                            @foreach (var file in line.Files)
+                                            {
+                                                var href = $"{Path}/files/{file.Id}";
+                                                <a href="@href" target="_blank" rel="noopener noreferrer">
+                                                    @if (file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <img src="@href" alt="@file.FileName" loading="lazy" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@file.FileName</span>
+                                                    }
+                                                </a>
+                                            }
+                                        </div>
+                                    }
+                                </td>
+                                <td class="num" data-label="@DebitTitle">@(line.Debit > 0 ? Money.Number(line.Debit) : "")</td>
+                                <td class="num" data-label="@CreditTitle">@(line.Credit > 0 ? Money.Number(line.Credit) : "")</td>
+                                <td class="num">@Balance(line.Balance)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Report.Lines.Count == 0)
+                {
+                    <p class="muted">@Loc["Ledger.Empty"]</p>
+                }
+            </section>
+
+            <footer class="muted">
+                <p>@Loc["PublicReport.Expires", Date(Report.ExpiresOn)]</p>
+                <p class="no-print"><a href="/signin">@Loc["PublicReport.SignIn"]</a></p>
+            </footer>
+        }
+    </main>
+    <script>
+        // Lazy images haven't all loaded yet; fetch them before printing or saving as PDF.
+        function lbPrint() {
+            var images = Array.from(document.images);
+            images.forEach(function (i) { i.loading = 'eager'; });
+            Promise.all(images.map(function (i) { return i.decode().catch(function () { }); })).then(function () { window.print(); });
+        }
+    </script>
+</body>
+</html>
+
+@code {
+    [Parameter]
+    public PublicReportDto? Report { get; set; }
+
+    /// <summary>The server couldn't be reached, so we don't know whether the link still works.</summary>
+    [Parameter]
+    public bool Unavailable { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Token { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool SignedIn { get; set; }
+
+    private static string Code => Languages.Normalize(CultureInfo.CurrentUICulture.Name);
+
+    private string Path => $"/r/{Uri.EscapeDataString(Token)}";
+
+    private string Title => Report is null ? "Lekha Books" : $"{Report.CompanyName} · Lekha Books";
+
+    private bool IsParty => Report?.PartyType is not null;
+
+    private CalendarMode Mode => Report!.Calendar == nameof(CalendarMode.AD) ? CalendarMode.AD : CalendarMode.BS;
+
+    private string DebitTitle => IsParty ? Loc["Ledger.GaveAdded"] : Loc["Accounts.Detail.MoneyIn"];
+
+    private string CreditTitle => IsParty ? Loc["Ledger.GotReduced"] : Loc["Accounts.Detail.MoneyOut"];
+
+    private IEnumerable<string> CompanyLines => new[]
+    {
+        Report!.CompanyAddress,
+        Report.CompanyPhone,
+        Report.CompanyPan is null ? null : $"{Loc["Statement.Pan"]} {Report.CompanyPan}",
+    }.OfType<string>().Where(s => s.Length > 0);
+
+    /// <summary>Who owes whom, named, so it reads the same whoever opens the link.</summary>
+    private string PartySummary => Report!.ClosingBalance switch
+    {
+        > 0 => Loc["PublicReport.Owes", Report.Name, Report.CompanyName],
+        < 0 => Loc["PublicReport.Owes", Report.CompanyName, Report.Name],
+        _ => Loc["PartySide.Settled"],
+    };
+
+    private string Date(DateOnly date) => CalendarDates.Format(date, Mode);
+
+    private string Balance(decimal balance)
+    {
+        if (!IsParty || balance == 0)
+        {
+            return Money.Number(balance);
+        }
+
+        return $"{Money.Number(Math.Abs(balance))} {Loc[MasterLabels.PartySide(balance).LabelKey]}";
+    }
+
+    private string VoucherTitle(PublicReportLine line) =>
+        line.VoucherNo.Length == 0
+            ? Loc[MasterLabels.TransactionType(line.Type)]
+            : $"{Loc[MasterLabels.TransactionType(line.Type)]} #{line.VoucherNo}";
+
+    private static string Detail(PublicReportLine line) =>
+        string.Join(" · ", new[] { line.OtherAccount, line.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+    private string LanguageHref(string code) => $"/culture/set?culture={code}&redirectUri={Uri.EscapeDataString(Path)}";
+}
