@@ -4,6 +4,8 @@
 @inject ILanguageService Language
 @inject NavigationManager Navigation
 
+@* The wrapper sets the reading direction (Arabic is right to left) and the language for font choice. *@
+<MudRTLProvider RightToLeft="@Languages.IsRightToLeft(Language.CurrentCode)" lang="@Language.CurrentCode">
 <MudThemeProvider Theme="AppTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
@@ -76,6 +78,8 @@ else
     <a href="." class="reload">@Loc["Shell.Reload"]</a>
     <span class="dismiss">🗙</span>
 </div>
+
+</MudRTLProvider>
 
 @code {
     private bool _drawerOpen = true;

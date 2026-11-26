@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+    <data name="Accounts.Add" xml:space="preserve">
+    <value>إضافة حساب</value>
+  </data>
+  <data name="Accounts.Detail.CurrentBalance" xml:space="preserve">
+    <value>الرصيد الحالي</value>
+  </data>
+  <data name="Accounts.Detail.Deleted" xml:space="preserve">
+    <value>تم حذف {0}.</value>
+  </data>
+  <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
+    <value>ستتم إزالة {0} من المالية.</value>
+  </data>
+  <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
+    <value>حذف الحساب؟</value>
+  </data>
+  <data name="Accounts.Detail.GenericError" xml:space="preserve">
+    <value>حدث خطأ ما.</value>
+  </data>
+  <data name="Accounts.Detail.MoneyIn" xml:space="preserve">
+    <value>الأموال الواردة</value>
+  </data>
+  <data name="Accounts.Detail.MoneyOut" xml:space="preserve">
+    <value>الأموال الصادرة</value>
+  </data>
+  <data name="Accounts.Detail.Title" xml:space="preserve">
+    <value>الحساب</value>
+  </data>
+  <data name="Accounts.Detail.Transactions" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="Accounts.Form.AccountName" xml:space="preserve">
+    <value>اسم الحساب</value>
+  </data>
+  <data name="Accounts.Form.AccountNumber" xml:space="preserve">
+    <value>رقم الحساب</value>
+  </data>
+  <data name="Accounts.Form.AsOfLabel" xml:space="preserve">
+    <value>بتاريخ</value>
+  </data>
+  <data name="Accounts.Form.BalanceHelp" xml:space="preserve">
+    <value>الرصيد في التاريخ أدناه. استخدم علامة السالب إذا كان الحساب مكشوفًا.</value>
+  </data>
+  <data name="Accounts.Form.BankName" xml:space="preserve">
+    <value>اسم البنك</value>
+  </data>
+  <data name="Accounts.Form.BankPlaceholder" xml:space="preserve">
+    <value>مثال: Nabil Bank</value>
+  </data>
+  <data name="Accounts.Form.BuiltInAccount" xml:space="preserve">
+    <value>{0} (حساب أساسي في النظام)</value>
+  </data>
+  <data name="Accounts.Form.CashPettyCash" xml:space="preserve">
+    <value>النقد / النثرية</value>
+  </data>
+  <data name="Accounts.Form.CashPlaceholder" xml:space="preserve">
+    <value>مثال: صندوق النثرية</value>
+  </data>
+  <data name="Accounts.Form.DateLockedHelp" xml:space="preserve">
+    <value>يمكنك تأريخ الرصيد الافتتاحي بتاريخ اليوم فقط.</value>
+  </data>
+  <data name="Accounts.Form.EditTitle" xml:space="preserve">
+    <value>تعديل الحساب</value>
+  </data>
+  <data name="Accounts.Form.HolderName" xml:space="preserve">
+    <value>اسم صاحب الحساب</value>
+  </data>
+  <data name="Accounts.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter للحقل التالي · Ctrl+S للحفظ · Esc للإلغاء</value>
+  </data>
+  <data name="Accounts.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>الرصيد الحالي للحساب (Rs.‎)</value>
+  </data>
+  <data name="Accounts.Form.SavedSnackbar" xml:space="preserve">
+    <value>تم حفظ {0}.</value>
+  </data>
+  <data name="Accounts.Form.Saving" xml:space="preserve">
+    <value>جارٍ الحفظ…</value>
+  </data>
+  <data name="Accounts.Form.TypeLabel" xml:space="preserve">
+    <value>نوع الحساب</value>
+  </data>
+  <data name="Accounts.Form.WalletId" xml:space="preserve">
+    <value>معرّف المحفظة / الهاتف</value>
+  </data>
+  <data name="Accounts.Form.WalletName" xml:space="preserve">
+    <value>اسم المحفظة</value>
+  </data>
+  <data name="Accounts.Form.WalletPlaceholder" xml:space="preserve">
+    <value>مثال: eSewa</value>
+  </data>
+  <data name="Accounts.List.NoViewPermission" xml:space="preserve">
+    <value>ليست لديك صلاحية عرض الحسابات المالية.</value>
+  </data>
+  <data name="Accounts.List.Subject" xml:space="preserve">
+    <value>الحسابات النقدية والمصرفية</value>
+  </data>
+  <data name="Accounts.List.Title" xml:space="preserve">
+    <value>المالية</value>
+  </data>
+  <data name="Accounts.List.TotalBalance" xml:space="preserve">
+    <value>إجمالي الرصيد</value>
+  </data>
+  <data name="AccountType.Bank" xml:space="preserve">
+    <value>حساب بنكي</value>
+  </data>
+  <data name="AccountType.Cash" xml:space="preserve">
+    <value>نقد</value>
+  </data>
+  <data name="AccountType.Cheque" xml:space="preserve">
+    <value>شيك</value>
+  </data>
+  <data name="AccountType.Wallet" xml:space="preserve">
+    <value>محفظة</value>
+  </data>
+  <data name="Attachments.CantShow" xml:space="preserve">
+    <value>تعذّر العرض</value>
+  </data>
+  <data name="Attachments.ChooseFiles" xml:space="preserve">
+    <value>اختيار ملفات</value>
+  </data>
+  <data name="Attachments.Deleted" xml:space="preserve">
+    <value>تمت إزالة {0}.</value>
+  </data>
+  <data name="Attachments.DeleteFailed" xml:space="preserve">
+    <value>تعذّرت إزالة المرفق.</value>
+  </data>
+  <data name="Attachments.DeleteMessage" xml:space="preserve">
+    <value>ستتم إزالة {0} من هذا القيد.</value>
+  </data>
+  <data name="Attachments.DeleteTitle" xml:space="preserve">
+    <value>إزالة هذا المرفق؟</value>
+  </data>
+  <data name="Attachments.Download" xml:space="preserve">
+    <value>تنزيل</value>
+  </data>
+  <data name="Attachments.NotUploaded" xml:space="preserve">
+    <value>تم حفظ القيد، لكن تعذّر رفع هذه الملفات: {0}. افتح القيد لإضافتها مرة أخرى.</value>
+  </data>
+  <data name="Attachments.OpenNamed" xml:space="preserve">
+    <value>فتح {0}</value>
+  </data>
+  <data name="Attachments.PdfPreviewHelp" xml:space="preserve">
+    <value>هذا ملف PDF. نزّله لفتحه على جهازك.</value>
+  </data>
+  <data name="Attachments.RemoveNamed" xml:space="preserve">
+    <value>إزالة {0}</value>
+  </data>
+  <data name="Attachments.SavedWithEntry" xml:space="preserve">
+    <value>تُحفظ هذه الملفات مع القيد.</value>
+  </data>
+  <data name="Attachments.TakePhoto" xml:space="preserve">
+    <value>التقاط صورة</value>
+  </data>
+  <data name="Attachments.UnsupportedType" xml:space="preserve">
+    <value>{0} ليس ملف JPEG أو PNG أو WebP أو PDF.</value>
+  </data>
+  <data name="Auth.SignIn.CreateAccount" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="Auth.SignIn.CredentialsRequired" xml:space="preserve">
+    <value>أدخل البريد الإلكتروني وكلمة المرور.</value>
+  </data>
+  <data name="Auth.SignIn.LinkExpired" xml:space="preserve">
+    <value>انتهت صلاحية رابط تسجيل الدخول. يرجى تسجيل الدخول مرة أخرى.</value>
+  </data>
+  <data name="Auth.SignIn.NewPrompt" xml:space="preserve">
+    <value>جديد في Lekha Books؟</value>
+  </data>
+  <data name="Auth.SignIn.PageTitle" xml:space="preserve">
+    <value>تسجيل الدخول · Lekha Books</value>
+  </data>
+  <data name="Auth.SignIn.Submit" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Auth.SignIn.Subtitle" xml:space="preserve">
+    <value>مرحبًا بعودتك. سجّل الدخول لفتح دفاترك.</value>
+  </data>
+  <data name="Auth.SignIn.Title" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Auth.SignUp.ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="Auth.SignUp.EmailRequired" xml:space="preserve">
+    <value>أدخل بريدك الإلكتروني.</value>
+  </data>
+  <data name="Auth.SignUp.HavePrompt" xml:space="preserve">
+    <value>لديك حساب بالفعل؟</value>
+  </data>
+  <data name="Auth.SignUp.Name" xml:space="preserve">
+    <value>اسمك</value>
+  </data>
+  <data name="Auth.SignUp.NameRequired" xml:space="preserve">
+    <value>أدخل اسمك.</value>
+  </data>
+  <data name="Auth.SignUp.PageTitle" xml:space="preserve">
+    <value>إنشاء حساب · Lekha Books</value>
+  </data>
+  <data name="Auth.SignUp.PasswordHelp" xml:space="preserve">
+    <value>8 أحرف على الأقل، تتضمن رقمًا وحرفًا إنجليزيًا صغيرًا.</value>
+  </data>
+  <data name="Auth.SignUp.PasswordMismatch" xml:space="preserve">
+    <value>كلمتا المرور غير متطابقتين.</value>
+  </data>
+  <data name="Auth.SignUp.PasswordTooShort" xml:space="preserve">
+    <value>يجب ألا تقل كلمة المرور عن 8 أحرف.</value>
+  </data>
+  <data name="Auth.SignUp.SignInLink" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Auth.SignUp.Submit" xml:space="preserve">
+    <value>إنشاء الحساب</value>
+  </data>
+  <data name="Auth.SignUp.Subtitle" xml:space="preserve">
+    <value>البدء مجاني. يمكنك إضافة موظفيك لاحقًا.</value>
+  </data>
+  <data name="Auth.SignUp.Title" xml:space="preserve">
+    <value>أنشئ حسابك</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="Common.Amount" xml:space="preserve">
+    <value>المبلغ</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Common.Balance" xml:space="preserve">
+    <value>الرصيد</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="Common.Company" xml:space="preserve">
+    <value>الشركة</value>
+  </data>
+  <data name="Common.Date" xml:space="preserve">
+    <value>التاريخ</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Common.Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="Common.Loading" xml:space="preserve">
+    <value>جارٍ التحميل…</value>
+  </data>
+  <data name="Common.Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Common.No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="Common.Optional" xml:space="preserve">
+    <value>(اختياري)</value>
+  </data>
+  <data name="Common.Party" xml:space="preserve">
+    <value>الطرف</value>
+  </data>
+  <data name="Common.Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="Common.Phone" xml:space="preserve">
+    <value>الهاتف</value>
+  </data>
+  <data name="Common.Remarks" xml:space="preserve">
+    <value>ملاحظات</value>
+  </data>
+  <data name="Common.Required" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>حاول مرة أخرى</value>
+  </data>
+  <data name="Common.Role" xml:space="preserve">
+    <value>الدور</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="Common.Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Common.Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Common.Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="Companies.Create.Address" xml:space="preserve">
+    <value>العنوان (اختياري)</value>
+  </data>
+  <data name="Companies.Create.BusinessName" xml:space="preserve">
+    <value>اسم النشاط التجاري</value>
+  </data>
+  <data name="Companies.Create.Intro" xml:space="preserve">
+    <value>ستكون مالك الشركة. سيتم إعداد النقد والشيكات والمحفظة الإلكترونية وبنود الإيرادات والمصروفات الشائعة لك.</value>
+  </data>
+  <data name="Companies.Create.NameRequired" xml:space="preserve">
+    <value>أدخل اسم النشاط التجاري.</value>
+  </data>
+  <data name="Companies.Create.PageTitle" xml:space="preserve">
+    <value>إنشاء شركة · Lekha Books</value>
+  </data>
+  <data name="Companies.Create.PanVat" xml:space="preserve">
+    <value>رقم PAN / ضريبة القيمة المضافة (اختياري)</value>
+  </data>
+  <data name="Companies.Create.Phone" xml:space="preserve">
+    <value>الهاتف (اختياري)</value>
+  </data>
+  <data name="Companies.Create.Submit" xml:space="preserve">
+    <value>إنشاء الشركة</value>
+  </data>
+  <data name="Companies.Join.Code" xml:space="preserve">
+    <value>رمز الدعوة</value>
+  </data>
+  <data name="Companies.Join.CodeRequired" xml:space="preserve">
+    <value>الصق رمز الدعوة.</value>
+  </data>
+  <data name="Companies.Join.Intro" xml:space="preserve">
+    <value>الصق رمز الدعوة الذي أعطاك إياه مالك الشركة. يجب أن تسجّل الدخول بالبريد الإلكتروني الذي أُرسلت إليه الدعوة ({0}).</value>
+  </data>
+  <data name="Companies.Join.PageTitle" xml:space="preserve">
+    <value>الانضمام إلى شركة · Lekha Books</value>
+  </data>
+  <data name="Companies.Join.Submit" xml:space="preserve">
+    <value>انضمام</value>
+  </data>
+  <data name="Companies.Join.Title" xml:space="preserve">
+    <value>الانضمام إلى شركة</value>
+  </data>
+  <data name="Errors.NeedConnection" xml:space="preserve">
+    <value>يتطلب عرض {0} اتصالًا بالإنترنت حاليًا. اتصل بالإنترنت وحاول مرة أخرى.</value>
+  </data>
+  <data name="Errors.TheseScreens" xml:space="preserve">
+    <value>هذه الشاشات</value>
+  </data>
+  <data name="Home.BankBalance" xml:space="preserve">
+    <value>رصيد البنك</value>
+  </data>
+  <data name="Home.CashInHand" xml:space="preserve">
+    <value>النقد في الصندوق</value>
+  </data>
+  <data name="Home.QuickEntry" xml:space="preserve">
+    <value>قيد سريع</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Home.Totals" xml:space="preserve">
+    <value>إجماليات لوحة التحكم</value>
+  </data>
+  <data name="Home.ThisMonth" xml:space="preserve">
+    <value>هذا الشهر</value>
+  </data>
+  <data name="Home.Monthly" xml:space="preserve">
+    <value>شهريًا</value>
+  </data>
+  <data name="Home.MonthlyHint" xml:space="preserve">
+    <value>آخر 12 شهرًا</value>
+  </data>
+  <data name="Home.Yearly" xml:space="preserve">
+    <value>سنويًا</value>
+  </data>
+  <data name="Home.YearlyHint" xml:space="preserve">
+    <value>آخر 5 سنوات مالية</value>
+  </data>
+  <data name="Home.TopParties" xml:space="preserve">
+    <value>أكبر 5 أطراف</value>
+  </data>
+  <data name="Home.TopPartiesHint" xml:space="preserve">
+    <value>الأكثر تعاملًا في السنة المالية الحالية، مع رصيد كل طرف الآن</value>
+  </data>
+  <data name="Home.MoneyIn" xml:space="preserve">
+    <value>الأموال الواردة</value>
+  </data>
+  <data name="Home.MoneyOut" xml:space="preserve">
+    <value>الأموال الصادرة</value>
+  </data>
+  <data name="Home.Net" xml:space="preserve">
+    <value>الصافي</value>
+  </data>
+  <data name="Home.Business" xml:space="preserve">
+    <value>حجم التعامل</value>
+  </data>
+  <data name="Home.FlowsEmpty" xml:space="preserve">
+    <value>لا توجد قيود في هذه الفترة بعد.</value>
+  </data>
+  <data name="Home.FlowsNote" xml:space="preserve">
+    <value>لا تُحتسب التحويلات بين الحسابات وتسويات الرصيد.</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>اللغة</value>
+  </data>
+  <data name="Ledger.ChequeNo" xml:space="preserve">
+    <value>شيك رقم {0}</value>
+  </data>
+  <data name="Ledger.Credit" xml:space="preserve">
+    <value>دائن</value>
+  </data>
+  <data name="Ledger.Debit" xml:space="preserve">
+    <value>مدين</value>
+  </data>
+  <data name="Ledger.Empty" xml:space="preserve">
+    <value>لا توجد قيود بعد.</value>
+  </data>
+  <data name="Ledger.GaveAdded" xml:space="preserve">
+    <value>أعطيت / إضافة</value>
+  </data>
+  <data name="Ledger.GotReduced" xml:space="preserve">
+    <value>استلمت / خصم</value>
+  </data>
+  <data name="Ledger.OpeningBalance" xml:space="preserve">
+    <value>الرصيد الافتتاحي</value>
+  </data>
+  <data name="Ledger.Particulars" xml:space="preserve">
+    <value>البيان</value>
+  </data>
+  <data name="Ledger.Transactions" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="Logo.Alt" xml:space="preserve">
+    <value>شعار الشركة</value>
+  </data>
+  <data name="Logo.ChooseImage" xml:space="preserve">
+    <value>اختيار صورة</value>
+  </data>
+  <data name="Logo.CreateWarning" xml:space="preserve">
+    <value>تم إنشاء الشركة، لكن تعذّر رفع شعارها: {0}</value>
+  </data>
+  <data name="Logo.Failed" xml:space="preserve">
+    <value>تعذّر تحديث الشعار.</value>
+  </data>
+  <data name="Logo.Hint" xml:space="preserve">
+    <value>JPEG أو PNG أو WebP، بحجم لا يتجاوز 2 ميغابايت.</value>
+  </data>
+  <data name="Logo.PickLabel" xml:space="preserve">
+    <value>شعار الشركة (اختياري)</value>
+  </data>
+  <data name="Logo.Remove" xml:space="preserve">
+    <value>إزالة الشعار</value>
+  </data>
+  <data name="Logo.Removed" xml:space="preserve">
+    <value>تمت إزالة الشعار.</value>
+  </data>
+  <data name="Logo.RemoveMessage" xml:space="preserve">
+    <value>لن يظهر بعد الآن في كشوف الحساب والمطبوعات.</value>
+  </data>
+  <data name="Logo.RemoveTitle" xml:space="preserve">
+    <value>إزالة شعار الشركة؟</value>
+  </data>
+  <data name="Logo.TooLarge" xml:space="preserve">
+    <value>حجم {0} أكبر من 2 ميغابايت.</value>
+  </data>
+  <data name="Logo.UnsupportedType" xml:space="preserve">
+    <value>استخدم صورة بصيغة JPEG أو PNG أو WebP.</value>
+  </data>
+  <data name="Logo.Updated" xml:space="preserve">
+    <value>تم تحديث الشعار.</value>
+  </data>
+  <data name="Nav.CashAndBank" xml:space="preserve">
+    <value>المالية</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>لوحة التحكم</value>
+  </data>
+  <data name="Nav.Expense" xml:space="preserve">
+    <value>المصروفات</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="Nav.Main" xml:space="preserve">
+    <value>التنقل الرئيسي</value>
+  </data>
+  <data name="Nav.More" xml:space="preserve">
+    <value>المزيد</value>
+  </data>
+  <data name="Nav.OtherIncome" xml:space="preserve">
+    <value>إيرادات أخرى</value>
+  </data>
+  <data name="Nav.Parties" xml:space="preserve">
+    <value>الأطراف</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="Nav.Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="Nav.Staff" xml:space="preserve">
+    <value>الموظفون</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="NotFound.BackToDashboard" xml:space="preserve">
+    <value>العودة إلى لوحة التحكم</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>هذه الشاشة غير موجودة بعد. تُضاف معظم الشاشات في مراحل التطوير اللاحقة.</value>
+  </data>
+  <data name="NotFound.PageTitle" xml:space="preserve">
+    <value>غير موجود · Lekha Books</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>غير متاح بعد</value>
+  </data>
+  <data name="Parties.AddParty" xml:space="preserve">
+    <value>إضافة طرف</value>
+  </data>
+  <data name="Parties.Detail.Deleted" xml:space="preserve">
+    <value>تم حذف {0}.</value>
+  </data>
+  <data name="Parties.Detail.DeleteText" xml:space="preserve">
+    <value>ستتم إزالة {0} من قائمة الأطراف.</value>
+  </data>
+  <data name="Parties.Detail.DeleteTitle" xml:space="preserve">
+    <value>حذف الطرف؟</value>
+  </data>
+  <data name="Parties.Detail.PanValue" xml:space="preserve">
+    <value>PAN {0}</value>
+  </data>
+  <data name="Parties.Detail.SomethingWrong" xml:space="preserve">
+    <value>حدث خطأ ما.</value>
+  </data>
+  <data name="Parties.EditParty" xml:space="preserve">
+    <value>تعديل الطرف</value>
+  </data>
+  <data name="Parties.Form.AddressLabel" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Parties.Form.AsOfLabel" xml:space="preserve">
+    <value>بتاريخ</value>
+  </data>
+  <data name="Parties.Form.AsOfLocked" xml:space="preserve">
+    <value>يمكنك تأريخ الرصيد الافتتاحي بتاريخ اليوم فقط.</value>
+  </data>
+  <data name="Parties.Form.CategoryAddFailed" xml:space="preserve">
+    <value>تعذّرت إضافة الفئة.</value>
+  </data>
+  <data name="Parties.Form.CategoryHelp" xml:space="preserve">
+    <value>اختر فئة، أو اكتب اسمًا جديدًا لإضافتها.</value>
+  </data>
+  <data name="Parties.Form.CategoryLabel" xml:space="preserve">
+    <value>فئة الطرف</value>
+  </data>
+  <data name="Parties.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter للحقل التالي · Ctrl+S للحفظ · Esc للإلغاء</value>
+  </data>
+  <data name="Parties.Form.MoreDetails" xml:space="preserve">
+    <value>تفاصيل أكثر</value>
+  </data>
+  <data name="Parties.Form.NameLabel" xml:space="preserve">
+    <value>الاسم الكامل *</value>
+  </data>
+  <data name="Parties.Form.NamePlaceholder" xml:space="preserve">
+    <value>أدخل اسم الطرف</value>
+  </data>
+  <data name="Parties.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>الرصيد الافتتاحي (Rs.‎)</value>
+  </data>
+  <data name="Parties.Form.PanLabel" xml:space="preserve">
+    <value>رقم PAN</value>
+  </data>
+  <data name="Parties.Form.PhoneLabel" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Parties.Form.PickCategory" xml:space="preserve">
+    <value>اختر فئة من القائمة.</value>
+  </data>
+  <data name="Parties.Form.SaveAndNew" xml:space="preserve">
+    <value>حفظ وجديد</value>
+  </data>
+  <data name="Parties.Form.Saved" xml:space="preserve">
+    <value>تم حفظ {0}.</value>
+  </data>
+  <data name="Parties.Form.Saving" xml:space="preserve">
+    <value>جارٍ الحفظ…</value>
+  </data>
+  <data name="Parties.Form.TypeLabel" xml:space="preserve">
+    <value>نوع الطرف</value>
+  </data>
+  <data name="Parties.List.BalanceAll" xml:space="preserve">
+    <value>كل الأرصدة</value>
+  </data>
+  <data name="Parties.List.EmptyAdd" xml:space="preserve">
+    <value>أضف أول طرف</value>
+  </data>
+  <data name="Parties.List.EmptyBody" xml:space="preserve">
+    <value>أضف عملاءك ومورّديك لتتابع ما لك عليهم وما لهم عليك.</value>
+  </data>
+  <data name="Parties.List.EmptyTitle" xml:space="preserve">
+    <value>لا توجد أطراف بعد</value>
+  </data>
+  <data name="Parties.List.NoMatch" xml:space="preserve">
+    <value>لا توجد أطراف مطابقة.</value>
+  </data>
+  <data name="Parties.List.SearchAria" xml:space="preserve">
+    <value>البحث في الأطراف</value>
+  </data>
+  <data name="Parties.List.SearchPlaceholder" xml:space="preserve">
+    <value>ابحث بالاسم أو الهاتف</value>
+  </data>
+  <data name="Parties.List.SortAmountAsc" xml:space="preserve">
+    <value>المبلغ: تصاعدي</value>
+  </data>
+  <data name="Parties.List.SortAmountDesc" xml:space="preserve">
+    <value>المبلغ: تنازلي</value>
+  </data>
+  <data name="Parties.List.SortLabel" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="Parties.List.SortLatest" xml:space="preserve">
+    <value>الأحدث</value>
+  </data>
+  <data name="Parties.List.SortNameAsc" xml:space="preserve">
+    <value>الاسم: أ إلى ي</value>
+  </data>
+  <data name="Parties.List.SortNameDesc" xml:space="preserve">
+    <value>الاسم: ي إلى أ</value>
+  </data>
+  <data name="Parties.List.TypeAll" xml:space="preserve">
+    <value>كل الأطراف</value>
+  </data>
+  <data name="Parties.List.TypeCustomers" xml:space="preserve">
+    <value>العملاء</value>
+  </data>
+  <data name="Parties.List.TypeLabel" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Parties.List.TypeSuppliers" xml:space="preserve">
+    <value>المورّدون</value>
+  </data>
+  <data name="Parties.Title" xml:space="preserve">
+    <value>الأطراف</value>
+  </data>
+  <data name="Parties.Type.Customer" xml:space="preserve">
+    <value>عميل</value>
+  </data>
+  <data name="Parties.Type.Supplier" xml:space="preserve">
+    <value>مورّد</value>
+  </data>
+  <data name="PartyBalance.Payable" xml:space="preserve">
+    <value>ذمم دائنة</value>
+  </data>
+  <data name="PartyBalance.Receivable" xml:space="preserve">
+    <value>ذمم مدينة</value>
+  </data>
+  <data name="PartySide.Settled" xml:space="preserve">
+    <value>مسدّد</value>
+  </data>
+  <data name="PartySide.ToGive" xml:space="preserve">
+    <value>عليك</value>
+  </data>
+  <data name="PartySide.ToReceive" xml:space="preserve">
+    <value>لك</value>
+  </data>
+  <data name="Role.Accountant" xml:space="preserve">
+    <value>محاسب</value>
+  </data>
+  <data name="Role.Accountant.Description" xml:space="preserve">
+    <value>كل الدفاتر والتقارير والإعدادات، دون إدارة الموظفين.</value>
+  </data>
+  <data name="Role.EntryPerson" xml:space="preserve">
+    <value>مُدخل قيود</value>
+  </data>
+  <data name="Role.EntryPerson.Description" xml:space="preserve">
+    <value>يضيف قيودًا بتاريخ اليوم ويمكنه تصحيح قيوده في اليوم نفسه.</value>
+  </data>
+  <data name="Role.Manager" xml:space="preserve">
+    <value>مدير</value>
+  </data>
+  <data name="Role.Manager.Description" xml:space="preserve">
+    <value>إضافة وتعديل القيود والأطراف، دون الحذف أو الموظفين أو الإعدادات.</value>
+  </data>
+  <data name="Role.Owner" xml:space="preserve">
+    <value>المالك</value>
+  </data>
+  <data name="Role.Owner.Description" xml:space="preserve">
+    <value>صلاحية كاملة، بما في ذلك حذف الشركة.</value>
+  </data>
+  <data name="Role.Partner" xml:space="preserve">
+    <value>شريك</value>
+  </data>
+  <data name="Role.Partner.Description" xml:space="preserve">
+    <value>كل الصلاحيات ما عدا حذف الشركة.</value>
+  </data>
+  <data name="Settings.CompanyReadOnly" xml:space="preserve">
+    <value>لا يمكن تغيير الشعار إلا لمن لديه صلاحية تغيير إعدادات النشاط التجاري.</value>
+  </data>
+  <data name="Settings.CreateCompany" xml:space="preserve">
+    <value>إنشاء شركة</value>
+  </data>
+  <data name="Settings.JoinCompany" xml:space="preserve">
+    <value>الانضمام برمز دعوة</value>
+  </data>
+  <data name="Settings.LanguageHelp" xml:space="preserve">
+    <value>تُستخدم على هذا الجهاز أو المتصفح.</value>
+  </data>
+  <data name="Settings.RunningOn" xml:space="preserve">
+    <value>يعمل على {0} ({1})</value>
+  </data>
+  <data name="Settings.SignOut" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Settings.SignOutHelpDevice" xml:space="preserve">
+    <value>يسجّل خروجك من هذا الجهاز.</value>
+  </data>
+  <data name="Settings.SignOutHelpWeb" xml:space="preserve">
+    <value>يسجّل خروجك من هذا المتصفح.</value>
+  </data>
+  <data name="Settings.Staff" xml:space="preserve">
+    <value>الموظفون</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>المزيد</value>
+  </data>
+  <data name="Shell.AddTransaction" xml:space="preserve">
+    <value>إضافة قيد</value>
+  </data>
+  <data name="Shell.BrandHome" xml:space="preserve">
+    <value>الصفحة الرئيسية لـ Lekha Books</value>
+  </data>
+  <data name="Shell.Loading" xml:space="preserve">
+    <value>جارٍ تحميل Lekha Books</value>
+  </data>
+  <data name="Shell.NoCompany" xml:space="preserve">
+    <value>لا توجد شركة</value>
+  </data>
+  <data name="Shell.Offline" xml:space="preserve">
+    <value>أنت غير متصل بالإنترنت. تُعرض قائمة شركاتك المحفوظة؛ أما الأطراف والحسابات والموظفون فتحتاج إلى اتصال إلى أن تتوفر المزامنة.</value>
+  </data>
+  <data name="Shell.Reload" xml:space="preserve">
+    <value>إعادة التحميل</value>
+  </data>
+  <data name="Shell.SetUpText" xml:space="preserve">
+    <value>أنشئ شركة لبدء تسجيل الأطراف والنقد والبنك، أو انضم إلى شركة برمز دعوة من مالكها.</value>
+  </data>
+  <data name="Shell.SetUpTitle" xml:space="preserve">
+    <value>إعداد دفاترك</value>
+  </data>
+  <data name="Shell.SwitchCompany" xml:space="preserve">
+    <value>تبديل الشركة</value>
+  </data>
+  <data name="Shell.ToggleMenu" xml:space="preserve">
+    <value>إظهار القائمة أو إخفاؤها</value>
+  </data>
+  <data name="Shell.UnexpectedError" xml:space="preserve">
+    <value>حدث خطأ غير متوقع.</value>
+  </data>
+  <data name="Staff.Invite.Button" xml:space="preserve">
+    <value>دعوة</value>
+  </data>
+  <data name="Staff.Invite.Copied" xml:space="preserve">
+    <value>تم النسخ.</value>
+  </data>
+  <data name="Staff.Invite.CopyAria" xml:space="preserve">
+    <value>نسخ الدعوة</value>
+  </data>
+  <data name="Staff.Invite.CopyFailed" xml:space="preserve">
+    <value>تعذّر النسخ. حدّد النص وانسخه يدويًا.</value>
+  </data>
+  <data name="Staff.Invite.Create" xml:space="preserve">
+    <value>إنشاء دعوة</value>
+  </data>
+  <data name="Staff.Invite.CreatedFor" xml:space="preserve">
+    <value>تم إنشاء دعوة لـ {0}</value>
+  </data>
+  <data name="Staff.Invite.Expires" xml:space="preserve">
+    <value>تنتهي في</value>
+  </data>
+  <data name="Staff.Invite.Heading" xml:space="preserve">
+    <value>دعوة شخص</value>
+  </data>
+  <data name="Staff.Invite.NameEmailRequired" xml:space="preserve">
+    <value>أدخل الاسم والبريد الإلكتروني.</value>
+  </data>
+  <data name="Staff.Invite.Pending" xml:space="preserve">
+    <value>الدعوات المعلّقة</value>
+  </data>
+  <data name="Staff.Invite.SendCode" xml:space="preserve">
+    <value>أرسل إليه هذا الرمز. يُستخدم مرة واحدة وتنتهي صلاحيته في {0}.</value>
+  </data>
+  <data name="Staff.Invite.SignInHint" xml:space="preserve">
+    <value>يسجّل الدخول بذلك البريد الإلكتروني، ثم يختار {0}.</value>
+  </data>
+  <data name="Staff.Member.Custom" xml:space="preserve">
+    <value>مخصّص</value>
+  </data>
+  <data name="Staff.Member.Joined" xml:space="preserve">
+    <value>تاريخ الانضمام</value>
+  </data>
+  <data name="Staff.Member.Manage" xml:space="preserve">
+    <value>إدارة {0}</value>
+  </data>
+  <data name="Staff.Member.RemoveAccess" xml:space="preserve">
+    <value>إزالة الوصول</value>
+  </data>
+  <data name="Staff.Member.Revoked" xml:space="preserve">
+    <value>لم يعد بإمكان {0} فتح {1}.</value>
+  </data>
+  <data name="Staff.Member.You" xml:space="preserve">
+    <value>(أنت)</value>
+  </data>
+  <data name="Staff.NoPermission" xml:space="preserve">
+    <value>ليست لديك صلاحية عرض موظفي {0}.</value>
+  </data>
+  <data name="Staff.PageTitle" xml:space="preserve">
+    <value>الموظفون · Lekha Books</value>
+  </data>
+  <data name="Staff.Role.Changed" xml:space="preserve">
+    <value>تم تغيير دور {0} إلى {1}.</value>
+  </data>
+  <data name="Staff.Role.Make" xml:space="preserve">
+    <value>تعيين بدور {0}</value>
+  </data>
+  <data name="Staff.Status.Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="Staff.Status.Revoked" xml:space="preserve">
+    <value>ملغى الوصول</value>
+  </data>
+  <data name="Statement.AccountHolder" xml:space="preserve">
+    <value>صاحب الحساب</value>
+  </data>
+  <data name="Statement.AccountNumber" xml:space="preserve">
+    <value>رقم الحساب</value>
+  </data>
+  <data name="Statement.AccountTitle" xml:space="preserve">
+    <value>كشف حساب</value>
+  </data>
+  <data name="Statement.Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Statement.Pan" xml:space="preserve">
+    <value>PAN</value>
+  </data>
+  <data name="Statement.PartyTitle" xml:space="preserve">
+    <value>كشف حساب طرف</value>
+  </data>
+  <data name="Statement.Period" xml:space="preserve">
+    <value>الفترة</value>
+  </data>
+  <data name="Statement.PeriodValue" xml:space="preserve">
+    <value>من {0} إلى {1}</value>
+  </data>
+  <data name="Statement.Print" xml:space="preserve">
+    <value>طباعة الكشف</value>
+  </data>
+  <data name="Statement.PrintDate" xml:space="preserve">
+    <value>طُبع في {0}</value>
+  </data>
+  <data name="Statement.Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Sync.Error" xml:space="preserve">
+    <value>خطأ في المزامنة</value>
+  </data>
+  <data name="Sync.Offline" xml:space="preserve">
+    <value>غير متصل</value>
+  </data>
+  <data name="Sync.OfflinePending" xml:space="preserve">
+    <value>غير متصل · المعلّق: {0}</value>
+  </data>
+  <data name="Sync.OnlineSynced" xml:space="preserve">
+    <value>متصل · تمت المزامنة</value>
+  </data>
+  <data name="Sync.Pending" xml:space="preserve">
+    <value>المعلّق: {0}</value>
+  </data>
+  <data name="Sync.Syncing" xml:space="preserve">
+    <value>جارٍ المزامنة…</value>
+  </data>
+  <data name="Transactions.Add" xml:space="preserve">
+    <value>إضافة قيد</value>
+  </data>
+  <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="Transactions.Attachment.SizeKb" xml:space="preserve">
+    <value>{0} KB</value>
+  </data>
+  <data name="Transactions.Attachment.SizeMb" xml:space="preserve">
+    <value>{0} MB</value>
+  </data>
+  <data name="Transactions.Form.AddAttachments" xml:space="preserve">
+    <value>إضافة مرفقات</value>
+  </data>
+  <data name="Transactions.Form.AmountLabel" xml:space="preserve">
+    <value>المبلغ (Rs.‎) *</value>
+  </data>
+  <data name="Transactions.Form.AttachmentLimits" xml:space="preserve">
+    <value>حتى 5 ملفات، 5 ميغابايت لكل ملف: JPEG أو PNG أو WebP أو PDF.</value>
+  </data>
+  <data name="Transactions.Form.AttachmentMax" xml:space="preserve">
+    <value>الحد الأقصى لمرفقات القيد الواحد هو 5.</value>
+  </data>
+  <data name="Transactions.Form.Attachments" xml:space="preserve">
+    <value>المرفقات</value>
+  </data>
+  <data name="Transactions.Form.AttachmentsSaveFirst" xml:space="preserve">
+    <value>احفظ القيد أولًا، ثم افتحه لإضافة صور أو ملفات PDF.</value>
+  </data>
+  <data name="Transactions.Form.BackToList" xml:space="preserve">
+    <value>العودة إلى القيود</value>
+  </data>
+  <data name="Transactions.Form.Balance" xml:space="preserve">
+    <value>الرصيد: {0}</value>
+  </data>
+  <data name="Transactions.Form.ChequeDateLabel" xml:space="preserve">
+    <value>تاريخ الشيك</value>
+  </data>
+  <data name="Transactions.Form.ChequeNoLabel" xml:space="preserve">
+    <value>رقم الشيك</value>
+  </data>
+  <data name="Transactions.Form.DateLockedHelp" xml:space="preserve">
+    <value>يمكنك تأريخ القيود بتاريخ اليوم فقط.</value>
+  </data>
+  <data name="Transactions.Form.DateRequired" xml:space="preserve">
+    <value>التاريخ مطلوب.</value>
+  </data>
+  <data name="Transactions.Form.EditTitle" xml:space="preserve">
+    <value>تعديل {0}</value>
+  </data>
+  <data name="Transactions.Form.FileTooLarge" xml:space="preserve">
+    <value>حجم {0} أكبر من 5 ميغابايت.</value>
+  </data>
+  <data name="Transactions.Form.FromAccount" xml:space="preserve">
+    <value>من حساب</value>
+  </data>
+  <data name="Transactions.Form.GenericError" xml:space="preserve">
+    <value>حدث خطأ ما.</value>
+  </data>
+  <data name="Transactions.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter للحقل التالي · Ctrl+S للحفظ · Esc للإلغاء</value>
+  </data>
+  <data name="Transactions.Form.NoCreatePermission" xml:space="preserve">
+    <value>ليست لديك صلاحية إضافة قيود في هذه الشركة.</value>
+  </data>
+  <data name="Transactions.Form.NotEditableHere" xml:space="preserve">
+    <value>لا يمكن تعديل هذا النوع من القيود هنا حتى الآن.</value>
+  </data>
+  <data name="Transactions.Form.PaymentMethod" xml:space="preserve">
+    <value>طريقة الدفع</value>
+  </data>
+  <data name="Transactions.Form.SaveAndNew" xml:space="preserve">
+    <value>حفظ وجديد</value>
+  </data>
+  <data name="Transactions.Form.SavedSnackbar" xml:space="preserve">
+    <value>تم حفظ {0} بمبلغ {1}.</value>
+  </data>
+  <data name="Transactions.Form.Saving" xml:space="preserve">
+    <value>جارٍ الحفظ…</value>
+  </data>
+  <data name="Transactions.Form.ToAccount" xml:space="preserve">
+    <value>إلى حساب</value>
+  </data>
+  <data name="Transactions.Form.TypeLabel" xml:space="preserve">
+    <value>نوع القيد</value>
+  </data>
+  <data name="Transactions.Form.Uploaded" xml:space="preserve">
+    <value>تم رفع {0}.</value>
+  </data>
+  <data name="Transactions.Form.UploadFailed" xml:space="preserve">
+    <value>فشل الرفع: {0}</value>
+  </data>
+  <data name="Transactions.Form.VoidedNotice" xml:space="preserve">
+    <value>تم إبطال هذا القيد، ولم يعد يُحتسب في أي رصيد.</value>
+  </data>
+  <data name="Transactions.Form.VoidedSnackbar" xml:space="preserve">
+    <value>تم إبطال القيد.</value>
+  </data>
+  <data name="Transactions.Form.VoidEntry" xml:space="preserve">
+    <value>إبطال القيد</value>
+  </data>
+  <data name="Transactions.Form.VoidMessage" xml:space="preserve">
+    <value>يبقى في السجل لكنه لا يعود يُحتسب في أي رصيد.</value>
+  </data>
+  <data name="Transactions.Form.VoidTitle" xml:space="preserve">
+    <value>إبطال هذا القيد؟</value>
+  </data>
+  <data name="Transactions.List.AllTypes" xml:space="preserve">
+    <value>كل الأنواع</value>
+  </data>
+  <data name="Transactions.List.AmountHighLow" xml:space="preserve">
+    <value>المبلغ: تنازلي</value>
+  </data>
+  <data name="Transactions.List.AmountLowHigh" xml:space="preserve">
+    <value>المبلغ: تصاعدي</value>
+  </data>
+  <data name="Transactions.List.Count" xml:space="preserve">
+    <value>العدد</value>
+  </data>
+  <data name="Transactions.List.EmptyBody" xml:space="preserve">
+    <value>أضف أول قيد لبدء المتابعة.</value>
+  </data>
+  <data name="Transactions.List.EmptyTitle" xml:space="preserve">
+    <value>لا توجد قيود بعد</value>
+  </data>
+  <data name="Transactions.List.LatestFirst" xml:space="preserve">
+    <value>الأحدث أولًا</value>
+  </data>
+  <data name="Transactions.List.NoMatch" xml:space="preserve">
+    <value>لا توجد قيود مطابقة.</value>
+  </data>
+  <data name="Transactions.List.OldestFirst" xml:space="preserve">
+    <value>الأقدم أولًا</value>
+  </data>
+  <data name="Transactions.List.SearchAria" xml:space="preserve">
+    <value>البحث في القيود</value>
+  </data>
+  <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
+    <value>ابحث بالنوع أو الملاحظات أو التاريخ</value>
+  </data>
+  <data name="Transactions.List.Sort" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="Transactions.List.Title" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="Transactions.List.Transfer" xml:space="preserve">
+    <value>تحويل</value>
+  </data>
+  <data name="Transactions.List.Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="Transactions.List.Void" xml:space="preserve">
+    <value>مُبطَل</value>
+  </data>
+  <data name="Transactions.Type.Expense" xml:space="preserve">
+    <value>مصروف</value>
+  </data>
+  <data name="TxnType.AddMoney" xml:space="preserve">
+    <value>إضافة مبلغ</value>
+  </data>
+  <data name="TxnType.OtherIncome" xml:space="preserve">
+    <value>إيرادات أخرى</value>
+  </data>
+  <data name="TxnType.PartyAdjustAdd" xml:space="preserve">
+    <value>إضافة إلى الرصيد</value>
+  </data>
+  <data name="TxnType.PartyAdjustReduce" xml:space="preserve">
+    <value>خصم من الرصيد</value>
+  </data>
+  <data name="TxnType.PaymentIn" xml:space="preserve">
+    <value>دفعة واردة</value>
+  </data>
+  <data name="TxnType.PaymentOut" xml:space="preserve">
+    <value>دفعة صادرة</value>
+  </data>
+  <data name="TxnType.ReduceMoney" xml:space="preserve">
+    <value>خصم مبلغ</value>
+  </data>
+  <data name="TxnType.TransferMoney" xml:space="preserve">
+    <value>تحويل أموال</value>
+  </data>
+  <data name="Web.Error.Heading" xml:space="preserve">
+    <value>حدث خطأ أثناء معالجة طلبك.</value>
+  </data>
+  <data name="Web.Error.RequestId" xml:space="preserve">
+    <value>معرّف الطلب:</value>
+  </data>
+  <data name="Web.Error.Title" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="Web.Reconnect.Failed" xml:space="preserve">
+    <value>تعذّرت إعادة الاتصال.&lt;br /&gt;يرجى إعادة المحاولة أو إعادة تحميل الصفحة.</value>
+  </data>
+  <data name="Web.Reconnect.Paused" xml:space="preserve">
+    <value>أوقف الخادم الجلسة مؤقتًا.</value>
+  </data>
+  <data name="Web.Reconnect.Rejoining" xml:space="preserve">
+    <value>جارٍ إعادة الاتصال بالخادم...</value>
+  </data>
+  <data name="Web.Reconnect.Resume" xml:space="preserve">
+    <value>استئناف</value>
+  </data>
+  <data name="Web.Reconnect.ResumeFailed" xml:space="preserve">
+    <value>تعذّر استئناف الجلسة.&lt;br /&gt;يرجى إعادة المحاولة أو إعادة تحميل الصفحة.</value>
+  </data>
+  <data name="Web.Reconnect.Retry" xml:space="preserve">
+    <value>إعادة المحاولة</value>
+  </data>
+  <data name="Web.Reconnect.RetryAfter" xml:space="preserve">
+    <value> ثانية.</value>
+  </data>
+  <data name="Web.Reconnect.RetryBefore" xml:space="preserve">
+    <value>فشلت إعادة الاتصال... ستُعاد المحاولة خلال </value>
+  </data>
+  <data name="Calendar.Label" xml:space="preserve">
+    <value>تقويم التاريخ</value>
+  </data>
+  <data name="Calendar.Bs" xml:space="preserve">
+    <value>التاريخ النيبالي (BS)</value>
+  </data>
+  <data name="Calendar.Ad" xml:space="preserve">
+    <value>التاريخ الميلادي (AD)</value>
+  </data>
+  <data name="Calendar.Help" xml:space="preserve">
+    <value>طريقة عرض التواريخ وكتابتها في هذه الشركة. القيود المحفوظة لا تتغير.</value>
+  </data>
+  <data name="Calendar.Saved" xml:space="preserve">
+    <value>تم تغيير تقويم التاريخ.</value>
+  </data>
+  <data name="Calendar.Failed" xml:space="preserve">
+    <value>تعذّر تغيير تقويم التاريخ.</value>
+  </data>
+  <data name="Calendar.Open" xml:space="preserve">
+    <value>فتح التقويم</value>
+  </data>
+  <data name="Calendar.PreviousMonth" xml:space="preserve">
+    <value>الشهر السابق</value>
+  </data>
+  <data name="Calendar.NextMonth" xml:space="preserve">
+    <value>الشهر التالي</value>
+  </data>
+  <data name="Calendar.Year" xml:space="preserve">
+    <value>السنة</value>
+  </data>
+  <data name="Calendar.Month" xml:space="preserve">
+    <value>الشهر</value>
+  </data>
+  <data name="Calendar.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="Calendar.AdDate" xml:space="preserve">
+    <value>AD {0}</value>
+  </data>
+  <data name="Calendar.OutsideRange" xml:space="preserve">
+    <value>تاريخ ميلادي (AD) خارج نطاق التقويم النيبالي</value>
+  </data>
+  <data name="Calendar.InvalidBs" xml:space="preserve">
+    <value>أدخل تاريخًا نيباليًا بالصيغة yyyy/mm/dd.</value>
+  </data>
+  <data name="Calendar.Month1" xml:space="preserve">
+    <value>بيساخ</value>
+  </data>
+  <data name="Calendar.Month2" xml:space="preserve">
+    <value>جيستا</value>
+  </data>
+  <data name="Calendar.Month3" xml:space="preserve">
+    <value>آساد</value>
+  </data>
+  <data name="Calendar.Month4" xml:space="preserve">
+    <value>شراوان</value>
+  </data>
+  <data name="Calendar.Month5" xml:space="preserve">
+    <value>بهادرا</value>
+  </data>
+  <data name="Calendar.Month6" xml:space="preserve">
+    <value>أشوين</value>
+  </data>
+  <data name="Calendar.Month7" xml:space="preserve">
+    <value>كارتيك</value>
+  </data>
+  <data name="Calendar.Month8" xml:space="preserve">
+    <value>مانغسير</value>
+  </data>
+  <data name="Calendar.Month9" xml:space="preserve">
+    <value>بوش</value>
+  </data>
+  <data name="Calendar.Month10" xml:space="preserve">
+    <value>ماغ</value>
+  </data>
+  <data name="Calendar.Month11" xml:space="preserve">
+    <value>فالغون</value>
+  </data>
+  <data name="Calendar.Month12" xml:space="preserve">
+    <value>تشايترا</value>
+  </data>
+  <data name="Calendar.Weekday0" xml:space="preserve">
+    <value>أحد</value>
+  </data>
+  <data name="Calendar.Weekday1" xml:space="preserve">
+    <value>اثنين</value>
+  </data>
+  <data name="Calendar.Weekday2" xml:space="preserve">
+    <value>ثلاثاء</value>
+  </data>
+  <data name="Calendar.Weekday3" xml:space="preserve">
+    <value>أربعاء</value>
+  </data>
+  <data name="Calendar.Weekday4" xml:space="preserve">
+    <value>خميس</value>
+  </data>
+  <data name="Calendar.Weekday5" xml:space="preserve">
+    <value>جمعة</value>
+  </data>
+  <data name="Calendar.Weekday6" xml:space="preserve">
+    <value>سبت</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>حقل {0} مطلوب.</value>
+  </data>
+  <data name="Validation.TooLong" xml:space="preserve">
+    <value>الحد الأقصى لعدد أحرف {0} هو {1}.</value>
+  </data>
+  <data name="Validation.PartyType" xml:space="preserve">
+    <value>اختر «عميل» أو «مورّد».</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>أدخل بريدًا إلكترونيًا صالحًا.</value>
+  </data>
+  <data name="Validation.Pan" xml:space="preserve">
+    <value>يجب أن يتكون PAN من أرقام فقط، وبحد أقصى {0}.</value>
+  </data>
+  <data name="Validation.PartyOpening" xml:space="preserve">
+    <value>يجب أن يكون الرصيد الافتتاحي مبلغًا موجبًا بمنزلتين عشريتين على الأكثر. استخدم «عليك» للمبالغ المستحقة عليك.</value>
+  </data>
+  <data name="Validation.OpeningSide" xml:space="preserve">
+    <value>اختر «لك» أو «عليك».</value>
+  </data>
+  <data name="Validation.MoneyType" xml:space="preserve">
+    <value>اختر «بنك» أو «محفظة» أو «نقد».</value>
+  </data>
+  <data name="Validation.Decimals" xml:space="preserve">
+    <value>أدخل مبلغًا بمنزلتين عشريتين على الأكثر.</value>
+  </data>
+  <data name="Validation.Phone" xml:space="preserve">
+    <value>يمكن أن يحتوي الهاتف على أرقام ومسافات و + و - وأقواس.</value>
+  </data>
+  <data name="Validation.TransactionType" xml:space="preserve">
+    <value>اختر نوع القيد.</value>
+  </data>
+  <data name="Validation.Amount" xml:space="preserve">
+    <value>يجب أن يكون المبلغ أكبر من 0 وبمنزلتين عشريتين على الأكثر.</value>
+  </data>
+  <data name="Validation.Account" xml:space="preserve">
+    <value>اختر حسابًا.</value>
+  </data>
+  <data name="Validation.Field.FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+  </data>
+  <data name="Validation.Field.Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="Validation.Field.CategoryName" xml:space="preserve">
+    <value>اسم الفئة</value>
+  </data>
+  <data name="Validation.Field.Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Validation.Field.AccountHolderName" xml:space="preserve">
+    <value>اسم صاحب الحساب</value>
+  </data>
+  <data name="Validation.Field.AccountNumber" xml:space="preserve">
+    <value>رقم الحساب</value>
+  </data>
+  <data name="Validation.Field.Remarks" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="Validation.Field.ChequeNo" xml:space="preserve">
+    <value>رقم الشيك</value>
+  </data>
+  <data name="MudAlert_Close" xml:space="preserve">
+    <value>إغلاق التنبيه</value>
+  </data>
+  <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
+    <value>الشهر التالي</value>
+  </data>
+  <data name="MudBaseDatePicker_NextYear" xml:space="preserve">
+    <value>السنة التالية</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>فتح</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevMonth" xml:space="preserve">
+    <value>الشهر السابق</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
+    <value>السنة السابقة</value>
+  </data>
+  <data name="MudChip_Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="MudDataGrid_Clear" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="MudDataGrid_Loading" xml:space="preserve">
+    <value>جارٍ التحميل...</value>
+  </data>
+  <data name="MudDataGridPager_AllItems" xml:space="preserve">
+    <value>الكل</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>الصفحة الأولى</value>
+  </data>
+  <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
+    <value>{0}-{1} من {2}</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>الصفحة الأخيرة</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>الصفحة التالية</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>الصفحة السابقة</value>
+  </data>
+  <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
+    <value>الصفوف في الصفحة:</value>
+  </data>
+  <data name="MudDialog_Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="MudInput_Clear" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="MudSnackbar_Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="MudTable_Loading" xml:space="preserve">
+    <value>جارٍ التحميل...</value>
+  </data>
+  <data name="MudTablePager_FirstPage" xml:space="preserve">
+    <value>الصفحة الأولى</value>
+  </data>
+  <data name="MudTablePager_LastPage" xml:space="preserve">
+    <value>الصفحة الأخيرة</value>
+  </data>
+  <data name="MudTablePager_NextPage" xml:space="preserve">
+    <value>الصفحة التالية</value>
+  </data>
+  <data name="MudTablePager_PreviousPage" xml:space="preserve">
+    <value>الصفحة السابقة</value>
+  </data>
+</root>

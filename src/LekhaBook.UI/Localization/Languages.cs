@@ -10,6 +10,10 @@ public static class Languages
 {
     public const string English = "en";
     public const string Nepali = "ne";
+    public const string Bengali = "bn";
+    public const string Arabic = "ar";
+    public const string Chinese = "zh"; // Simplified
+    public const string Japanese = "ja";
 
     /// <summary>Where a device keeps the chosen language (MAUI Preferences). The web host uses a cookie instead.</summary>
     public const string PreferenceKey = "lekhabook.language";
@@ -19,6 +23,10 @@ public static class Languages
     [
         (English, "English"),
         (Nepali, "नेपाली"),
+        (Bengali, "বাংলা"),
+        (Arabic, "العربية"),
+        (Chinese, "中文（简体）"),
+        (Japanese, "日本語"),
     ];
 
     /// <summary>
@@ -29,6 +37,33 @@ public static class Languages
     {
         var language = code?.Split('-')[0].ToLowerInvariant();
         return Supported.Any(l => l.Code == language) ? language! : English;
+    }
+
+    /// <summary>Whether screens in this language read from right to left.</summary>
+    public static bool IsRightToLeft(string? code) => Normalize(code) == Arabic;
+
+    /// <summary>
+    /// The culture for a language: its own texts and month names, but always Gregorian dates and "." decimals.
+    /// Without this, Arabic would show Hijri dates and could expect another decimal mark in amount fields.
+    /// </summary>
+    public static CultureInfo CultureFor(string? code)
+    {
+        var culture = (CultureInfo)CultureInfo.GetCultureInfo(Normalize(code)).Clone();
+        culture.NumberFormat = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        if (culture.DateTimeFormat.Calendar is not GregorianCalendar)
+        {
+            var gregorian = culture.OptionalCalendars.OfType<GregorianCalendar>().FirstOrDefault();
+            if (gregorian is null)
+            {
+                culture.DateTimeFormat = (DateTimeFormatInfo)CultureInfo.InvariantCulture.DateTimeFormat.Clone();
+            }
+            else
+            {
+                culture.DateTimeFormat.Calendar = gregorian;
+            }
+        }
+
+        return culture;
     }
 
     /// <summary>
@@ -42,7 +77,7 @@ public static class Languages
     /// </summary>
     public static void Apply(string? code)
     {
-        var culture = CultureInfo.GetCultureInfo(Normalize(code));
+        var culture = CultureFor(code);
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
     }

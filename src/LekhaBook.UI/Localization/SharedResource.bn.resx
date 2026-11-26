@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+    <data name="Accounts.Add" xml:space="preserve">
+    <value>অ্যাকাউন্ট যোগ করুন</value>
+  </data>
+  <data name="Accounts.Detail.CurrentBalance" xml:space="preserve">
+    <value>বর্তমান ব্যালেন্স</value>
+  </data>
+  <data name="Accounts.Detail.Deleted" xml:space="preserve">
+    <value>{0} মুছে ফেলা হয়েছে।</value>
+  </data>
+  <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
+    <value>ক্যাশ-ব্যাংক থেকে {0} সরিয়ে ফেলা হবে।</value>
+  </data>
+  <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
+    <value>অ্যাকাউন্ট মুছবেন?</value>
+  </data>
+  <data name="Accounts.Detail.GenericError" xml:space="preserve">
+    <value>কিছু একটা সমস্যা হয়েছে।</value>
+  </data>
+  <data name="Accounts.Detail.MoneyIn" xml:space="preserve">
+    <value>টাকা জমা</value>
+  </data>
+  <data name="Accounts.Detail.MoneyOut" xml:space="preserve">
+    <value>টাকা খরচ</value>
+  </data>
+  <data name="Accounts.Detail.Title" xml:space="preserve">
+    <value>অ্যাকাউন্ট</value>
+  </data>
+  <data name="Accounts.Detail.Transactions" xml:space="preserve">
+    <value>এন্ট্রি</value>
+  </data>
+  <data name="Accounts.Form.AccountName" xml:space="preserve">
+    <value>অ্যাকাউন্টের নাম</value>
+  </data>
+  <data name="Accounts.Form.AccountNumber" xml:space="preserve">
+    <value>অ্যাকাউন্ট নম্বর</value>
+  </data>
+  <data name="Accounts.Form.AsOfLabel" xml:space="preserve">
+    <value>যে তারিখের হিসাব</value>
+  </data>
+  <data name="Accounts.Form.BalanceHelp" xml:space="preserve">
+    <value>নিচের তারিখে যে ব্যালেন্স ছিল। অ্যাকাউন্ট ওভারড্রন থাকলে মাইনাস চিহ্ন দিন।</value>
+  </data>
+  <data name="Accounts.Form.BankName" xml:space="preserve">
+    <value>ব্যাংকের নাম</value>
+  </data>
+  <data name="Accounts.Form.BankPlaceholder" xml:space="preserve">
+    <value>যেমন: Nabil Bank</value>
+  </data>
+  <data name="Accounts.Form.BuiltInAccount" xml:space="preserve">
+    <value>{0} (আগে থেকে থাকা অ্যাকাউন্ট)</value>
+  </data>
+  <data name="Accounts.Form.CashPettyCash" xml:space="preserve">
+    <value>ক্যাশ / পেটি ক্যাশ</value>
+  </data>
+  <data name="Accounts.Form.CashPlaceholder" xml:space="preserve">
+    <value>যেমন: পেটি ক্যাশ</value>
+  </data>
+  <data name="Accounts.Form.DateLockedHelp" xml:space="preserve">
+    <value>ওপেনিং ব্যালেন্সে শুধু আজকের তারিখ দিতে পারবেন।</value>
+  </data>
+  <data name="Accounts.Form.EditTitle" xml:space="preserve">
+    <value>অ্যাকাউন্ট এডিট</value>
+  </data>
+  <data name="Accounts.Form.HolderName" xml:space="preserve">
+    <value>অ্যাকাউন্টধারীর নাম</value>
+  </data>
+  <data name="Accounts.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter চাপলে পরের ঘরে যাবে · Ctrl+S সেভ · Esc বাতিল</value>
+  </data>
+  <data name="Accounts.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>অ্যাকাউন্টের বর্তমান ব্যালেন্স (Rs.)</value>
+  </data>
+  <data name="Accounts.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0} সেভ হয়েছে।</value>
+  </data>
+  <data name="Accounts.Form.Saving" xml:space="preserve">
+    <value>সেভ হচ্ছে…</value>
+  </data>
+  <data name="Accounts.Form.TypeLabel" xml:space="preserve">
+    <value>অ্যাকাউন্টের ধরন</value>
+  </data>
+  <data name="Accounts.Form.WalletId" xml:space="preserve">
+    <value>ওয়ালেট আইডি / ফোন</value>
+  </data>
+  <data name="Accounts.Form.WalletName" xml:space="preserve">
+    <value>ওয়ালেটের নাম</value>
+  </data>
+  <data name="Accounts.Form.WalletPlaceholder" xml:space="preserve">
+    <value>যেমন: eSewa</value>
+  </data>
+  <data name="Accounts.List.NoViewPermission" xml:space="preserve">
+    <value>টাকার অ্যাকাউন্ট দেখার অনুমতি আপনার নেই।</value>
+  </data>
+  <data name="Accounts.List.Subject" xml:space="preserve">
+    <value>ক্যাশ ও ব্যাংক অ্যাকাউন্ট</value>
+  </data>
+  <data name="Accounts.List.Title" xml:space="preserve">
+    <value>ক্যাশ-ব্যাংক</value>
+  </data>
+  <data name="Accounts.List.TotalBalance" xml:space="preserve">
+    <value>মোট ব্যালেন্স</value>
+  </data>
+  <data name="AccountType.Bank" xml:space="preserve">
+    <value>ব্যাংক অ্যাকাউন্ট</value>
+  </data>
+  <data name="AccountType.Cash" xml:space="preserve">
+    <value>ক্যাশ</value>
+  </data>
+  <data name="AccountType.Cheque" xml:space="preserve">
+    <value>চেক</value>
+  </data>
+  <data name="AccountType.Wallet" xml:space="preserve">
+    <value>ওয়ালেট</value>
+  </data>
+  <data name="Attachments.CantShow" xml:space="preserve">
+    <value>দেখানো যাচ্ছে না</value>
+  </data>
+  <data name="Attachments.ChooseFiles" xml:space="preserve">
+    <value>ফাইল বাছুন</value>
+  </data>
+  <data name="Attachments.Deleted" xml:space="preserve">
+    <value>{0} সরানো হয়েছে।</value>
+  </data>
+  <data name="Attachments.DeleteFailed" xml:space="preserve">
+    <value>সংযুক্তিটি সরানো যায়নি।</value>
+  </data>
+  <data name="Attachments.DeleteMessage" xml:space="preserve">
+    <value>এই এন্ট্রি থেকে {0} সরিয়ে ফেলা হবে।</value>
+  </data>
+  <data name="Attachments.DeleteTitle" xml:space="preserve">
+    <value>সংযুক্তিটি সরাবেন?</value>
+  </data>
+  <data name="Attachments.Download" xml:space="preserve">
+    <value>ডাউনলোড</value>
+  </data>
+  <data name="Attachments.NotUploaded" xml:space="preserve">
+    <value>এন্ট্রি সেভ হয়েছে, কিন্তু এই ফাইলগুলো আপলোড হয়নি: {0}। আবার যোগ করতে এন্ট্রিটি খুলুন।</value>
+  </data>
+  <data name="Attachments.OpenNamed" xml:space="preserve">
+    <value>{0} খুলুন</value>
+  </data>
+  <data name="Attachments.PdfPreviewHelp" xml:space="preserve">
+    <value>এটি একটি PDF। আপনার ডিভাইসে খুলতে ডাউনলোড করুন।</value>
+  </data>
+  <data name="Attachments.RemoveNamed" xml:space="preserve">
+    <value>{0} সরান</value>
+  </data>
+  <data name="Attachments.SavedWithEntry" xml:space="preserve">
+    <value>এই ফাইলগুলো এন্ট্রির সাথে সেভ হবে।</value>
+  </data>
+  <data name="Attachments.TakePhoto" xml:space="preserve">
+    <value>ছবি তুলুন</value>
+  </data>
+  <data name="Attachments.UnsupportedType" xml:space="preserve">
+    <value>{0} ফাইলটি JPEG, PNG, WebP বা PDF নয়।</value>
+  </data>
+  <data name="Auth.SignIn.CreateAccount" xml:space="preserve">
+    <value>অ্যাকাউন্ট খুলুন</value>
+  </data>
+  <data name="Auth.SignIn.CredentialsRequired" xml:space="preserve">
+    <value>আপনার ইমেইল ও পাসওয়ার্ড দিন।</value>
+  </data>
+  <data name="Auth.SignIn.LinkExpired" xml:space="preserve">
+    <value>সাইন-ইন লিংকটির মেয়াদ শেষ। আবার সাইন ইন করুন।</value>
+  </data>
+  <data name="Auth.SignIn.NewPrompt" xml:space="preserve">
+    <value>Lekha Books-এ নতুন?</value>
+  </data>
+  <data name="Auth.SignIn.PageTitle" xml:space="preserve">
+    <value>সাইন ইন · Lekha Books</value>
+  </data>
+  <data name="Auth.SignIn.Submit" xml:space="preserve">
+    <value>সাইন ইন</value>
+  </data>
+  <data name="Auth.SignIn.Subtitle" xml:space="preserve">
+    <value>আবার স্বাগতম। আপনার হিসাবের খাতা খুলতে সাইন ইন করুন।</value>
+  </data>
+  <data name="Auth.SignIn.Title" xml:space="preserve">
+    <value>সাইন ইন</value>
+  </data>
+  <data name="Auth.SignUp.ConfirmPassword" xml:space="preserve">
+    <value>পাসওয়ার্ড আবার লিখুন</value>
+  </data>
+  <data name="Auth.SignUp.EmailRequired" xml:space="preserve">
+    <value>আপনার ইমেইল দিন।</value>
+  </data>
+  <data name="Auth.SignUp.HavePrompt" xml:space="preserve">
+    <value>আগে থেকেই অ্যাকাউন্ট আছে?</value>
+  </data>
+  <data name="Auth.SignUp.Name" xml:space="preserve">
+    <value>আপনার নাম</value>
+  </data>
+  <data name="Auth.SignUp.NameRequired" xml:space="preserve">
+    <value>আপনার নাম দিন।</value>
+  </data>
+  <data name="Auth.SignUp.PageTitle" xml:space="preserve">
+    <value>অ্যাকাউন্ট খুলুন · Lekha Books</value>
+  </data>
+  <data name="Auth.SignUp.PasswordHelp" xml:space="preserve">
+    <value>কমপক্ষে 8 অক্ষর, একটি সংখ্যা ও একটি ছোট হাতের ইংরেজি অক্ষরসহ।</value>
+  </data>
+  <data name="Auth.SignUp.PasswordMismatch" xml:space="preserve">
+    <value>দুটি পাসওয়ার্ড মেলেনি।</value>
+  </data>
+  <data name="Auth.SignUp.PasswordTooShort" xml:space="preserve">
+    <value>পাসওয়ার্ড কমপক্ষে 8 অক্ষরের হতে হবে।</value>
+  </data>
+  <data name="Auth.SignUp.SignInLink" xml:space="preserve">
+    <value>সাইন ইন</value>
+  </data>
+  <data name="Auth.SignUp.Submit" xml:space="preserve">
+    <value>অ্যাকাউন্ট খুলুন</value>
+  </data>
+  <data name="Auth.SignUp.Subtitle" xml:space="preserve">
+    <value>শুরু করা ফ্রি। পরে স্টাফ যোগ করতে পারবেন।</value>
+  </data>
+  <data name="Auth.SignUp.Title" xml:space="preserve">
+    <value>আপনার অ্যাকাউন্ট খুলুন</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>যোগ করুন</value>
+  </data>
+  <data name="Common.Amount" xml:space="preserve">
+    <value>টাকার পরিমাণ</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>পেছনে</value>
+  </data>
+  <data name="Common.Balance" xml:space="preserve">
+    <value>ব্যালেন্স</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>বাতিল</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>ক্যাটাগরি</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>বন্ধ করুন</value>
+  </data>
+  <data name="Common.Company" xml:space="preserve">
+    <value>কোম্পানি</value>
+  </data>
+  <data name="Common.Date" xml:space="preserve">
+    <value>তারিখ</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>মুছুন</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>এডিট</value>
+  </data>
+  <data name="Common.Email" xml:space="preserve">
+    <value>ইমেইল</value>
+  </data>
+  <data name="Common.Loading" xml:space="preserve">
+    <value>লোড হচ্ছে…</value>
+  </data>
+  <data name="Common.Name" xml:space="preserve">
+    <value>নাম</value>
+  </data>
+  <data name="Common.No" xml:space="preserve">
+    <value>না</value>
+  </data>
+  <data name="Common.Optional" xml:space="preserve">
+    <value>(ঐচ্ছিক)</value>
+  </data>
+  <data name="Common.Party" xml:space="preserve">
+    <value>পার্টি</value>
+  </data>
+  <data name="Common.Password" xml:space="preserve">
+    <value>পাসওয়ার্ড</value>
+  </data>
+  <data name="Common.Phone" xml:space="preserve">
+    <value>ফোন</value>
+  </data>
+  <data name="Common.Remarks" xml:space="preserve">
+    <value>মন্তব্য</value>
+  </data>
+  <data name="Common.Required" xml:space="preserve">
+    <value>আবশ্যক</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>আবার চেষ্টা করুন</value>
+  </data>
+  <data name="Common.Role" xml:space="preserve">
+    <value>ভূমিকা</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>সেভ করুন</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>খুঁজুন</value>
+  </data>
+  <data name="Common.Status" xml:space="preserve">
+    <value>অবস্থা</value>
+  </data>
+  <data name="Common.Total" xml:space="preserve">
+    <value>মোট</value>
+  </data>
+  <data name="Common.Yes" xml:space="preserve">
+    <value>হ্যাঁ</value>
+  </data>
+  <data name="Companies.Create.Address" xml:space="preserve">
+    <value>ঠিকানা (ঐচ্ছিক)</value>
+  </data>
+  <data name="Companies.Create.BusinessName" xml:space="preserve">
+    <value>ব্যবসার নাম</value>
+  </data>
+  <data name="Companies.Create.Intro" xml:space="preserve">
+    <value>আপনি হবেন এর মালিক। ক্যাশ, চেক, অনলাইন ওয়ালেট এবং সাধারণ আয়-ব্যয়ের খাতগুলো আপনার জন্য তৈরি করে দেওয়া হবে।</value>
+  </data>
+  <data name="Companies.Create.NameRequired" xml:space="preserve">
+    <value>ব্যবসার নাম দিন।</value>
+  </data>
+  <data name="Companies.Create.PageTitle" xml:space="preserve">
+    <value>কোম্পানি তৈরি · Lekha Books</value>
+  </data>
+  <data name="Companies.Create.PanVat" xml:space="preserve">
+    <value>PAN / ভ্যাট নম্বর (ঐচ্ছিক)</value>
+  </data>
+  <data name="Companies.Create.Phone" xml:space="preserve">
+    <value>ফোন (ঐচ্ছিক)</value>
+  </data>
+  <data name="Companies.Create.Submit" xml:space="preserve">
+    <value>কোম্পানি তৈরি করুন</value>
+  </data>
+  <data name="Companies.Join.Code" xml:space="preserve">
+    <value>আমন্ত্রণ কোড</value>
+  </data>
+  <data name="Companies.Join.CodeRequired" xml:space="preserve">
+    <value>আমন্ত্রণ কোডটি পেস্ট করুন।</value>
+  </data>
+  <data name="Companies.Join.Intro" xml:space="preserve">
+    <value>কোম্পানির মালিকের দেওয়া আমন্ত্রণ কোডটি পেস্ট করুন। যে ইমেইলে কোডটি পাঠানো হয়েছে ({0}), সেটি দিয়েই সাইন ইন থাকতে হবে।</value>
+  </data>
+  <data name="Companies.Join.PageTitle" xml:space="preserve">
+    <value>কোম্পানিতে যোগ দিন · Lekha Books</value>
+  </data>
+  <data name="Companies.Join.Submit" xml:space="preserve">
+    <value>যোগ দিন</value>
+  </data>
+  <data name="Companies.Join.Title" xml:space="preserve">
+    <value>কোম্পানিতে যোগ দিন</value>
+  </data>
+  <data name="Errors.NeedConnection" xml:space="preserve">
+    <value>{0} দেখতে আপাতত ইন্টারনেট লাগবে। ইন্টারনেট চালু করে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="Errors.TheseScreens" xml:space="preserve">
+    <value>এই স্ক্রিনগুলো</value>
+  </data>
+  <data name="Home.BankBalance" xml:space="preserve">
+    <value>ব্যাংক ব্যালেন্স</value>
+  </data>
+  <data name="Home.CashInHand" xml:space="preserve">
+    <value>হাতে ক্যাশ</value>
+  </data>
+  <data name="Home.QuickEntry" xml:space="preserve">
+    <value>দ্রুত এন্ট্রি</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>ড্যাশবোর্ড</value>
+  </data>
+  <data name="Home.Totals" xml:space="preserve">
+    <value>ড্যাশবোর্ডের মোট হিসাব</value>
+  </data>
+  <data name="Home.ThisMonth" xml:space="preserve">
+    <value>এই মাস</value>
+  </data>
+  <data name="Home.Monthly" xml:space="preserve">
+    <value>মাসিক</value>
+  </data>
+  <data name="Home.MonthlyHint" xml:space="preserve">
+    <value>গত 12 মাস</value>
+  </data>
+  <data name="Home.Yearly" xml:space="preserve">
+    <value>বার্ষিক</value>
+  </data>
+  <data name="Home.YearlyHint" xml:space="preserve">
+    <value>গত 5টি অর্থবছর</value>
+  </data>
+  <data name="Home.TopParties" xml:space="preserve">
+    <value>শীর্ষ 5 পার্টি</value>
+  </data>
+  <data name="Home.TopPartiesHint" xml:space="preserve">
+    <value>এই অর্থবছরে সবচেয়ে বেশি লেনদেন, প্রতিটি পার্টির বর্তমান ব্যালেন্সসহ</value>
+  </data>
+  <data name="Home.MoneyIn" xml:space="preserve">
+    <value>টাকা জমা</value>
+  </data>
+  <data name="Home.MoneyOut" xml:space="preserve">
+    <value>টাকা খরচ</value>
+  </data>
+  <data name="Home.Net" xml:space="preserve">
+    <value>নিট</value>
+  </data>
+  <data name="Home.Business" xml:space="preserve">
+    <value>লেনদেন</value>
+  </data>
+  <data name="Home.FlowsEmpty" xml:space="preserve">
+    <value>এই সময়ে এখনো কোনো এন্ট্রি নেই।</value>
+  </data>
+  <data name="Home.FlowsNote" xml:space="preserve">
+    <value>অ্যাকাউন্টের মধ্যে ট্রান্সফার ও ব্যালেন্স সমন্বয় ধরা হয়নি।</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>ভাষা</value>
+  </data>
+  <data name="Ledger.ChequeNo" xml:space="preserve">
+    <value>চেক #{0}</value>
+  </data>
+  <data name="Ledger.Credit" xml:space="preserve">
+    <value>ক্রেডিট</value>
+  </data>
+  <data name="Ledger.Debit" xml:space="preserve">
+    <value>ডেবিট</value>
+  </data>
+  <data name="Ledger.Empty" xml:space="preserve">
+    <value>এখনো কোনো এন্ট্রি নেই।</value>
+  </data>
+  <data name="Ledger.GaveAdded" xml:space="preserve">
+    <value>দিলাম / যোগ</value>
+  </data>
+  <data name="Ledger.GotReduced" xml:space="preserve">
+    <value>পেলাম / বিয়োগ</value>
+  </data>
+  <data name="Ledger.OpeningBalance" xml:space="preserve">
+    <value>ওপেনিং ব্যালেন্স</value>
+  </data>
+  <data name="Ledger.Particulars" xml:space="preserve">
+    <value>বিবরণ</value>
+  </data>
+  <data name="Ledger.Transactions" xml:space="preserve">
+    <value>এন্ট্রি</value>
+  </data>
+  <data name="Logo.Alt" xml:space="preserve">
+    <value>কোম্পানির লোগো</value>
+  </data>
+  <data name="Logo.ChooseImage" xml:space="preserve">
+    <value>ছবি বাছুন</value>
+  </data>
+  <data name="Logo.CreateWarning" xml:space="preserve">
+    <value>কোম্পানি তৈরি হয়েছে, কিন্তু লোগো আপলোড হয়নি: {0}</value>
+  </data>
+  <data name="Logo.Failed" xml:space="preserve">
+    <value>লোগো আপডেট করা যায়নি।</value>
+  </data>
+  <data name="Logo.Hint" xml:space="preserve">
+    <value>JPEG, PNG বা WebP, সর্বোচ্চ 2 MB।</value>
+  </data>
+  <data name="Logo.PickLabel" xml:space="preserve">
+    <value>কোম্পানির লোগো (ঐচ্ছিক)</value>
+  </data>
+  <data name="Logo.Remove" xml:space="preserve">
+    <value>লোগো সরান</value>
+  </data>
+  <data name="Logo.Removed" xml:space="preserve">
+    <value>লোগো সরানো হয়েছে।</value>
+  </data>
+  <data name="Logo.RemoveMessage" xml:space="preserve">
+    <value>স্টেটমেন্ট ও প্রিন্টে লোগো আর দেখাবে না।</value>
+  </data>
+  <data name="Logo.RemoveTitle" xml:space="preserve">
+    <value>কোম্পানির লোগো সরাবেন?</value>
+  </data>
+  <data name="Logo.TooLarge" xml:space="preserve">
+    <value>{0} ফাইলটি 2 MB-এর চেয়ে বড়।</value>
+  </data>
+  <data name="Logo.UnsupportedType" xml:space="preserve">
+    <value>JPEG, PNG বা WebP ছবি দিন।</value>
+  </data>
+  <data name="Logo.Updated" xml:space="preserve">
+    <value>লোগো আপডেট হয়েছে।</value>
+  </data>
+  <data name="Nav.CashAndBank" xml:space="preserve">
+    <value>ক্যাশ-ব্যাংক</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>ড্যাশবোর্ড</value>
+  </data>
+  <data name="Nav.Expense" xml:space="preserve">
+    <value>খরচ</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>হোম</value>
+  </data>
+  <data name="Nav.Main" xml:space="preserve">
+    <value>প্রধান</value>
+  </data>
+  <data name="Nav.More" xml:space="preserve">
+    <value>আরও</value>
+  </data>
+  <data name="Nav.OtherIncome" xml:space="preserve">
+    <value>অন্যান্য আয়</value>
+  </data>
+  <data name="Nav.Parties" xml:space="preserve">
+    <value>পার্টি</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>রিপোর্ট</value>
+  </data>
+  <data name="Nav.Settings" xml:space="preserve">
+    <value>সেটিংস</value>
+  </data>
+  <data name="Nav.Staff" xml:space="preserve">
+    <value>স্টাফ</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>এন্ট্রি</value>
+  </data>
+  <data name="NotFound.BackToDashboard" xml:space="preserve">
+    <value>ড্যাশবোর্ডে ফিরুন</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>এই স্ক্রিনটি এখনো তৈরি হয়নি। বেশিরভাগ স্ক্রিন পরের ধাপগুলোতে যোগ হবে।</value>
+  </data>
+  <data name="NotFound.PageTitle" xml:space="preserve">
+    <value>পাওয়া যায়নি · Lekha Books</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>এখনো চালু হয়নি</value>
+  </data>
+  <data name="Parties.AddParty" xml:space="preserve">
+    <value>পার্টি যোগ করুন</value>
+  </data>
+  <data name="Parties.Detail.Deleted" xml:space="preserve">
+    <value>{0} মুছে ফেলা হয়েছে।</value>
+  </data>
+  <data name="Parties.Detail.DeleteText" xml:space="preserve">
+    <value>আপনার পার্টি তালিকা থেকে {0} সরিয়ে ফেলা হবে।</value>
+  </data>
+  <data name="Parties.Detail.DeleteTitle" xml:space="preserve">
+    <value>পার্টি মুছবেন?</value>
+  </data>
+  <data name="Parties.Detail.PanValue" xml:space="preserve">
+    <value>PAN {0}</value>
+  </data>
+  <data name="Parties.Detail.SomethingWrong" xml:space="preserve">
+    <value>কিছু একটা সমস্যা হয়েছে।</value>
+  </data>
+  <data name="Parties.EditParty" xml:space="preserve">
+    <value>পার্টি এডিট</value>
+  </data>
+  <data name="Parties.Form.AddressLabel" xml:space="preserve">
+    <value>ঠিকানা</value>
+  </data>
+  <data name="Parties.Form.AsOfLabel" xml:space="preserve">
+    <value>যে তারিখের হিসাব</value>
+  </data>
+  <data name="Parties.Form.AsOfLocked" xml:space="preserve">
+    <value>ওপেনিং ব্যালেন্সে শুধু আজকের তারিখ দিতে পারবেন।</value>
+  </data>
+  <data name="Parties.Form.CategoryAddFailed" xml:space="preserve">
+    <value>ক্যাটাগরি যোগ করা যায়নি।</value>
+  </data>
+  <data name="Parties.Form.CategoryHelp" xml:space="preserve">
+    <value>একটি বাছুন, অথবা যোগ করতে নতুন নাম লিখুন।</value>
+  </data>
+  <data name="Parties.Form.CategoryLabel" xml:space="preserve">
+    <value>পার্টির ক্যাটাগরি</value>
+  </data>
+  <data name="Parties.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter চাপলে পরের ঘরে যাবে · Ctrl+S সেভ · Esc বাতিল</value>
+  </data>
+  <data name="Parties.Form.MoreDetails" xml:space="preserve">
+    <value>আরও তথ্য</value>
+  </data>
+  <data name="Parties.Form.NameLabel" xml:space="preserve">
+    <value>পুরো নাম *</value>
+  </data>
+  <data name="Parties.Form.NamePlaceholder" xml:space="preserve">
+    <value>পার্টির নাম লিখুন</value>
+  </data>
+  <data name="Parties.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>ওপেনিং ব্যালেন্স (Rs.)</value>
+  </data>
+  <data name="Parties.Form.PanLabel" xml:space="preserve">
+    <value>PAN নম্বর</value>
+  </data>
+  <data name="Parties.Form.PhoneLabel" xml:space="preserve">
+    <value>ফোন নম্বর</value>
+  </data>
+  <data name="Parties.Form.PickCategory" xml:space="preserve">
+    <value>তালিকা থেকে একটি ক্যাটাগরি বাছুন।</value>
+  </data>
+  <data name="Parties.Form.SaveAndNew" xml:space="preserve">
+    <value>সেভ ও নতুন</value>
+  </data>
+  <data name="Parties.Form.Saved" xml:space="preserve">
+    <value>{0} সেভ হয়েছে।</value>
+  </data>
+  <data name="Parties.Form.Saving" xml:space="preserve">
+    <value>সেভ হচ্ছে…</value>
+  </data>
+  <data name="Parties.Form.TypeLabel" xml:space="preserve">
+    <value>পার্টির ধরন</value>
+  </data>
+  <data name="Parties.List.BalanceAll" xml:space="preserve">
+    <value>সব ব্যালেন্স</value>
+  </data>
+  <data name="Parties.List.EmptyAdd" xml:space="preserve">
+    <value>প্রথম পার্টি যোগ করুন</value>
+  </data>
+  <data name="Parties.List.EmptyBody" xml:space="preserve">
+    <value>কাস্টমার ও সাপ্লায়ার যোগ করুন, আর পাওনা-দেনার হিসাব রাখুন।</value>
+  </data>
+  <data name="Parties.List.EmptyTitle" xml:space="preserve">
+    <value>এখনো কোনো পার্টি নেই</value>
+  </data>
+  <data name="Parties.List.NoMatch" xml:space="preserve">
+    <value>কোনো পার্টি মেলেনি।</value>
+  </data>
+  <data name="Parties.List.SearchAria" xml:space="preserve">
+    <value>পার্টি খুঁজুন</value>
+  </data>
+  <data name="Parties.List.SearchPlaceholder" xml:space="preserve">
+    <value>নাম বা ফোন দিয়ে খুঁজুন</value>
+  </data>
+  <data name="Parties.List.SortAmountAsc" xml:space="preserve">
+    <value>টাকা কম→বেশি</value>
+  </data>
+  <data name="Parties.List.SortAmountDesc" xml:space="preserve">
+    <value>টাকা বেশি→কম</value>
+  </data>
+  <data name="Parties.List.SortLabel" xml:space="preserve">
+    <value>সাজান</value>
+  </data>
+  <data name="Parties.List.SortLatest" xml:space="preserve">
+    <value>সাম্প্রতিক</value>
+  </data>
+  <data name="Parties.List.SortNameAsc" xml:space="preserve">
+    <value>নাম A→Z</value>
+  </data>
+  <data name="Parties.List.SortNameDesc" xml:space="preserve">
+    <value>নাম Z→A</value>
+  </data>
+  <data name="Parties.List.TypeAll" xml:space="preserve">
+    <value>সব পার্টি</value>
+  </data>
+  <data name="Parties.List.TypeCustomers" xml:space="preserve">
+    <value>কাস্টমার</value>
+  </data>
+  <data name="Parties.List.TypeLabel" xml:space="preserve">
+    <value>ধরন</value>
+  </data>
+  <data name="Parties.List.TypeSuppliers" xml:space="preserve">
+    <value>সাপ্লায়ার</value>
+  </data>
+  <data name="Parties.Title" xml:space="preserve">
+    <value>পার্টি</value>
+  </data>
+  <data name="Parties.Type.Customer" xml:space="preserve">
+    <value>কাস্টমার</value>
+  </data>
+  <data name="Parties.Type.Supplier" xml:space="preserve">
+    <value>সাপ্লায়ার</value>
+  </data>
+  <data name="PartyBalance.Payable" xml:space="preserve">
+    <value>দেনা</value>
+  </data>
+  <data name="PartyBalance.Receivable" xml:space="preserve">
+    <value>পাওনা</value>
+  </data>
+  <data name="PartySide.Settled" xml:space="preserve">
+    <value>পরিশোধিত</value>
+  </data>
+  <data name="PartySide.ToGive" xml:space="preserve">
+    <value>দেনা</value>
+  </data>
+  <data name="PartySide.ToReceive" xml:space="preserve">
+    <value>পাওনা</value>
+  </data>
+  <data name="Role.Accountant" xml:space="preserve">
+    <value>হিসাবরক্ষক</value>
+  </data>
+  <data name="Role.Accountant.Description" xml:space="preserve">
+    <value>সব হিসাব, রিপোর্ট ও সেটিংস; স্টাফ পরিচালনা ছাড়া।</value>
+  </data>
+  <data name="Role.EntryPerson" xml:space="preserve">
+    <value>এন্ট্রি অপারেটর</value>
+  </data>
+  <data name="Role.EntryPerson.Description" xml:space="preserve">
+    <value>আজকের তারিখে এন্ট্রি দিতে পারেন এবং নিজের এন্ট্রি একই দিনে ঠিক করতে পারেন।</value>
+  </data>
+  <data name="Role.Manager" xml:space="preserve">
+    <value>ম্যানেজার</value>
+  </data>
+  <data name="Role.Manager.Description" xml:space="preserve">
+    <value>এন্ট্রি ও পার্টি যোগ-এডিট করতে পারেন; মোছা, স্টাফ বা সেটিংস নয়।</value>
+  </data>
+  <data name="Role.Owner" xml:space="preserve">
+    <value>মালিক</value>
+  </data>
+  <data name="Role.Owner.Description" xml:space="preserve">
+    <value>সম্পূর্ণ অ্যাক্সেস, কোম্পানি মুছে ফেলাসহ।</value>
+  </data>
+  <data name="Role.Partner" xml:space="preserve">
+    <value>পার্টনার</value>
+  </data>
+  <data name="Role.Partner.Description" xml:space="preserve">
+    <value>কোম্পানি মুছে ফেলা ছাড়া সবকিছু।</value>
+  </data>
+  <data name="Settings.CompanyReadOnly" xml:space="preserve">
+    <value>যাদের ব্যবসার সেটিংস বদলানোর অনুমতি আছে, শুধু তারাই লোগো বদলাতে পারেন।</value>
+  </data>
+  <data name="Settings.CreateCompany" xml:space="preserve">
+    <value>কোম্পানি তৈরি করুন</value>
+  </data>
+  <data name="Settings.JoinCompany" xml:space="preserve">
+    <value>আমন্ত্রণ কোড দিয়ে যোগ দিন</value>
+  </data>
+  <data name="Settings.LanguageHelp" xml:space="preserve">
+    <value>এই ডিভাইস বা ব্রাউজারে ব্যবহার হবে।</value>
+  </data>
+  <data name="Settings.RunningOn" xml:space="preserve">
+    <value>চলছে: {0} ({1})</value>
+  </data>
+  <data name="Settings.SignOut" xml:space="preserve">
+    <value>সাইন আউট</value>
+  </data>
+  <data name="Settings.SignOutHelpDevice" xml:space="preserve">
+    <value>এই ডিভাইস থেকে সাইন আউট হবে।</value>
+  </data>
+  <data name="Settings.SignOutHelpWeb" xml:space="preserve">
+    <value>এই ব্রাউজার থেকে সাইন আউট হবে।</value>
+  </data>
+  <data name="Settings.Staff" xml:space="preserve">
+    <value>স্টাফ</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>আরও</value>
+  </data>
+  <data name="Shell.AddTransaction" xml:space="preserve">
+    <value>এন্ট্রি যোগ করুন</value>
+  </data>
+  <data name="Shell.BrandHome" xml:space="preserve">
+    <value>Lekha Books হোম</value>
+  </data>
+  <data name="Shell.Loading" xml:space="preserve">
+    <value>Lekha Books লোড হচ্ছে</value>
+  </data>
+  <data name="Shell.NoCompany" xml:space="preserve">
+    <value>কোনো কোম্পানি নেই</value>
+  </data>
+  <data name="Shell.Offline" xml:space="preserve">
+    <value>আপনি অফলাইনে আছেন। সেভ থাকা কোম্পানির তালিকা দেখানো হচ্ছে; সিঙ্ক সুবিধা চালু না হওয়া পর্যন্ত পার্টি, অ্যাকাউন্ট ও স্টাফের জন্য ইন্টারনেট লাগবে।</value>
+  </data>
+  <data name="Shell.Reload" xml:space="preserve">
+    <value>রিলোড</value>
+  </data>
+  <data name="Shell.SetUpText" xml:space="preserve">
+    <value>পার্টি, ক্যাশ ও ব্যাংকের হিসাব রাখতে একটি কোম্পানি তৈরি করুন, অথবা মালিকের দেওয়া আমন্ত্রণ কোড দিয়ে যোগ দিন।</value>
+  </data>
+  <data name="Shell.SetUpTitle" xml:space="preserve">
+    <value>আপনার হিসাবের খাতা সাজান</value>
+  </data>
+  <data name="Shell.SwitchCompany" xml:space="preserve">
+    <value>কোম্পানি বদলান</value>
+  </data>
+  <data name="Shell.ToggleMenu" xml:space="preserve">
+    <value>মেনু খুলুন বা বন্ধ করুন</value>
+  </data>
+  <data name="Shell.UnexpectedError" xml:space="preserve">
+    <value>একটি অপ্রত্যাশিত সমস্যা হয়েছে।</value>
+  </data>
+  <data name="Staff.Invite.Button" xml:space="preserve">
+    <value>আমন্ত্রণ</value>
+  </data>
+  <data name="Staff.Invite.Copied" xml:space="preserve">
+    <value>কপি হয়েছে।</value>
+  </data>
+  <data name="Staff.Invite.CopyAria" xml:space="preserve">
+    <value>আমন্ত্রণ কপি করুন</value>
+  </data>
+  <data name="Staff.Invite.CopyFailed" xml:space="preserve">
+    <value>কপি করা যায়নি। লেখাটি সিলেক্ট করে কপি করুন।</value>
+  </data>
+  <data name="Staff.Invite.Create" xml:space="preserve">
+    <value>আমন্ত্রণ তৈরি করুন</value>
+  </data>
+  <data name="Staff.Invite.CreatedFor" xml:space="preserve">
+    <value>{0}-এর জন্য আমন্ত্রণ তৈরি হয়েছে</value>
+  </data>
+  <data name="Staff.Invite.Expires" xml:space="preserve">
+    <value>মেয়াদ শেষ</value>
+  </data>
+  <data name="Staff.Invite.Heading" xml:space="preserve">
+    <value>কাউকে আমন্ত্রণ জানান</value>
+  </data>
+  <data name="Staff.Invite.NameEmailRequired" xml:space="preserve">
+    <value>নাম ও ইমেইল দিন।</value>
+  </data>
+  <data name="Staff.Invite.Pending" xml:space="preserve">
+    <value>অপেক্ষমাণ আমন্ত্রণ</value>
+  </data>
+  <data name="Staff.Invite.SendCode" xml:space="preserve">
+    <value>তাকে এই কোডটি পাঠান। এটি একবারই ব্যবহার করা যাবে এবং মেয়াদ শেষ হবে {0} তারিখে।</value>
+  </data>
+  <data name="Staff.Invite.SignInHint" xml:space="preserve">
+    <value>তিনি ওই ইমেইল দিয়ে সাইন ইন করবেন, তারপর {0} বেছে নেবেন।</value>
+  </data>
+  <data name="Staff.Member.Custom" xml:space="preserve">
+    <value>কাস্টম</value>
+  </data>
+  <data name="Staff.Member.Joined" xml:space="preserve">
+    <value>যোগদান</value>
+  </data>
+  <data name="Staff.Member.Manage" xml:space="preserve">
+    <value>{0}-কে পরিচালনা করুন</value>
+  </data>
+  <data name="Staff.Member.RemoveAccess" xml:space="preserve">
+    <value>অ্যাক্সেস বন্ধ করুন</value>
+  </data>
+  <data name="Staff.Member.Revoked" xml:space="preserve">
+    <value>{0} আর {1} খুলতে পারবেন না।</value>
+  </data>
+  <data name="Staff.Member.You" xml:space="preserve">
+    <value>(আপনি)</value>
+  </data>
+  <data name="Staff.NoPermission" xml:space="preserve">
+    <value>{0}-এর স্টাফ দেখার অনুমতি আপনার নেই।</value>
+  </data>
+  <data name="Staff.PageTitle" xml:space="preserve">
+    <value>স্টাফ · Lekha Books</value>
+  </data>
+  <data name="Staff.Role.Changed" xml:space="preserve">
+    <value>{0} এখন {1}।</value>
+  </data>
+  <data name="Staff.Role.Make" xml:space="preserve">
+    <value>{0} করুন</value>
+  </data>
+  <data name="Staff.Status.Active" xml:space="preserve">
+    <value>সক্রিয়</value>
+  </data>
+  <data name="Staff.Status.Revoked" xml:space="preserve">
+    <value>অ্যাক্সেস বন্ধ</value>
+  </data>
+  <data name="Statement.AccountHolder" xml:space="preserve">
+    <value>অ্যাকাউন্টধারী</value>
+  </data>
+  <data name="Statement.AccountNumber" xml:space="preserve">
+    <value>অ্যাকাউন্ট নম্বর</value>
+  </data>
+  <data name="Statement.AccountTitle" xml:space="preserve">
+    <value>অ্যাকাউন্ট স্টেটমেন্ট</value>
+  </data>
+  <data name="Statement.Address" xml:space="preserve">
+    <value>ঠিকানা</value>
+  </data>
+  <data name="Statement.Pan" xml:space="preserve">
+    <value>PAN</value>
+  </data>
+  <data name="Statement.PartyTitle" xml:space="preserve">
+    <value>পার্টি স্টেটমেন্ট</value>
+  </data>
+  <data name="Statement.Period" xml:space="preserve">
+    <value>সময়কাল</value>
+  </data>
+  <data name="Statement.PeriodValue" xml:space="preserve">
+    <value>{0} থেকে {1}</value>
+  </data>
+  <data name="Statement.Print" xml:space="preserve">
+    <value>স্টেটমেন্ট প্রিন্ট</value>
+  </data>
+  <data name="Statement.PrintDate" xml:space="preserve">
+    <value>প্রিন্টের তারিখ: {0}</value>
+  </data>
+  <data name="Statement.Type" xml:space="preserve">
+    <value>ধরন</value>
+  </data>
+  <data name="Sync.Error" xml:space="preserve">
+    <value>সিঙ্কে সমস্যা</value>
+  </data>
+  <data name="Sync.Offline" xml:space="preserve">
+    <value>অফলাইন</value>
+  </data>
+  <data name="Sync.OfflinePending" xml:space="preserve">
+    <value>অফলাইন · {0}টি বাকি</value>
+  </data>
+  <data name="Sync.OnlineSynced" xml:space="preserve">
+    <value>অনলাইন · সিঙ্ক হয়েছে</value>
+  </data>
+  <data name="Sync.Pending" xml:space="preserve">
+    <value>{0}টি বাকি</value>
+  </data>
+  <data name="Sync.Syncing" xml:space="preserve">
+    <value>সিঙ্ক হচ্ছে…</value>
+  </data>
+  <data name="Transactions.Add" xml:space="preserve">
+    <value>এন্ট্রি যোগ করুন</value>
+  </data>
+  <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="Transactions.Attachment.SizeKb" xml:space="preserve">
+    <value>{0} KB</value>
+  </data>
+  <data name="Transactions.Attachment.SizeMb" xml:space="preserve">
+    <value>{0} MB</value>
+  </data>
+  <data name="Transactions.Form.AddAttachments" xml:space="preserve">
+    <value>সংযুক্তি যোগ করুন</value>
+  </data>
+  <data name="Transactions.Form.AmountLabel" xml:space="preserve">
+    <value>টাকার পরিমাণ (Rs.) *</value>
+  </data>
+  <data name="Transactions.Form.AttachmentLimits" xml:space="preserve">
+    <value>সর্বোচ্চ 5টি ফাইল, প্রতিটি 5 MB: JPEG, PNG, WebP বা PDF।</value>
+  </data>
+  <data name="Transactions.Form.AttachmentMax" xml:space="preserve">
+    <value>একটি এন্ট্রিতে সর্বোচ্চ 5টি সংযুক্তি রাখা যায়।</value>
+  </data>
+  <data name="Transactions.Form.Attachments" xml:space="preserve">
+    <value>সংযুক্তি</value>
+  </data>
+  <data name="Transactions.Form.AttachmentsSaveFirst" xml:space="preserve">
+    <value>আগে এন্ট্রি সেভ করুন, তারপর খুলে ছবি বা PDF যোগ করুন।</value>
+  </data>
+  <data name="Transactions.Form.BackToList" xml:space="preserve">
+    <value>এন্ট্রি তালিকায় ফিরুন</value>
+  </data>
+  <data name="Transactions.Form.Balance" xml:space="preserve">
+    <value>ব্যালেন্স: {0}</value>
+  </data>
+  <data name="Transactions.Form.ChequeDateLabel" xml:space="preserve">
+    <value>চেকের তারিখ</value>
+  </data>
+  <data name="Transactions.Form.ChequeNoLabel" xml:space="preserve">
+    <value>চেক নম্বর</value>
+  </data>
+  <data name="Transactions.Form.DateLockedHelp" xml:space="preserve">
+    <value>শুধু আজকের তারিখে এন্ট্রি দিতে পারবেন।</value>
+  </data>
+  <data name="Transactions.Form.DateRequired" xml:space="preserve">
+    <value>তারিখ দিতে হবে।</value>
+  </data>
+  <data name="Transactions.Form.EditTitle" xml:space="preserve">
+    <value>{0} এডিট</value>
+  </data>
+  <data name="Transactions.Form.FileTooLarge" xml:space="preserve">
+    <value>{0} ফাইলটি 5 MB-এর চেয়ে বড়।</value>
+  </data>
+  <data name="Transactions.Form.FromAccount" xml:space="preserve">
+    <value>যে অ্যাকাউন্ট থেকে</value>
+  </data>
+  <data name="Transactions.Form.GenericError" xml:space="preserve">
+    <value>কিছু একটা সমস্যা হয়েছে।</value>
+  </data>
+  <data name="Transactions.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter চাপলে পরের ঘরে যাবে · Ctrl+S সেভ · Esc বাতিল</value>
+  </data>
+  <data name="Transactions.Form.NoCreatePermission" xml:space="preserve">
+    <value>এই কোম্পানিতে এন্ট্রি যোগ করার অনুমতি আপনার নেই।</value>
+  </data>
+  <data name="Transactions.Form.NotEditableHere" xml:space="preserve">
+    <value>এ ধরনের এন্ট্রি এখনো এখানে এডিট করা যায় না।</value>
+  </data>
+  <data name="Transactions.Form.PaymentMethod" xml:space="preserve">
+    <value>পেমেন্টের মাধ্যম</value>
+  </data>
+  <data name="Transactions.Form.SaveAndNew" xml:space="preserve">
+    <value>সেভ ও নতুন</value>
+  </data>
+  <data name="Transactions.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0} সেভ হয়েছে: {1}।</value>
+  </data>
+  <data name="Transactions.Form.Saving" xml:space="preserve">
+    <value>সেভ হচ্ছে…</value>
+  </data>
+  <data name="Transactions.Form.ToAccount" xml:space="preserve">
+    <value>যে অ্যাকাউন্টে</value>
+  </data>
+  <data name="Transactions.Form.TypeLabel" xml:space="preserve">
+    <value>এন্ট্রির ধরন</value>
+  </data>
+  <data name="Transactions.Form.Uploaded" xml:space="preserve">
+    <value>{0} আপলোড হয়েছে।</value>
+  </data>
+  <data name="Transactions.Form.UploadFailed" xml:space="preserve">
+    <value>আপলোড হয়নি: {0}</value>
+  </data>
+  <data name="Transactions.Form.VoidedNotice" xml:space="preserve">
+    <value>এই এন্ট্রি বাতিল করা হয়েছে। এটি আর কোনো ব্যালেন্সে ধরা হয় না।</value>
+  </data>
+  <data name="Transactions.Form.VoidedSnackbar" xml:space="preserve">
+    <value>এন্ট্রি বাতিল হয়েছে।</value>
+  </data>
+  <data name="Transactions.Form.VoidEntry" xml:space="preserve">
+    <value>এন্ট্রি বাতিল করুন</value>
+  </data>
+  <data name="Transactions.Form.VoidMessage" xml:space="preserve">
+    <value>এটি রেকর্ডে থাকবে, কিন্তু আর কোনো ব্যালেন্সে ধরা হবে না।</value>
+  </data>
+  <data name="Transactions.Form.VoidTitle" xml:space="preserve">
+    <value>এই এন্ট্রি বাতিল করবেন?</value>
+  </data>
+  <data name="Transactions.List.AllTypes" xml:space="preserve">
+    <value>সব ধরন</value>
+  </data>
+  <data name="Transactions.List.AmountHighLow" xml:space="preserve">
+    <value>টাকা বেশি→কম</value>
+  </data>
+  <data name="Transactions.List.AmountLowHigh" xml:space="preserve">
+    <value>টাকা কম→বেশি</value>
+  </data>
+  <data name="Transactions.List.Count" xml:space="preserve">
+    <value>সংখ্যা</value>
+  </data>
+  <data name="Transactions.List.EmptyBody" xml:space="preserve">
+    <value>হিসাব রাখা শুরু করতে প্রথম এন্ট্রি যোগ করুন।</value>
+  </data>
+  <data name="Transactions.List.EmptyTitle" xml:space="preserve">
+    <value>এখনো কোনো এন্ট্রি নেই</value>
+  </data>
+  <data name="Transactions.List.LatestFirst" xml:space="preserve">
+    <value>নতুনগুলো আগে</value>
+  </data>
+  <data name="Transactions.List.NoMatch" xml:space="preserve">
+    <value>কোনো এন্ট্রি মেলেনি।</value>
+  </data>
+  <data name="Transactions.List.OldestFirst" xml:space="preserve">
+    <value>পুরোনোগুলো আগে</value>
+  </data>
+  <data name="Transactions.List.SearchAria" xml:space="preserve">
+    <value>এন্ট্রি খুঁজুন</value>
+  </data>
+  <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
+    <value>ধরন, মন্তব্য, তারিখ দিয়ে খুঁজুন</value>
+  </data>
+  <data name="Transactions.List.Sort" xml:space="preserve">
+    <value>সাজান</value>
+  </data>
+  <data name="Transactions.List.Title" xml:space="preserve">
+    <value>এন্ট্রি</value>
+  </data>
+  <data name="Transactions.List.Transfer" xml:space="preserve">
+    <value>ট্রান্সফার</value>
+  </data>
+  <data name="Transactions.List.Type" xml:space="preserve">
+    <value>ধরন</value>
+  </data>
+  <data name="Transactions.List.Void" xml:space="preserve">
+    <value>বাতিল</value>
+  </data>
+  <data name="Transactions.Type.Expense" xml:space="preserve">
+    <value>খরচ</value>
+  </data>
+  <data name="TxnType.AddMoney" xml:space="preserve">
+    <value>টাকা যোগ</value>
+  </data>
+  <data name="TxnType.OtherIncome" xml:space="preserve">
+    <value>অন্যান্য আয়</value>
+  </data>
+  <data name="TxnType.PartyAdjustAdd" xml:space="preserve">
+    <value>ব্যালেন্স যোগ</value>
+  </data>
+  <data name="TxnType.PartyAdjustReduce" xml:space="preserve">
+    <value>ব্যালেন্স বিয়োগ</value>
+  </data>
+  <data name="TxnType.PaymentIn" xml:space="preserve">
+    <value>টাকা গ্রহণ</value>
+  </data>
+  <data name="TxnType.PaymentOut" xml:space="preserve">
+    <value>টাকা প্রদান</value>
+  </data>
+  <data name="TxnType.ReduceMoney" xml:space="preserve">
+    <value>টাকা কমানো</value>
+  </data>
+  <data name="TxnType.TransferMoney" xml:space="preserve">
+    <value>টাকা ট্রান্সফার</value>
+  </data>
+  <data name="Web.Error.Heading" xml:space="preserve">
+    <value>আপনার অনুরোধ প্রক্রিয়া করার সময় একটি সমস্যা হয়েছে।</value>
+  </data>
+  <data name="Web.Error.RequestId" xml:space="preserve">
+    <value>রিকোয়েস্ট আইডি:</value>
+  </data>
+  <data name="Web.Error.Title" xml:space="preserve">
+    <value>সমস্যা</value>
+  </data>
+  <data name="Web.Reconnect.Failed" xml:space="preserve">
+    <value>আবার যুক্ত হওয়া যায়নি।&lt;br /&gt;আবার চেষ্টা করুন বা পেজটি রিলোড করুন।</value>
+  </data>
+  <data name="Web.Reconnect.Paused" xml:space="preserve">
+    <value>সার্ভার সেশনটি সাময়িকভাবে থামিয়ে রেখেছে।</value>
+  </data>
+  <data name="Web.Reconnect.Rejoining" xml:space="preserve">
+    <value>সার্ভারে আবার যুক্ত হচ্ছে...</value>
+  </data>
+  <data name="Web.Reconnect.Resume" xml:space="preserve">
+    <value>আবার চালু করুন</value>
+  </data>
+  <data name="Web.Reconnect.ResumeFailed" xml:space="preserve">
+    <value>সেশনটি আবার চালু করা যায়নি।&lt;br /&gt;আবার চেষ্টা করুন বা পেজটি রিলোড করুন।</value>
+  </data>
+  <data name="Web.Reconnect.Retry" xml:space="preserve">
+    <value>আবার চেষ্টা</value>
+  </data>
+  <data name="Web.Reconnect.RetryAfter" xml:space="preserve">
+    <value> সেকেন্ড পরে।</value>
+  </data>
+  <data name="Web.Reconnect.RetryBefore" xml:space="preserve">
+    <value>যুক্ত হওয়া যায়নি... আবার চেষ্টা হবে </value>
+  </data>
+  <data name="Calendar.Label" xml:space="preserve">
+    <value>তারিখের ক্যালেন্ডার</value>
+  </data>
+  <data name="Calendar.Bs" xml:space="preserve">
+    <value>নেপালি তারিখ (BS)</value>
+  </data>
+  <data name="Calendar.Ad" xml:space="preserve">
+    <value>ইংরেজি তারিখ (AD)</value>
+  </data>
+  <data name="Calendar.Help" xml:space="preserve">
+    <value>এই কোম্পানিতে তারিখ যেভাবে দেখানো ও লেখা হবে। সেভ করা এন্ট্রি বদলাবে না।</value>
+  </data>
+  <data name="Calendar.Saved" xml:space="preserve">
+    <value>তারিখের ক্যালেন্ডার বদলানো হয়েছে।</value>
+  </data>
+  <data name="Calendar.Failed" xml:space="preserve">
+    <value>তারিখের ক্যালেন্ডার বদলানো যায়নি।</value>
+  </data>
+  <data name="Calendar.Open" xml:space="preserve">
+    <value>ক্যালেন্ডার খুলুন</value>
+  </data>
+  <data name="Calendar.PreviousMonth" xml:space="preserve">
+    <value>আগের মাস</value>
+  </data>
+  <data name="Calendar.NextMonth" xml:space="preserve">
+    <value>পরের মাস</value>
+  </data>
+  <data name="Calendar.Year" xml:space="preserve">
+    <value>বছর</value>
+  </data>
+  <data name="Calendar.Month" xml:space="preserve">
+    <value>মাস</value>
+  </data>
+  <data name="Calendar.Today" xml:space="preserve">
+    <value>আজ</value>
+  </data>
+  <data name="Calendar.AdDate" xml:space="preserve">
+    <value>AD {0}</value>
+  </data>
+  <data name="Calendar.OutsideRange" xml:space="preserve">
+    <value>AD তারিখ, নেপালি ক্যালেন্ডারের সীমার বাইরে</value>
+  </data>
+  <data name="Calendar.InvalidBs" xml:space="preserve">
+    <value>yyyy/mm/dd আকারে নেপালি তারিখ দিন।</value>
+  </data>
+  <data name="Calendar.Month1" xml:space="preserve">
+    <value>বৈশাখ</value>
+  </data>
+  <data name="Calendar.Month2" xml:space="preserve">
+    <value>জ্যৈষ্ঠ</value>
+  </data>
+  <data name="Calendar.Month3" xml:space="preserve">
+    <value>আষাঢ়</value>
+  </data>
+  <data name="Calendar.Month4" xml:space="preserve">
+    <value>শ্রাবণ</value>
+  </data>
+  <data name="Calendar.Month5" xml:space="preserve">
+    <value>ভাদ্র</value>
+  </data>
+  <data name="Calendar.Month6" xml:space="preserve">
+    <value>আশ্বিন</value>
+  </data>
+  <data name="Calendar.Month7" xml:space="preserve">
+    <value>কার্তিক</value>
+  </data>
+  <data name="Calendar.Month8" xml:space="preserve">
+    <value>মংসির</value>
+  </data>
+  <data name="Calendar.Month9" xml:space="preserve">
+    <value>পৌষ</value>
+  </data>
+  <data name="Calendar.Month10" xml:space="preserve">
+    <value>মাঘ</value>
+  </data>
+  <data name="Calendar.Month11" xml:space="preserve">
+    <value>ফাল্গুন</value>
+  </data>
+  <data name="Calendar.Month12" xml:space="preserve">
+    <value>চৈত্র</value>
+  </data>
+  <data name="Calendar.Weekday0" xml:space="preserve">
+    <value>রবি</value>
+  </data>
+  <data name="Calendar.Weekday1" xml:space="preserve">
+    <value>সোম</value>
+  </data>
+  <data name="Calendar.Weekday2" xml:space="preserve">
+    <value>মঙ্গল</value>
+  </data>
+  <data name="Calendar.Weekday3" xml:space="preserve">
+    <value>বুধ</value>
+  </data>
+  <data name="Calendar.Weekday4" xml:space="preserve">
+    <value>বৃহঃ</value>
+  </data>
+  <data name="Calendar.Weekday5" xml:space="preserve">
+    <value>শুক্র</value>
+  </data>
+  <data name="Calendar.Weekday6" xml:space="preserve">
+    <value>শনি</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>{0} দিতে হবে।</value>
+  </data>
+  <data name="Validation.TooLong" xml:space="preserve">
+    <value>{0} সর্বোচ্চ {1} অক্ষরের হতে পারবে।</value>
+  </data>
+  <data name="Validation.PartyType" xml:space="preserve">
+    <value>কাস্টমার বা সাপ্লায়ার বাছুন।</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>সঠিক ইমেইল ঠিকানা দিন।</value>
+  </data>
+  <data name="Validation.Pan" xml:space="preserve">
+    <value>PAN-এ শুধু সংখ্যা থাকবে, সর্বোচ্চ {0}টি।</value>
+  </data>
+  <data name="Validation.PartyOpening" xml:space="preserve">
+    <value>ওপেনিং ব্যালেন্স ধনাত্মক হতে হবে, দশমিকের পর সর্বোচ্চ 2 ঘর। আপনার দেনা হলে "দেনা" বাছুন।</value>
+  </data>
+  <data name="Validation.OpeningSide" xml:space="preserve">
+    <value>পাওনা বা দেনা বাছুন।</value>
+  </data>
+  <data name="Validation.MoneyType" xml:space="preserve">
+    <value>ব্যাংক, ওয়ালেট বা ক্যাশ বাছুন।</value>
+  </data>
+  <data name="Validation.Decimals" xml:space="preserve">
+    <value>দশমিকের পর সর্বোচ্চ 2 ঘর রেখে টাকার পরিমাণ দিন।</value>
+  </data>
+  <data name="Validation.Phone" xml:space="preserve">
+    <value>ফোন নম্বরে শুধু সংখ্যা, স্পেস, +, - ও ব্র্যাকেট থাকতে পারে।</value>
+  </data>
+  <data name="Validation.TransactionType" xml:space="preserve">
+    <value>এন্ট্রির ধরন বাছুন।</value>
+  </data>
+  <data name="Validation.Amount" xml:space="preserve">
+    <value>টাকার পরিমাণ 0-এর বেশি হতে হবে, দশমিকের পর সর্বোচ্চ 2 ঘর।</value>
+  </data>
+  <data name="Validation.Account" xml:space="preserve">
+    <value>একটি অ্যাকাউন্ট বাছুন।</value>
+  </data>
+  <data name="Validation.Field.FullName" xml:space="preserve">
+    <value>পুরো নাম</value>
+  </data>
+  <data name="Validation.Field.Name" xml:space="preserve">
+    <value>নাম</value>
+  </data>
+  <data name="Validation.Field.CategoryName" xml:space="preserve">
+    <value>ক্যাটাগরির নাম</value>
+  </data>
+  <data name="Validation.Field.Address" xml:space="preserve">
+    <value>ঠিকানা</value>
+  </data>
+  <data name="Validation.Field.AccountHolderName" xml:space="preserve">
+    <value>অ্যাকাউন্টধারীর নাম</value>
+  </data>
+  <data name="Validation.Field.AccountNumber" xml:space="preserve">
+    <value>অ্যাকাউন্ট নম্বর</value>
+  </data>
+  <data name="Validation.Field.Remarks" xml:space="preserve">
+    <value>মন্তব্য</value>
+  </data>
+  <data name="Validation.Field.ChequeNo" xml:space="preserve">
+    <value>চেক নম্বর</value>
+  </data>
+  <data name="MudAlert_Close" xml:space="preserve">
+    <value>সতর্কবার্তা বন্ধ করুন</value>
+  </data>
+  <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
+    <value>পরের মাস</value>
+  </data>
+  <data name="MudBaseDatePicker_NextYear" xml:space="preserve">
+    <value>পরের বছর</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>খুলুন</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevMonth" xml:space="preserve">
+    <value>আগের মাস</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
+    <value>আগের বছর</value>
+  </data>
+  <data name="MudChip_Close" xml:space="preserve">
+    <value>বন্ধ করুন</value>
+  </data>
+  <data name="MudDataGrid_Clear" xml:space="preserve">
+    <value>মুছুন</value>
+  </data>
+  <data name="MudDataGrid_Loading" xml:space="preserve">
+    <value>লোড হচ্ছে...</value>
+  </data>
+  <data name="MudDataGridPager_AllItems" xml:space="preserve">
+    <value>সব</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>প্রথম পৃষ্ঠা</value>
+  </data>
+  <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
+    <value>{2}টির মধ্যে {0}-{1}</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>শেষ পৃষ্ঠা</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>পরের পৃষ্ঠা</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>আগের পৃষ্ঠা</value>
+  </data>
+  <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
+    <value>প্রতি পৃষ্ঠায় সারি:</value>
+  </data>
+  <data name="MudDialog_Close" xml:space="preserve">
+    <value>বন্ধ করুন</value>
+  </data>
+  <data name="MudInput_Clear" xml:space="preserve">
+    <value>মুছুন</value>
+  </data>
+  <data name="MudSnackbar_Close" xml:space="preserve">
+    <value>বন্ধ করুন</value>
+  </data>
+  <data name="MudTable_Loading" xml:space="preserve">
+    <value>লোড হচ্ছে...</value>
+  </data>
+  <data name="MudTablePager_FirstPage" xml:space="preserve">
+    <value>প্রথম পৃষ্ঠা</value>
+  </data>
+  <data name="MudTablePager_LastPage" xml:space="preserve">
+    <value>শেষ পৃষ্ঠা</value>
+  </data>
+  <data name="MudTablePager_NextPage" xml:space="preserve">
+    <value>পরের পৃষ্ঠা</value>
+  </data>
+  <data name="MudTablePager_PreviousPage" xml:space="preserve">
+    <value>আগের পৃষ্ঠা</value>
+  </data>
+</root>

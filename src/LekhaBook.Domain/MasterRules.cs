@@ -56,7 +56,7 @@ public static class MasterRules
     public static string? CheckDeleteParty(CompanyMember member, PartyType type) =>
         member.Has(PartyPermission(type, EntryAction.Delete)) ? null : $"You don't have permission to delete {Plural(type)}.";
 
-    public const string PartyInUse = "This party has transactions. Delete those first.";
+    public const string PartyInUse = "This party has entries. Delete those first.";
 
     /// <summary>Checks adding or editing a money account (the endpoint policy already checked add/edit permission).</summary>
     public static string? CheckMoneyAccountOpening(CompanyMember member, decimal opening, DateOnly? openingAsOf, DateOnly companyToday) =>
@@ -70,7 +70,7 @@ public static class MasterRules
         }
 
         return usedByTransactions
-            ? "This account has transactions. Delete those first."
+            ? "This account has entries. Delete those first."
             : null;
     }
 

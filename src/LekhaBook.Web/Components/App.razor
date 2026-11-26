@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 <!DOCTYPE html>
-<html lang="@_lang">
+<html lang="@_lang" dir="@(LekhaBook.UI.Localization.Languages.IsRightToLeft(_lang) ? "rtl" : "ltr")">
 
 <head>
     <meta charset="utf-8" />

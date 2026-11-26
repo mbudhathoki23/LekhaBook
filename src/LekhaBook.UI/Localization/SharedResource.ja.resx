@@ -1,0 +1,1348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+    <data name="Accounts.Add" xml:space="preserve">
+    <value>口座を追加</value>
+  </data>
+  <data name="Accounts.Detail.CurrentBalance" xml:space="preserve">
+    <value>現在の残高</value>
+  </data>
+  <data name="Accounts.Detail.Deleted" xml:space="preserve">
+    <value>{0}を削除しました。</value>
+  </data>
+  <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
+    <value>{0}は「資金」から削除されます。</value>
+  </data>
+  <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
+    <value>口座を削除しますか？</value>
+  </data>
+  <data name="Accounts.Detail.GenericError" xml:space="preserve">
+    <value>問題が発生しました。</value>
+  </data>
+  <data name="Accounts.Detail.MoneyIn" xml:space="preserve">
+    <value>入金額</value>
+  </data>
+  <data name="Accounts.Detail.MoneyOut" xml:space="preserve">
+    <value>出金額</value>
+  </data>
+  <data name="Accounts.Detail.Title" xml:space="preserve">
+    <value>口座</value>
+  </data>
+  <data name="Accounts.Detail.Transactions" xml:space="preserve">
+    <value>取引</value>
+  </data>
+  <data name="Accounts.Form.AccountName" xml:space="preserve">
+    <value>口座名</value>
+  </data>
+  <data name="Accounts.Form.AccountNumber" xml:space="preserve">
+    <value>口座番号</value>
+  </data>
+  <data name="Accounts.Form.AsOfLabel" xml:space="preserve">
+    <value>基準日</value>
+  </data>
+  <data name="Accounts.Form.BalanceHelp" xml:space="preserve">
+    <value>下の日付時点の残高です。当座借越の場合はマイナス記号を付けてください。</value>
+  </data>
+  <data name="Accounts.Form.BankName" xml:space="preserve">
+    <value>銀行名</value>
+  </data>
+  <data name="Accounts.Form.BankPlaceholder" xml:space="preserve">
+    <value>例：Nabil Bank</value>
+  </data>
+  <data name="Accounts.Form.BuiltInAccount" xml:space="preserve">
+    <value>{0}（標準の口座）</value>
+  </data>
+  <data name="Accounts.Form.CashPettyCash" xml:space="preserve">
+    <value>現金・小口現金</value>
+  </data>
+  <data name="Accounts.Form.CashPlaceholder" xml:space="preserve">
+    <value>例：小口現金</value>
+  </data>
+  <data name="Accounts.Form.DateLockedHelp" xml:space="preserve">
+    <value>期首残高の日付は今日のみ指定できます。</value>
+  </data>
+  <data name="Accounts.Form.EditTitle" xml:space="preserve">
+    <value>口座を編集</value>
+  </data>
+  <data name="Accounts.Form.HolderName" xml:space="preserve">
+    <value>口座名義人</value>
+  </data>
+  <data name="Accounts.Form.KeyboardHint" xml:space="preserve">
+    <value>Enterで次の項目へ · Ctrl+Sで保存 · Escでキャンセル</value>
+  </data>
+  <data name="Accounts.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>現在の口座残高 (Rs.)</value>
+  </data>
+  <data name="Accounts.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0}を保存しました。</value>
+  </data>
+  <data name="Accounts.Form.Saving" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="Accounts.Form.TypeLabel" xml:space="preserve">
+    <value>口座の種類</value>
+  </data>
+  <data name="Accounts.Form.WalletId" xml:space="preserve">
+    <value>ウォレットID・電話番号</value>
+  </data>
+  <data name="Accounts.Form.WalletName" xml:space="preserve">
+    <value>ウォレット名</value>
+  </data>
+  <data name="Accounts.Form.WalletPlaceholder" xml:space="preserve">
+    <value>例：eSewa</value>
+  </data>
+  <data name="Accounts.List.NoViewPermission" xml:space="preserve">
+    <value>資金口座を表示する権限がありません。</value>
+  </data>
+  <data name="Accounts.List.Subject" xml:space="preserve">
+    <value>現金・銀行口座</value>
+  </data>
+  <data name="Accounts.List.Title" xml:space="preserve">
+    <value>資金</value>
+  </data>
+  <data name="Accounts.List.TotalBalance" xml:space="preserve">
+    <value>合計残高</value>
+  </data>
+  <data name="AccountType.Bank" xml:space="preserve">
+    <value>銀行口座</value>
+  </data>
+  <data name="AccountType.Cash" xml:space="preserve">
+    <value>現金</value>
+  </data>
+  <data name="AccountType.Cheque" xml:space="preserve">
+    <value>小切手</value>
+  </data>
+  <data name="AccountType.Wallet" xml:space="preserve">
+    <value>ウォレット</value>
+  </data>
+  <data name="Attachments.CantShow" xml:space="preserve">
+    <value>表示できません</value>
+  </data>
+  <data name="Attachments.ChooseFiles" xml:space="preserve">
+    <value>ファイルを選択</value>
+  </data>
+  <data name="Attachments.Deleted" xml:space="preserve">
+    <value>{0}を削除しました。</value>
+  </data>
+  <data name="Attachments.DeleteFailed" xml:space="preserve">
+    <value>添付ファイルを削除できませんでした。</value>
+  </data>
+  <data name="Attachments.DeleteMessage" xml:space="preserve">
+    <value>{0}はこの取引から削除されます。</value>
+  </data>
+  <data name="Attachments.DeleteTitle" xml:space="preserve">
+    <value>この添付ファイルを削除しますか？</value>
+  </data>
+  <data name="Attachments.Download" xml:space="preserve">
+    <value>ダウンロード</value>
+  </data>
+  <data name="Attachments.NotUploaded" xml:space="preserve">
+    <value>取引は保存されましたが、次のファイルはアップロードできませんでした：{0}。取引を開いて、もう一度追加してください。</value>
+  </data>
+  <data name="Attachments.OpenNamed" xml:space="preserve">
+    <value>{0}を開く</value>
+  </data>
+  <data name="Attachments.PdfPreviewHelp" xml:space="preserve">
+    <value>PDFファイルです。ダウンロードして端末で開いてください。</value>
+  </data>
+  <data name="Attachments.RemoveNamed" xml:space="preserve">
+    <value>{0}を削除</value>
+  </data>
+  <data name="Attachments.SavedWithEntry" xml:space="preserve">
+    <value>これらのファイルは取引と一緒に保存されます。</value>
+  </data>
+  <data name="Attachments.TakePhoto" xml:space="preserve">
+    <value>写真を撮る</value>
+  </data>
+  <data name="Attachments.UnsupportedType" xml:space="preserve">
+    <value>{0}はJPEG、PNG、WebP、PDFのいずれのファイルでもありません。</value>
+  </data>
+  <data name="Auth.SignIn.CreateAccount" xml:space="preserve">
+    <value>アカウントを作成</value>
+  </data>
+  <data name="Auth.SignIn.CredentialsRequired" xml:space="preserve">
+    <value>メールアドレスとパスワードを入力してください。</value>
+  </data>
+  <data name="Auth.SignIn.LinkExpired" xml:space="preserve">
+    <value>ログイン用リンクの有効期限が切れました。もう一度ログインしてください。</value>
+  </data>
+  <data name="Auth.SignIn.NewPrompt" xml:space="preserve">
+    <value>Lekha Booksは初めてですか？</value>
+  </data>
+  <data name="Auth.SignIn.PageTitle" xml:space="preserve">
+    <value>ログイン · Lekha Books</value>
+  </data>
+  <data name="Auth.SignIn.Submit" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="Auth.SignIn.Subtitle" xml:space="preserve">
+    <value>おかえりなさい。ログインして帳簿を開いてください。</value>
+  </data>
+  <data name="Auth.SignIn.Title" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="Auth.SignUp.ConfirmPassword" xml:space="preserve">
+    <value>パスワード（確認）</value>
+  </data>
+  <data name="Auth.SignUp.EmailRequired" xml:space="preserve">
+    <value>メールアドレスを入力してください。</value>
+  </data>
+  <data name="Auth.SignUp.HavePrompt" xml:space="preserve">
+    <value>アカウントをお持ちですか？</value>
+  </data>
+  <data name="Auth.SignUp.Name" xml:space="preserve">
+    <value>お名前</value>
+  </data>
+  <data name="Auth.SignUp.NameRequired" xml:space="preserve">
+    <value>お名前を入力してください。</value>
+  </data>
+  <data name="Auth.SignUp.PageTitle" xml:space="preserve">
+    <value>アカウント作成 · Lekha Books</value>
+  </data>
+  <data name="Auth.SignUp.PasswordHelp" xml:space="preserve">
+    <value>8文字以上で、数字と英小文字を含めてください。</value>
+  </data>
+  <data name="Auth.SignUp.PasswordMismatch" xml:space="preserve">
+    <value>2つのパスワードが一致しません。</value>
+  </data>
+  <data name="Auth.SignUp.PasswordTooShort" xml:space="preserve">
+    <value>パスワードは8文字以上にしてください。</value>
+  </data>
+  <data name="Auth.SignUp.SignInLink" xml:space="preserve">
+    <value>ログイン</value>
+  </data>
+  <data name="Auth.SignUp.Submit" xml:space="preserve">
+    <value>アカウントを作成</value>
+  </data>
+  <data name="Auth.SignUp.Subtitle" xml:space="preserve">
+    <value>無料で始められます。スタッフは後から追加できます。</value>
+  </data>
+  <data name="Auth.SignUp.Title" xml:space="preserve">
+    <value>アカウントの作成</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="Common.Amount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="Common.Balance" xml:space="preserve">
+    <value>残高</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>カテゴリ</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="Common.Company" xml:space="preserve">
+    <value>会社</value>
+  </data>
+  <data name="Common.Date" xml:space="preserve">
+    <value>日付</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="Common.Email" xml:space="preserve">
+    <value>メール</value>
+  </data>
+  <data name="Common.Loading" xml:space="preserve">
+    <value>読み込み中…</value>
+  </data>
+  <data name="Common.Name" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Common.No" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="Common.Optional" xml:space="preserve">
+    <value>（任意）</value>
+  </data>
+  <data name="Common.Party" xml:space="preserve">
+    <value>取引先</value>
+  </data>
+  <data name="Common.Password" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="Common.Phone" xml:space="preserve">
+    <value>電話番号</value>
+  </data>
+  <data name="Common.Remarks" xml:space="preserve">
+    <value>備考</value>
+  </data>
+  <data name="Common.Required" xml:space="preserve">
+    <value>必須</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>再試行</value>
+  </data>
+  <data name="Common.Role" xml:space="preserve">
+    <value>役割</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="Common.Status" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="Common.Total" xml:space="preserve">
+    <value>合計</value>
+  </data>
+  <data name="Common.Yes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="Companies.Create.Address" xml:space="preserve">
+    <value>住所（任意）</value>
+  </data>
+  <data name="Companies.Create.BusinessName" xml:space="preserve">
+    <value>事業者名</value>
+  </data>
+  <data name="Companies.Create.Intro" xml:space="preserve">
+    <value>あなたがオーナーになります。現金、小切手、オンラインウォレット、一般的な収益・費用の科目が自動で設定されます。</value>
+  </data>
+  <data name="Companies.Create.NameRequired" xml:space="preserve">
+    <value>事業者名を入力してください。</value>
+  </data>
+  <data name="Companies.Create.PageTitle" xml:space="preserve">
+    <value>会社を作成 · Lekha Books</value>
+  </data>
+  <data name="Companies.Create.PanVat" xml:space="preserve">
+    <value>PAN・VAT番号（任意）</value>
+  </data>
+  <data name="Companies.Create.Phone" xml:space="preserve">
+    <value>電話番号（任意）</value>
+  </data>
+  <data name="Companies.Create.Submit" xml:space="preserve">
+    <value>会社を作成</value>
+  </data>
+  <data name="Companies.Join.Code" xml:space="preserve">
+    <value>招待コード</value>
+  </data>
+  <data name="Companies.Join.CodeRequired" xml:space="preserve">
+    <value>招待コードを貼り付けてください。</value>
+  </data>
+  <data name="Companies.Join.Intro" xml:space="preserve">
+    <value>会社のオーナーから受け取った招待コードを貼り付けてください。招待の送付先メールアドレス（{0}）でログインしている必要があります。</value>
+  </data>
+  <data name="Companies.Join.PageTitle" xml:space="preserve">
+    <value>会社に参加 · Lekha Books</value>
+  </data>
+  <data name="Companies.Join.Submit" xml:space="preserve">
+    <value>参加</value>
+  </data>
+  <data name="Companies.Join.Title" xml:space="preserve">
+    <value>会社に参加</value>
+  </data>
+  <data name="Errors.NeedConnection" xml:space="preserve">
+    <value>{0}は現在、インターネット接続が必要です。接続してもう一度お試しください。</value>
+  </data>
+  <data name="Errors.TheseScreens" xml:space="preserve">
+    <value>これらの画面</value>
+  </data>
+  <data name="Home.BankBalance" xml:space="preserve">
+    <value>銀行残高</value>
+  </data>
+  <data name="Home.CashInHand" xml:space="preserve">
+    <value>手元現金</value>
+  </data>
+  <data name="Home.QuickEntry" xml:space="preserve">
+    <value>クイック入力</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>ダッシュボード</value>
+  </data>
+  <data name="Home.Totals" xml:space="preserve">
+    <value>ダッシュボードの合計</value>
+  </data>
+  <data name="Home.ThisMonth" xml:space="preserve">
+    <value>今月</value>
+  </data>
+  <data name="Home.Monthly" xml:space="preserve">
+    <value>月別</value>
+  </data>
+  <data name="Home.MonthlyHint" xml:space="preserve">
+    <value>直近12か月</value>
+  </data>
+  <data name="Home.Yearly" xml:space="preserve">
+    <value>年度別</value>
+  </data>
+  <data name="Home.YearlyHint" xml:space="preserve">
+    <value>直近5会計年度</value>
+  </data>
+  <data name="Home.TopParties" xml:space="preserve">
+    <value>取引先トップ5</value>
+  </data>
+  <data name="Home.TopPartiesHint" xml:space="preserve">
+    <value>今会計年度の取引額が多い順（各取引先の現在残高付き）</value>
+  </data>
+  <data name="Home.MoneyIn" xml:space="preserve">
+    <value>入金額</value>
+  </data>
+  <data name="Home.MoneyOut" xml:space="preserve">
+    <value>出金額</value>
+  </data>
+  <data name="Home.Net" xml:space="preserve">
+    <value>差引</value>
+  </data>
+  <data name="Home.Business" xml:space="preserve">
+    <value>取引額</value>
+  </data>
+  <data name="Home.FlowsEmpty" xml:space="preserve">
+    <value>この期間の取引はまだありません。</value>
+  </data>
+  <data name="Home.FlowsNote" xml:space="preserve">
+    <value>口座間の振替と残高調整は含まれません。</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="Ledger.ChequeNo" xml:space="preserve">
+    <value>小切手 #{0}</value>
+  </data>
+  <data name="Ledger.Credit" xml:space="preserve">
+    <value>貸方</value>
+  </data>
+  <data name="Ledger.Debit" xml:space="preserve">
+    <value>借方</value>
+  </data>
+  <data name="Ledger.Empty" xml:space="preserve">
+    <value>取引はまだありません。</value>
+  </data>
+  <data name="Ledger.GaveAdded" xml:space="preserve">
+    <value>支払・増加</value>
+  </data>
+  <data name="Ledger.GotReduced" xml:space="preserve">
+    <value>受取・減少</value>
+  </data>
+  <data name="Ledger.OpeningBalance" xml:space="preserve">
+    <value>期首残高</value>
+  </data>
+  <data name="Ledger.Particulars" xml:space="preserve">
+    <value>摘要</value>
+  </data>
+  <data name="Ledger.Transactions" xml:space="preserve">
+    <value>取引</value>
+  </data>
+  <data name="Logo.Alt" xml:space="preserve">
+    <value>会社のロゴ</value>
+  </data>
+  <data name="Logo.ChooseImage" xml:space="preserve">
+    <value>画像を選択</value>
+  </data>
+  <data name="Logo.CreateWarning" xml:space="preserve">
+    <value>会社は作成されましたが、ロゴをアップロードできませんでした：{0}</value>
+  </data>
+  <data name="Logo.Failed" xml:space="preserve">
+    <value>ロゴを更新できませんでした。</value>
+  </data>
+  <data name="Logo.Hint" xml:space="preserve">
+    <value>JPEG、PNG、WebP（2 MBまで）</value>
+  </data>
+  <data name="Logo.PickLabel" xml:space="preserve">
+    <value>会社のロゴ（任意）</value>
+  </data>
+  <data name="Logo.Remove" xml:space="preserve">
+    <value>ロゴを削除</value>
+  </data>
+  <data name="Logo.Removed" xml:space="preserve">
+    <value>ロゴを削除しました。</value>
+  </data>
+  <data name="Logo.RemoveMessage" xml:space="preserve">
+    <value>明細書や印刷物に表示されなくなります。</value>
+  </data>
+  <data name="Logo.RemoveTitle" xml:space="preserve">
+    <value>会社のロゴを削除しますか？</value>
+  </data>
+  <data name="Logo.TooLarge" xml:space="preserve">
+    <value>{0}は2 MBを超えています。</value>
+  </data>
+  <data name="Logo.UnsupportedType" xml:space="preserve">
+    <value>JPEG、PNG、WebPの画像を使用してください。</value>
+  </data>
+  <data name="Logo.Updated" xml:space="preserve">
+    <value>ロゴを更新しました。</value>
+  </data>
+  <data name="Nav.CashAndBank" xml:space="preserve">
+    <value>資金</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>ダッシュボード</value>
+  </data>
+  <data name="Nav.Expense" xml:space="preserve">
+    <value>経費</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="Nav.Main" xml:space="preserve">
+    <value>メイン</value>
+  </data>
+  <data name="Nav.More" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="Nav.OtherIncome" xml:space="preserve">
+    <value>その他収入</value>
+  </data>
+  <data name="Nav.Parties" xml:space="preserve">
+    <value>取引先</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>レポート</value>
+  </data>
+  <data name="Nav.Settings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="Nav.Staff" xml:space="preserve">
+    <value>スタッフ</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>取引</value>
+  </data>
+  <data name="NotFound.BackToDashboard" xml:space="preserve">
+    <value>ダッシュボードに戻る</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>この画面はまだありません。ほとんどの画面は今後の開発段階で追加されます。</value>
+  </data>
+  <data name="NotFound.PageTitle" xml:space="preserve">
+    <value>見つかりません · Lekha Books</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>まだ利用できません</value>
+  </data>
+  <data name="Parties.AddParty" xml:space="preserve">
+    <value>取引先を追加</value>
+  </data>
+  <data name="Parties.Detail.Deleted" xml:space="preserve">
+    <value>{0}を削除しました。</value>
+  </data>
+  <data name="Parties.Detail.DeleteText" xml:space="preserve">
+    <value>{0}は取引先一覧から削除されます。</value>
+  </data>
+  <data name="Parties.Detail.DeleteTitle" xml:space="preserve">
+    <value>取引先を削除しますか？</value>
+  </data>
+  <data name="Parties.Detail.PanValue" xml:space="preserve">
+    <value>PAN {0}</value>
+  </data>
+  <data name="Parties.Detail.SomethingWrong" xml:space="preserve">
+    <value>問題が発生しました。</value>
+  </data>
+  <data name="Parties.EditParty" xml:space="preserve">
+    <value>取引先を編集</value>
+  </data>
+  <data name="Parties.Form.AddressLabel" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="Parties.Form.AsOfLabel" xml:space="preserve">
+    <value>基準日</value>
+  </data>
+  <data name="Parties.Form.AsOfLocked" xml:space="preserve">
+    <value>期首残高の日付は今日のみ指定できます。</value>
+  </data>
+  <data name="Parties.Form.CategoryAddFailed" xml:space="preserve">
+    <value>カテゴリを追加できませんでした。</value>
+  </data>
+  <data name="Parties.Form.CategoryHelp" xml:space="preserve">
+    <value>選択するか、新しい名前を入力して追加してください。</value>
+  </data>
+  <data name="Parties.Form.CategoryLabel" xml:space="preserve">
+    <value>取引先カテゴリ</value>
+  </data>
+  <data name="Parties.Form.KeyboardHint" xml:space="preserve">
+    <value>Enterで次の項目へ · Ctrl+Sで保存 · Escでキャンセル</value>
+  </data>
+  <data name="Parties.Form.MoreDetails" xml:space="preserve">
+    <value>詳細項目</value>
+  </data>
+  <data name="Parties.Form.NameLabel" xml:space="preserve">
+    <value>氏名 *</value>
+  </data>
+  <data name="Parties.Form.NamePlaceholder" xml:space="preserve">
+    <value>取引先の名前を入力</value>
+  </data>
+  <data name="Parties.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>期首残高 (Rs.)</value>
+  </data>
+  <data name="Parties.Form.PanLabel" xml:space="preserve">
+    <value>PAN番号</value>
+  </data>
+  <data name="Parties.Form.PhoneLabel" xml:space="preserve">
+    <value>電話番号</value>
+  </data>
+  <data name="Parties.Form.PickCategory" xml:space="preserve">
+    <value>一覧からカテゴリを選択してください。</value>
+  </data>
+  <data name="Parties.Form.SaveAndNew" xml:space="preserve">
+    <value>保存して新規</value>
+  </data>
+  <data name="Parties.Form.Saved" xml:space="preserve">
+    <value>{0}を保存しました。</value>
+  </data>
+  <data name="Parties.Form.Saving" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="Parties.Form.TypeLabel" xml:space="preserve">
+    <value>取引先の種類</value>
+  </data>
+  <data name="Parties.List.BalanceAll" xml:space="preserve">
+    <value>すべての残高</value>
+  </data>
+  <data name="Parties.List.EmptyAdd" xml:space="preserve">
+    <value>最初の取引先を追加</value>
+  </data>
+  <data name="Parties.List.EmptyBody" xml:space="preserve">
+    <value>顧客と仕入先を追加して、受け取る金額と支払う金額を管理しましょう。</value>
+  </data>
+  <data name="Parties.List.EmptyTitle" xml:space="preserve">
+    <value>取引先はまだありません</value>
+  </data>
+  <data name="Parties.List.NoMatch" xml:space="preserve">
+    <value>該当する取引先はありません。</value>
+  </data>
+  <data name="Parties.List.SearchAria" xml:space="preserve">
+    <value>取引先を検索</value>
+  </data>
+  <data name="Parties.List.SearchPlaceholder" xml:space="preserve">
+    <value>名前・電話番号で検索</value>
+  </data>
+  <data name="Parties.List.SortAmountAsc" xml:space="preserve">
+    <value>金額の小さい順</value>
+  </data>
+  <data name="Parties.List.SortAmountDesc" xml:space="preserve">
+    <value>金額の大きい順</value>
+  </data>
+  <data name="Parties.List.SortLabel" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
+  <data name="Parties.List.SortLatest" xml:space="preserve">
+    <value>新しい順</value>
+  </data>
+  <data name="Parties.List.SortNameAsc" xml:space="preserve">
+    <value>名前 A→Z</value>
+  </data>
+  <data name="Parties.List.SortNameDesc" xml:space="preserve">
+    <value>名前 Z→A</value>
+  </data>
+  <data name="Parties.List.TypeAll" xml:space="preserve">
+    <value>すべての取引先</value>
+  </data>
+  <data name="Parties.List.TypeCustomers" xml:space="preserve">
+    <value>顧客</value>
+  </data>
+  <data name="Parties.List.TypeLabel" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="Parties.List.TypeSuppliers" xml:space="preserve">
+    <value>仕入先</value>
+  </data>
+  <data name="Parties.Title" xml:space="preserve">
+    <value>取引先</value>
+  </data>
+  <data name="Parties.Type.Customer" xml:space="preserve">
+    <value>顧客</value>
+  </data>
+  <data name="Parties.Type.Supplier" xml:space="preserve">
+    <value>仕入先</value>
+  </data>
+  <data name="PartyBalance.Payable" xml:space="preserve">
+    <value>未払</value>
+  </data>
+  <data name="PartyBalance.Receivable" xml:space="preserve">
+    <value>未収</value>
+  </data>
+  <data name="PartySide.Settled" xml:space="preserve">
+    <value>精算済み</value>
+  </data>
+  <data name="PartySide.ToGive" xml:space="preserve">
+    <value>支払予定</value>
+  </data>
+  <data name="PartySide.ToReceive" xml:space="preserve">
+    <value>受取予定</value>
+  </data>
+  <data name="Role.Accountant" xml:space="preserve">
+    <value>会計担当</value>
+  </data>
+  <data name="Role.Accountant.Description" xml:space="preserve">
+    <value>すべての帳簿・レポート・設定を利用可能。スタッフ管理は不可。</value>
+  </data>
+  <data name="Role.EntryPerson" xml:space="preserve">
+    <value>入力担当</value>
+  </data>
+  <data name="Role.EntryPerson.Description" xml:space="preserve">
+    <value>今日の日付の取引を追加でき、自分の取引は当日中に修正できます。</value>
+  </data>
+  <data name="Role.Manager" xml:space="preserve">
+    <value>マネージャー</value>
+  </data>
+  <data name="Role.Manager.Description" xml:space="preserve">
+    <value>取引と取引先の追加・編集が可能。削除、スタッフ管理、設定は不可。</value>
+  </data>
+  <data name="Role.Owner" xml:space="preserve">
+    <value>オーナー</value>
+  </data>
+  <data name="Role.Owner.Description" xml:space="preserve">
+    <value>会社の削除を含むすべての操作が可能です。</value>
+  </data>
+  <data name="Role.Partner" xml:space="preserve">
+    <value>パートナー</value>
+  </data>
+  <data name="Role.Partner.Description" xml:space="preserve">
+    <value>会社の削除以外のすべての操作が可能です。</value>
+  </data>
+  <data name="Settings.CompanyReadOnly" xml:space="preserve">
+    <value>ロゴを変更できるのは、事業設定の変更権限を持つ人のみです。</value>
+  </data>
+  <data name="Settings.CreateCompany" xml:space="preserve">
+    <value>会社を作成</value>
+  </data>
+  <data name="Settings.JoinCompany" xml:space="preserve">
+    <value>招待コードで参加</value>
+  </data>
+  <data name="Settings.LanguageHelp" xml:space="preserve">
+    <value>この端末またはブラウザーで使用されます。</value>
+  </data>
+  <data name="Settings.RunningOn" xml:space="preserve">
+    <value>実行環境：{0}（{1}）</value>
+  </data>
+  <data name="Settings.SignOut" xml:space="preserve">
+    <value>ログアウト</value>
+  </data>
+  <data name="Settings.SignOutHelpDevice" xml:space="preserve">
+    <value>この端末からログアウトします。</value>
+  </data>
+  <data name="Settings.SignOutHelpWeb" xml:space="preserve">
+    <value>このブラウザーからログアウトします。</value>
+  </data>
+  <data name="Settings.Staff" xml:space="preserve">
+    <value>スタッフ</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="Shell.AddTransaction" xml:space="preserve">
+    <value>取引を追加</value>
+  </data>
+  <data name="Shell.BrandHome" xml:space="preserve">
+    <value>Lekha Books ホーム</value>
+  </data>
+  <data name="Shell.Loading" xml:space="preserve">
+    <value>Lekha Booksを読み込み中</value>
+  </data>
+  <data name="Shell.NoCompany" xml:space="preserve">
+    <value>会社なし</value>
+  </data>
+  <data name="Shell.Offline" xml:space="preserve">
+    <value>オフラインです。保存済みの会社一覧を表示しています。同期機能に対応するまで、取引先・口座・スタッフの利用には接続が必要です。</value>
+  </data>
+  <data name="Shell.Reload" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="Shell.SetUpText" xml:space="preserve">
+    <value>会社を作成して取引先や現金・銀行の記録を始めるか、オーナーから受け取った招待コードで会社に参加してください。</value>
+  </data>
+  <data name="Shell.SetUpTitle" xml:space="preserve">
+    <value>帳簿を設定しましょう</value>
+  </data>
+  <data name="Shell.SwitchCompany" xml:space="preserve">
+    <value>会社を切り替え</value>
+  </data>
+  <data name="Shell.ToggleMenu" xml:space="preserve">
+    <value>メニューを開閉</value>
+  </data>
+  <data name="Shell.UnexpectedError" xml:space="preserve">
+    <value>予期しないエラーが発生しました。</value>
+  </data>
+  <data name="Staff.Invite.Button" xml:space="preserve">
+    <value>招待</value>
+  </data>
+  <data name="Staff.Invite.Copied" xml:space="preserve">
+    <value>コピーしました。</value>
+  </data>
+  <data name="Staff.Invite.CopyAria" xml:space="preserve">
+    <value>招待をコピー</value>
+  </data>
+  <data name="Staff.Invite.CopyFailed" xml:space="preserve">
+    <value>コピーできませんでした。テキストを選択してコピーしてください。</value>
+  </data>
+  <data name="Staff.Invite.Create" xml:space="preserve">
+    <value>招待を作成</value>
+  </data>
+  <data name="Staff.Invite.CreatedFor" xml:space="preserve">
+    <value>{0}への招待を作成しました</value>
+  </data>
+  <data name="Staff.Invite.Expires" xml:space="preserve">
+    <value>有効期限</value>
+  </data>
+  <data name="Staff.Invite.Heading" xml:space="preserve">
+    <value>メンバーを招待</value>
+  </data>
+  <data name="Staff.Invite.NameEmailRequired" xml:space="preserve">
+    <value>名前とメールアドレスを入力してください。</value>
+  </data>
+  <data name="Staff.Invite.Pending" xml:space="preserve">
+    <value>承認待ちの招待</value>
+  </data>
+  <data name="Staff.Invite.SendCode" xml:space="preserve">
+    <value>このコードを相手に送ってください。使用できるのは1回のみで、有効期限は{0}です。</value>
+  </data>
+  <data name="Staff.Invite.SignInHint" xml:space="preserve">
+    <value>相手はそのメールアドレスでログインし、「{0}」を選択します。</value>
+  </data>
+  <data name="Staff.Member.Custom" xml:space="preserve">
+    <value>カスタム</value>
+  </data>
+  <data name="Staff.Member.Joined" xml:space="preserve">
+    <value>参加日</value>
+  </data>
+  <data name="Staff.Member.Manage" xml:space="preserve">
+    <value>{0}さんを管理</value>
+  </data>
+  <data name="Staff.Member.RemoveAccess" xml:space="preserve">
+    <value>アクセス権を削除</value>
+  </data>
+  <data name="Staff.Member.Revoked" xml:space="preserve">
+    <value>{0}さんは{1}を開けなくなりました。</value>
+  </data>
+  <data name="Staff.Member.You" xml:space="preserve">
+    <value>（自分）</value>
+  </data>
+  <data name="Staff.NoPermission" xml:space="preserve">
+    <value>{0}のスタッフを表示する権限がありません。</value>
+  </data>
+  <data name="Staff.PageTitle" xml:space="preserve">
+    <value>スタッフ · Lekha Books</value>
+  </data>
+  <data name="Staff.Role.Changed" xml:space="preserve">
+    <value>{0}さんは{1}になりました。</value>
+  </data>
+  <data name="Staff.Role.Make" xml:space="preserve">
+    <value>{0}にする</value>
+  </data>
+  <data name="Staff.Status.Active" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="Staff.Status.Revoked" xml:space="preserve">
+    <value>アクセス停止</value>
+  </data>
+  <data name="Statement.AccountHolder" xml:space="preserve">
+    <value>口座名義人</value>
+  </data>
+  <data name="Statement.AccountNumber" xml:space="preserve">
+    <value>口座番号</value>
+  </data>
+  <data name="Statement.AccountTitle" xml:space="preserve">
+    <value>口座明細書</value>
+  </data>
+  <data name="Statement.Address" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="Statement.Pan" xml:space="preserve">
+    <value>PAN</value>
+  </data>
+  <data name="Statement.PartyTitle" xml:space="preserve">
+    <value>取引先明細書</value>
+  </data>
+  <data name="Statement.Period" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="Statement.PeriodValue" xml:space="preserve">
+    <value>{0}～{1}</value>
+  </data>
+  <data name="Statement.Print" xml:space="preserve">
+    <value>明細書を印刷</value>
+  </data>
+  <data name="Statement.PrintDate" xml:space="preserve">
+    <value>印刷日：{0}</value>
+  </data>
+  <data name="Statement.Type" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="Sync.Error" xml:space="preserve">
+    <value>同期エラー</value>
+  </data>
+  <data name="Sync.Offline" xml:space="preserve">
+    <value>オフライン</value>
+  </data>
+  <data name="Sync.OfflinePending" xml:space="preserve">
+    <value>オフライン · 未同期{0}件</value>
+  </data>
+  <data name="Sync.OnlineSynced" xml:space="preserve">
+    <value>オンライン · 同期済み</value>
+  </data>
+  <data name="Sync.Pending" xml:space="preserve">
+    <value>未同期{0}件</value>
+  </data>
+  <data name="Sync.Syncing" xml:space="preserve">
+    <value>同期中…</value>
+  </data>
+  <data name="Transactions.Add" xml:space="preserve">
+    <value>取引を追加</value>
+  </data>
+  <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="Transactions.Attachment.SizeKb" xml:space="preserve">
+    <value>{0} KB</value>
+  </data>
+  <data name="Transactions.Attachment.SizeMb" xml:space="preserve">
+    <value>{0} MB</value>
+  </data>
+  <data name="Transactions.Form.AddAttachments" xml:space="preserve">
+    <value>添付ファイルを追加</value>
+  </data>
+  <data name="Transactions.Form.AmountLabel" xml:space="preserve">
+    <value>金額 (Rs.) *</value>
+  </data>
+  <data name="Transactions.Form.AttachmentLimits" xml:space="preserve">
+    <value>5件まで、各5 MB以内：JPEG、PNG、WebP、PDF</value>
+  </data>
+  <data name="Transactions.Form.AttachmentMax" xml:space="preserve">
+    <value>1件の取引に添付できるのは5件までです。</value>
+  </data>
+  <data name="Transactions.Form.Attachments" xml:space="preserve">
+    <value>添付ファイル</value>
+  </data>
+  <data name="Transactions.Form.AttachmentsSaveFirst" xml:space="preserve">
+    <value>先に取引を保存してから、開いて写真やPDFを追加してください。</value>
+  </data>
+  <data name="Transactions.Form.BackToList" xml:space="preserve">
+    <value>取引一覧に戻る</value>
+  </data>
+  <data name="Transactions.Form.Balance" xml:space="preserve">
+    <value>残高：{0}</value>
+  </data>
+  <data name="Transactions.Form.ChequeDateLabel" xml:space="preserve">
+    <value>小切手の日付</value>
+  </data>
+  <data name="Transactions.Form.ChequeNoLabel" xml:space="preserve">
+    <value>小切手番号</value>
+  </data>
+  <data name="Transactions.Form.DateLockedHelp" xml:space="preserve">
+    <value>取引の日付は今日のみ指定できます。</value>
+  </data>
+  <data name="Transactions.Form.DateRequired" xml:space="preserve">
+    <value>日付は必須です。</value>
+  </data>
+  <data name="Transactions.Form.EditTitle" xml:space="preserve">
+    <value>{0}を編集</value>
+  </data>
+  <data name="Transactions.Form.FileTooLarge" xml:space="preserve">
+    <value>{0}は5 MBを超えています。</value>
+  </data>
+  <data name="Transactions.Form.FromAccount" xml:space="preserve">
+    <value>出金元口座</value>
+  </data>
+  <data name="Transactions.Form.GenericError" xml:space="preserve">
+    <value>問題が発生しました。</value>
+  </data>
+  <data name="Transactions.Form.KeyboardHint" xml:space="preserve">
+    <value>Enterで次の項目へ · Ctrl+Sで保存 · Escでキャンセル</value>
+  </data>
+  <data name="Transactions.Form.NoCreatePermission" xml:space="preserve">
+    <value>この会社で取引を追加する権限がありません。</value>
+  </data>
+  <data name="Transactions.Form.NotEditableHere" xml:space="preserve">
+    <value>この種類の取引は、まだここでは編集できません。</value>
+  </data>
+  <data name="Transactions.Form.PaymentMethod" xml:space="preserve">
+    <value>支払方法</value>
+  </data>
+  <data name="Transactions.Form.SaveAndNew" xml:space="preserve">
+    <value>保存して新規</value>
+  </data>
+  <data name="Transactions.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0}（{1}）を保存しました。</value>
+  </data>
+  <data name="Transactions.Form.Saving" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="Transactions.Form.ToAccount" xml:space="preserve">
+    <value>入金先口座</value>
+  </data>
+  <data name="Transactions.Form.TypeLabel" xml:space="preserve">
+    <value>取引の種類</value>
+  </data>
+  <data name="Transactions.Form.Uploaded" xml:space="preserve">
+    <value>{0}をアップロードしました。</value>
+  </data>
+  <data name="Transactions.Form.UploadFailed" xml:space="preserve">
+    <value>アップロードに失敗しました：{0}</value>
+  </data>
+  <data name="Transactions.Form.VoidedNotice" xml:space="preserve">
+    <value>この取引は取り消されています。残高には反映されません。</value>
+  </data>
+  <data name="Transactions.Form.VoidedSnackbar" xml:space="preserve">
+    <value>取引を取り消しました。</value>
+  </data>
+  <data name="Transactions.Form.VoidEntry" xml:space="preserve">
+    <value>取引を取り消す</value>
+  </data>
+  <data name="Transactions.Form.VoidMessage" xml:space="preserve">
+    <value>記録は残りますが、残高には反映されなくなります。</value>
+  </data>
+  <data name="Transactions.Form.VoidTitle" xml:space="preserve">
+    <value>この取引を取り消しますか？</value>
+  </data>
+  <data name="Transactions.List.AllTypes" xml:space="preserve">
+    <value>すべての種類</value>
+  </data>
+  <data name="Transactions.List.AmountHighLow" xml:space="preserve">
+    <value>金額の大きい順</value>
+  </data>
+  <data name="Transactions.List.AmountLowHigh" xml:space="preserve">
+    <value>金額の小さい順</value>
+  </data>
+  <data name="Transactions.List.Count" xml:space="preserve">
+    <value>件数</value>
+  </data>
+  <data name="Transactions.List.EmptyBody" xml:space="preserve">
+    <value>最初の取引を追加して、記録を始めましょう。</value>
+  </data>
+  <data name="Transactions.List.EmptyTitle" xml:space="preserve">
+    <value>取引はまだありません</value>
+  </data>
+  <data name="Transactions.List.LatestFirst" xml:space="preserve">
+    <value>新しい順</value>
+  </data>
+  <data name="Transactions.List.NoMatch" xml:space="preserve">
+    <value>該当する取引はありません。</value>
+  </data>
+  <data name="Transactions.List.OldestFirst" xml:space="preserve">
+    <value>古い順</value>
+  </data>
+  <data name="Transactions.List.SearchAria" xml:space="preserve">
+    <value>取引を検索</value>
+  </data>
+  <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
+    <value>種類・備考・日付で検索</value>
+  </data>
+  <data name="Transactions.List.Sort" xml:space="preserve">
+    <value>並べ替え</value>
+  </data>
+  <data name="Transactions.List.Title" xml:space="preserve">
+    <value>取引</value>
+  </data>
+  <data name="Transactions.List.Transfer" xml:space="preserve">
+    <value>振替</value>
+  </data>
+  <data name="Transactions.List.Type" xml:space="preserve">
+    <value>種類</value>
+  </data>
+  <data name="Transactions.List.Void" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Transactions.Type.Expense" xml:space="preserve">
+    <value>経費</value>
+  </data>
+  <data name="TxnType.AddMoney" xml:space="preserve">
+    <value>資金追加</value>
+  </data>
+  <data name="TxnType.OtherIncome" xml:space="preserve">
+    <value>その他収入</value>
+  </data>
+  <data name="TxnType.PartyAdjustAdd" xml:space="preserve">
+    <value>残高の増額</value>
+  </data>
+  <data name="TxnType.PartyAdjustReduce" xml:space="preserve">
+    <value>残高の減額</value>
+  </data>
+  <data name="TxnType.PaymentIn" xml:space="preserve">
+    <value>入金</value>
+  </data>
+  <data name="TxnType.PaymentOut" xml:space="preserve">
+    <value>出金</value>
+  </data>
+  <data name="TxnType.ReduceMoney" xml:space="preserve">
+    <value>資金減額</value>
+  </data>
+  <data name="TxnType.TransferMoney" xml:space="preserve">
+    <value>資金振替</value>
+  </data>
+  <data name="Web.Error.Heading" xml:space="preserve">
+    <value>リクエストの処理中にエラーが発生しました。</value>
+  </data>
+  <data name="Web.Error.RequestId" xml:space="preserve">
+    <value>リクエストID：</value>
+  </data>
+  <data name="Web.Error.Title" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="Web.Reconnect.Failed" xml:space="preserve">
+    <value>再接続できませんでした。&lt;br /&gt;再試行するか、ページを再読み込みしてください。</value>
+  </data>
+  <data name="Web.Reconnect.Paused" xml:space="preserve">
+    <value>サーバーによってセッションが一時停止されました。</value>
+  </data>
+  <data name="Web.Reconnect.Rejoining" xml:space="preserve">
+    <value>サーバーに再接続しています...</value>
+  </data>
+  <data name="Web.Reconnect.Resume" xml:space="preserve">
+    <value>再開</value>
+  </data>
+  <data name="Web.Reconnect.ResumeFailed" xml:space="preserve">
+    <value>セッションを再開できませんでした。&lt;br /&gt;再試行するか、ページを再読み込みしてください。</value>
+  </data>
+  <data name="Web.Reconnect.Retry" xml:space="preserve">
+    <value>再試行</value>
+  </data>
+  <data name="Web.Reconnect.RetryAfter" xml:space="preserve">
+    <value> 秒後にもう一度試します。</value>
+  </data>
+  <data name="Web.Reconnect.RetryBefore" xml:space="preserve">
+    <value>再接続に失敗しました... </value>
+  </data>
+  <data name="Calendar.Label" xml:space="preserve">
+    <value>日付の暦</value>
+  </data>
+  <data name="Calendar.Bs" xml:space="preserve">
+    <value>ネパール暦 (BS)</value>
+  </data>
+  <data name="Calendar.Ad" xml:space="preserve">
+    <value>西暦 (AD)</value>
+  </data>
+  <data name="Calendar.Help" xml:space="preserve">
+    <value>この会社での日付の表示・入力方法です。保存済みの取引は変わりません。</value>
+  </data>
+  <data name="Calendar.Saved" xml:space="preserve">
+    <value>日付の暦を変更しました。</value>
+  </data>
+  <data name="Calendar.Failed" xml:space="preserve">
+    <value>日付の暦を変更できませんでした。</value>
+  </data>
+  <data name="Calendar.Open" xml:space="preserve">
+    <value>カレンダーを開く</value>
+  </data>
+  <data name="Calendar.PreviousMonth" xml:space="preserve">
+    <value>前の月</value>
+  </data>
+  <data name="Calendar.NextMonth" xml:space="preserve">
+    <value>次の月</value>
+  </data>
+  <data name="Calendar.Year" xml:space="preserve">
+    <value>年</value>
+  </data>
+  <data name="Calendar.Month" xml:space="preserve">
+    <value>月</value>
+  </data>
+  <data name="Calendar.Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Calendar.AdDate" xml:space="preserve">
+    <value>AD {0}</value>
+  </data>
+  <data name="Calendar.OutsideRange" xml:space="preserve">
+    <value>西暦 (AD) の日付（ネパール暦の範囲外）</value>
+  </data>
+  <data name="Calendar.InvalidBs" xml:space="preserve">
+    <value>ネパール暦の日付を yyyy/mm/dd 形式で入力してください。</value>
+  </data>
+  <data name="Calendar.Month1" xml:space="preserve">
+    <value>バイサク</value>
+  </data>
+  <data name="Calendar.Month2" xml:space="preserve">
+    <value>ジェスタ</value>
+  </data>
+  <data name="Calendar.Month3" xml:space="preserve">
+    <value>アサール</value>
+  </data>
+  <data name="Calendar.Month4" xml:space="preserve">
+    <value>シュラワン</value>
+  </data>
+  <data name="Calendar.Month5" xml:space="preserve">
+    <value>バドラ</value>
+  </data>
+  <data name="Calendar.Month6" xml:space="preserve">
+    <value>アシュウィン</value>
+  </data>
+  <data name="Calendar.Month7" xml:space="preserve">
+    <value>カルティク</value>
+  </data>
+  <data name="Calendar.Month8" xml:space="preserve">
+    <value>マンシル</value>
+  </data>
+  <data name="Calendar.Month9" xml:space="preserve">
+    <value>ポウシュ</value>
+  </data>
+  <data name="Calendar.Month10" xml:space="preserve">
+    <value>マーグ</value>
+  </data>
+  <data name="Calendar.Month11" xml:space="preserve">
+    <value>ファルグン</value>
+  </data>
+  <data name="Calendar.Month12" xml:space="preserve">
+    <value>チャイトラ</value>
+  </data>
+  <data name="Calendar.Weekday0" xml:space="preserve">
+    <value>日</value>
+  </data>
+  <data name="Calendar.Weekday1" xml:space="preserve">
+    <value>月</value>
+  </data>
+  <data name="Calendar.Weekday2" xml:space="preserve">
+    <value>火</value>
+  </data>
+  <data name="Calendar.Weekday3" xml:space="preserve">
+    <value>水</value>
+  </data>
+  <data name="Calendar.Weekday4" xml:space="preserve">
+    <value>木</value>
+  </data>
+  <data name="Calendar.Weekday5" xml:space="preserve">
+    <value>金</value>
+  </data>
+  <data name="Calendar.Weekday6" xml:space="preserve">
+    <value>土</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>{0}は必須です。</value>
+  </data>
+  <data name="Validation.TooLong" xml:space="preserve">
+    <value>{0}は{1}文字以内で入力してください。</value>
+  </data>
+  <data name="Validation.PartyType" xml:space="preserve">
+    <value>顧客か仕入先を選択してください。</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>有効なメールアドレスを入力してください。</value>
+  </data>
+  <data name="Validation.Pan" xml:space="preserve">
+    <value>PANは{0}桁以内の数字のみで入力してください。</value>
+  </data>
+  <data name="Validation.PartyOpening" xml:space="preserve">
+    <value>期首残高は、小数点以下2桁までの正の金額にしてください。支払う必要がある金額は「支払予定」を使ってください。</value>
+  </data>
+  <data name="Validation.OpeningSide" xml:space="preserve">
+    <value>「受取予定」か「支払予定」を選択してください。</value>
+  </data>
+  <data name="Validation.MoneyType" xml:space="preserve">
+    <value>銀行、ウォレット、現金のいずれかを選択してください。</value>
+  </data>
+  <data name="Validation.Decimals" xml:space="preserve">
+    <value>金額は小数点以下2桁までで入力してください。</value>
+  </data>
+  <data name="Validation.Phone" xml:space="preserve">
+    <value>電話番号には数字、スペース、+、-、かっこを使用できます。</value>
+  </data>
+  <data name="Validation.TransactionType" xml:space="preserve">
+    <value>取引の種類を選択してください。</value>
+  </data>
+  <data name="Validation.Amount" xml:space="preserve">
+    <value>金額は0より大きく、小数点以下2桁までにしてください。</value>
+  </data>
+  <data name="Validation.Account" xml:space="preserve">
+    <value>口座を選択してください。</value>
+  </data>
+  <data name="Validation.Field.FullName" xml:space="preserve">
+    <value>氏名</value>
+  </data>
+  <data name="Validation.Field.Name" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Validation.Field.CategoryName" xml:space="preserve">
+    <value>カテゴリ名</value>
+  </data>
+  <data name="Validation.Field.Address" xml:space="preserve">
+    <value>住所</value>
+  </data>
+  <data name="Validation.Field.AccountHolderName" xml:space="preserve">
+    <value>口座名義人</value>
+  </data>
+  <data name="Validation.Field.AccountNumber" xml:space="preserve">
+    <value>口座番号</value>
+  </data>
+  <data name="Validation.Field.Remarks" xml:space="preserve">
+    <value>備考</value>
+  </data>
+  <data name="Validation.Field.ChequeNo" xml:space="preserve">
+    <value>小切手番号</value>
+  </data>
+  <data name="MudAlert_Close" xml:space="preserve">
+    <value>アラートを閉じる</value>
+  </data>
+  <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
+    <value>次の月</value>
+  </data>
+  <data name="MudBaseDatePicker_NextYear" xml:space="preserve">
+    <value>次の年</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevMonth" xml:space="preserve">
+    <value>前の月</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
+    <value>前の年</value>
+  </data>
+  <data name="MudChip_Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="MudDataGrid_Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="MudDataGrid_Loading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="MudDataGridPager_AllItems" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>最初のページ</value>
+  </data>
+  <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
+    <value>{2}件中 {0}-{1}</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>最後のページ</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>次のページ</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>前のページ</value>
+  </data>
+  <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
+    <value>表示件数：</value>
+  </data>
+  <data name="MudDialog_Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="MudInput_Clear" xml:space="preserve">
+    <value>クリア</value>
+  </data>
+  <data name="MudSnackbar_Close" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="MudTable_Loading" xml:space="preserve">
+    <value>読み込み中...</value>
+  </data>
+  <data name="MudTablePager_FirstPage" xml:space="preserve">
+    <value>最初のページ</value>
+  </data>
+  <data name="MudTablePager_LastPage" xml:space="preserve">
+    <value>最後のページ</value>
+  </data>
+  <data name="MudTablePager_NextPage" xml:space="preserve">
+    <value>次のページ</value>
+  </data>
+  <data name="MudTablePager_PreviousPage" xml:space="preserve">
+    <value>前のページ</value>
+  </data>
+</root>

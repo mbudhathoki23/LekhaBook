@@ -18,8 +18,12 @@ public static class Money
     };
 
     /// <summary>"Rs. 1,23,456.00"; negative amounts as "-Rs. 1,23,456.00".</summary>
-    public static string Format(decimal amount) =>
-        (amount < 0 ? "-Rs. " : "Rs. ") + Number(Math.Abs(amount));
+    public static string Format(decimal amount)
+    {
+        var text = (amount < 0 ? "-Rs. " : "Rs. ") + Number(Math.Abs(amount));
+        // In right-to-left text, isolate it so the sign, "Rs." and the digits keep their order.
+        return CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "\u2066" + text + "\u2069" : text;
+    }
 
     /// <summary>"1,23,456.00" without the currency.</summary>
     public static string Number(decimal amount) => amount.ToString("N2", Lakh);

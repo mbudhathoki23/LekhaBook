@@ -5,6 +5,8 @@
 @inject NavigationManager Navigation
 @* Layout for sign-in and sign-up: no navigation, centred card. Signed-in users go to the app. *@
 
+@* The wrapper sets the reading direction (Arabic is right to left) and the language for font choice. *@
+<MudRTLProvider RightToLeft="@Languages.IsRightToLeft(Language.CurrentCode)" lang="@Language.CurrentCode">
 <MudThemeProvider Theme="AppTheme.Theme" />
 <MudPopoverProvider />
 <MudDialogProvider />
@@ -29,6 +31,8 @@
         }
     </div>
 </div>
+
+</MudRTLProvider>
 
 @code {
     private int _languageVersion;

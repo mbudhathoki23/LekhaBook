@@ -146,7 +146,7 @@ h1:focus, .mud-typography:focus {
 #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
-    right: 0.75rem;
+    inset-inline-end: 0.75rem;
     top: 0.5rem;
 }
 
@@ -311,7 +311,7 @@ h1:focus, .mud-typography:focus {
 
 .row-amount {
     flex: 0 0 auto;
-    text-align: right;
+    text-align: end;
 }
 
 .detail-header {
@@ -322,7 +322,7 @@ h1:focus, .mud-typography:focus {
 }
 
 .text-right {
-    text-align: right !important;
+    text-align: end !important;
 }
 
 .entry-form {
@@ -346,7 +346,7 @@ h1:focus, .mud-typography:focus {
 @media (max-width: 599.98px) {
     .detail-header .row-amount {
         width: 100%;
-        text-align: left;
+        text-align: start;
     }
 
     /* Thumb-sized buttons, full width, Save last (nearest the thumb). */
@@ -530,7 +530,7 @@ h1:focus, .mud-typography:focus {
 }
 
 .statement-label {
-    margin-right: 6px;
+    margin-inline-end: 6px;
     color: var(--mud-palette-text-secondary);
 }
 
@@ -603,6 +603,98 @@ h1:focus, .mud-typography:focus {
     .ledger-table .ledger-files {
         gap: 6px;
     }
+}
+
+/* Dashboard money-in / money-out bars (FlowBars.razor): blue for money in, orange for money out.
+   The values are written beside every bar. */
+:root {
+    --viz-in: #2a78d6;
+    --viz-out: #eb6834;
+}
+
+.flow-list {
+    display: grid;
+    gap: 14px;
+}
+
+.flow-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.8rem;
+    color: var(--mud-palette-text-secondary);
+}
+
+.flow-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-inline-end: 6px;
+    border-radius: 2px;
+    vertical-align: middle;
+}
+
+.flow-swatch.in,
+.flow-bar.in,
+.flow-bar.party {
+    background: var(--viz-in);
+}
+
+.flow-swatch.out,
+.flow-bar.out {
+    background: var(--viz-out);
+}
+
+.flow-row {
+    display: grid;
+    gap: 3px;
+}
+
+.flow-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.flow-head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 4px 12px;
+    font-size: 0.9rem;
+}
+
+.flow-label {
+    font-weight: 500;
+}
+
+.flow-net {
+    color: var(--mud-palette-text-secondary);
+    font-variant-numeric: tabular-nums;
+}
+
+.flow-track {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 16px;
+}
+
+.flow-area {
+    flex: 1;
+    min-width: 0;
+}
+
+.flow-bar {
+    height: 8px;
+    border-start-end-radius: 4px;
+    border-end-end-radius: 4px;
+}
+
+.flow-value {
+    font-size: 0.8rem;
+    white-space: nowrap;
+    color: var(--mud-palette-text-secondary);
+    font-variant-numeric: tabular-nums;
 }
 
 /* Nepali miti calendar (BsCalendar.razor). */
@@ -679,4 +771,9 @@ h1:focus, .mud-typography:focus {
 .bs-calendar-selected small {
     background: var(--mud-palette-primary);
     color: var(--mud-palette-primary-text);
+}
+
+/* ---------- Right-to-left languages ---------- */
+[dir="rtl"] .rtl-flip-icon .mud-icon-root {
+    transform: scaleX(-1);
 }

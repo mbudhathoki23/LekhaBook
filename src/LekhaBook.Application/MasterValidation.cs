@@ -38,7 +38,7 @@ public static class MasterValidation
         ["Validation.MoneyType"] = "Choose Bank, Wallet or Cash.",
         ["Validation.Decimals"] = "Enter an amount with at most 2 decimals.",
         ["Validation.Phone"] = "Phone can contain digits, spaces, +, - and brackets.",
-        ["Validation.TransactionType"] = "Choose a transaction type.",
+        ["Validation.TransactionType"] = "Choose an entry type.",
         ["Validation.Amount"] = "Amount must be more than 0 with at most 2 decimals.",
         ["Validation.Account"] = "Choose an account.",
         ["Validation.Field.FullName"] = "Full name",
@@ -51,7 +51,7 @@ public static class MasterValidation
         ["Validation.Field.ChequeNo"] = "Cheque no.",
     };
 
-    /// <summary>Account types a user can add on the Cash &amp; Bank screen (Cheque is built in).</summary>
+    /// <summary>Account types a user can add on the Finance screen (Cheque is built in).</summary>
     public static readonly AccountType[] AddableMoneyTypes = [AccountType.Bank, AccountType.Wallet, AccountType.Cash];
 
     public static Dictionary<string, string[]> Validate(SavePartyRequest r, ValidationText? text = null)

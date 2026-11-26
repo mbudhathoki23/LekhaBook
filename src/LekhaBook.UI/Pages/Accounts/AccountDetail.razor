@@ -9,7 +9,7 @@
 
 <PageTitle>@(_account?.Name ?? Loc["Accounts.Detail.Title"]) · Lekha Books</PageTitle>
 
-<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="accounts" Class="mb-2 no-print">@Loc["Accounts.List.Title"]</MudButton>
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="accounts" Class="mb-2 no-print rtl-flip-icon">@Loc["Accounts.List.Title"]</MudButton>
 
 @if (_error is not null)
 {

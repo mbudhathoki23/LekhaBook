@@ -3,7 +3,7 @@
 @* The Nepali miti calendar: one BS month, weeks starting Sunday, each day with its AD day underneath. *@
 <div class="bs-calendar" role="group" aria-label="@Loc["Calendar.Bs"]">
     <div class="bs-calendar-header">
-        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" Size="Size.Small" aria-label="@Loc["Calendar.PreviousMonth"]"
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" Size="Size.Small" Class="rtl-flip-icon" aria-label="@Loc["Calendar.PreviousMonth"]"
                        Disabled="@(!HasMonth(-1))" OnClick="() => Move(-1)" />
         <select class="bs-calendar-select" aria-label="@Loc["Calendar.Month"]" value="@_month" @onchange="OnMonthChanged">
             @for (var m = 1; m <= 12; m++)
@@ -17,7 +17,7 @@
                 <option value="@y">@y</option>
             }
         </select>
-        <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" aria-label="@Loc["Calendar.NextMonth"]"
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" Class="rtl-flip-icon" aria-label="@Loc["Calendar.NextMonth"]"
                        Disabled="@(!HasMonth(1))" OnClick="() => Move(1)" />
     </div>
 

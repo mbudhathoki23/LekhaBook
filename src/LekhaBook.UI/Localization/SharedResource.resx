@@ -14,7 +14,7 @@
     <value>Deleted {0}.</value>
   </data>
   <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
-    <value>{0} will be removed from Cash &amp; Bank.</value>
+    <value>{0} will be removed from Finance.</value>
   </data>
   <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
     <value>Delete account?</value>
@@ -32,7 +32,7 @@
     <value>Account</value>
   </data>
   <data name="Accounts.Detail.Transactions" xml:space="preserve">
-    <value>Transactions</value>
+    <value>Entries</value>
   </data>
   <data name="Accounts.Form.AccountName" xml:space="preserve">
     <value>Account name</value>
@@ -101,7 +101,7 @@
     <value>Cash and bank accounts</value>
   </data>
   <data name="Accounts.List.Title" xml:space="preserve">
-    <value>Cash &amp; Bank</value>
+    <value>Finance</value>
   </data>
   <data name="Accounts.List.TotalBalance" xml:space="preserve">
     <value>Total balance</value>
@@ -370,6 +370,45 @@
   <data name="Home.Totals" xml:space="preserve">
     <value>Dashboard totals</value>
   </data>
+  <data name="Home.ThisMonth" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="Home.Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="Home.MonthlyHint" xml:space="preserve">
+    <value>The last 12 months</value>
+  </data>
+  <data name="Home.Yearly" xml:space="preserve">
+    <value>Yearly</value>
+  </data>
+  <data name="Home.YearlyHint" xml:space="preserve">
+    <value>The last 5 fiscal years</value>
+  </data>
+  <data name="Home.TopParties" xml:space="preserve">
+    <value>Top 5 parties</value>
+  </data>
+  <data name="Home.TopPartiesHint" xml:space="preserve">
+    <value>Most business this fiscal year, with each party's balance now</value>
+  </data>
+  <data name="Home.MoneyIn" xml:space="preserve">
+    <value>Money in</value>
+  </data>
+  <data name="Home.MoneyOut" xml:space="preserve">
+    <value>Money out</value>
+  </data>
+  <data name="Home.Net" xml:space="preserve">
+    <value>Net</value>
+  </data>
+  <data name="Home.Business" xml:space="preserve">
+    <value>Business</value>
+  </data>
+  <data name="Home.FlowsEmpty" xml:space="preserve">
+    <value>No entries in this period yet.</value>
+  </data>
+  <data name="Home.FlowsNote" xml:space="preserve">
+    <value>Transfers between accounts and balance adjustments are not counted.</value>
+  </data>
   <data name="Language.Label" xml:space="preserve">
     <value>Language</value>
   </data>
@@ -383,7 +422,7 @@
     <value>Debit</value>
   </data>
   <data name="Ledger.Empty" xml:space="preserve">
-    <value>No transactions yet.</value>
+    <value>No entries yet.</value>
   </data>
   <data name="Ledger.GaveAdded" xml:space="preserve">
     <value>Gave / Added</value>
@@ -398,7 +437,7 @@
     <value>Particulars</value>
   </data>
   <data name="Ledger.Transactions" xml:space="preserve">
-    <value>Transactions</value>
+    <value>Entries</value>
   </data>
   <data name="Logo.Alt" xml:space="preserve">
     <value>Company logo</value>
@@ -440,7 +479,7 @@
     <value>Logo updated.</value>
   </data>
   <data name="Nav.CashAndBank" xml:space="preserve">
-    <value>Cash &amp; Bank</value>
+    <value>Finance</value>
   </data>
   <data name="Nav.Dashboard" xml:space="preserve">
     <value>Dashboard</value>
@@ -473,7 +512,7 @@
     <value>Staff</value>
   </data>
   <data name="Nav.Transactions" xml:space="preserve">
-    <value>Transactions</value>
+    <value>Entry</value>
   </data>
   <data name="NotFound.BackToDashboard" xml:space="preserve">
     <value>Back to dashboard</value>
@@ -698,7 +737,7 @@
     <value>More</value>
   </data>
   <data name="Shell.AddTransaction" xml:space="preserve">
-    <value>Add transaction</value>
+    <value>Add entry</value>
   </data>
   <data name="Shell.BrandHome" xml:space="preserve">
     <value>Lekha Books home</value>
@@ -854,7 +893,7 @@
     <value>Syncing…</value>
   </data>
   <data name="Transactions.Add" xml:space="preserve">
-    <value>Add Transaction</value>
+    <value>Add Entry</value>
   </data>
   <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
     <value>{0} B</value>
@@ -884,7 +923,7 @@
     <value>Save the entry first, then open it to add photos or PDFs.</value>
   </data>
   <data name="Transactions.Form.BackToList" xml:space="preserve">
-    <value>Back to transactions</value>
+    <value>Back to entries</value>
   </data>
   <data name="Transactions.Form.Balance" xml:space="preserve">
     <value>Balance: {0}</value>
@@ -938,7 +977,7 @@
     <value>To account</value>
   </data>
   <data name="Transactions.Form.TypeLabel" xml:space="preserve">
-    <value>Transaction type</value>
+    <value>Entry type</value>
   </data>
   <data name="Transactions.Form.Uploaded" xml:space="preserve">
     <value>Uploaded {0}.</value>
@@ -974,22 +1013,22 @@
     <value>Count</value>
   </data>
   <data name="Transactions.List.EmptyBody" xml:space="preserve">
-    <value>Add your first transaction to start tracking.</value>
+    <value>Add your first entry to start tracking.</value>
   </data>
   <data name="Transactions.List.EmptyTitle" xml:space="preserve">
-    <value>No transactions yet</value>
+    <value>No entries yet</value>
   </data>
   <data name="Transactions.List.LatestFirst" xml:space="preserve">
     <value>Latest first</value>
   </data>
   <data name="Transactions.List.NoMatch" xml:space="preserve">
-    <value>No transactions match.</value>
+    <value>No entries match.</value>
   </data>
   <data name="Transactions.List.OldestFirst" xml:space="preserve">
     <value>Oldest first</value>
   </data>
   <data name="Transactions.List.SearchAria" xml:space="preserve">
-    <value>Search transactions</value>
+    <value>Search entries</value>
   </data>
   <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
     <value>Search type, remarks, date</value>
@@ -998,7 +1037,7 @@
     <value>Sort</value>
   </data>
   <data name="Transactions.List.Title" xml:space="preserve">
-    <value>Transactions</value>
+    <value>Entry</value>
   </data>
   <data name="Transactions.List.Transfer" xml:space="preserve">
     <value>Transfer</value>
@@ -1202,7 +1241,7 @@
     <value>Phone can contain digits, spaces, +, - and brackets.</value>
   </data>
   <data name="Validation.TransactionType" xml:space="preserve">
-    <value>Choose a transaction type.</value>
+    <value>Choose an entry type.</value>
   </data>
   <data name="Validation.Amount" xml:space="preserve">
     <value>Amount must be more than 0 with at most 2 decimals.</value>

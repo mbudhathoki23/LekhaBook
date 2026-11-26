@@ -1,7 +1,11 @@
 @page "/"
+@using System.Globalization
+@using LekhaBook.Application
 @using LekhaBook.Domain
+@using LekhaBook.UI.Formatting
 @inject IPlatformInfo PlatformInfo
 @inject IDataService Data
+@inject ICompanyApi Companies
 @inject ISessionService Session
 
 <PageTitle>@Loc["Home.Title"] · Lekha Books</PageTitle>
@@ -36,6 +40,66 @@
     <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney" Disabled="@(!CanAdd(TransactionType.TransferMoney))">@Loc["TxnType.TransferMoney"]</MudButton>
 </MudStack>
 
+@if (_dashboard is { Months.Count: > 0 } dashboard)
+{
+    <MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">@Loc["Home.ThisMonth"] · @MonthLabel(dashboard.Months[^1])</MudText>
+    <MudGrid Spacing="2">
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-3" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.MoneyIn"]</MudText>
+                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.MoneyIn)</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-3" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.MoneyOut"]</MudText>
+                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.MoneyOut)</MudText>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudPaper Class="pa-3" Elevation="1">
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.Net"]</MudText>
+                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.Net)</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.Monthly"]</MudText>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.MonthlyHint"]</MudText>
+    <FlowBars Rows="@MonthRows(dashboard)" />
+
+    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.Yearly"]</MudText>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.YearlyHint"]</MudText>
+    <FlowBars Rows="@YearRows(dashboard)" />
+
+    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.TopParties"]</MudText>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.TopPartiesHint"]</MudText>
+    @if (dashboard.TopParties.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Home.FlowsEmpty"]</MudText>
+    }
+    else
+    {
+        <div class="flow-list">
+            @foreach (var party in dashboard.TopParties)
+            {
+                <a class="flow-row flow-link" href="@($"parties/{party.PartyId}")">
+                    <div class="flow-head">
+                        <span class="flow-label">@party.Name</span>
+                        <span class="flow-net">@BalanceText(party.Balance)</span>
+                    </div>
+                    <div class="flow-track">
+                        <div class="flow-area" aria-hidden="true"><div class="flow-bar party" style="width: @Share(party.Total, dashboard.TopParties[0].Total)%"></div></div>
+                        <span class="flow-value">@Loc["Home.Business"] @Money.Format(party.Total)</span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+
+    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-4">@Loc["Home.FlowsNote"]</MudText>
+}
+
 <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">
     @(Loc["Settings.RunningOn", PlatformInfo.Platform, PlatformInfo.FormFactor])
 </MudText>
@@ -43,6 +107,8 @@
 @code {
     private List<PartyDto>? _parties;
     private List<MoneyAccountDto>? _accounts;
+    private DashboardReport? _dashboard;
+    private CalendarMode _calendar;
     private ApiError? _error;
 
     private IEnumerable<(string Label, decimal? Amount, Color Color, string Href)> Tiles =>
@@ -78,7 +144,61 @@
             _accounts = accounts.Value;
             _error ??= accounts.Ok ? null : new ApiError(accounts.Error, accounts.IsNetworkError);
         }
+
+        if (Session.Can(Permission.ReportsDashboard))
+        {
+            await LoadDashboardAsync(company.CompanyId);
+        }
     }
+
+    private async Task LoadDashboardAsync(Guid companyId)
+    {
+        var details = await Companies.GetCompanyAsync(companyId);
+        var transactions = await Data.GetTransactionsAsync(companyId);
+        _error ??= details.Ok ? null : new ApiError(details.Error, details.IsNetworkError);
+        _error ??= transactions.Ok ? null : new ApiError(transactions.Error, transactions.IsNetworkError);
+        if (details.Value is not { } settings || transactions.Value is not { } entries)
+        {
+            _dashboard = null;
+            return;
+        }
+
+        _calendar = Enum.TryParse(settings.Calendar, out CalendarMode calendar) ? calendar : CalendarMode.BS;
+        _dashboard = DashboardFlows.Build(
+            entries,
+            _parties ?? [],
+            _calendar,
+            settings.FiscalYearStartMonth,
+            CompanyClock.Today(settings.TimeZoneId, TimeProvider.System));
+    }
+
+    private string MonthLabel(MonthFlow month)
+    {
+        if (_calendar == CalendarMode.AD)
+        {
+            return new DateOnly(month.Year, month.Month, 1).ToString("MMM yyyy", CultureInfo.CurrentUICulture);
+        }
+
+        var monthKey = $"Calendar.Month{month.Month}";
+        return $"{Loc[monthKey].Value} {month.Year}";
+    }
+
+    private static string FiscalYearLabel(int startYear) => $"{startYear}/{(startYear + 1) % 100:00}";
+
+    private IReadOnlyList<(string Label, FlowTotals Totals)> MonthRows(DashboardReport report) =>
+        report.Months.Select(m => (MonthLabel(m), m.Totals)).ToList();
+
+    private static IReadOnlyList<(string Label, FlowTotals Totals)> YearRows(DashboardReport report) =>
+        report.FiscalYears.Select(y => (FiscalYearLabel(y.StartYear), y.Totals)).ToList();
+
+    private string BalanceText(decimal balance)
+    {
+        var (labelKey, _) = MasterLabels.PartySide(balance);
+        return balance == 0 ? Loc[labelKey].Value : $"{Loc[labelKey].Value} {Money.Format(Math.Abs(balance))}";
+    }
+
+    private static string Share(decimal value, decimal largest) =>
+        largest <= 0m ? "0" : (value / largest * 100m).ToString("0.##", CultureInfo.InvariantCulture);
 
     private sealed record ApiError(string? Error, bool IsNetworkError);
 }

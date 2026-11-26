@@ -1,3 +1,4 @@
+using System.Globalization;
 using LekhaBook.Domain;
 using LekhaBook.UI.Services;
 
@@ -18,6 +19,6 @@ public static class SessionDates
         var local = utc.ToLocalTime();
         return session.Calendar() == CalendarMode.BS
             ? CalendarDates.Format(DateOnly.FromDateTime(local), CalendarMode.BS)
-            : local.ToString("d MMM yyyy");
+            : local.ToString(CultureInfo.CurrentUICulture.TwoLetterISOLanguageName is "zh" or "ja" ? "yyyy年M月d日" : "d MMM yyyy");
     }
 }

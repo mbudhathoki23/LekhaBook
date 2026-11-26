@@ -3,7 +3,7 @@
 @inject NavigationManager Navigation
 @* Shows the current company; opens a list to switch, create or join another. *@
 
-<MudMenu AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="ml-2 company-switcher"
+<MudMenu AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="ms-2 company-switcher"
          Label="@(Session.CompanyName ?? Loc["Shell.NoCompany"])" EndIcon="@Icons.Material.Filled.ArrowDropDown"
          Color="Color.Inherit" Variant="Variant.Text" AriaLabel="@Loc["Shell.SwitchCompany"]">
     <ChildContent>
@@ -12,7 +12,7 @@
             var isCurrent = company.CompanyId == Session.CurrentCompany?.CompanyId;
             <MudMenuItem OnClick="() => Session.SelectCompanyAsync(company.CompanyId)"
                          Icon="@(isCurrent ? Icons.Material.Filled.Check : Icons.Material.Filled.Business)">
-                @company.Name <MudText Typo="Typo.caption" Class="mud-text-secondary ml-1">@Loc[RoleLabels.For(company.Role)]</MudText>
+                @company.Name <MudText Typo="Typo.caption" Class="mud-text-secondary ms-1">@Loc[RoleLabels.For(company.Role)]</MudText>
             </MudMenuItem>
         }
         <MudDivider Class="my-1" />

@@ -1,0 +1,41 @@
+@using LekhaBook.Application
+@using LekhaBook.UI.Formatting
+
+@* Money in above money out for each period, as thin bars with the amounts written beside them. The amounts are the table view. *@
+<div class="flow-list">
+    <div class="flow-legend">
+        <span><span class="flow-swatch in"></span>@Loc["Home.MoneyIn"]</span>
+        <span><span class="flow-swatch out"></span>@Loc["Home.MoneyOut"]</span>
+    </div>
+    @foreach (var (label, totals) in Rows)
+    {
+        <div class="flow-row">
+            <div class="flow-head">
+                <span class="flow-label">@label</span>
+                <span class="flow-net">@Loc["Home.Net"] @Money.Format(totals.Net)</span>
+            </div>
+            <div class="flow-track" title="@($"{Loc["Home.MoneyIn"]}: {Money.Format(totals.MoneyIn)}")">
+                <div class="flow-area" aria-hidden="true"><div class="flow-bar in" style="width: @Percent(totals.MoneyIn)%"></div></div>
+                <span class="flow-value">@Money.Format(totals.MoneyIn)</span>
+            </div>
+            <div class="flow-track" title="@($"{Loc["Home.MoneyOut"]}: {Money.Format(totals.MoneyOut)}")">
+                <div class="flow-area" aria-hidden="true"><div class="flow-bar out" style="width: @Percent(totals.MoneyOut)%"></div></div>
+                <span class="flow-value">@Money.Format(totals.MoneyOut)</span>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<(string Label, FlowTotals Totals)> Rows { get; set; } = [];
+
+    /// <summary>The largest figure in any row, so every bar in the list shares one scale.</summary>
+    private decimal _scale;
+
+    protected override void OnParametersSet() =>
+        _scale = Rows.SelectMany(r => new[] { r.Totals.MoneyIn, r.Totals.MoneyOut }).DefaultIfEmpty(0m).Max();
+
+    private string Percent(decimal value) =>
+        _scale <= 0m ? "0" : (value / _scale * 100m).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}

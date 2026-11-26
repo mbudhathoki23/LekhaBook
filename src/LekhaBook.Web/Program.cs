@@ -52,12 +52,15 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
-// English unless the culture cookie (set by /culture/set) asks for Nepali.
-var supportedCultures = Languages.Supported.Select(l => l.Code).ToArray();
-var localization = new RequestLocalizationOptions()
-    .SetDefaultCulture(Languages.English)
-    .AddSupportedCultures(supportedCultures)
-    .AddSupportedUICultures(supportedCultures);
+// English unless the culture cookie (set by /culture/set) asks for another language.
+// CultureFor keeps Gregorian dates and "." decimals in every language.
+var cultures = Languages.Supported.Select(l => Languages.CultureFor(l.Code)).ToList();
+var localization = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(Languages.English),
+    SupportedCultures = cultures,
+    SupportedUICultures = cultures,
+};
 // Only the cookie chooses. The default providers would also follow ?culture= and the browser language.
 localization.RequestCultureProviders = [new CookieRequestCultureProvider()];
 app.UseRequestLocalization(localization);
