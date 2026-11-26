@@ -52,6 +52,10 @@ public static class MasterEndpoints
         company.MapPost("/attachments", CreateAttachment).RequirePermission(Permission.TransactionsEdit);
         company.MapGet("/attachments/{id:guid}", GetAttachment).RequirePermission(Permission.TransactionsView);
         company.MapGet("/attachments", ListAttachments).RequirePermission(Permission.TransactionsView);
+
+        // Sync (AGENT_PLAN § 6)
+        company.MapPost("/sync/push", SyncPush).RequirePermission(Permission.TransactionsEdit);
+        company.MapGet("/sync/pull", SyncPull).RequirePermission(Permission.TransactionsView);
     }
 
     // ---------------- Parties ----------------
@@ -600,6 +604,269 @@ public static class MasterEndpoints
 
     private static AttachmentDto ToAttachmentDto(Attachment a) =>
         new(a.Id, a.TransactionId, a.AccountId, a.FileName, a.ContentType, a.SizeBytes, a.StorageKey, a.CreatedAtUtc);
+
+    // ---------------- Sync (AGENT_PLAN § 6) ----------------
+
+    private static async Task<Results<Ok<PushResponse>, ValidationProblem, ProblemHttpResult>> SyncPush(
+        Guid companyId, PushRequest request, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+
+        var changed = new List<SyncEntity>();
+        var results = new List<PushItemResult>();
+
+        foreach (var item in request.Items)
+        {
+            var (outcome, row) = await ApplySyncItemAsync(companyId, member, item, db, clock);
+            results.Add(outcome);
+            if (row is not null)
+            {
+                changed.Add(row);
+            }
+        }
+
+        if (changed.Count > 0)
+        {
+            await db.SaveWithVersionsAsync(companyId, changed, member.UserId, clock.GetUtcNow().UtcDateTime);
+        }
+
+        return TypedResults.Ok(new PushResponse(results));
+    }
+
+    private static async Task<(PushItemResult Result, SyncEntity? Row)> ApplySyncItemAsync(
+        Guid companyId, CompanyMember member, PushItem item, PostgresDbContext db, TimeProvider clock)
+    {
+        var now = clock.GetUtcNow().UtcDateTime;
+
+        // Default: success, no final voucher, version will be set after SaveWithVersionsAsync
+        var result = new PushItemResult(item.IdempotencyKey, Ok: true, Error: null, FinalVoucherNo: null, Version: null);
+
+        switch (item.EntityType)
+        {
+            case "PartyCategory":
+                if (item.Operation == "Create")
+                {
+                    var category = JsonSerializer.Deserialize<PartyCategory>(item.Payload);
+                    if (category is not null && !await db.PartyCategories.AnyAsync(c => c.Id == category.Id && c.CompanyId == companyId))
+                    {
+                        category.CompanyId = companyId;
+                        category.CreatedAtUtc = now;
+                        category.UpdatedAtUtc = now;
+                        db.PartyCategories.Add(category);
+                        return (result, category);
+                    }
+                    // Duplicate id: treat as conflict (idempotent but client has different payload)
+                    return (result with { Ok = false, Error = "Duplicate category id" }, null);
+                }
+                break;
+
+            case "Transaction":
+                if (item.Operation is "Create" or "Update" or "Void")
+                {
+                    var txn = JsonSerializer.Deserialize<Transaction>(item.Payload);
+                    if (txn is null)
+                    {
+                        return (result with { Ok = false, Error = "Invalid payload" }, null);
+                    }
+
+                    var existing = await db.Transactions.SingleOrDefaultAsync(t => t.Id == txn.Id && t.CompanyId == companyId);
+                    if (existing is not null)
+                    {
+                        if (existing.Version > txn.Version)
+                        {
+                            // Conflict: client is stale
+                            return (result with { Ok = false, Error = $"Conflict: server version {existing.Version} > client base {txn.Version}" }, null);
+                        }
+                    }
+
+                    if (existing is null)
+                    {
+                        // Create new transaction
+                        txn.CompanyId = companyId;
+                        txn.CreatedAtUtc = now;
+                        txn.IsProvisionalNo = !txn.IsManualNo; // mark provisional if not manual
+                        db.Transactions.Add(txn);
+
+                        // Server assigns final voucher number if provisional
+                        if (txn.IsProvisionalNo)
+                        {
+                            var finalVoucherNo = await AssignFinalVoucherNoAsync(db, companyId, txn.Type, now);
+                            result = result with { FinalVoucherNo = finalVoucherNo };
+                        }
+                        return (result, txn);
+                    }
+
+                    if (item.Operation == "Void")
+                    {
+                        existing.Status = TransactionStatus.Void;
+                        existing.UpdatedAtUtc = now;
+                        existing.IsProvisionalNo = false;
+                        return (result, existing);
+                    }
+
+                    // Update existing
+                    existing.Amount = txn.Amount;
+                    existing.Date = txn.Date;
+                    existing.FromAccountId = txn.FromAccountId;
+                    existing.ToAccountId = txn.ToAccountId;
+                    existing.Remarks = txn.Remarks;
+                    existing.ChequeNo = txn.ChequeNo;
+                    existing.ChequeDate = txn.ChequeDate;
+                    existing.IsDeleted = txn.IsDeleted;
+                    existing.IsProvisionalNo = false;
+                    return (result, existing);
+                }
+                break;
+
+            case "Attachment":
+                if (item.Operation == "Create")
+                {
+                    var attachment = JsonSerializer.Deserialize<Attachment>(item.Payload);
+                    if (attachment is not null && !await db.Attachments.AnyAsync(a => a.Id == attachment.Id && a.CompanyId == companyId))
+                    {
+                        attachment.CompanyId = companyId;
+                        attachment.CreatedAtUtc = now;
+                        attachment.UpdatedAtUtc = now;
+                        db.Attachments.Add(attachment);
+                        return (result, attachment);
+                    }
+                    return (result with { Ok = false, Error = "Duplicate attachment id" }, null);
+                }
+                break;
+        }
+
+        return (result with { Ok = false, Error = "Unknown entity type or operation" }, null);
+    }
+
+    private static async Task<string> AssignFinalVoucherNoAsync(PostgresDbContext db, Guid companyId, TransactionType type, DateTime nowUtc)
+    {
+        // Simplified: per-type, per-fiscal-year sequence
+        // For now, use a simple counter per type per company
+        // In production, this would use fiscal year from company settings and a DB sequence
+        var prefix = type switch
+        {
+            TransactionType.PaymentIn => "RC",
+            TransactionType.PaymentOut => "RP",
+            TransactionType.Expense => "EX",
+            TransactionType.OtherIncome => "OI",
+            TransactionType.AddMoney => "AM",
+            TransactionType.ReduceMoney => "RM",
+            TransactionType.TransferMoney => "TR",
+            TransactionType.PartyAdjustAdd => "PA",
+            TransactionType.PartyAdjustReduce => "PR",
+            _ => "TX"
+        };
+
+        var year = nowUtc.Year;
+        var counter = await db.Transactions
+            .Where(t => t.CompanyId == companyId && t.Type == type && t.Date.Year == year)
+            .CountAsync();
+
+        return $"{prefix}-{year}-{(counter + 1):D4}";
+    }
+
+    private static async Task<Results<Ok<PullResponse>, ProblemHttpResult>> SyncPull(
+        Guid companyId, long since, int take, CompanyAccess access, PostgresDbContext db)
+    {
+        var member = await access.RequireMemberAsync();
+
+        take = Math.Min(take, 1000);
+
+        var rows = new List<PulledRow>();
+
+        // Pull accounts
+        var accounts = await db.Accounts.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && a.Version > since)
+            .OrderBy(a => a.Version)
+            .Take(take)
+            .ToListAsync();
+
+        foreach (var a in accounts)
+        {
+            rows.Add(new PulledRow(
+                "Account",
+                a.Id,
+                a.Version,
+                a.UpdatedAtUtc,
+                a.UpdatedBy,
+                a.UpdatedOnDevice,
+                a.IsDeleted,
+                JsonSerializer.Serialize(a)));
+        }
+
+        // Pull party categories
+        var categories = await db.PartyCategories.AsNoTracking()
+            .Where(c => c.CompanyId == companyId && c.Version > since)
+            .OrderBy(c => c.Version)
+            .Take(take)
+            .ToListAsync();
+
+        foreach (var c in categories)
+        {
+            rows.Add(new PulledRow(
+                "PartyCategory",
+                c.Id,
+                c.Version,
+                c.UpdatedAtUtc,
+                c.UpdatedBy,
+                c.UpdatedOnDevice,
+                c.IsDeleted,
+                JsonSerializer.Serialize(c)));
+        }
+
+        // Pull transactions
+        var transactions = await db.Transactions.AsNoTracking()
+            .Where(t => t.CompanyId == companyId && t.Version > since)
+            .OrderBy(t => t.Version)
+            .Take(take)
+            .ToListAsync();
+
+        foreach (var t in transactions)
+        {
+            rows.Add(new PulledRow(
+                "Transaction",
+                t.Id,
+                t.Version,
+                t.UpdatedAtUtc,
+                t.UpdatedBy,
+                t.UpdatedOnDevice,
+                t.IsDeleted,
+                JsonSerializer.Serialize(t)));
+        }
+
+        // Pull attachments
+        var attachments = await db.Attachments.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && a.Version > since)
+            .OrderBy(a => a.Version)
+            .Take(take)
+            .ToListAsync();
+
+        foreach (var a in attachments)
+        {
+            rows.Add(new PulledRow(
+                "Attachment",
+                a.Id,
+                a.Version,
+                a.UpdatedAtUtc,
+                a.UpdatedBy,
+                a.UpdatedOnDevice,
+                a.IsDeleted,
+                JsonSerializer.Serialize(a)));
+        }
+
+        var latest = await db.CompanySyncStates
+            .Where(s => s.CompanyId == companyId)
+            .Select(s => s.LastVersion)
+            .SingleOrDefaultAsync(default);
+
+        if (latest == 0)
+        {
+            // No sync state row means no changes have been tracked yet.
+            latest = since;
+        }
+
+        return TypedResults.Ok(new PullResponse(latest, rows));
+    }
 
     private static async Task<Transaction?> ValidateAndCreateTransactionAsync(Guid companyId, CompanyMember member, CreateTransactionRequest request, PostgresDbContext db, TimeProvider clock, DateOnly today)
     {

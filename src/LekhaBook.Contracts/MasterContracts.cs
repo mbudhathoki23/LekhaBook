@@ -130,3 +130,40 @@ public sealed record UpdateTransactionRequest(
     string? ChequeNo,
     DateOnly? ChequeDate,
     string? Status);
+
+/// <summary>One item in a sync push batch.</summary>
+public sealed record PushItem(
+    string EntityType,
+    string Operation,
+    string Payload,
+    string IdempotencyKey);
+
+/// <summary>Result of processing one push item.</summary>
+public sealed record PushItemResult(
+    string IdempotencyKey,
+    bool Ok,
+    string? Error,
+    string? FinalVoucherNo,
+    long? Version);
+
+/// <summary>Request to push a batch of outbox items.</summary>
+public sealed record PushRequest(IReadOnlyList<PushItem> Items);
+
+/// <summary>Response from a push batch.</summary>
+public sealed record PushResponse(IReadOnlyList<PushItemResult> Results);
+
+/// <summary>One row returned by pull (includes soft-deleted rows).</summary>
+public sealed record PulledRow(
+    string EntityType,
+    Guid Id,
+    long Version,
+    DateTime UpdatedAtUtc,
+    Guid? UpdatedBy,
+    string? UpdatedOnDevice,
+    bool IsDeleted,
+    string Payload);
+
+/// <summary>Pull response: rows changed since the given version, plus the latest server version.</summary>
+public sealed record PullResponse(
+    long LatestVersion,
+    IReadOnlyList<PulledRow> Rows);

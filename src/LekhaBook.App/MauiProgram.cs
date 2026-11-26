@@ -26,7 +26,7 @@ public static class MauiProgram
         builder.Services.AddLekhaBookUI();
         builder.Services.AddSingleton<IPlatformInfo, MauiPlatformInfo>();
         builder.Services.AddSingleton<IConnectivityService, MauiConnectivityService>();
-        builder.Services.AddSingleton<ISyncService, PendingSyncEngine>();
+        builder.Services.AddSingleton<ISyncService, MauiSyncEngine>();
 
         // Sign-in: one user per app install, so the session is a singleton. Tokens live in SecureStorage.
         builder.Services.AddLekhaBookClient(ApiEndpoint.BaseAddress, perUserScope: false);
