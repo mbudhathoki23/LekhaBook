@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using LekhaBook.Contracts;
 using LekhaBook.UI.Services;
 
 namespace LekhaBook.Client;
@@ -171,6 +172,72 @@ public sealed class LekhaBookApi(HttpClient http, ITokenStore tokenStore, TimePr
         {
             return new(default, "The server took too long to answer.", 0);
         }
+    }
+
+    /// <summary>
+    /// GET for a file (an attachment or a company logo). Same bearer token and refresh-once rules as
+    /// <see cref="SendContentAsync{T}"/>. The name comes from Content-Disposition when the server sends one.
+    /// </summary>
+    public async Task<ApiResult<AttachmentFile>> GetFileAsync(string path)
+    {
+        try
+        {
+            if (_tokens is { } t && (t.AccessToken is null || t.AccessTokenExpiresAtUtc <= clock.GetUtcNow().UtcDateTime.AddSeconds(30)))
+            {
+                if (!await RefreshAsync())
+                {
+                    return new(default, "Please sign in again.", 401);
+                }
+            }
+
+            using var response = await GetOnceAsync(path);
+            if (response.StatusCode == HttpStatusCode.Unauthorized && _tokens is not null)
+            {
+                if (!await RefreshAsync())
+                {
+                    return new(default, "Please sign in again.", 401);
+                }
+
+                using var retry = await GetOnceAsync(path);
+                return await ReadFileAsync(retry);
+            }
+
+            return await ReadFileAsync(response);
+        }
+        catch (HttpRequestException)
+        {
+            return new(default, "Can't reach the server. Check your internet connection.", 0);
+        }
+        catch (TaskCanceledException)
+        {
+            return new(default, "The server took too long to answer.", 0);
+        }
+    }
+
+    private async Task<HttpResponseMessage> GetOnceAsync(string path)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        if (_tokens?.AccessToken is { } token)
+        {
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        return await http.SendAsync(request);
+    }
+
+    private static async Task<ApiResult<AttachmentFile>> ReadFileAsync(HttpResponseMessage response)
+    {
+        var status = (int)response.StatusCode;
+        if (!response.IsSuccessStatusCode)
+        {
+            return new(default, await ErrorMessageAsync(response), status);
+        }
+
+        var bytes = await response.Content.ReadAsByteArrayAsync();
+        var contentType = response.Content.Headers.ContentType?.MediaType ?? "application/octet-stream";
+        var disposition = response.Content.Headers.ContentDisposition;
+        var fileName = disposition?.FileNameStar ?? disposition?.FileName?.Trim('"') ?? "file";
+        return new(new AttachmentFile(fileName, contentType, bytes), null, status);
     }
 
     private Task<HttpResponseMessage> SendOnceAsync(HttpMethod method, string path, object? body, bool authenticated)

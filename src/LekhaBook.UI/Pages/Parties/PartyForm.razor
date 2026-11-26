@@ -7,13 +7,13 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<PageTitle>@(IsNew ? "Add Party" : "Edit Party") · Lekha Books</PageTitle>
+<PageTitle>@(IsNew ? Loc["Parties.AddParty"] : Loc["Parties.EditParty"]) · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Party" : "Edit Party")</MudText>
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? Loc["Parties.AddParty"] : Loc["Parties.EditParty"])</MudText>
 
 @if (_loadError is not null)
 {
-    <LoadError Message="@_loadError" Offline="_offline" What="Parties" OnRetry="LoadAsync" />
+    <LoadError Message="@_loadError" Offline="_offline" What="@Loc["Parties.Title"]" OnRetry="LoadAsync" />
 }
 else if (!_loaded)
 {
@@ -23,46 +23,45 @@ else
 {
     <EnterNavForm @ref="_form" Class="entry-form">
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudTextField @bind-Value="_name" Label="Full name *" Placeholder="Enter the name of the party"
+            <MudTextField @bind-Value="_name" Label="@Loc["Parties.Form.NameLabel"]" Placeholder="@Loc["Parties.Form.NamePlaceholder"]"
                           Variant="Variant.Outlined" MaxLength="MasterValidation.NameMax"
                           Error="@Has("name")" ErrorText="@ErrorOf("name")" />
-            <MudTextField @bind-Value="_phone" Label="Phone number" InputType="InputType.Telephone" InputMode="InputMode.tel"
+            <MudTextField @bind-Value="_phone" Label="@Loc["Parties.Form.PhoneLabel"]" InputType="InputType.Telephone" InputMode="InputMode.tel"
                           Variant="Variant.Outlined" Class="mt-3" MaxLength="MasterValidation.PhoneMax"
                           Error="@Has("phone")" ErrorText="@ErrorOf("phone")" />
-            <MudAutocomplete T="string" @bind-Value="_category" Label="Party category" SearchFunc="SearchCategories"
+            <MudAutocomplete T="string" @bind-Value="_category" Label="@Loc["Parties.Form.CategoryLabel"]" SearchFunc="SearchCategories"
                              CoerceValue="true" Clearable="true" ResetValueOnEmptyText="true" OpenOnFocus="false" SelectOnActivation="false" Variant="Variant.Outlined" Class="mt-3"
-                             HelperText="@(CanAddCategory ? "Pick one, or type a new name to add it." : null)"
+                             HelperText="@(CanAddCategory ? Loc["Parties.Form.CategoryHelp"].Value : null)"
                              Error="@Has("categoryId")" ErrorText="@ErrorOf("categoryId")" />
 
-            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-3">Party type</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-3">@Loc["Parties.Form.TypeLabel"]</MudText>
             <MudRadioGroup T="string" @bind-Value="_type" Name="party-type">
-                <MudRadio Value="@("Customer")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Customer))">Customer</MudRadio>
-                <MudRadio Value="@("Supplier")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Supplier))">Supplier</MudRadio>
+                <MudRadio Value="@("Customer")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Customer))">@Loc["Parties.Type.Customer"]</MudRadio>
+                <MudRadio Value="@("Supplier")" Color="Color.Primary" Disabled="@(!CanUseType(PartyType.Supplier))">@Loc["Parties.Type.Supplier"]</MudRadio>
             </MudRadioGroup>
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Opening balance</MudText>
-            <MudNumericField T="decimal?" @bind-Value="_opening" Label="Opening balance (Rs.)" Placeholder="0" HideSpinButtons="true"
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@Loc["Ledger.OpeningBalance"]</MudText>
+            <MudNumericField T="decimal?" @bind-Value="_opening" Label="@Loc["Parties.Form.OpeningBalanceLabel"]" Placeholder="0" HideSpinButtons="true"
                              InputMode="InputModes.Decimal" Min="0" Variant="Variant.Outlined"
                              Error="@Has("openingBalance")" ErrorText="@ErrorOf("openingBalance")" />
             <MudRadioGroup T="string" @bind-Value="_side" Name="opening-side" Class="mt-2">
-                <MudRadio Value="@("ToReceive")" Color="Color.Success">To Receive</MudRadio>
-                <MudRadio Value="@("ToGive")" Color="Color.Error">To Give</MudRadio>
+                <MudRadio Value="@("ToReceive")" Color="Color.Success">@Loc["PartySide.ToReceive"]</MudRadio>
+                <MudRadio Value="@("ToGive")" Color="Color.Error">@Loc["PartySide.ToGive"]</MudRadio>
             </MudRadioGroup>
-            <MudDatePicker @bind-Date="_asOf" Label="As of date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
-                           Variant="Variant.Outlined" Class="mt-2" Disabled="DateLocked"
-                           HelperText="@(DateLocked ? "You can only date an opening balance today." : null)" />
+            <DateField @ref="_asOfField" @bind-Value="_asOf" Label="@Loc["Parties.Form.AsOfLabel"]" Class="mt-2" Disabled="DateLocked"
+                       HelperText="@(DateLocked ? Loc["Parties.Form.AsOfLocked"].Value : null)" />
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
             <MudText Typo="Typo.subtitle2" Class="mb-2">More details</MudText>
-            <MudTextField @bind-Value="_address" Label="Address" Variant="Variant.Outlined" MaxLength="MasterValidation.AddressMax"
+            <MudTextField @bind-Value="_address" Label="@Loc["Parties.Form.AddressLabel"]" Variant="Variant.Outlined" MaxLength="MasterValidation.AddressMax"
                           Error="@Has("address")" ErrorText="@ErrorOf("address")" />
-            <MudTextField @bind-Value="_email" Label="Email" InputType="InputType.Email" InputMode="InputMode.email"
+            <MudTextField @bind-Value="_email" Label="@Loc["Common.Email"]" InputType="InputType.Email" InputMode="InputMode.email"
                           Variant="Variant.Outlined" Class="mt-3" MaxLength="MasterValidation.EmailMax"
                           Error="@Has("email")" ErrorText="@ErrorOf("email")" />
-            <MudTextField @bind-Value="_pan" Label="PAN number" InputMode="InputMode.numeric" Variant="Variant.Outlined" Class="mt-3"
+            <MudTextField @bind-Value="_pan" Label="@Loc["Parties.Form.PanLabel"]" InputMode="InputMode.numeric" Variant="Variant.Outlined" Class="mt-3"
                           MaxLength="MasterValidation.PanMax" Error="@Has("pan")" ErrorText="@ErrorOf("pan")" />
         </MudPaper>
 
@@ -72,17 +71,17 @@ else
         }
 
         <div class="form-actions">
-            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>@Loc["Common.Cancel"]</MudButton>
             @if (IsNew)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save &amp; New</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">@Loc["Parties.Form.SaveAndNew"]</MudButton>
             }
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
-                @(_saving ? "Saving…" : "Save")
+                @(_saving ? Loc["Parties.Form.Saving"] : Loc["Common.Save"])
             </MudButton>
         </div>
         <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
-            Enter moves to the next field · Ctrl+S saves · Esc cancels
+            @Loc["Parties.Form.KeyboardHint"]
         </MudText>
     </EnterNavForm>
 }
@@ -105,6 +104,7 @@ else
     private decimal? _opening;
     private string _side = "ToReceive";
     private DateTime? _asOf = DateTime.Today;
+    private DateField? _asOfField;
 
     // The picker starts on this device's today. Left untouched on a new entry, no date is sent and the
     // server uses the company's today (D12); a locked date is always the server's today.
@@ -206,7 +206,12 @@ else
             OpeningBalance: _opening ?? 0,
             OpeningSide: _side,
             OpeningAsOf: SentAsOf);
-        _errors = MasterValidation.Validate(request);
+        _errors = MasterValidation.Validate(request, Loc.ForValidation());
+        if (_asOfField?.IsInvalid == true)
+        {
+            _errors["openingAsOf"] = [Loc["Calendar.InvalidBs"]];
+        }
+
         if (_errors.Count > 0)
         {
             _form?.FocusFirstErrorAfterRender();
@@ -231,7 +236,7 @@ else
                 return;
             }
 
-            Snackbar.Add($"Saved {result.Value!.Name}.", Severity.Success);
+            Snackbar.Add(Loc["Parties.Form.Saved", result.Value!.Name], Severity.Success);
             if (andNew)
             {
                 (_name, _phone, _category, _opening, _address, _email, _pan) = (null, null, null, null, null, null, null);
@@ -269,7 +274,7 @@ else
 
         if (!CanAddCategory)
         {
-            _errors = new() { ["categoryId"] = ["Pick a category from the list."] };
+            _errors = new() { ["categoryId"] = [Loc["Parties.Form.PickCategory"]] };
             _form?.FocusFirstErrorAfterRender();
             return (false, null);
         }
@@ -277,7 +282,7 @@ else
         var added = await Data.AddPartyCategoryAsync(companyId, new SavePartyCategoryRequest(name, Guid.CreateVersion7()));
         if (!added.Ok)
         {
-            _errors = new() { ["categoryId"] = [added.Error ?? "Couldn't add the category."] };
+            _errors = new() { ["categoryId"] = [added.Error ?? Loc["Parties.Form.CategoryAddFailed"]] };
             _form?.FocusFirstErrorAfterRender();
             return (false, null);
         }

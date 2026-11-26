@@ -7,13 +7,13 @@
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
 
-<PageTitle>@(_account?.Name ?? "Account") · Lekha Books</PageTitle>
+<PageTitle>@(_account?.Name ?? Loc["Accounts.Detail.Title"]) · Lekha Books</PageTitle>
 
-<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="accounts" Class="mb-2">Cash &amp; Bank</MudButton>
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="accounts" Class="mb-2 no-print">@Loc["Accounts.List.Title"]</MudButton>
 
 @if (_error is not null)
 {
-    <LoadError Message="@_error" Offline="_offline" What="Cash and bank accounts" OnRetry="LoadAsync" />
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Accounts.List.Subject"]" OnRetry="LoadAsync" />
 }
 else if (_account is null)
 {
@@ -27,31 +27,32 @@ else
             <div class="row-main">
                 <MudText Typo="Typo.h6" tabindex="-1">@_account.Name</MudText>
                 <MudText Typo="Typo.body2" Class="mud-text-secondary">
-                    @MasterLabels.AccountType(_account.Type)@(_account.AccountHolderName is null ? "" : $" · {_account.AccountHolderName}")@(MasterLabels.MaskNumber(_account.AccountNumber) is { } masked ? $" · {masked}" : "")
+                    @Loc[MasterLabels.AccountType(_account.Type)]@(_account.AccountHolderName is null ? "" : $" · {_account.AccountHolderName}")@(MasterLabels.MaskNumber(_account.AccountNumber) is { } masked ? $" · {masked}" : "")
                 </MudText>
             </div>
             <div class="row-amount">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">Current balance</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Accounts.Detail.CurrentBalance"]</MudText>
                 <MudText Typo="Typo.h5" Color="@(_account.Balance < 0 ? Color.Error : Color.Default)" Class="text-nowrap">@Money.Format(_account.Balance)</MudText>
             </div>
         </div>
 
-        <MudStack Row="true" Spacing="2" Class="mt-3" Wrap="Wrap.Wrap">
+        <MudStack Row="true" Spacing="2" Class="mt-3 no-print" Wrap="Wrap.Wrap">
             @if (Session.Can(Permission.AccountsEdit))
             {
-                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"accounts/{AccountId}/edit")">Edit</MudButton>
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"accounts/{AccountId}/edit")">@Loc["Common.Edit"]</MudButton>
             }
             @if (Session.Can(Permission.AccountsDelete) && !_account.IsSystem)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">Delete</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">@Loc["Common.Delete"]</MudButton>
             }
         </MudStack>
     </MudPaper>
 
-    <MudText Typo="Typo.subtitle1" Class="mb-2">Transactions</MudText>
-    @if (_ledger is not null)
+    <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Accounts.Detail.Transactions"]</MudText>
+    @if (_ledger is not null && Session.CurrentCompany is { } company)
     {
-        <LedgerTable Ledger="_ledger" DebitTitle="Money in" CreditTitle="Money out" />
+        <StatementHeader CompanyId="company.CompanyId" Account="_account" Ledger="_ledger" />
+        <LedgerTable Ledger="_ledger" DebitTitle="@Loc["Accounts.Detail.MoneyIn"]" CreditTitle="@Loc["Accounts.Detail.MoneyOut"]" />
     }
 }
 
@@ -96,9 +97,9 @@ else
     private async Task DeleteAsync()
     {
         var confirmed = await Dialogs.ShowMessageBoxAsync(
-            "Delete account?",
-            $"{_account!.Name} will be removed from Cash & Bank.",
-            yesText: "Delete", cancelText: "Cancel");
+            Loc["Accounts.Detail.DeleteTitle"],
+            Loc["Accounts.Detail.DeleteMessage", _account!.Name],
+            yesText: Loc["Common.Delete"], cancelText: Loc["Common.Cancel"]);
         if (confirmed != true || Session.CurrentCompany is not { } company)
         {
             return;
@@ -109,12 +110,12 @@ else
         _busy = false;
         if (result.Ok)
         {
-            Snackbar.Add($"Deleted {_account.Name}.", Severity.Success);
+            Snackbar.Add(Loc["Accounts.Detail.Deleted", _account.Name], Severity.Success);
             Navigation.NavigateTo("accounts");
         }
         else
         {
-            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+            Snackbar.Add(result.Error ?? Loc["Accounts.Detail.GenericError"], Severity.Error);
         }
     }
 }

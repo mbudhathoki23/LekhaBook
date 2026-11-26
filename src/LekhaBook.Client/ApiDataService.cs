@@ -80,6 +80,9 @@ public sealed class ApiAttachmentService(LekhaBookApi api) : IAttachmentService
     public Task<ApiResult<AttachmentDto>> PickAsync(Guid companyId, Guid? transactionId = null, CancellationToken ct = default) =>
         Task.FromResult(new ApiResult<AttachmentDto>(null, "Pick requires platform UI. Use UploadAttachmentAsync with an InputFile.", 0));
 
+    public Task<ApiResult<AttachmentFile>> GetContentAsync(Guid companyId, Guid attachmentId, CancellationToken ct = default) =>
+        api.GetFileAsync($"{Company(companyId)}/attachments/{attachmentId}");
+
     public async Task<ApiResult<AttachmentDto>> UploadAttachmentAsync(Guid companyId, Stream fileStream, string fileName, string contentType, Guid? transactionId = null, CancellationToken ct = default)
     {
         using var content = new MultipartFormDataContent();

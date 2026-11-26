@@ -1,0 +1,1306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Accounts.Add" xml:space="preserve">
+    <value>नयाँ खाता थप्नुहोस्</value>
+  </data>
+  <data name="Accounts.Detail.CurrentBalance" xml:space="preserve">
+    <value>हालको बाँकी</value>
+  </data>
+  <data name="Accounts.Detail.Deleted" xml:space="preserve">
+    <value>{0} मेटाइयो।</value>
+  </data>
+  <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
+    <value>{0} नगद र बैंकबाट हटाइनेछ।</value>
+  </data>
+  <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
+    <value>खाता मेटाउने हो?</value>
+  </data>
+  <data name="Accounts.Detail.GenericError" xml:space="preserve">
+    <value>केही गलत भयो।</value>
+  </data>
+  <data name="Accounts.Detail.MoneyIn" xml:space="preserve">
+    <value>रकम भित्र</value>
+  </data>
+  <data name="Accounts.Detail.MoneyOut" xml:space="preserve">
+    <value>रकम बाहिर</value>
+  </data>
+  <data name="Accounts.Detail.Title" xml:space="preserve">
+    <value>खाता</value>
+  </data>
+  <data name="Accounts.Detail.Transactions" xml:space="preserve">
+    <value>कारोबारहरू</value>
+  </data>
+  <data name="Accounts.Form.AccountName" xml:space="preserve">
+    <value>खाताको नाम</value>
+  </data>
+  <data name="Accounts.Form.AccountNumber" xml:space="preserve">
+    <value>खाता नम्बर</value>
+  </data>
+  <data name="Accounts.Form.AsOfLabel" xml:space="preserve">
+    <value>यस मितिसम्म</value>
+  </data>
+  <data name="Accounts.Form.BalanceHelp" xml:space="preserve">
+    <value>तलको मितिमा रहेको बाँकी। खाता ओभरड्राफ्ट भएमा माइनस चिन्ह (-) प्रयोग गर्नुहोस्।</value>
+  </data>
+  <data name="Accounts.Form.BankName" xml:space="preserve">
+    <value>बैंकको नाम</value>
+  </data>
+  <data name="Accounts.Form.BankPlaceholder" xml:space="preserve">
+    <value>जस्तै: Nabil Bank</value>
+  </data>
+  <data name="Accounts.Form.BuiltInAccount" xml:space="preserve">
+    <value>{0} (अन्तर्निर्मित खाता)</value>
+  </data>
+  <data name="Accounts.Form.CashPettyCash" xml:space="preserve">
+    <value>नगद / पेटी क्यास</value>
+  </data>
+  <data name="Accounts.Form.CashPlaceholder" xml:space="preserve">
+    <value>जस्तै: पेटी क्यास</value>
+  </data>
+  <data name="Accounts.Form.DateLockedHelp" xml:space="preserve">
+    <value>सुरु बाँकीको मिति आजकै मात्र राख्न सकिन्छ।</value>
+  </data>
+  <data name="Accounts.Form.EditTitle" xml:space="preserve">
+    <value>खाता सम्पादन गर्नुहोस्</value>
+  </data>
+  <data name="Accounts.Form.HolderName" xml:space="preserve">
+    <value>खाताधनीको नाम</value>
+  </data>
+  <data name="Accounts.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter ले अर्को फिल्डमा सार्छ · Ctrl+S ले सेभ गर्छ · Esc ले रद्द गर्छ</value>
+  </data>
+  <data name="Accounts.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>हालको खाता बाँकी (Rs.)</value>
+  </data>
+  <data name="Accounts.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0} सेभ गरियो।</value>
+  </data>
+  <data name="Accounts.Form.Saving" xml:space="preserve">
+    <value>सेभ हुँदैछ…</value>
+  </data>
+  <data name="Accounts.Form.TypeLabel" xml:space="preserve">
+    <value>खाताको प्रकार</value>
+  </data>
+  <data name="Accounts.Form.WalletId" xml:space="preserve">
+    <value>वालेट आईडी / फोन</value>
+  </data>
+  <data name="Accounts.Form.WalletName" xml:space="preserve">
+    <value>वालेटको नाम</value>
+  </data>
+  <data name="Accounts.Form.WalletPlaceholder" xml:space="preserve">
+    <value>जस्तै: eSewa</value>
+  </data>
+  <data name="Accounts.List.NoViewPermission" xml:space="preserve">
+    <value>नगद र बैंक खाता हेर्ने अनुमति तपाईंसँग छैन।</value>
+  </data>
+  <data name="Accounts.List.Subject" xml:space="preserve">
+    <value>नगद र बैंक खाताहरू</value>
+  </data>
+  <data name="Accounts.List.Title" xml:space="preserve">
+    <value>नगद र बैंक</value>
+  </data>
+  <data name="Accounts.List.TotalBalance" xml:space="preserve">
+    <value>जम्मा बाँकी</value>
+  </data>
+  <data name="AccountType.Bank" xml:space="preserve">
+    <value>बैंक खाता</value>
+  </data>
+  <data name="AccountType.Cash" xml:space="preserve">
+    <value>नगद</value>
+  </data>
+  <data name="AccountType.Cheque" xml:space="preserve">
+    <value>चेक</value>
+  </data>
+  <data name="AccountType.Wallet" xml:space="preserve">
+    <value>वालेट</value>
+  </data>
+  <data name="Attachments.CantShow" xml:space="preserve">
+    <value>देखाउन सकिएन</value>
+  </data>
+  <data name="Attachments.ChooseFiles" xml:space="preserve">
+    <value>फाइल छान्नुहोस्</value>
+  </data>
+  <data name="Attachments.Deleted" xml:space="preserve">
+    <value>{0} हटाइयो।</value>
+  </data>
+  <data name="Attachments.DeleteFailed" xml:space="preserve">
+    <value>संलग्नक हटाउन सकिएन।</value>
+  </data>
+  <data name="Attachments.DeleteMessage" xml:space="preserve">
+    <value>{0} यो कारोबारबाट हटाइनेछ।</value>
+  </data>
+  <data name="Attachments.DeleteTitle" xml:space="preserve">
+    <value>यो संलग्नक हटाउने हो?</value>
+  </data>
+  <data name="Attachments.Download" xml:space="preserve">
+    <value>डाउनलोड गर्नुहोस्</value>
+  </data>
+  <data name="Attachments.NotUploaded" xml:space="preserve">
+    <value>कारोबार सेभ भयो, तर यी फाइलहरू अपलोड भएनन्: {0}। फेरि थप्न कारोबार खोल्नुहोस्।</value>
+  </data>
+  <data name="Attachments.OpenNamed" xml:space="preserve">
+    <value>{0} खोल्नुहोस्</value>
+  </data>
+  <data name="Attachments.PdfPreviewHelp" xml:space="preserve">
+    <value>यो PDF फाइल हो। यन्त्रमा खोल्न यसलाई डाउनलोड गर्नुहोस्।</value>
+  </data>
+  <data name="Attachments.RemoveNamed" xml:space="preserve">
+    <value>{0} हटाउनुहोस्</value>
+  </data>
+  <data name="Attachments.SavedWithEntry" xml:space="preserve">
+    <value>यी फाइलहरू कारोबारसँगै सेभ हुन्छन्।</value>
+  </data>
+  <data name="Attachments.TakePhoto" xml:space="preserve">
+    <value>फोटो खिच्नुहोस्</value>
+  </data>
+  <data name="Attachments.UnsupportedType" xml:space="preserve">
+    <value>{0} JPEG, PNG, WebP वा PDF फाइल होइन।</value>
+  </data>
+  <data name="Auth.SignIn.CreateAccount" xml:space="preserve">
+    <value>नयाँ खाता खोल्नुहोस्</value>
+  </data>
+  <data name="Auth.SignIn.CredentialsRequired" xml:space="preserve">
+    <value>इमेल र पासवर्ड प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="Auth.SignIn.LinkExpired" xml:space="preserve">
+    <value>यो साइन इन लिंकको म्याद सकियो। कृपया फेरि साइन इन गर्नुहोस्।</value>
+  </data>
+  <data name="Auth.SignIn.NewPrompt" xml:space="preserve">
+    <value>Lekha Books मा नयाँ हुनुहुन्छ?</value>
+  </data>
+  <data name="Auth.SignIn.PageTitle" xml:space="preserve">
+    <value>साइन इन गर्नुहोस् · Lekha Books</value>
+  </data>
+  <data name="Auth.SignIn.Submit" xml:space="preserve">
+    <value>साइन इन गर्नुहोस्</value>
+  </data>
+  <data name="Auth.SignIn.Subtitle" xml:space="preserve">
+    <value>फेरि स्वागत छ। आफ्ना हिसाब-किताब खोल्न साइन इन गर्नुहोस्।</value>
+  </data>
+  <data name="Auth.SignIn.Title" xml:space="preserve">
+    <value>साइन इन गर्नुहोस्</value>
+  </data>
+  <data name="Auth.SignUp.ConfirmPassword" xml:space="preserve">
+    <value>पासवर्ड पुष्टि गर्नुहोस्</value>
+  </data>
+  <data name="Auth.SignUp.EmailRequired" xml:space="preserve">
+    <value>तपाईंको इमेल प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="Auth.SignUp.HavePrompt" xml:space="preserve">
+    <value>पहिले नै खाता छ?</value>
+  </data>
+  <data name="Auth.SignUp.Name" xml:space="preserve">
+    <value>तपाईंको नाम</value>
+  </data>
+  <data name="Auth.SignUp.NameRequired" xml:space="preserve">
+    <value>तपाईंको नाम प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="Auth.SignUp.PageTitle" xml:space="preserve">
+    <value>नयाँ खाता खोल्नुहोस् · Lekha Books</value>
+  </data>
+  <data name="Auth.SignUp.PasswordHelp" xml:space="preserve">
+    <value>कम्तीमा 8 अक्षर, एउटा अंक र एउटा सानो अक्षर हुनुपर्छ।</value>
+  </data>
+  <data name="Auth.SignUp.PasswordMismatch" xml:space="preserve">
+    <value>दुवै पासवर्ड मिलेनन्।</value>
+  </data>
+  <data name="Auth.SignUp.PasswordTooShort" xml:space="preserve">
+    <value>पासवर्ड कम्तीमा 8 अक्षरको हुनुपर्छ।</value>
+  </data>
+  <data name="Auth.SignUp.SignInLink" xml:space="preserve">
+    <value>साइन इन गर्नुहोस्</value>
+  </data>
+  <data name="Auth.SignUp.Submit" xml:space="preserve">
+    <value>नयाँ खाता खोल्नुहोस्</value>
+  </data>
+  <data name="Auth.SignUp.Subtitle" xml:space="preserve">
+    <value>सुरु गर्न निःशुल्क। कर्मचारीहरू पछि थप्न सक्नुहुन्छ।</value>
+  </data>
+  <data name="Auth.SignUp.Title" xml:space="preserve">
+    <value>तपाईंको नयाँ खाता खोल्नुहोस्</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>थप्नुहोस्</value>
+  </data>
+  <data name="Common.Amount" xml:space="preserve">
+    <value>रकम</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>पछाडि</value>
+  </data>
+  <data name="Common.Balance" xml:space="preserve">
+    <value>बाँकी</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>रद्द गर्नुहोस्</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>वर्ग</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Common.Company" xml:space="preserve">
+    <value>कम्पनी</value>
+  </data>
+  <data name="Common.Date" xml:space="preserve">
+    <value>मिति</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>मेटाउनुहोस्</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>सम्पादन गर्नुहोस्</value>
+  </data>
+  <data name="Common.Email" xml:space="preserve">
+    <value>इमेल</value>
+  </data>
+  <data name="Common.Loading" xml:space="preserve">
+    <value>लोड हुँदैछ…</value>
+  </data>
+  <data name="Common.Name" xml:space="preserve">
+    <value>नाम</value>
+  </data>
+  <data name="Common.No" xml:space="preserve">
+    <value>होइन</value>
+  </data>
+  <data name="Common.Optional" xml:space="preserve">
+    <value>(ऐच्छिक)</value>
+  </data>
+  <data name="Common.Party" xml:space="preserve">
+    <value>पार्टी</value>
+  </data>
+  <data name="Common.Password" xml:space="preserve">
+    <value>पासवर्ड</value>
+  </data>
+  <data name="Common.Phone" xml:space="preserve">
+    <value>फोन</value>
+  </data>
+  <data name="Common.Remarks" xml:space="preserve">
+    <value>विवरण</value>
+  </data>
+  <data name="Common.Required" xml:space="preserve">
+    <value>आवश्यक</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>फेरि प्रयास गर्नुहोस्</value>
+  </data>
+  <data name="Common.Role" xml:space="preserve">
+    <value>भूमिका</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>सेभ गर्नुहोस्</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>खोज्नुहोस्</value>
+  </data>
+  <data name="Common.Status" xml:space="preserve">
+    <value>स्थिति</value>
+  </data>
+  <data name="Common.Total" xml:space="preserve">
+    <value>जम्मा</value>
+  </data>
+  <data name="Common.Yes" xml:space="preserve">
+    <value>हो</value>
+  </data>
+  <data name="Companies.Create.Address" xml:space="preserve">
+    <value>ठेगाना (ऐच्छिक)</value>
+  </data>
+  <data name="Companies.Create.BusinessName" xml:space="preserve">
+    <value>व्यवसायको नाम</value>
+  </data>
+  <data name="Companies.Create.Intro" xml:space="preserve">
+    <value>तपाईं यसको मालिक हुनुहुनेछ। नगद, चेक, अनलाइन वालेट र सामान्य आम्दानी तथा खर्चका शीर्षकहरू तपाईंका लागि पहिले नै सेटअप गरिन्छ।</value>
+  </data>
+  <data name="Companies.Create.NameRequired" xml:space="preserve">
+    <value>व्यवसायको नाम प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="Companies.Create.PageTitle" xml:space="preserve">
+    <value>कम्पनी बनाउनुहोस् · Lekha Books</value>
+  </data>
+  <data name="Companies.Create.PanVat" xml:space="preserve">
+    <value>PAN / VAT नम्बर (ऐच्छिक)</value>
+  </data>
+  <data name="Companies.Create.Phone" xml:space="preserve">
+    <value>फोन (ऐच्छिक)</value>
+  </data>
+  <data name="Companies.Create.Submit" xml:space="preserve">
+    <value>कम्पनी बनाउनुहोस्</value>
+  </data>
+  <data name="Companies.Join.Code" xml:space="preserve">
+    <value>निम्तो कोड</value>
+  </data>
+  <data name="Companies.Join.CodeRequired" xml:space="preserve">
+    <value>निम्तो कोड टाँस्नुहोस्।</value>
+  </data>
+  <data name="Companies.Join.Intro" xml:space="preserve">
+    <value>कम्पनीका मालिकले दिएको निम्तो कोड टाँस्नुहोस्। निम्तो पठाइएकै इमेलबाट साइन इन गरेको हुनुपर्छ ({0})।</value>
+  </data>
+  <data name="Companies.Join.PageTitle" xml:space="preserve">
+    <value>कम्पनीमा सामेल हुनुहोस् · Lekha Books</value>
+  </data>
+  <data name="Companies.Join.Submit" xml:space="preserve">
+    <value>सामेल हुनुहोस्</value>
+  </data>
+  <data name="Companies.Join.Title" xml:space="preserve">
+    <value>कम्पनीमा सामेल हुनुहोस्</value>
+  </data>
+  <data name="Errors.NeedConnection" xml:space="preserve">
+    <value>{0} का लागि अहिले इन्टरनेट जडान चाहिन्छ। इन्टरनेटमा जडान गरेर फेरि प्रयास गर्नुहोस्।</value>
+  </data>
+  <data name="Errors.TheseScreens" xml:space="preserve">
+    <value>यी स्क्रिनहरू</value>
+  </data>
+  <data name="Home.BankBalance" xml:space="preserve">
+    <value>बैंक बाँकी</value>
+  </data>
+  <data name="Home.CashInHand" xml:space="preserve">
+    <value>हातमा नगद</value>
+  </data>
+  <data name="Home.QuickEntry" xml:space="preserve">
+    <value>छिटो कारोबार</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>ड्यासबोर्ड</value>
+  </data>
+  <data name="Home.Totals" xml:space="preserve">
+    <value>ड्यासबोर्डका जम्मा रकमहरू</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>भाषा</value>
+  </data>
+  <data name="Ledger.ChequeNo" xml:space="preserve">
+    <value>चेक #{0}</value>
+  </data>
+  <data name="Ledger.Credit" xml:space="preserve">
+    <value>क्रेडिट</value>
+  </data>
+  <data name="Ledger.Debit" xml:space="preserve">
+    <value>डेबिट</value>
+  </data>
+  <data name="Ledger.Empty" xml:space="preserve">
+    <value>अहिलेसम्म कुनै कारोबार छैन।</value>
+  </data>
+  <data name="Ledger.GaveAdded" xml:space="preserve">
+    <value>दिइयो / थपियो</value>
+  </data>
+  <data name="Ledger.GotReduced" xml:space="preserve">
+    <value>प्राप्त / घटाइयो</value>
+  </data>
+  <data name="Ledger.OpeningBalance" xml:space="preserve">
+    <value>सुरु बाँकी</value>
+  </data>
+  <data name="Ledger.Particulars" xml:space="preserve">
+    <value>विवरण</value>
+  </data>
+  <data name="Ledger.Transactions" xml:space="preserve">
+    <value>कारोबारहरू</value>
+  </data>
+  <data name="Logo.Alt" xml:space="preserve">
+    <value>कम्पनीको लोगो</value>
+  </data>
+  <data name="Logo.ChooseImage" xml:space="preserve">
+    <value>तस्बिर छान्नुहोस्</value>
+  </data>
+  <data name="Logo.CreateWarning" xml:space="preserve">
+    <value>कम्पनी बनाइयो, तर लोगो अपलोड भएन: {0}</value>
+  </data>
+  <data name="Logo.Failed" xml:space="preserve">
+    <value>लोगो अपडेट गर्न सकिएन।</value>
+  </data>
+  <data name="Logo.Hint" xml:space="preserve">
+    <value>JPEG, PNG वा WebP, अधिकतम 2 MB।</value>
+  </data>
+  <data name="Logo.PickLabel" xml:space="preserve">
+    <value>कम्पनीको लोगो (ऐच्छिक)</value>
+  </data>
+  <data name="Logo.Remove" xml:space="preserve">
+    <value>लोगो हटाउनुहोस्</value>
+  </data>
+  <data name="Logo.Removed" xml:space="preserve">
+    <value>लोगो हटाइयो।</value>
+  </data>
+  <data name="Logo.RemoveMessage" xml:space="preserve">
+    <value>स्टेटमेन्ट र प्रिन्टमा यो देखिने छैन।</value>
+  </data>
+  <data name="Logo.RemoveTitle" xml:space="preserve">
+    <value>कम्पनीको लोगो हटाउने हो?</value>
+  </data>
+  <data name="Logo.TooLarge" xml:space="preserve">
+    <value>{0} 2 MB भन्दा ठूलो छ।</value>
+  </data>
+  <data name="Logo.UnsupportedType" xml:space="preserve">
+    <value>JPEG, PNG वा WebP तस्बिर प्रयोग गर्नुहोस्।</value>
+  </data>
+  <data name="Logo.Updated" xml:space="preserve">
+    <value>लोगो अपडेट गरियो।</value>
+  </data>
+  <data name="MudAlert_Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="MudBaseDatePicker_NextMonth" xml:space="preserve">
+    <value>अर्को महिना</value>
+  </data>
+  <data name="MudBaseDatePicker_NextYear" xml:space="preserve">
+    <value>अर्को वर्ष</value>
+  </data>
+  <data name="MudBaseDatePicker_Open" xml:space="preserve">
+    <value>खोल्नुहोस्</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevMonth" xml:space="preserve">
+    <value>अघिल्लो महिना</value>
+  </data>
+  <data name="MudBaseDatePicker_PrevYear" xml:space="preserve">
+    <value>अघिल्लो वर्ष</value>
+  </data>
+  <data name="MudChip_Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="MudDataGrid_Clear" xml:space="preserve">
+    <value>साफ गर्नुहोस्</value>
+  </data>
+  <data name="MudDataGrid_Loading" xml:space="preserve">
+    <value>लोड हुँदैछ...</value>
+  </data>
+  <data name="MudDataGridPager_AllItems" xml:space="preserve">
+    <value>सबै</value>
+  </data>
+  <data name="MudDataGridPager_FirstPage" xml:space="preserve">
+    <value>पहिलो पृष्ठ</value>
+  </data>
+  <data name="MudDataGridPager_InfoFormat" xml:space="preserve">
+    <value>{0}-{1} / जम्मा {2}</value>
+  </data>
+  <data name="MudDataGridPager_LastPage" xml:space="preserve">
+    <value>अन्तिम पृष्ठ</value>
+  </data>
+  <data name="MudDataGridPager_NextPage" xml:space="preserve">
+    <value>अर्को पृष्ठ</value>
+  </data>
+  <data name="MudDataGridPager_PreviousPage" xml:space="preserve">
+    <value>अघिल्लो पृष्ठ</value>
+  </data>
+  <data name="MudDataGridPager_RowsPerPage" xml:space="preserve">
+    <value>प्रति पृष्ठ पङ्क्ति:</value>
+  </data>
+  <data name="MudDialog_Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="MudInput_Clear" xml:space="preserve">
+    <value>साफ गर्नुहोस्</value>
+  </data>
+  <data name="MudSnackbar_Close" xml:space="preserve">
+    <value>बन्द गर्नुहोस्</value>
+  </data>
+  <data name="MudTable_Loading" xml:space="preserve">
+    <value>लोड हुँदैछ...</value>
+  </data>
+  <data name="MudTablePager_FirstPage" xml:space="preserve">
+    <value>पहिलो पृष्ठ</value>
+  </data>
+  <data name="MudTablePager_LastPage" xml:space="preserve">
+    <value>अन्तिम पृष्ठ</value>
+  </data>
+  <data name="MudTablePager_NextPage" xml:space="preserve">
+    <value>अर्को पृष्ठ</value>
+  </data>
+  <data name="MudTablePager_PreviousPage" xml:space="preserve">
+    <value>अघिल्लो पृष्ठ</value>
+  </data>
+  <data name="Nav.CashAndBank" xml:space="preserve">
+    <value>नगद र बैंक</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>ड्यासबोर्ड</value>
+  </data>
+  <data name="Nav.Expense" xml:space="preserve">
+    <value>खर्च</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>गृहपृष्ठ</value>
+  </data>
+  <data name="Nav.Main" xml:space="preserve">
+    <value>मुख्य</value>
+  </data>
+  <data name="Nav.More" xml:space="preserve">
+    <value>थप</value>
+  </data>
+  <data name="Nav.OtherIncome" xml:space="preserve">
+    <value>अन्य आम्दानी</value>
+  </data>
+  <data name="Nav.Parties" xml:space="preserve">
+    <value>पार्टीहरू</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>प्रतिवेदन</value>
+  </data>
+  <data name="Nav.Settings" xml:space="preserve">
+    <value>सेटिङ</value>
+  </data>
+  <data name="Nav.Staff" xml:space="preserve">
+    <value>कर्मचारी</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>कारोबारहरू</value>
+  </data>
+  <data name="NotFound.BackToDashboard" xml:space="preserve">
+    <value>ड्यासबोर्डमा फर्कनुहोस्</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>यो स्क्रिन अझै बनेको छैन। धेरै स्क्रिनहरू पछिल्ला चरणमा थपिनेछन्।</value>
+  </data>
+  <data name="NotFound.PageTitle" xml:space="preserve">
+    <value>फेला परेन · Lekha Books</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>अहिलेसम्म उपलब्ध छैन</value>
+  </data>
+  <data name="Parties.AddParty" xml:space="preserve">
+    <value>पार्टी थप्नुहोस्</value>
+  </data>
+  <data name="Parties.Detail.Deleted" xml:space="preserve">
+    <value>{0} मेटाइयो।</value>
+  </data>
+  <data name="Parties.Detail.DeleteText" xml:space="preserve">
+    <value>{0} लाई तपाईंको पार्टी सूचीबाट हटाइनेछ।</value>
+  </data>
+  <data name="Parties.Detail.DeleteTitle" xml:space="preserve">
+    <value>पार्टी मेटाउने हो?</value>
+  </data>
+  <data name="Parties.Detail.PanValue" xml:space="preserve">
+    <value>PAN {0}</value>
+  </data>
+  <data name="Parties.Detail.SomethingWrong" xml:space="preserve">
+    <value>केही गलत भयो।</value>
+  </data>
+  <data name="Parties.EditParty" xml:space="preserve">
+    <value>पार्टी सम्पादन</value>
+  </data>
+  <data name="Parties.Form.AddressLabel" xml:space="preserve">
+    <value>ठेगाना</value>
+  </data>
+  <data name="Parties.Form.AsOfLabel" xml:space="preserve">
+    <value>यस मिति अनुसार</value>
+  </data>
+  <data name="Parties.Form.AsOfLocked" xml:space="preserve">
+    <value>सुरु बाँकीको मिति आज मात्र राख्न सकिन्छ।</value>
+  </data>
+  <data name="Parties.Form.CategoryAddFailed" xml:space="preserve">
+    <value>वर्ग थप्न सकिएन।</value>
+  </data>
+  <data name="Parties.Form.CategoryHelp" xml:space="preserve">
+    <value>एउटा छान्नुहोस्, वा नयाँ नाम टाइप गरी थप्नुहोस्।</value>
+  </data>
+  <data name="Parties.Form.CategoryLabel" xml:space="preserve">
+    <value>पार्टी वर्ग</value>
+  </data>
+  <data name="Parties.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter ले अर्को फिल्डमा जान्छ · Ctrl+S ले सेभ गर्छ · Esc ले रद्द गर्छ</value>
+  </data>
+  <data name="Parties.Form.NameLabel" xml:space="preserve">
+    <value>पूरा नाम *</value>
+  </data>
+  <data name="Parties.Form.NamePlaceholder" xml:space="preserve">
+    <value>पार्टीको नाम लेख्नुहोस्</value>
+  </data>
+  <data name="Parties.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>सुरु बाँकी (Rs.)</value>
+  </data>
+  <data name="Parties.Form.PanLabel" xml:space="preserve">
+    <value>PAN नम्बर</value>
+  </data>
+  <data name="Parties.Form.PhoneLabel" xml:space="preserve">
+    <value>फोन नम्बर</value>
+  </data>
+  <data name="Parties.Form.PickCategory" xml:space="preserve">
+    <value>सूचीबाट वर्ग छान्नुहोस्।</value>
+  </data>
+  <data name="Parties.Form.SaveAndNew" xml:space="preserve">
+    <value>सेभ गरी नयाँ</value>
+  </data>
+  <data name="Parties.Form.Saved" xml:space="preserve">
+    <value>{0} सेभ गरियो।</value>
+  </data>
+  <data name="Parties.Form.Saving" xml:space="preserve">
+    <value>सेभ हुँदैछ…</value>
+  </data>
+  <data name="Parties.Form.TypeLabel" xml:space="preserve">
+    <value>पार्टीको प्रकार</value>
+  </data>
+  <data name="Parties.List.BalanceAll" xml:space="preserve">
+    <value>सबै बाँकी</value>
+  </data>
+  <data name="Parties.List.EmptyAdd" xml:space="preserve">
+    <value>पहिलो पार्टी थप्नुहोस्</value>
+  </data>
+  <data name="Parties.List.EmptyBody" xml:space="preserve">
+    <value>तपाईंलाई कसले कति तिर्नुपर्छ र तपाईंले कसलाई कति तिर्नुपर्छ भन्ने हिसाब राख्न आफ्ना ग्राहक र आपूर्तिकर्ता थप्नुहोस्।</value>
+  </data>
+  <data name="Parties.List.EmptyTitle" xml:space="preserve">
+    <value>अहिलेसम्म कुनै पार्टी छैन</value>
+  </data>
+  <data name="Parties.List.NoMatch" xml:space="preserve">
+    <value>कुनै पार्टी मेल खाएन।</value>
+  </data>
+  <data name="Parties.List.SearchAria" xml:space="preserve">
+    <value>पार्टीहरू खोज्नुहोस्</value>
+  </data>
+  <data name="Parties.List.SearchPlaceholder" xml:space="preserve">
+    <value>नाम वा फोन खोज्नुहोस्</value>
+  </data>
+  <data name="Parties.List.SortAmountAsc" xml:space="preserve">
+    <value>रकम सानो→ठूलो</value>
+  </data>
+  <data name="Parties.List.SortAmountDesc" xml:space="preserve">
+    <value>रकम ठूलो→सानो</value>
+  </data>
+  <data name="Parties.List.SortLabel" xml:space="preserve">
+    <value>क्रम</value>
+  </data>
+  <data name="Parties.List.SortLatest" xml:space="preserve">
+    <value>सबैभन्दा नयाँ</value>
+  </data>
+  <data name="Parties.List.SortNameAsc" xml:space="preserve">
+    <value>नाम A→Z</value>
+  </data>
+  <data name="Parties.List.SortNameDesc" xml:space="preserve">
+    <value>नाम Z→A</value>
+  </data>
+  <data name="Parties.List.TypeAll" xml:space="preserve">
+    <value>सबै पार्टीहरू</value>
+  </data>
+  <data name="Parties.List.TypeCustomers" xml:space="preserve">
+    <value>ग्राहकहरू</value>
+  </data>
+  <data name="Parties.List.TypeLabel" xml:space="preserve">
+    <value>प्रकार</value>
+  </data>
+  <data name="Parties.List.TypeSuppliers" xml:space="preserve">
+    <value>आपूर्तिकर्ताहरू</value>
+  </data>
+  <data name="Parties.Title" xml:space="preserve">
+    <value>पार्टीहरू</value>
+  </data>
+  <data name="Parties.Type.Customer" xml:space="preserve">
+    <value>ग्राहक</value>
+  </data>
+  <data name="Parties.Type.Supplier" xml:space="preserve">
+    <value>आपूर्तिकर्ता</value>
+  </data>
+  <data name="PartyBalance.Payable" xml:space="preserve">
+    <value>तिर्नुपर्ने</value>
+  </data>
+  <data name="PartyBalance.Receivable" xml:space="preserve">
+    <value>लिनुपर्ने</value>
+  </data>
+  <data name="PartySide.Settled" xml:space="preserve">
+    <value>फछ्र्यौट</value>
+  </data>
+  <data name="PartySide.ToGive" xml:space="preserve">
+    <value>दिने बाँकी</value>
+  </data>
+  <data name="PartySide.ToReceive" xml:space="preserve">
+    <value>लिने बाँकी</value>
+  </data>
+  <data name="Role.Accountant" xml:space="preserve">
+    <value>लेखापाल</value>
+  </data>
+  <data name="Role.Accountant.Description" xml:space="preserve">
+    <value>सबै खाता, प्रतिवेदन र सेटिङ; कर्मचारी व्यवस्थापन छैन।</value>
+  </data>
+  <data name="Role.EntryPerson" xml:space="preserve">
+    <value>इन्ट्री गर्ने व्यक्ति</value>
+  </data>
+  <data name="Role.EntryPerson.Description" xml:space="preserve">
+    <value>आजको मितिमा कारोबार थप्छ र त्यही दिन आफ्नै कारोबार सुधार्न सक्छ।</value>
+  </data>
+  <data name="Role.Manager" xml:space="preserve">
+    <value>प्रबन्धक</value>
+  </data>
+  <data name="Role.Manager.Description" xml:space="preserve">
+    <value>कारोबार र पार्टी थप्न र सम्पादन गर्न सक्छ; मेटाउने, कर्मचारी वा सेटिङमा पहुँच छैन।</value>
+  </data>
+  <data name="Role.Owner" xml:space="preserve">
+    <value>मालिक</value>
+  </data>
+  <data name="Role.Owner.Description" xml:space="preserve">
+    <value>कम्पनी मेटाउने समेत पूर्ण पहुँच।</value>
+  </data>
+  <data name="Role.Partner" xml:space="preserve">
+    <value>साझेदार</value>
+  </data>
+  <data name="Role.Partner.Description" xml:space="preserve">
+    <value>कम्पनी मेटाउने बाहेक सबै कुरा।</value>
+  </data>
+  <data name="Settings.CompanyReadOnly" xml:space="preserve">
+    <value>व्यवसाय सेटिङ परिवर्तन गर्न अनुमति भएका व्यक्तिहरूले मात्र लोगो बदल्न सक्छन्।</value>
+  </data>
+  <data name="Settings.CreateCompany" xml:space="preserve">
+    <value>नयाँ कम्पनी बनाउनुहोस्</value>
+  </data>
+  <data name="Settings.JoinCompany" xml:space="preserve">
+    <value>निम्तो कोडबाट कम्पनीमा सामेल हुनुहोस्</value>
+  </data>
+  <data name="Settings.LanguageHelp" xml:space="preserve">
+    <value>यो यन्त्र वा ब्राउजरमा लागू हुन्छ।</value>
+  </data>
+  <data name="Settings.RunningOn" xml:space="preserve">
+    <value>{0} ({1}) मा चलिरहेको</value>
+  </data>
+  <data name="Settings.SignOut" xml:space="preserve">
+    <value>साइन आउट गर्नुहोस्</value>
+  </data>
+  <data name="Settings.SignOutHelpDevice" xml:space="preserve">
+    <value>यो यन्त्रबाट साइन आउट गर्छ।</value>
+  </data>
+  <data name="Settings.SignOutHelpWeb" xml:space="preserve">
+    <value>यो ब्राउजरबाट साइन आउट गर्छ।</value>
+  </data>
+  <data name="Settings.Staff" xml:space="preserve">
+    <value>कर्मचारी</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>थप</value>
+  </data>
+  <data name="Shell.AddTransaction" xml:space="preserve">
+    <value>नयाँ कारोबार थप्नुहोस्</value>
+  </data>
+  <data name="Shell.BrandHome" xml:space="preserve">
+    <value>लेखा बुक्स गृहपृष्ठ</value>
+  </data>
+  <data name="Shell.Loading" xml:space="preserve">
+    <value>लेखा बुक्स लोड हुँदैछ</value>
+  </data>
+  <data name="Shell.NoCompany" xml:space="preserve">
+    <value>कुनै कम्पनी छैन</value>
+  </data>
+  <data name="Shell.Offline" xml:space="preserve">
+    <value>तपाईं अफलाइन हुनुहुन्छ। सेभ गरिएको कम्पनी सूची देखाइँदैछ। सिंक नहुँदासम्म पार्टी, खाता र कर्मचारीका लागि इन्टरनेट जडान चाहिन्छ।</value>
+  </data>
+  <data name="Shell.Reload" xml:space="preserve">
+    <value>पुन: लोड गर्नुहोस्</value>
+  </data>
+  <data name="Shell.SetUpText" xml:space="preserve">
+    <value>पार्टी, नगद र बैंक रेकर्ड गर्न सुरु गर्न कम्पनी बनाउनुहोस्, वा मालिकबाट पाएको निम्तो कोडबाट कुनै कम्पनीमा सामेल हुनुहोस्।</value>
+  </data>
+  <data name="Shell.SetUpTitle" xml:space="preserve">
+    <value>आफ्नो खाता सेटअप गर्नुहोस्</value>
+  </data>
+  <data name="Shell.SwitchCompany" xml:space="preserve">
+    <value>कम्पनी बदल्नुहोस्</value>
+  </data>
+  <data name="Shell.ToggleMenu" xml:space="preserve">
+    <value>मेनु खोल्नुहोस् वा बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Shell.UnexpectedError" xml:space="preserve">
+    <value>अनपेक्षित त्रुटि भयो।</value>
+  </data>
+  <data name="Staff.Invite.Button" xml:space="preserve">
+    <value>निम्तो दिनुहोस्</value>
+  </data>
+  <data name="Staff.Invite.Copied" xml:space="preserve">
+    <value>कपी भयो।</value>
+  </data>
+  <data name="Staff.Invite.CopyAria" xml:space="preserve">
+    <value>निम्तो कपी गर्नुहोस्</value>
+  </data>
+  <data name="Staff.Invite.CopyFailed" xml:space="preserve">
+    <value>कपी गर्न सकिएन। पाठ चयन गरेर आफैं कपी गर्नुहोस्।</value>
+  </data>
+  <data name="Staff.Invite.Create" xml:space="preserve">
+    <value>निम्तो सिर्जना गर्नुहोस्</value>
+  </data>
+  <data name="Staff.Invite.CreatedFor" xml:space="preserve">
+    <value>{0} का लागि निम्तो सिर्जना गरियो</value>
+  </data>
+  <data name="Staff.Invite.Expires" xml:space="preserve">
+    <value>म्याद सकिने मिति</value>
+  </data>
+  <data name="Staff.Invite.Heading" xml:space="preserve">
+    <value>कसैलाई निम्तो दिनुहोस्</value>
+  </data>
+  <data name="Staff.Invite.NameEmailRequired" xml:space="preserve">
+    <value>नाम र इमेल प्रविष्ट गर्नुहोस्।</value>
+  </data>
+  <data name="Staff.Invite.Pending" xml:space="preserve">
+    <value>पर्खाइमा रहेका निम्तोहरू</value>
+  </data>
+  <data name="Staff.Invite.SendCode" xml:space="preserve">
+    <value>यो कोड पठाउनुहोस्। यो एक पटक मात्र काम गर्छ र {0} मा म्याद सकिन्छ।</value>
+  </data>
+  <data name="Staff.Invite.SignInHint" xml:space="preserve">
+    <value>उनीहरू त्यही इमेलबाट साइन इन गर्छन्, त्यसपछि {0} छान्छन्।</value>
+  </data>
+  <data name="Staff.Member.Custom" xml:space="preserve">
+    <value>कस्टम</value>
+  </data>
+  <data name="Staff.Member.Joined" xml:space="preserve">
+    <value>सामेल भएको मिति</value>
+  </data>
+  <data name="Staff.Member.Manage" xml:space="preserve">
+    <value>{0} व्यवस्थापन गर्नुहोस्</value>
+  </data>
+  <data name="Staff.Member.RemoveAccess" xml:space="preserve">
+    <value>पहुँच हटाउनुहोस्</value>
+  </data>
+  <data name="Staff.Member.Revoked" xml:space="preserve">
+    <value>{0} अब {1} खोल्न सक्दैन।</value>
+  </data>
+  <data name="Staff.Member.You" xml:space="preserve">
+    <value>(तपाईं)</value>
+  </data>
+  <data name="Staff.NoPermission" xml:space="preserve">
+    <value>तपाईंसँग {0} का कर्मचारी हेर्ने अनुमति छैन।</value>
+  </data>
+  <data name="Staff.PageTitle" xml:space="preserve">
+    <value>कर्मचारी · Lekha Books</value>
+  </data>
+  <data name="Staff.Role.Changed" xml:space="preserve">
+    <value>{0} अब {1} भएको छ।</value>
+  </data>
+  <data name="Staff.Role.Make" xml:space="preserve">
+    <value>{0} बनाउनुहोस्</value>
+  </data>
+  <data name="Staff.Status.Active" xml:space="preserve">
+    <value>सक्रिय</value>
+  </data>
+  <data name="Staff.Status.Revoked" xml:space="preserve">
+    <value>रद्द गरिएको</value>
+  </data>
+  <data name="Statement.AccountHolder" xml:space="preserve">
+    <value>खाता धनी</value>
+  </data>
+  <data name="Statement.AccountNumber" xml:space="preserve">
+    <value>खाता नम्बर</value>
+  </data>
+  <data name="Statement.AccountTitle" xml:space="preserve">
+    <value>खाता स्टेटमेन्ट</value>
+  </data>
+  <data name="Statement.Address" xml:space="preserve">
+    <value>ठेगाना</value>
+  </data>
+  <data name="Statement.Pan" xml:space="preserve">
+    <value>PAN नम्बर</value>
+  </data>
+  <data name="Statement.PartyTitle" xml:space="preserve">
+    <value>पार्टी स्टेटमेन्ट</value>
+  </data>
+  <data name="Statement.Period" xml:space="preserve">
+    <value>अवधि</value>
+  </data>
+  <data name="Statement.PeriodValue" xml:space="preserve">
+    <value>{0} देखि {1} सम्म</value>
+  </data>
+  <data name="Statement.Print" xml:space="preserve">
+    <value>स्टेटमेन्ट छाप्नुहोस्</value>
+  </data>
+  <data name="Statement.PrintDate" xml:space="preserve">
+    <value>छापिएको मिति: {0}</value>
+  </data>
+  <data name="Statement.Type" xml:space="preserve">
+    <value>प्रकार</value>
+  </data>
+  <data name="Sync.Error" xml:space="preserve">
+    <value>सिंक त्रुटि</value>
+  </data>
+  <data name="Sync.Offline" xml:space="preserve">
+    <value>अफलाइन</value>
+  </data>
+  <data name="Sync.OfflinePending" xml:space="preserve">
+    <value>अफलाइन · {0} बाँकी</value>
+  </data>
+  <data name="Sync.OnlineSynced" xml:space="preserve">
+    <value>अनलाइन · सिंक भयो</value>
+  </data>
+  <data name="Sync.Pending" xml:space="preserve">
+    <value>{0} बाँकी</value>
+  </data>
+  <data name="Sync.Syncing" xml:space="preserve">
+    <value>सिंक हुँदैछ…</value>
+  </data>
+  <data name="Transactions.Add" xml:space="preserve">
+    <value>नयाँ कारोबार थप्नुहोस्</value>
+  </data>
+  <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="Transactions.Attachment.SizeKb" xml:space="preserve">
+    <value>{0} KB</value>
+  </data>
+  <data name="Transactions.Attachment.SizeMb" xml:space="preserve">
+    <value>{0} MB</value>
+  </data>
+  <data name="Transactions.Form.AddAttachments" xml:space="preserve">
+    <value>संलग्नक थप्नुहोस्</value>
+  </data>
+  <data name="Transactions.Form.AmountLabel" xml:space="preserve">
+    <value>रकम (Rs.) *</value>
+  </data>
+  <data name="Transactions.Form.AttachmentLimits" xml:space="preserve">
+    <value>अधिकतम 5 फाइल, प्रति फाइल 5 MB: JPEG, PNG, WebP वा PDF।</value>
+  </data>
+  <data name="Transactions.Form.AttachmentMax" xml:space="preserve">
+    <value>कारोबारमा अधिकतम 5 वटा संलग्नक हुन सक्छ।</value>
+  </data>
+  <data name="Transactions.Form.Attachments" xml:space="preserve">
+    <value>संलग्नकहरू</value>
+  </data>
+  <data name="Transactions.Form.AttachmentsSaveFirst" xml:space="preserve">
+    <value>पहिले कारोबार सेभ गर्नुहोस्, त्यसपछि फोटो वा PDF थप्न यसलाई खोल्नुहोस्।</value>
+  </data>
+  <data name="Transactions.Form.BackToList" xml:space="preserve">
+    <value>कारोबारमा फर्कनुहोस्</value>
+  </data>
+  <data name="Transactions.Form.Balance" xml:space="preserve">
+    <value>बाँकी: {0}</value>
+  </data>
+  <data name="Transactions.Form.ChequeDateLabel" xml:space="preserve">
+    <value>चेक मिति</value>
+  </data>
+  <data name="Transactions.Form.ChequeNoLabel" xml:space="preserve">
+    <value>चेक नं.</value>
+  </data>
+  <data name="Transactions.Form.DateLockedHelp" xml:space="preserve">
+    <value>कारोबारको मिति आजकै मात्र राख्न सकिन्छ।</value>
+  </data>
+  <data name="Transactions.Form.DateRequired" xml:space="preserve">
+    <value>मिति आवश्यक छ।</value>
+  </data>
+  <data name="Transactions.Form.EditTitle" xml:space="preserve">
+    <value>{0} सम्पादन गर्नुहोस्</value>
+  </data>
+  <data name="Transactions.Form.FileTooLarge" xml:space="preserve">
+    <value>{0} 5 MB भन्दा ठूलो छ।</value>
+  </data>
+  <data name="Transactions.Form.FromAccount" xml:space="preserve">
+    <value>स्रोत खाता</value>
+  </data>
+  <data name="Transactions.Form.GenericError" xml:space="preserve">
+    <value>केही गलत भयो।</value>
+  </data>
+  <data name="Transactions.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter ले अर्को फिल्डमा सार्छ · Ctrl+S ले सेभ गर्छ · Esc ले रद्द गर्छ</value>
+  </data>
+  <data name="Transactions.Form.NoCreatePermission" xml:space="preserve">
+    <value>यो कम्पनीमा कारोबार थप्ने अनुमति तपाईंसँग छैन।</value>
+  </data>
+  <data name="Transactions.Form.NotEditableHere" xml:space="preserve">
+    <value>यस प्रकारको कारोबार यहाँ अहिलेसम्म सम्पादन गर्न मिल्दैन।</value>
+  </data>
+  <data name="Transactions.Form.PaymentMethod" xml:space="preserve">
+    <value>भुक्तानी माध्यम</value>
+  </data>
+  <data name="Transactions.Form.SaveAndNew" xml:space="preserve">
+    <value>सेभ गरी नयाँ</value>
+  </data>
+  <data name="Transactions.Form.SavedSnackbar" xml:space="preserve">
+    <value>{0} सेभ गरियो: {1}।</value>
+  </data>
+  <data name="Transactions.Form.Saving" xml:space="preserve">
+    <value>सेभ हुँदैछ…</value>
+  </data>
+  <data name="Transactions.Form.ToAccount" xml:space="preserve">
+    <value>गन्तव्य खाता</value>
+  </data>
+  <data name="Transactions.Form.TypeLabel" xml:space="preserve">
+    <value>कारोबारको प्रकार</value>
+  </data>
+  <data name="Transactions.Form.Uploaded" xml:space="preserve">
+    <value>{0} अपलोड गरियो।</value>
+  </data>
+  <data name="Transactions.Form.UploadFailed" xml:space="preserve">
+    <value>अपलोड असफल भयो: {0}</value>
+  </data>
+  <data name="Transactions.Form.VoidedNotice" xml:space="preserve">
+    <value>यो कारोबार रद्द गरिएको छ। यो अब कुनै पनि बाँकीमा गणना हुँदैन।</value>
+  </data>
+  <data name="Transactions.Form.VoidedSnackbar" xml:space="preserve">
+    <value>कारोबार रद्द गरियो।</value>
+  </data>
+  <data name="Transactions.Form.VoidEntry" xml:space="preserve">
+    <value>कारोबार रद्द गर्नुहोस्</value>
+  </data>
+  <data name="Transactions.Form.VoidMessage" xml:space="preserve">
+    <value>यो कारोबार रेकर्डमा रहन्छ, तर अब कुनै पनि बाँकीमा गणना हुँदैन।</value>
+  </data>
+  <data name="Transactions.Form.VoidTitle" xml:space="preserve">
+    <value>यो कारोबार रद्द गर्ने हो?</value>
+  </data>
+  <data name="Transactions.List.AllTypes" xml:space="preserve">
+    <value>सबै प्रकार</value>
+  </data>
+  <data name="Transactions.List.AmountHighLow" xml:space="preserve">
+    <value>रकम ठूलोदेखि सानोसम्म</value>
+  </data>
+  <data name="Transactions.List.AmountLowHigh" xml:space="preserve">
+    <value>रकम सानोदेखि ठूलोसम्म</value>
+  </data>
+  <data name="Transactions.List.Count" xml:space="preserve">
+    <value>संख्या</value>
+  </data>
+  <data name="Transactions.List.EmptyBody" xml:space="preserve">
+    <value>हिसाब राख्न सुरु गर्न आफ्नो पहिलो कारोबार थप्नुहोस्।</value>
+  </data>
+  <data name="Transactions.List.EmptyTitle" xml:space="preserve">
+    <value>अहिलेसम्म कुनै कारोबार छैन</value>
+  </data>
+  <data name="Transactions.List.LatestFirst" xml:space="preserve">
+    <value>नयाँ पहिले</value>
+  </data>
+  <data name="Transactions.List.NoMatch" xml:space="preserve">
+    <value>कुनै कारोबार मेल खाएन।</value>
+  </data>
+  <data name="Transactions.List.OldestFirst" xml:space="preserve">
+    <value>पुरानो पहिले</value>
+  </data>
+  <data name="Transactions.List.SearchAria" xml:space="preserve">
+    <value>कारोबार खोज्नुहोस्</value>
+  </data>
+  <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
+    <value>प्रकार, विवरण, मिति खोज्नुहोस्</value>
+  </data>
+  <data name="Transactions.List.Sort" xml:space="preserve">
+    <value>क्रम</value>
+  </data>
+  <data name="Transactions.List.Title" xml:space="preserve">
+    <value>कारोबारहरू</value>
+  </data>
+  <data name="Transactions.List.Transfer" xml:space="preserve">
+    <value>स्थानान्तरण</value>
+  </data>
+  <data name="Transactions.List.Type" xml:space="preserve">
+    <value>प्रकार</value>
+  </data>
+  <data name="Transactions.List.Void" xml:space="preserve">
+    <value>रद्द</value>
+  </data>
+  <data name="Transactions.Type.Expense" xml:space="preserve">
+    <value>खर्च</value>
+  </data>
+  <data name="TxnType.AddMoney" xml:space="preserve">
+    <value>रकम थप्नुहोस्</value>
+  </data>
+  <data name="TxnType.OtherIncome" xml:space="preserve">
+    <value>अन्य आम्दानी</value>
+  </data>
+  <data name="TxnType.PartyAdjustAdd" xml:space="preserve">
+    <value>बाँकी थपियो</value>
+  </data>
+  <data name="TxnType.PartyAdjustReduce" xml:space="preserve">
+    <value>बाँकी घटाइयो</value>
+  </data>
+  <data name="TxnType.PaymentIn" xml:space="preserve">
+    <value>भुक्तानी प्राप्त</value>
+  </data>
+  <data name="TxnType.PaymentOut" xml:space="preserve">
+    <value>भुक्तानी दिइयो</value>
+  </data>
+  <data name="TxnType.ReduceMoney" xml:space="preserve">
+    <value>रकम घटाउनुहोस्</value>
+  </data>
+  <data name="TxnType.TransferMoney" xml:space="preserve">
+    <value>रकम सार्नुहोस्</value>
+  </data>
+  <data name="Web.Error.Heading" xml:space="preserve">
+    <value>तपाईंको अनुरोध प्रशोधन गर्दा त्रुटि भयो।</value>
+  </data>
+  <data name="Web.Error.RequestId" xml:space="preserve">
+    <value>अनुरोध ID:</value>
+  </data>
+  <data name="Web.Error.Title" xml:space="preserve">
+    <value>त्रुटि</value>
+  </data>
+  <data name="Web.Reconnect.Failed" xml:space="preserve">
+    <value>फेरि जडान हुन सकेन।&lt;br /&gt;कृपया फेरि प्रयास गर्नुहोस् वा पृष्ठ पुन: लोड गर्नुहोस्।</value>
+  </data>
+  <data name="Web.Reconnect.Paused" xml:space="preserve">
+    <value>सर्भरले सत्र रोकेको छ।</value>
+  </data>
+  <data name="Web.Reconnect.Rejoining" xml:space="preserve">
+    <value>सर्भरमा फेरि जडान गर्दैछ...</value>
+  </data>
+  <data name="Web.Reconnect.Resume" xml:space="preserve">
+    <value>पुन: सुरु</value>
+  </data>
+  <data name="Web.Reconnect.ResumeFailed" xml:space="preserve">
+    <value>सत्र फेरि सुरु गर्न सकिएन।&lt;br /&gt;कृपया फेरि प्रयास गर्नुहोस् वा पृष्ठ पुन: लोड गर्नुहोस्।</value>
+  </data>
+  <data name="Web.Reconnect.Retry" xml:space="preserve">
+    <value>फेरि प्रयास</value>
+  </data>
+  <data name="Web.Reconnect.RetryAfter" xml:space="preserve">
+    <value> सेकेन्डपछि फेरि प्रयास गरिनेछ।</value>
+  </data>
+  <data name="Web.Reconnect.RetryBefore" xml:space="preserve">
+    <value>पुन: जडान असफल भयो... </value>
+  </data>
+  <data name="Calendar.Label" xml:space="preserve">
+    <value>मिति पात्रो</value>
+  </data>
+  <data name="Calendar.Bs" xml:space="preserve">
+    <value>नेपाली मिति (वि.सं.)</value>
+  </data>
+  <data name="Calendar.Ad" xml:space="preserve">
+    <value>अंग्रेजी मिति (ई.सं.)</value>
+  </data>
+  <data name="Calendar.Help" xml:space="preserve">
+    <value>यो कम्पनीमा मिति कसरी देखिने र टाइप गरिने। सुरक्षित प्रविष्टिहरू बदलिँदैनन्।</value>
+  </data>
+  <data name="Calendar.Saved" xml:space="preserve">
+    <value>मिति पात्रो परिवर्तन भयो।</value>
+  </data>
+  <data name="Calendar.Failed" xml:space="preserve">
+    <value>मिति पात्रो परिवर्तन गर्न सकिएन।</value>
+  </data>
+  <data name="Calendar.Open" xml:space="preserve">
+    <value>पात्रो खोल्नुहोस्</value>
+  </data>
+  <data name="Calendar.PreviousMonth" xml:space="preserve">
+    <value>अघिल्लो महिना</value>
+  </data>
+  <data name="Calendar.NextMonth" xml:space="preserve">
+    <value>अर्को महिना</value>
+  </data>
+  <data name="Calendar.Year" xml:space="preserve">
+    <value>वर्ष</value>
+  </data>
+  <data name="Calendar.Month" xml:space="preserve">
+    <value>महिना</value>
+  </data>
+  <data name="Calendar.Today" xml:space="preserve">
+    <value>आज</value>
+  </data>
+  <data name="Calendar.AdDate" xml:space="preserve">
+    <value>ई.सं. {0}</value>
+  </data>
+  <data name="Calendar.OutsideRange" xml:space="preserve">
+    <value>ई.सं. मिति, नेपाली पात्रोको दायराबाहिर</value>
+  </data>
+  <data name="Calendar.InvalidBs" xml:space="preserve">
+    <value>नेपाली मिति yyyy/mm/dd ढाँचामा लेख्नुहोस्।</value>
+  </data>
+  <data name="Calendar.Month1" xml:space="preserve">
+    <value>वैशाख</value>
+  </data>
+  <data name="Calendar.Month2" xml:space="preserve">
+    <value>जेठ</value>
+  </data>
+  <data name="Calendar.Month3" xml:space="preserve">
+    <value>असार</value>
+  </data>
+  <data name="Calendar.Month4" xml:space="preserve">
+    <value>साउन</value>
+  </data>
+  <data name="Calendar.Month5" xml:space="preserve">
+    <value>भदौ</value>
+  </data>
+  <data name="Calendar.Month6" xml:space="preserve">
+    <value>असोज</value>
+  </data>
+  <data name="Calendar.Month7" xml:space="preserve">
+    <value>कात्तिक</value>
+  </data>
+  <data name="Calendar.Month8" xml:space="preserve">
+    <value>मंसिर</value>
+  </data>
+  <data name="Calendar.Month9" xml:space="preserve">
+    <value>पुस</value>
+  </data>
+  <data name="Calendar.Month10" xml:space="preserve">
+    <value>माघ</value>
+  </data>
+  <data name="Calendar.Month11" xml:space="preserve">
+    <value>फागुन</value>
+  </data>
+  <data name="Calendar.Month12" xml:space="preserve">
+    <value>चैत</value>
+  </data>
+  <data name="Calendar.Weekday0" xml:space="preserve">
+    <value>आइत</value>
+  </data>
+  <data name="Calendar.Weekday1" xml:space="preserve">
+    <value>सोम</value>
+  </data>
+  <data name="Calendar.Weekday2" xml:space="preserve">
+    <value>मंगल</value>
+  </data>
+  <data name="Calendar.Weekday3" xml:space="preserve">
+    <value>बुध</value>
+  </data>
+  <data name="Calendar.Weekday4" xml:space="preserve">
+    <value>बिही</value>
+  </data>
+  <data name="Calendar.Weekday5" xml:space="preserve">
+    <value>शुक्र</value>
+  </data>
+  <data name="Calendar.Weekday6" xml:space="preserve">
+    <value>शनि</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>{0} आवश्यक छ।</value>
+  </data>
+  <data name="Validation.TooLong" xml:space="preserve">
+    <value>{0} बढीमा {1} अक्षरको हुन सक्छ।</value>
+  </data>
+  <data name="Validation.PartyType" xml:space="preserve">
+    <value>ग्राहक वा आपूर्तिकर्ता छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>मान्य इमेल ठेगाना लेख्नुहोस्।</value>
+  </data>
+  <data name="Validation.Pan" xml:space="preserve">
+    <value>PAN मा अंक मात्र हुनुपर्छ, बढीमा {0} वटा।</value>
+  </data>
+  <data name="Validation.PartyOpening" xml:space="preserve">
+    <value>सुरु बाँकी शून्यभन्दा बढी र दशमलवपछि बढीमा २ अंकको हुनुपर्छ। तपाईंले तिर्नुपर्ने रकमका लागि "दिने बाँकी" छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.OpeningSide" xml:space="preserve">
+    <value>लिने बाँकी वा दिने बाँकी छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.MoneyType" xml:space="preserve">
+    <value>बैंक खाता, वालेट वा नगद छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.Decimals" xml:space="preserve">
+    <value>दशमलवपछि बढीमा २ अंक भएको रकम लेख्नुहोस्।</value>
+  </data>
+  <data name="Validation.Phone" xml:space="preserve">
+    <value>फोनमा अंक, खाली ठाउँ, +, - र कोष्ठक मात्र राख्न सकिन्छ।</value>
+  </data>
+  <data name="Validation.TransactionType" xml:space="preserve">
+    <value>कारोबारको प्रकार छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.Amount" xml:space="preserve">
+    <value>रकम ० भन्दा बढी र दशमलवपछि बढीमा २ अंकको हुनुपर्छ।</value>
+  </data>
+  <data name="Validation.Account" xml:space="preserve">
+    <value>खाता छान्नुहोस्।</value>
+  </data>
+  <data name="Validation.Field.FullName" xml:space="preserve">
+    <value>पूरा नाम</value>
+  </data>
+  <data name="Validation.Field.Name" xml:space="preserve">
+    <value>नाम</value>
+  </data>
+  <data name="Validation.Field.CategoryName" xml:space="preserve">
+    <value>वर्गको नाम</value>
+  </data>
+  <data name="Validation.Field.Address" xml:space="preserve">
+    <value>ठेगाना</value>
+  </data>
+  <data name="Validation.Field.AccountHolderName" xml:space="preserve">
+    <value>खाताधनीको नाम</value>
+  </data>
+  <data name="Validation.Field.AccountNumber" xml:space="preserve">
+    <value>खाता नम्बर</value>
+  </data>
+  <data name="Validation.Field.Remarks" xml:space="preserve">
+    <value>विवरण</value>
+  </data>
+  <data name="Validation.Field.ChequeNo" xml:space="preserve">
+    <value>चेक नं.</value>
+  </data>
+</root>

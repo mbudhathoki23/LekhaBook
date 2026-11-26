@@ -1,9 +1,11 @@
 using LekhaBook.Client;
 using LekhaBook.UI;
+using LekhaBook.UI.Localization;
 using LekhaBook.UI.Services;
 using LekhaBook.Web.Components;
 using LekhaBook.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,7 @@ builder.Services.AddLekhaBookUI();
 builder.Services.AddSingleton<IPlatformInfo, WebPlatformInfo>();
 builder.Services.AddSingleton<IConnectivityService, WebConnectivityService>();
 builder.Services.AddSingleton<ISyncService, OnlineOnlySyncService>();
+builder.Services.AddScoped<ILanguageService, WebLanguageService>(); // culture cookie, see WebCulture
 
 // Sign-in (D13). Everything that holds a user's tokens is Scoped = one per browser circuit.
 var apiBase = new Uri(builder.Configuration["Api:BaseUrl"] ?? "http://localhost:5050/");
@@ -49,12 +52,20 @@ if (!app.Environment.IsDevelopment())
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
 app.UseHttpsRedirection();
 
+// English unless the culture cookie (set by /culture/set) asks for Nepali.
+var supportedCultures = Languages.Supported.Select(l => l.Code).ToArray();
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .SetDefaultCulture(Languages.English)
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures));
+
 app.UseBrowserBinding();
 app.UseAuthentication();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapWebSignInEndpoints();
+app.MapWebCultureEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddAdditionalAssemblies(typeof(LekhaBook.UI.Routes).Assembly);

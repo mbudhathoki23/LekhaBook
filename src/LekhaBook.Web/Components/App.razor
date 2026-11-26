@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Authentication.Cookies
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@_lang">
 
 <head>
     <meta charset="utf-8" />
@@ -38,9 +38,11 @@
 
     private string? _refreshToken;
     private string? _binding;
+    private string _lang = LekhaBook.UI.Localization.Languages.English;
 
     protected override async Task OnInitializedAsync()
     {
+        _lang = LekhaBook.UI.Localization.Languages.Normalize(System.Globalization.CultureInfo.CurrentUICulture.Name);
         // Read during the plain HTTP request (the only time HttpContext is reliable) and handed to the
         // circuit as encrypted component parameters.
         _refreshToken = await HttpContext.GetTokenAsync(CookieAuthenticationDefaults.AuthenticationScheme, "refresh_token");

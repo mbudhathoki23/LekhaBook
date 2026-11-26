@@ -3,14 +3,14 @@
 @inject ISessionService Session
 @inject NavigationManager Navigation
 
-<PageTitle>Sign in · Lekha Books</PageTitle>
+<PageTitle>@Loc["Auth.SignIn.PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Sign in</MudText>
-<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">Welcome back. Sign in to open your books.</MudText>
+<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Auth.SignIn.Title"]</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc["Auth.SignIn.Subtitle"]</MudText>
 
 @if (Error == "expired")
 {
-    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">That sign-in link has expired. Please sign in again.</MudAlert>
+    <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">@Loc["Auth.SignIn.LinkExpired"]</MudAlert>
 }
 @if (_error is not null)
 {
@@ -19,10 +19,10 @@
 
 <form @onsubmit="SignInAsync">
     <MudStack Spacing="3">
-        <MudTextField @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined"
+        <MudTextField @bind-Value="_email" Label="@Loc["Common.Email"]" InputType="InputType.Email" Variant="Variant.Outlined"
                       Immediate="true" Required="true" AutoFocus="true"
                       UserAttributes="@(new() { ["autocomplete"] = "username", ["enterkeyhint"] = "next", ["inputmode"] = "email" })" />
-        <MudTextField @bind-Value="_password" Label="Password" InputType="InputType.Password" Variant="Variant.Outlined"
+        <MudTextField @bind-Value="_password" Label="@Loc["Common.Password"]" InputType="InputType.Password" Variant="Variant.Outlined"
                       Immediate="true" Required="true"
                       UserAttributes="@(new() { ["autocomplete"] = "current-password", ["enterkeyhint"] = "go" })" />
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
@@ -31,13 +31,13 @@
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" />
             }
-            Sign in
+            @Loc["Auth.SignIn.Submit"]
         </MudButton>
     </MudStack>
 </form>
 
 <MudText Typo="Typo.body2" Class="mt-5" Align="Align.Center">
-    New to Lekha Books? <MudLink Href="@SignUpHref">Create an account</MudLink>
+    @Loc["Auth.SignIn.NewPrompt"] <MudLink Href="@SignUpHref">@Loc["Auth.SignIn.CreateAccount"]</MudLink>
 </MudText>
 
 @code {
@@ -58,7 +58,7 @@
     {
         if (string.IsNullOrWhiteSpace(_email) || string.IsNullOrEmpty(_password))
         {
-            _error = "Enter your email and password.";
+            _error = Loc["Auth.SignIn.CredentialsRequired"];
             return;
         }
 

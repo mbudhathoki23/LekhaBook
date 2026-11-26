@@ -52,9 +52,9 @@ function indexOf(fields, target) {
     return fields.findIndex(f => f === target || (target.type === 'radio' && f.type === 'radio' && f.name === target.name));
 }
 
-/** True while a dropdown/autocomplete list belonging to this field is open. */
+/** True while a dropdown/autocomplete list or calendar belonging to this field is open. */
 function listIsOpen(target) {
-    if (target.getAttribute('aria-expanded') === 'true') {
+    if (target.getAttribute('aria-expanded') === 'true' || target.closest('[data-popup-open="true"]')) {
         return true;
     }
     const combo = target.closest('[role=combobox], .mud-autocomplete, .mud-select');

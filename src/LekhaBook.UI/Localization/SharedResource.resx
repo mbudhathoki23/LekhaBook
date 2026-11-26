@@ -1,0 +1,1234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">text/microsoft-resx</resheader>
+  <resheader name="version">2.0</resheader>
+  <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</resheader>
+  <data name="Accounts.Add" xml:space="preserve">
+    <value>Add Account</value>
+  </data>
+  <data name="Accounts.Detail.CurrentBalance" xml:space="preserve">
+    <value>Current balance</value>
+  </data>
+  <data name="Accounts.Detail.Deleted" xml:space="preserve">
+    <value>Deleted {0}.</value>
+  </data>
+  <data name="Accounts.Detail.DeleteMessage" xml:space="preserve">
+    <value>{0} will be removed from Cash &amp; Bank.</value>
+  </data>
+  <data name="Accounts.Detail.DeleteTitle" xml:space="preserve">
+    <value>Delete account?</value>
+  </data>
+  <data name="Accounts.Detail.GenericError" xml:space="preserve">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="Accounts.Detail.MoneyIn" xml:space="preserve">
+    <value>Money in</value>
+  </data>
+  <data name="Accounts.Detail.MoneyOut" xml:space="preserve">
+    <value>Money out</value>
+  </data>
+  <data name="Accounts.Detail.Title" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="Accounts.Detail.Transactions" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="Accounts.Form.AccountName" xml:space="preserve">
+    <value>Account name</value>
+  </data>
+  <data name="Accounts.Form.AccountNumber" xml:space="preserve">
+    <value>Account number</value>
+  </data>
+  <data name="Accounts.Form.AsOfLabel" xml:space="preserve">
+    <value>As of date</value>
+  </data>
+  <data name="Accounts.Form.BalanceHelp" xml:space="preserve">
+    <value>The balance on the date below. Use a minus sign if the account is overdrawn.</value>
+  </data>
+  <data name="Accounts.Form.BankName" xml:space="preserve">
+    <value>Bank name</value>
+  </data>
+  <data name="Accounts.Form.BankPlaceholder" xml:space="preserve">
+    <value>e.g. Nabil Bank</value>
+  </data>
+  <data name="Accounts.Form.BuiltInAccount" xml:space="preserve">
+    <value>{0} (built-in account)</value>
+  </data>
+  <data name="Accounts.Form.CashPettyCash" xml:space="preserve">
+    <value>Cash / petty cash</value>
+  </data>
+  <data name="Accounts.Form.CashPlaceholder" xml:space="preserve">
+    <value>e.g. Petty Cash</value>
+  </data>
+  <data name="Accounts.Form.DateLockedHelp" xml:space="preserve">
+    <value>You can only date an opening balance today.</value>
+  </data>
+  <data name="Accounts.Form.EditTitle" xml:space="preserve">
+    <value>Edit Account</value>
+  </data>
+  <data name="Accounts.Form.HolderName" xml:space="preserve">
+    <value>Account holder name</value>
+  </data>
+  <data name="Accounts.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter moves to the next field · Ctrl+S saves · Esc cancels</value>
+  </data>
+  <data name="Accounts.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>Current account balance (Rs.)</value>
+  </data>
+  <data name="Accounts.Form.SavedSnackbar" xml:space="preserve">
+    <value>Saved {0}.</value>
+  </data>
+  <data name="Accounts.Form.Saving" xml:space="preserve">
+    <value>Saving…</value>
+  </data>
+  <data name="Accounts.Form.TypeLabel" xml:space="preserve">
+    <value>Account type</value>
+  </data>
+  <data name="Accounts.Form.WalletId" xml:space="preserve">
+    <value>Wallet ID / phone</value>
+  </data>
+  <data name="Accounts.Form.WalletName" xml:space="preserve">
+    <value>Wallet name</value>
+  </data>
+  <data name="Accounts.Form.WalletPlaceholder" xml:space="preserve">
+    <value>e.g. eSewa</value>
+  </data>
+  <data name="Accounts.List.NoViewPermission" xml:space="preserve">
+    <value>You don&apos;t have permission to view money accounts.</value>
+  </data>
+  <data name="Accounts.List.Subject" xml:space="preserve">
+    <value>Cash and bank accounts</value>
+  </data>
+  <data name="Accounts.List.Title" xml:space="preserve">
+    <value>Cash &amp; Bank</value>
+  </data>
+  <data name="Accounts.List.TotalBalance" xml:space="preserve">
+    <value>Total balance</value>
+  </data>
+  <data name="AccountType.Bank" xml:space="preserve">
+    <value>Bank account</value>
+  </data>
+  <data name="AccountType.Cash" xml:space="preserve">
+    <value>Cash</value>
+  </data>
+  <data name="AccountType.Cheque" xml:space="preserve">
+    <value>Cheque</value>
+  </data>
+  <data name="AccountType.Wallet" xml:space="preserve">
+    <value>Wallet</value>
+  </data>
+  <data name="Attachments.CantShow" xml:space="preserve">
+    <value>Can&apos;t show</value>
+  </data>
+  <data name="Attachments.ChooseFiles" xml:space="preserve">
+    <value>Choose files</value>
+  </data>
+  <data name="Attachments.Deleted" xml:space="preserve">
+    <value>Removed {0}.</value>
+  </data>
+  <data name="Attachments.DeleteFailed" xml:space="preserve">
+    <value>Couldn&apos;t remove the attachment.</value>
+  </data>
+  <data name="Attachments.DeleteMessage" xml:space="preserve">
+    <value>{0} will be removed from this entry.</value>
+  </data>
+  <data name="Attachments.DeleteTitle" xml:space="preserve">
+    <value>Remove this attachment?</value>
+  </data>
+  <data name="Attachments.Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Attachments.NotUploaded" xml:space="preserve">
+    <value>The entry is saved, but these files didn&apos;t upload: {0}. Open the entry to add them again.</value>
+  </data>
+  <data name="Attachments.OpenNamed" xml:space="preserve">
+    <value>Open {0}</value>
+  </data>
+  <data name="Attachments.PdfPreviewHelp" xml:space="preserve">
+    <value>This is a PDF. Download it to open it on your device.</value>
+  </data>
+  <data name="Attachments.RemoveNamed" xml:space="preserve">
+    <value>Remove {0}</value>
+  </data>
+  <data name="Attachments.SavedWithEntry" xml:space="preserve">
+    <value>These files are saved with the entry.</value>
+  </data>
+  <data name="Attachments.TakePhoto" xml:space="preserve">
+    <value>Take photo</value>
+  </data>
+  <data name="Attachments.UnsupportedType" xml:space="preserve">
+    <value>{0} isn&apos;t a JPEG, PNG, WebP or PDF file.</value>
+  </data>
+  <data name="Auth.SignIn.CreateAccount" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="Auth.SignIn.CredentialsRequired" xml:space="preserve">
+    <value>Enter your email and password.</value>
+  </data>
+  <data name="Auth.SignIn.LinkExpired" xml:space="preserve">
+    <value>That sign-in link has expired. Please sign in again.</value>
+  </data>
+  <data name="Auth.SignIn.NewPrompt" xml:space="preserve">
+    <value>New to Lekha Books?</value>
+  </data>
+  <data name="Auth.SignIn.PageTitle" xml:space="preserve">
+    <value>Sign in · Lekha Books</value>
+  </data>
+  <data name="Auth.SignIn.Submit" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Auth.SignIn.Subtitle" xml:space="preserve">
+    <value>Welcome back. Sign in to open your books.</value>
+  </data>
+  <data name="Auth.SignIn.Title" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Auth.SignUp.ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Auth.SignUp.EmailRequired" xml:space="preserve">
+    <value>Enter your email.</value>
+  </data>
+  <data name="Auth.SignUp.HavePrompt" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="Auth.SignUp.Name" xml:space="preserve">
+    <value>Your name</value>
+  </data>
+  <data name="Auth.SignUp.NameRequired" xml:space="preserve">
+    <value>Enter your name.</value>
+  </data>
+  <data name="Auth.SignUp.PageTitle" xml:space="preserve">
+    <value>Create account · Lekha Books</value>
+  </data>
+  <data name="Auth.SignUp.PasswordHelp" xml:space="preserve">
+    <value>At least 8 characters, with a number and a lowercase letter.</value>
+  </data>
+  <data name="Auth.SignUp.PasswordMismatch" xml:space="preserve">
+    <value>The two passwords don&apos;t match.</value>
+  </data>
+  <data name="Auth.SignUp.PasswordTooShort" xml:space="preserve">
+    <value>Password must be at least 8 characters.</value>
+  </data>
+  <data name="Auth.SignUp.SignInLink" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Auth.SignUp.Submit" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="Auth.SignUp.Subtitle" xml:space="preserve">
+    <value>Free to start. You can add your staff later.</value>
+  </data>
+  <data name="Auth.SignUp.Title" xml:space="preserve">
+    <value>Create your account</value>
+  </data>
+  <data name="Common.Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Common.Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Common.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Common.Balance" xml:space="preserve">
+    <value>Balance</value>
+  </data>
+  <data name="Common.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Common.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Common.Company" xml:space="preserve">
+    <value>Company</value>
+  </data>
+  <data name="Common.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Common.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Common.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Common.Loading" xml:space="preserve">
+    <value>Loading…</value>
+  </data>
+  <data name="Common.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Common.No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Common.Optional" xml:space="preserve">
+    <value>(optional)</value>
+  </data>
+  <data name="Common.Party" xml:space="preserve">
+    <value>Party</value>
+  </data>
+  <data name="Common.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Common.Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Common.Remarks" xml:space="preserve">
+    <value>Remarks</value>
+  </data>
+  <data name="Common.Required" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="Common.Retry" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="Common.Role" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="Common.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Common.Search" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="Common.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Common.Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Common.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Companies.Create.Address" xml:space="preserve">
+    <value>Address (optional)</value>
+  </data>
+  <data name="Companies.Create.BusinessName" xml:space="preserve">
+    <value>Business name</value>
+  </data>
+  <data name="Companies.Create.Intro" xml:space="preserve">
+    <value>You&apos;ll be its Owner. Cash, Cheque, Online Wallet and common income and expense heads are set up for you.</value>
+  </data>
+  <data name="Companies.Create.NameRequired" xml:space="preserve">
+    <value>Enter the business name.</value>
+  </data>
+  <data name="Companies.Create.PageTitle" xml:space="preserve">
+    <value>Create company · Lekha Books</value>
+  </data>
+  <data name="Companies.Create.PanVat" xml:space="preserve">
+    <value>PAN / VAT number (optional)</value>
+  </data>
+  <data name="Companies.Create.Phone" xml:space="preserve">
+    <value>Phone (optional)</value>
+  </data>
+  <data name="Companies.Create.Submit" xml:space="preserve">
+    <value>Create company</value>
+  </data>
+  <data name="Companies.Join.Code" xml:space="preserve">
+    <value>Invite code</value>
+  </data>
+  <data name="Companies.Join.CodeRequired" xml:space="preserve">
+    <value>Paste the invite code.</value>
+  </data>
+  <data name="Companies.Join.Intro" xml:space="preserve">
+    <value>Paste the invite code the company owner gave you. You must be signed in with the email it was sent to ({0}).</value>
+  </data>
+  <data name="Companies.Join.PageTitle" xml:space="preserve">
+    <value>Join a company · Lekha Books</value>
+  </data>
+  <data name="Companies.Join.Submit" xml:space="preserve">
+    <value>Join</value>
+  </data>
+  <data name="Companies.Join.Title" xml:space="preserve">
+    <value>Join a company</value>
+  </data>
+  <data name="Errors.NeedConnection" xml:space="preserve">
+    <value>{0} need a connection for now. Connect to the internet and try again.</value>
+  </data>
+  <data name="Errors.TheseScreens" xml:space="preserve">
+    <value>These screens</value>
+  </data>
+  <data name="Home.BankBalance" xml:space="preserve">
+    <value>Bank Balance</value>
+  </data>
+  <data name="Home.CashInHand" xml:space="preserve">
+    <value>Cash in Hand</value>
+  </data>
+  <data name="Home.QuickEntry" xml:space="preserve">
+    <value>Quick entry</value>
+  </data>
+  <data name="Home.Title" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Home.Totals" xml:space="preserve">
+    <value>Dashboard totals</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Ledger.ChequeNo" xml:space="preserve">
+    <value>Cheque #{0}</value>
+  </data>
+  <data name="Ledger.Credit" xml:space="preserve">
+    <value>Credit</value>
+  </data>
+  <data name="Ledger.Debit" xml:space="preserve">
+    <value>Debit</value>
+  </data>
+  <data name="Ledger.Empty" xml:space="preserve">
+    <value>No transactions yet.</value>
+  </data>
+  <data name="Ledger.GaveAdded" xml:space="preserve">
+    <value>Gave / Added</value>
+  </data>
+  <data name="Ledger.GotReduced" xml:space="preserve">
+    <value>Got / Reduced</value>
+  </data>
+  <data name="Ledger.OpeningBalance" xml:space="preserve">
+    <value>Opening balance</value>
+  </data>
+  <data name="Ledger.Particulars" xml:space="preserve">
+    <value>Particulars</value>
+  </data>
+  <data name="Ledger.Transactions" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="Logo.Alt" xml:space="preserve">
+    <value>Company logo</value>
+  </data>
+  <data name="Logo.ChooseImage" xml:space="preserve">
+    <value>Choose image</value>
+  </data>
+  <data name="Logo.CreateWarning" xml:space="preserve">
+    <value>The company was created, but its logo didn&apos;t upload: {0}</value>
+  </data>
+  <data name="Logo.Failed" xml:space="preserve">
+    <value>Couldn&apos;t update the logo.</value>
+  </data>
+  <data name="Logo.Hint" xml:space="preserve">
+    <value>JPEG, PNG or WebP, up to 2 MB.</value>
+  </data>
+  <data name="Logo.PickLabel" xml:space="preserve">
+    <value>Company logo (optional)</value>
+  </data>
+  <data name="Logo.Remove" xml:space="preserve">
+    <value>Remove logo</value>
+  </data>
+  <data name="Logo.Removed" xml:space="preserve">
+    <value>Logo removed.</value>
+  </data>
+  <data name="Logo.RemoveMessage" xml:space="preserve">
+    <value>Statements and printouts will stop showing it.</value>
+  </data>
+  <data name="Logo.RemoveTitle" xml:space="preserve">
+    <value>Remove the company logo?</value>
+  </data>
+  <data name="Logo.TooLarge" xml:space="preserve">
+    <value>{0} is larger than 2 MB.</value>
+  </data>
+  <data name="Logo.UnsupportedType" xml:space="preserve">
+    <value>Use a JPEG, PNG or WebP image.</value>
+  </data>
+  <data name="Logo.Updated" xml:space="preserve">
+    <value>Logo updated.</value>
+  </data>
+  <data name="Nav.CashAndBank" xml:space="preserve">
+    <value>Cash &amp; Bank</value>
+  </data>
+  <data name="Nav.Dashboard" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
+  <data name="Nav.Expense" xml:space="preserve">
+    <value>Expense</value>
+  </data>
+  <data name="Nav.Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="Nav.Main" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="Nav.More" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="Nav.OtherIncome" xml:space="preserve">
+    <value>Other Income</value>
+  </data>
+  <data name="Nav.Parties" xml:space="preserve">
+    <value>Parties</value>
+  </data>
+  <data name="Nav.Reports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="Nav.Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Nav.Staff" xml:space="preserve">
+    <value>Staff</value>
+  </data>
+  <data name="Nav.Transactions" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="NotFound.BackToDashboard" xml:space="preserve">
+    <value>Back to dashboard</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>This screen doesn&apos;t exist yet. Most screens are added in later build phases.</value>
+  </data>
+  <data name="NotFound.PageTitle" xml:space="preserve">
+    <value>Not found · Lekha Books</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>Not available yet</value>
+  </data>
+  <data name="Parties.AddParty" xml:space="preserve">
+    <value>Add Party</value>
+  </data>
+  <data name="Parties.Detail.Deleted" xml:space="preserve">
+    <value>Deleted {0}.</value>
+  </data>
+  <data name="Parties.Detail.DeleteText" xml:space="preserve">
+    <value>{0} will be removed from your party list.</value>
+  </data>
+  <data name="Parties.Detail.DeleteTitle" xml:space="preserve">
+    <value>Delete party?</value>
+  </data>
+  <data name="Parties.Detail.PanValue" xml:space="preserve">
+    <value>PAN {0}</value>
+  </data>
+  <data name="Parties.Detail.SomethingWrong" xml:space="preserve">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="Parties.EditParty" xml:space="preserve">
+    <value>Edit Party</value>
+  </data>
+  <data name="Parties.Form.AddressLabel" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Parties.Form.AsOfLabel" xml:space="preserve">
+    <value>As of date</value>
+  </data>
+  <data name="Parties.Form.AsOfLocked" xml:space="preserve">
+    <value>You can only date an opening balance today.</value>
+  </data>
+  <data name="Parties.Form.CategoryAddFailed" xml:space="preserve">
+    <value>Couldn&apos;t add the category.</value>
+  </data>
+  <data name="Parties.Form.CategoryHelp" xml:space="preserve">
+    <value>Pick one, or type a new name to add it.</value>
+  </data>
+  <data name="Parties.Form.CategoryLabel" xml:space="preserve">
+    <value>Party category</value>
+  </data>
+  <data name="Parties.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter moves to the next field · Ctrl+S saves · Esc cancels</value>
+  </data>
+  <data name="Parties.Form.NameLabel" xml:space="preserve">
+    <value>Full name *</value>
+  </data>
+  <data name="Parties.Form.NamePlaceholder" xml:space="preserve">
+    <value>Enter the name of the party</value>
+  </data>
+  <data name="Parties.Form.OpeningBalanceLabel" xml:space="preserve">
+    <value>Opening balance (Rs.)</value>
+  </data>
+  <data name="Parties.Form.PanLabel" xml:space="preserve">
+    <value>PAN number</value>
+  </data>
+  <data name="Parties.Form.PhoneLabel" xml:space="preserve">
+    <value>Phone number</value>
+  </data>
+  <data name="Parties.Form.PickCategory" xml:space="preserve">
+    <value>Pick a category from the list.</value>
+  </data>
+  <data name="Parties.Form.SaveAndNew" xml:space="preserve">
+    <value>Save &amp; New</value>
+  </data>
+  <data name="Parties.Form.Saved" xml:space="preserve">
+    <value>Saved {0}.</value>
+  </data>
+  <data name="Parties.Form.Saving" xml:space="preserve">
+    <value>Saving…</value>
+  </data>
+  <data name="Parties.Form.TypeLabel" xml:space="preserve">
+    <value>Party type</value>
+  </data>
+  <data name="Parties.List.BalanceAll" xml:space="preserve">
+    <value>All balances</value>
+  </data>
+  <data name="Parties.List.EmptyAdd" xml:space="preserve">
+    <value>Add your first party</value>
+  </data>
+  <data name="Parties.List.EmptyBody" xml:space="preserve">
+    <value>Add your customers and suppliers to track what they owe you and what you owe them.</value>
+  </data>
+  <data name="Parties.List.EmptyTitle" xml:space="preserve">
+    <value>No parties yet</value>
+  </data>
+  <data name="Parties.List.NoMatch" xml:space="preserve">
+    <value>No parties match.</value>
+  </data>
+  <data name="Parties.List.SearchAria" xml:space="preserve">
+    <value>Search parties</value>
+  </data>
+  <data name="Parties.List.SearchPlaceholder" xml:space="preserve">
+    <value>Search name or phone</value>
+  </data>
+  <data name="Parties.List.SortAmountAsc" xml:space="preserve">
+    <value>Amount low→high</value>
+  </data>
+  <data name="Parties.List.SortAmountDesc" xml:space="preserve">
+    <value>Amount high→low</value>
+  </data>
+  <data name="Parties.List.SortLabel" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="Parties.List.SortLatest" xml:space="preserve">
+    <value>Latest</value>
+  </data>
+  <data name="Parties.List.SortNameAsc" xml:space="preserve">
+    <value>Name A→Z</value>
+  </data>
+  <data name="Parties.List.SortNameDesc" xml:space="preserve">
+    <value>Name Z→A</value>
+  </data>
+  <data name="Parties.List.TypeAll" xml:space="preserve">
+    <value>All parties</value>
+  </data>
+  <data name="Parties.List.TypeCustomers" xml:space="preserve">
+    <value>Customers</value>
+  </data>
+  <data name="Parties.List.TypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Parties.List.TypeSuppliers" xml:space="preserve">
+    <value>Suppliers</value>
+  </data>
+  <data name="Parties.Title" xml:space="preserve">
+    <value>Parties</value>
+  </data>
+  <data name="Parties.Type.Customer" xml:space="preserve">
+    <value>Customer</value>
+  </data>
+  <data name="Parties.Type.Supplier" xml:space="preserve">
+    <value>Supplier</value>
+  </data>
+  <data name="PartyBalance.Payable" xml:space="preserve">
+    <value>Payable</value>
+  </data>
+  <data name="PartyBalance.Receivable" xml:space="preserve">
+    <value>Receivable</value>
+  </data>
+  <data name="PartySide.Settled" xml:space="preserve">
+    <value>Settled</value>
+  </data>
+  <data name="PartySide.ToGive" xml:space="preserve">
+    <value>To Give</value>
+  </data>
+  <data name="PartySide.ToReceive" xml:space="preserve">
+    <value>To Receive</value>
+  </data>
+  <data name="Role.Accountant" xml:space="preserve">
+    <value>Accountant</value>
+  </data>
+  <data name="Role.Accountant.Description" xml:space="preserve">
+    <value>All books, reports and settings; no staff management.</value>
+  </data>
+  <data name="Role.EntryPerson" xml:space="preserve">
+    <value>Entry Person</value>
+  </data>
+  <data name="Role.EntryPerson.Description" xml:space="preserve">
+    <value>Adds entries dated today and can fix their own entries the same day.</value>
+  </data>
+  <data name="Role.Manager" xml:space="preserve">
+    <value>Manager</value>
+  </data>
+  <data name="Role.Manager.Description" xml:space="preserve">
+    <value>Add and edit entries and parties; no deleting, staff or settings.</value>
+  </data>
+  <data name="Role.Owner" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="Role.Owner.Description" xml:space="preserve">
+    <value>Full access, including deleting the company.</value>
+  </data>
+  <data name="Role.Partner" xml:space="preserve">
+    <value>Partner</value>
+  </data>
+  <data name="Role.Partner.Description" xml:space="preserve">
+    <value>Everything except deleting the company.</value>
+  </data>
+  <data name="Settings.CompanyReadOnly" xml:space="preserve">
+    <value>Only people who can change business settings can change the logo.</value>
+  </data>
+  <data name="Settings.CreateCompany" xml:space="preserve">
+    <value>Create a company</value>
+  </data>
+  <data name="Settings.JoinCompany" xml:space="preserve">
+    <value>Join with an invite code</value>
+  </data>
+  <data name="Settings.LanguageHelp" xml:space="preserve">
+    <value>Used on this device or browser.</value>
+  </data>
+  <data name="Settings.RunningOn" xml:space="preserve">
+    <value>Running on {0} ({1})</value>
+  </data>
+  <data name="Settings.SignOut" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="Settings.SignOutHelpDevice" xml:space="preserve">
+    <value>Signs you out on this device.</value>
+  </data>
+  <data name="Settings.SignOutHelpWeb" xml:space="preserve">
+    <value>Signs you out on this browser.</value>
+  </data>
+  <data name="Settings.Staff" xml:space="preserve">
+    <value>Staff</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="Shell.AddTransaction" xml:space="preserve">
+    <value>Add transaction</value>
+  </data>
+  <data name="Shell.BrandHome" xml:space="preserve">
+    <value>Lekha Books home</value>
+  </data>
+  <data name="Shell.Loading" xml:space="preserve">
+    <value>Loading Lekha Books</value>
+  </data>
+  <data name="Shell.NoCompany" xml:space="preserve">
+    <value>No company</value>
+  </data>
+  <data name="Shell.Offline" xml:space="preserve">
+    <value>You&apos;re offline. Showing your saved company list; parties, accounts and staff need a connection until sync arrives.</value>
+  </data>
+  <data name="Shell.Reload" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="Shell.SetUpText" xml:space="preserve">
+    <value>Create a company to start recording parties, cash and bank, or join one with an invite code from its owner.</value>
+  </data>
+  <data name="Shell.SetUpTitle" xml:space="preserve">
+    <value>Set up your books</value>
+  </data>
+  <data name="Shell.SwitchCompany" xml:space="preserve">
+    <value>Switch company</value>
+  </data>
+  <data name="Shell.ToggleMenu" xml:space="preserve">
+    <value>Toggle menu</value>
+  </data>
+  <data name="Shell.UnexpectedError" xml:space="preserve">
+    <value>An unexpected error has occurred.</value>
+  </data>
+  <data name="Staff.Invite.Button" xml:space="preserve">
+    <value>Invite</value>
+  </data>
+  <data name="Staff.Invite.Copied" xml:space="preserve">
+    <value>Copied.</value>
+  </data>
+  <data name="Staff.Invite.CopyAria" xml:space="preserve">
+    <value>Copy invite</value>
+  </data>
+  <data name="Staff.Invite.CopyFailed" xml:space="preserve">
+    <value>Couldn&apos;t copy. Select the text and copy it instead.</value>
+  </data>
+  <data name="Staff.Invite.Create" xml:space="preserve">
+    <value>Create invite</value>
+  </data>
+  <data name="Staff.Invite.CreatedFor" xml:space="preserve">
+    <value>Invite created for {0}</value>
+  </data>
+  <data name="Staff.Invite.Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Staff.Invite.Heading" xml:space="preserve">
+    <value>Invite someone</value>
+  </data>
+  <data name="Staff.Invite.NameEmailRequired" xml:space="preserve">
+    <value>Enter a name and email.</value>
+  </data>
+  <data name="Staff.Invite.Pending" xml:space="preserve">
+    <value>Pending invites</value>
+  </data>
+  <data name="Staff.Invite.SendCode" xml:space="preserve">
+    <value>Send them this code. It works once and expires on {0}.</value>
+  </data>
+  <data name="Staff.Invite.SignInHint" xml:space="preserve">
+    <value>They sign in with that email, then choose {0}.</value>
+  </data>
+  <data name="Staff.Member.Custom" xml:space="preserve">
+    <value>custom</value>
+  </data>
+  <data name="Staff.Member.Joined" xml:space="preserve">
+    <value>Joined</value>
+  </data>
+  <data name="Staff.Member.Manage" xml:space="preserve">
+    <value>Manage {0}</value>
+  </data>
+  <data name="Staff.Member.RemoveAccess" xml:space="preserve">
+    <value>Remove access</value>
+  </data>
+  <data name="Staff.Member.Revoked" xml:space="preserve">
+    <value>{0} can no longer open {1}.</value>
+  </data>
+  <data name="Staff.Member.You" xml:space="preserve">
+    <value>(you)</value>
+  </data>
+  <data name="Staff.NoPermission" xml:space="preserve">
+    <value>You don&apos;t have permission to see the staff of {0}.</value>
+  </data>
+  <data name="Staff.PageTitle" xml:space="preserve">
+    <value>Staff · Lekha Books</value>
+  </data>
+  <data name="Staff.Role.Changed" xml:space="preserve">
+    <value>{0} is now {1}.</value>
+  </data>
+  <data name="Staff.Role.Make" xml:space="preserve">
+    <value>Make {0}</value>
+  </data>
+  <data name="Staff.Status.Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Staff.Status.Revoked" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="Statement.AccountHolder" xml:space="preserve">
+    <value>Account holder</value>
+  </data>
+  <data name="Statement.AccountNumber" xml:space="preserve">
+    <value>Account number</value>
+  </data>
+  <data name="Statement.AccountTitle" xml:space="preserve">
+    <value>Account statement</value>
+  </data>
+  <data name="Statement.Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Statement.Pan" xml:space="preserve">
+    <value>PAN</value>
+  </data>
+  <data name="Statement.PartyTitle" xml:space="preserve">
+    <value>Party statement</value>
+  </data>
+  <data name="Statement.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Statement.PeriodValue" xml:space="preserve">
+    <value>{0} to {1}</value>
+  </data>
+  <data name="Statement.Print" xml:space="preserve">
+    <value>Print statement</value>
+  </data>
+  <data name="Statement.PrintDate" xml:space="preserve">
+    <value>Printed on {0}</value>
+  </data>
+  <data name="Statement.Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Sync.Error" xml:space="preserve">
+    <value>Sync error</value>
+  </data>
+  <data name="Sync.Offline" xml:space="preserve">
+    <value>Offline</value>
+  </data>
+  <data name="Sync.OfflinePending" xml:space="preserve">
+    <value>Offline · {0} pending</value>
+  </data>
+  <data name="Sync.OnlineSynced" xml:space="preserve">
+    <value>Online · Synced</value>
+  </data>
+  <data name="Sync.Pending" xml:space="preserve">
+    <value>{0} pending</value>
+  </data>
+  <data name="Sync.Syncing" xml:space="preserve">
+    <value>Syncing…</value>
+  </data>
+  <data name="Transactions.Add" xml:space="preserve">
+    <value>Add Transaction</value>
+  </data>
+  <data name="Transactions.Attachment.SizeBytes" xml:space="preserve">
+    <value>{0} B</value>
+  </data>
+  <data name="Transactions.Attachment.SizeKb" xml:space="preserve">
+    <value>{0} KB</value>
+  </data>
+  <data name="Transactions.Attachment.SizeMb" xml:space="preserve">
+    <value>{0} MB</value>
+  </data>
+  <data name="Transactions.Form.AddAttachments" xml:space="preserve">
+    <value>Add attachments</value>
+  </data>
+  <data name="Transactions.Form.AmountLabel" xml:space="preserve">
+    <value>Amount (Rs.) *</value>
+  </data>
+  <data name="Transactions.Form.AttachmentLimits" xml:space="preserve">
+    <value>Up to 5 files, 5 MB each: JPEG, PNG, WebP or PDF.</value>
+  </data>
+  <data name="Transactions.Form.AttachmentMax" xml:space="preserve">
+    <value>An entry can have at most 5 attachments.</value>
+  </data>
+  <data name="Transactions.Form.Attachments" xml:space="preserve">
+    <value>Attachments</value>
+  </data>
+  <data name="Transactions.Form.AttachmentsSaveFirst" xml:space="preserve">
+    <value>Save the entry first, then open it to add photos or PDFs.</value>
+  </data>
+  <data name="Transactions.Form.BackToList" xml:space="preserve">
+    <value>Back to transactions</value>
+  </data>
+  <data name="Transactions.Form.Balance" xml:space="preserve">
+    <value>Balance: {0}</value>
+  </data>
+  <data name="Transactions.Form.ChequeDateLabel" xml:space="preserve">
+    <value>Cheque date</value>
+  </data>
+  <data name="Transactions.Form.ChequeNoLabel" xml:space="preserve">
+    <value>Cheque no.</value>
+  </data>
+  <data name="Transactions.Form.DateLockedHelp" xml:space="preserve">
+    <value>You can only date entries today.</value>
+  </data>
+  <data name="Transactions.Form.DateRequired" xml:space="preserve">
+    <value>A date is required.</value>
+  </data>
+  <data name="Transactions.Form.EditTitle" xml:space="preserve">
+    <value>Edit {0}</value>
+  </data>
+  <data name="Transactions.Form.FileTooLarge" xml:space="preserve">
+    <value>{0} is larger than 5 MB.</value>
+  </data>
+  <data name="Transactions.Form.FromAccount" xml:space="preserve">
+    <value>From account</value>
+  </data>
+  <data name="Transactions.Form.GenericError" xml:space="preserve">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="Transactions.Form.KeyboardHint" xml:space="preserve">
+    <value>Enter moves to the next field · Ctrl+S saves · Esc cancels</value>
+  </data>
+  <data name="Transactions.Form.NoCreatePermission" xml:space="preserve">
+    <value>You don&apos;t have permission to add entries in this company.</value>
+  </data>
+  <data name="Transactions.Form.NotEditableHere" xml:space="preserve">
+    <value>This kind of entry can&apos;t be edited here yet.</value>
+  </data>
+  <data name="Transactions.Form.PaymentMethod" xml:space="preserve">
+    <value>Payment method</value>
+  </data>
+  <data name="Transactions.Form.SaveAndNew" xml:space="preserve">
+    <value>Save &amp; New</value>
+  </data>
+  <data name="Transactions.Form.SavedSnackbar" xml:space="preserve">
+    <value>Saved {0} of {1}.</value>
+  </data>
+  <data name="Transactions.Form.Saving" xml:space="preserve">
+    <value>Saving…</value>
+  </data>
+  <data name="Transactions.Form.ToAccount" xml:space="preserve">
+    <value>To account</value>
+  </data>
+  <data name="Transactions.Form.TypeLabel" xml:space="preserve">
+    <value>Transaction type</value>
+  </data>
+  <data name="Transactions.Form.Uploaded" xml:space="preserve">
+    <value>Uploaded {0}.</value>
+  </data>
+  <data name="Transactions.Form.UploadFailed" xml:space="preserve">
+    <value>Upload failed: {0}</value>
+  </data>
+  <data name="Transactions.Form.VoidedNotice" xml:space="preserve">
+    <value>This entry was voided. It no longer counts toward any balance.</value>
+  </data>
+  <data name="Transactions.Form.VoidedSnackbar" xml:space="preserve">
+    <value>Entry voided.</value>
+  </data>
+  <data name="Transactions.Form.VoidEntry" xml:space="preserve">
+    <value>Void entry</value>
+  </data>
+  <data name="Transactions.Form.VoidMessage" xml:space="preserve">
+    <value>It stays on record but no longer counts toward any balance.</value>
+  </data>
+  <data name="Transactions.Form.VoidTitle" xml:space="preserve">
+    <value>Void this entry?</value>
+  </data>
+  <data name="Transactions.List.AllTypes" xml:space="preserve">
+    <value>All types</value>
+  </data>
+  <data name="Transactions.List.AmountHighLow" xml:space="preserve">
+    <value>Amount high→low</value>
+  </data>
+  <data name="Transactions.List.AmountLowHigh" xml:space="preserve">
+    <value>Amount low→high</value>
+  </data>
+  <data name="Transactions.List.Count" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="Transactions.List.EmptyBody" xml:space="preserve">
+    <value>Add your first transaction to start tracking.</value>
+  </data>
+  <data name="Transactions.List.EmptyTitle" xml:space="preserve">
+    <value>No transactions yet</value>
+  </data>
+  <data name="Transactions.List.LatestFirst" xml:space="preserve">
+    <value>Latest first</value>
+  </data>
+  <data name="Transactions.List.NoMatch" xml:space="preserve">
+    <value>No transactions match.</value>
+  </data>
+  <data name="Transactions.List.OldestFirst" xml:space="preserve">
+    <value>Oldest first</value>
+  </data>
+  <data name="Transactions.List.SearchAria" xml:space="preserve">
+    <value>Search transactions</value>
+  </data>
+  <data name="Transactions.List.SearchPlaceholder" xml:space="preserve">
+    <value>Search type, remarks, date</value>
+  </data>
+  <data name="Transactions.List.Sort" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="Transactions.List.Title" xml:space="preserve">
+    <value>Transactions</value>
+  </data>
+  <data name="Transactions.List.Transfer" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="Transactions.List.Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Transactions.List.Void" xml:space="preserve">
+    <value>Void</value>
+  </data>
+  <data name="Transactions.Type.Expense" xml:space="preserve">
+    <value>Expense</value>
+  </data>
+  <data name="TxnType.AddMoney" xml:space="preserve">
+    <value>Add Money</value>
+  </data>
+  <data name="TxnType.OtherIncome" xml:space="preserve">
+    <value>Other Income</value>
+  </data>
+  <data name="TxnType.PartyAdjustAdd" xml:space="preserve">
+    <value>Balance added</value>
+  </data>
+  <data name="TxnType.PartyAdjustReduce" xml:space="preserve">
+    <value>Balance reduced</value>
+  </data>
+  <data name="TxnType.PaymentIn" xml:space="preserve">
+    <value>Payment In</value>
+  </data>
+  <data name="TxnType.PaymentOut" xml:space="preserve">
+    <value>Payment Out</value>
+  </data>
+  <data name="TxnType.ReduceMoney" xml:space="preserve">
+    <value>Reduce Money</value>
+  </data>
+  <data name="TxnType.TransferMoney" xml:space="preserve">
+    <value>Transfer Money</value>
+  </data>
+  <data name="Web.Error.Heading" xml:space="preserve">
+    <value>An error occurred while processing your request.</value>
+  </data>
+  <data name="Web.Error.RequestId" xml:space="preserve">
+    <value>Request ID:</value>
+  </data>
+  <data name="Web.Error.Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Web.Reconnect.Failed" xml:space="preserve">
+    <value>Failed to rejoin.&lt;br /&gt;Please retry or reload the page.</value>
+  </data>
+  <data name="Web.Reconnect.Paused" xml:space="preserve">
+    <value>The session has been paused by the server.</value>
+  </data>
+  <data name="Web.Reconnect.Rejoining" xml:space="preserve">
+    <value>Rejoining the server...</value>
+  </data>
+  <data name="Web.Reconnect.Resume" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="Web.Reconnect.ResumeFailed" xml:space="preserve">
+    <value>Failed to resume the session.&lt;br /&gt;Please retry or reload the page.</value>
+  </data>
+  <data name="Web.Reconnect.Retry" xml:space="preserve">
+    <value>Retry</value>
+  </data>
+  <data name="Web.Reconnect.RetryAfter" xml:space="preserve">
+    <value> seconds.</value>
+  </data>
+  <data name="Web.Reconnect.RetryBefore" xml:space="preserve">
+    <value>Rejoin failed... trying again in </value>
+  </data>
+  <data name="Calendar.Label" xml:space="preserve">
+    <value>Date calendar</value>
+  </data>
+  <data name="Calendar.Bs" xml:space="preserve">
+    <value>Nepali miti (BS)</value>
+  </data>
+  <data name="Calendar.Ad" xml:space="preserve">
+    <value>English date (AD)</value>
+  </data>
+  <data name="Calendar.Help" xml:space="preserve">
+    <value>How dates are shown and typed for this company. Saved entries don't change.</value>
+  </data>
+  <data name="Calendar.Saved" xml:space="preserve">
+    <value>Date calendar changed.</value>
+  </data>
+  <data name="Calendar.Failed" xml:space="preserve">
+    <value>The date calendar couldn't be changed.</value>
+  </data>
+  <data name="Calendar.Open" xml:space="preserve">
+    <value>Open calendar</value>
+  </data>
+  <data name="Calendar.PreviousMonth" xml:space="preserve">
+    <value>Previous month</value>
+  </data>
+  <data name="Calendar.NextMonth" xml:space="preserve">
+    <value>Next month</value>
+  </data>
+  <data name="Calendar.Year" xml:space="preserve">
+    <value>Year</value>
+  </data>
+  <data name="Calendar.Month" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="Calendar.Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Calendar.AdDate" xml:space="preserve">
+    <value>AD {0}</value>
+  </data>
+  <data name="Calendar.OutsideRange" xml:space="preserve">
+    <value>AD date, outside the Nepali calendar</value>
+  </data>
+  <data name="Calendar.InvalidBs" xml:space="preserve">
+    <value>Enter a Nepali date as yyyy/mm/dd.</value>
+  </data>
+  <data name="Calendar.Month1" xml:space="preserve">
+    <value>Baishakh</value>
+  </data>
+  <data name="Calendar.Month2" xml:space="preserve">
+    <value>Jestha</value>
+  </data>
+  <data name="Calendar.Month3" xml:space="preserve">
+    <value>Ashad</value>
+  </data>
+  <data name="Calendar.Month4" xml:space="preserve">
+    <value>Shrawan</value>
+  </data>
+  <data name="Calendar.Month5" xml:space="preserve">
+    <value>Bhadra</value>
+  </data>
+  <data name="Calendar.Month6" xml:space="preserve">
+    <value>Ashwin</value>
+  </data>
+  <data name="Calendar.Month7" xml:space="preserve">
+    <value>Kartik</value>
+  </data>
+  <data name="Calendar.Month8" xml:space="preserve">
+    <value>Mangsir</value>
+  </data>
+  <data name="Calendar.Month9" xml:space="preserve">
+    <value>Poush</value>
+  </data>
+  <data name="Calendar.Month10" xml:space="preserve">
+    <value>Magh</value>
+  </data>
+  <data name="Calendar.Month11" xml:space="preserve">
+    <value>Falgun</value>
+  </data>
+  <data name="Calendar.Month12" xml:space="preserve">
+    <value>Chaitra</value>
+  </data>
+  <data name="Calendar.Weekday0" xml:space="preserve">
+    <value>Sun</value>
+  </data>
+  <data name="Calendar.Weekday1" xml:space="preserve">
+    <value>Mon</value>
+  </data>
+  <data name="Calendar.Weekday2" xml:space="preserve">
+    <value>Tue</value>
+  </data>
+  <data name="Calendar.Weekday3" xml:space="preserve">
+    <value>Wed</value>
+  </data>
+  <data name="Calendar.Weekday4" xml:space="preserve">
+    <value>Thu</value>
+  </data>
+  <data name="Calendar.Weekday5" xml:space="preserve">
+    <value>Fri</value>
+  </data>
+  <data name="Calendar.Weekday6" xml:space="preserve">
+    <value>Sat</value>
+  </data>
+  <data name="Validation.Required" xml:space="preserve">
+    <value>{0} is required.</value>
+  </data>
+  <data name="Validation.TooLong" xml:space="preserve">
+    <value>{0} can be at most {1} characters.</value>
+  </data>
+  <data name="Validation.PartyType" xml:space="preserve">
+    <value>Choose Customer or Supplier.</value>
+  </data>
+  <data name="Validation.Email" xml:space="preserve">
+    <value>Enter a valid email address.</value>
+  </data>
+  <data name="Validation.Pan" xml:space="preserve">
+    <value>PAN must be digits only, at most {0}.</value>
+  </data>
+  <data name="Validation.PartyOpening" xml:space="preserve">
+    <value>Opening balance must be a positive amount with at most 2 decimals. Use To Give for money you owe.</value>
+  </data>
+  <data name="Validation.OpeningSide" xml:space="preserve">
+    <value>Choose To Receive or To Give.</value>
+  </data>
+  <data name="Validation.MoneyType" xml:space="preserve">
+    <value>Choose Bank, Wallet or Cash.</value>
+  </data>
+  <data name="Validation.Decimals" xml:space="preserve">
+    <value>Enter an amount with at most 2 decimals.</value>
+  </data>
+  <data name="Validation.Phone" xml:space="preserve">
+    <value>Phone can contain digits, spaces, +, - and brackets.</value>
+  </data>
+  <data name="Validation.TransactionType" xml:space="preserve">
+    <value>Choose a transaction type.</value>
+  </data>
+  <data name="Validation.Amount" xml:space="preserve">
+    <value>Amount must be more than 0 with at most 2 decimals.</value>
+  </data>
+  <data name="Validation.Account" xml:space="preserve">
+    <value>Choose an account.</value>
+  </data>
+  <data name="Validation.Field.FullName" xml:space="preserve">
+    <value>Full name</value>
+  </data>
+  <data name="Validation.Field.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Validation.Field.CategoryName" xml:space="preserve">
+    <value>Category name</value>
+  </data>
+  <data name="Validation.Field.Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Validation.Field.AccountHolderName" xml:space="preserve">
+    <value>Account holder name</value>
+  </data>
+  <data name="Validation.Field.AccountNumber" xml:space="preserve">
+    <value>Account number</value>
+  </data>
+  <data name="Validation.Field.Remarks" xml:space="preserve">
+    <value>Remarks</value>
+  </data>
+  <data name="Validation.Field.ChequeNo" xml:space="preserve">
+    <value>Cheque no.</value>
+  </data>
+</root>

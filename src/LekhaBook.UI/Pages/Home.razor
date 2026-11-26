@@ -4,13 +4,13 @@
 @inject IDataService Data
 @inject ISessionService Session
 
-<PageTitle>Dashboard · Lekha Books</PageTitle>
+<PageTitle>@Loc["Home.Title"] · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">Dashboard</MudText>
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Home.Title"]</MudText>
 
 @if (_error is not null)
 {
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Dashboard totals" OnRetry="LoadAsync" />
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Home.Totals"]" OnRetry="LoadAsync" />
 }
 
 <MudGrid Spacing="2">
@@ -27,17 +27,17 @@
     }
 </MudGrid>
 
-<MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">Quick entry</MudText>
+<MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">@Loc["Home.QuickEntry"]</MudText>
 <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
-    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Href="transactions/new?type=PaymentIn" Disabled="@(!CanAdd(TransactionType.PaymentIn))">Payment In</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Href="transactions/new?type=PaymentOut" Disabled="@(!CanAdd(TransactionType.PaymentOut))">Payment Out</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Href="transactions/new?type=Expense" Disabled="@(!CanAdd(TransactionType.Expense))">Expense</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Savings" Href="transactions/new?type=OtherIncome" Disabled="@(!CanAdd(TransactionType.OtherIncome))">Other Income</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney" Disabled="@(!CanAdd(TransactionType.TransferMoney))">Transfer Money</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Href="transactions/new?type=PaymentIn" Disabled="@(!CanAdd(TransactionType.PaymentIn))">@Loc["TxnType.PaymentIn"]</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Href="transactions/new?type=PaymentOut" Disabled="@(!CanAdd(TransactionType.PaymentOut))">@Loc["TxnType.PaymentOut"]</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Href="transactions/new?type=Expense" Disabled="@(!CanAdd(TransactionType.Expense))">@Loc["Transactions.Type.Expense"]</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Savings" Href="transactions/new?type=OtherIncome" Disabled="@(!CanAdd(TransactionType.OtherIncome))">@Loc["TxnType.OtherIncome"]</MudButton>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney" Disabled="@(!CanAdd(TransactionType.TransferMoney))">@Loc["TxnType.TransferMoney"]</MudButton>
 </MudStack>
 
 <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">
-    Running on @PlatformInfo.Platform (@PlatformInfo.FormFactor)
+    @(Loc["Settings.RunningOn", PlatformInfo.Platform, PlatformInfo.FormFactor])
 </MudText>
 
 @code {
@@ -47,10 +47,10 @@
 
     private IEnumerable<(string Label, decimal? Amount, Color Color, string Href)> Tiles =>
     [
-        ("To Receive", _parties?.Where(p => p.Balance > 0).Sum(p => p.Balance), Color.Success, "parties?balance=receive"),
-        ("To Give", _parties is null ? null : -_parties.Where(p => p.Balance < 0).Sum(p => p.Balance), Color.Error, "parties?balance=give"),
-        ("Cash in Hand", _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance), Color.Default, "accounts"),
-        ("Bank Balance", _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance), Color.Default, "accounts"),
+        (Loc["PartySide.ToReceive"], _parties?.Where(p => p.Balance > 0).Sum(p => p.Balance), Color.Success, "parties?balance=receive"),
+        (Loc["PartySide.ToGive"], _parties is null ? null : -_parties.Where(p => p.Balance < 0).Sum(p => p.Balance), Color.Error, "parties?balance=give"),
+        (Loc["Home.CashInHand"], _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance), Color.Default, "accounts"),
+        (Loc["Home.BankBalance"], _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance), Color.Default, "accounts"),
     ];
 
     private bool CanAdd(TransactionType type) => Session.Can(EntryRules.PermissionFor(type, EntryAction.Create));

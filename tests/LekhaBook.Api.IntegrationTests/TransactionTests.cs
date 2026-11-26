@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using LekhaBook.Contracts;
 using LekhaBook.Data.Postgres;
 using LekhaBook.Domain;
@@ -259,7 +260,105 @@ public sealed class TransactionTests(ApiFixture api) : IClassFixture<ApiFixture>
         Assert.Equal(HttpStatusCode.Forbidden, (await noPayments.Http.GetAsync($"{books.Url}/attachments/{attachment.Id}")).StatusCode);
     }
 
+    [PostgresFact]
+    public async Task Attachments_can_be_removed_by_whoever_may_change_the_entry_and_an_entry_holds_five()
+    {
+        var books = await SetUpAsync();
+        var entry = await books.AddAsync("PaymentIn", books.Customer, books.Cash, 100m);
+        var clerk = await api.NewUserAsync();
+        await ApiFixture.AddMemberAsync(books.Owner, books.CompanyId, clerk, "EntryPerson");
+        var attachmentsUrl = $"{books.Url}/attachments";
+
+        var ids = new List<Guid>();
+        for (var i = 0; i < 5; i++)
+        {
+            ids.Add(await UploadPhotoAsync(books.Owner, attachmentsUrl, entry.Id));
+        }
+
+        // A sixth is refused before its file is kept.
+        var sixth = await books.Owner.Http.PostAsync(attachmentsUrl, PhotoContent(entry.Id));
+        Assert.Equal(HttpStatusCode.BadRequest, sixth.StatusCode);
+        using (var problem = JsonDocument.Parse(await sixth.Content.ReadAsStringAsync()))
+        {
+            Assert.Equal("An entry can have at most 5 attachments.", problem.RootElement.GetProperty("errors").GetProperty("file")[0].GetString());
+        }
+
+        // The clerk didn't add the owner's proof, so may not remove it.
+        Assert.Equal(HttpStatusCode.Forbidden, (await clerk.Http.DeleteAsync($"{attachmentsUrl}/{ids[0]}")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await clerk.Http.GetAsync($"{attachmentsUrl}/{ids[0]}")).StatusCode);
+
+        Assert.Equal(HttpStatusCode.NoContent, (await books.Owner.Http.DeleteAsync($"{attachmentsUrl}/{ids[0]}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await books.Owner.Http.GetAsync($"{attachmentsUrl}/{ids[0]}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await books.Owner.Http.DeleteAsync($"{attachmentsUrl}/{ids[0]}")).StatusCode);
+        Assert.Equal(4, (await books.Owner.Http.GetFromJsonAsync<List<AttachmentDto>>($"{attachmentsUrl}?transactionId={entry.Id}"))!.Count);
+
+        // The removed one frees a place.
+        await UploadPhotoAsync(books.Owner, attachmentsUrl, entry.Id);
+    }
+
+    [PostgresFact]
+    public async Task Statement_lines_carry_cheque_no_and_the_proof_the_user_may_see()
+    {
+        var books = await SetUpAsync();
+        var payment = await books.AddAsync("PaymentIn", books.Customer, books.Cash, 400m);
+        var cheque = await books.Owner.Http.PostAsJsonAsync($"{books.Url}/transactions",
+            new CreateTransactionRequest("TransferMoney", null, 100m, books.Cash, books.Bank, "note", ChequeNo: "CHQ-42"));
+        Assert.Equal(HttpStatusCode.Created, cheque.StatusCode);
+        var transfer = (await cheque.Content.ReadFromJsonAsync<TransactionDto>())!;
+
+        var attachmentsUrl = $"{books.Url}/attachments";
+        var first = await UploadPhotoAsync(books.Owner, attachmentsUrl, transfer.Id);
+        var second = await UploadPhotoAsync(books.Owner, attachmentsUrl, transfer.Id);
+        var receipt = await UploadPhotoAsync(books.Owner, attachmentsUrl, payment.Id);
+
+        var bank = await books.Owner.Http.GetFromJsonAsync<LedgerDto>($"{books.Url}/accounts/{books.Bank}/ledger");
+        var line = Assert.Single(bank!.Lines);
+        Assert.Equal("CHQ-42", line.ChequeNo);
+        Assert.Equal(new[] { first, second }, line.Attachments.Select(a => a.Id)); // oldest first
+
+        var customer = await books.Owner.Http.GetFromJsonAsync<LedgerDto>($"{books.Url}/parties/{books.Customer}/ledger");
+        var paymentLine = Assert.Single(customer!.Lines);
+        Assert.Null(paymentLine.ChequeNo);
+        Assert.Equal(new[] { receipt }, paymentLine.Attachments.Select(a => a.Id));
+    }
+
+    [PostgresFact]
+    public async Task Members_without_the_view_grant_see_the_statement_but_not_its_proof()
+    {
+        var books = await SetUpAsync();
+        var payment = await books.AddAsync("PaymentIn", books.Customer, books.Cash, 400m);
+        await UploadPhotoAsync(books.Owner, $"{books.Url}/attachments", payment.Id);
+
+        // Can open money accounts, but not payments in.
+        var viewer = await api.NewUserAsync();
+        await ApiFixture.AddMemberAsync(books.Owner, books.CompanyId, viewer, "Accountant", [Permission.AccountsView]);
+
+        var cash = await viewer.Http.GetFromJsonAsync<LedgerDto>($"{books.Url}/accounts/{books.Cash}/ledger");
+        var line = Assert.Single(cash!.Lines);
+        Assert.Equal(payment.Id, line.TransactionId);
+        Assert.Empty(line.Attachments);
+    }
+
     // ---------------- Helpers ----------------
+
+    private static MultipartFormDataContent PhotoContent(Guid transactionId)
+    {
+        var file = new ByteArrayContent([0xFF, 0xD8, 0xFF, 0xE0]);
+        file.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
+        return new MultipartFormDataContent
+        {
+            { file, "file", "receipt.jpg" },
+            { new StringContent(transactionId.ToString()), "transactionId" },
+        };
+    }
+
+    private static async Task<Guid> UploadPhotoAsync(ApiFixture.UserClient user, string attachmentsUrl, Guid transactionId)
+    {
+        var response = await user.Http.PostAsync(attachmentsUrl, PhotoContent(transactionId));
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<AttachmentDto>())!.Id;
+    }
+
 
     private async Task<Books> SetUpAsync()
     {

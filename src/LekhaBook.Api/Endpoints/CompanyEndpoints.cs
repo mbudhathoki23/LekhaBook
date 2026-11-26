@@ -23,12 +23,18 @@ public static class CompanyEndpoints
         // Everything under a company: members only, checked before the request body is read.
         var company = api.MapGroup("/companies/{companyId:guid}").RequireCompanyMember();
         company.MapGet("", GetCompany);
+        company.MapPut("/calendar", UpdateCalendar).RequirePermission(Permission.SettingsBusiness);
         company.MapGet("/members", ListMembers).RequirePermission(Permission.StaffView);
         company.MapPut("/members/{memberId:guid}", UpdateMember).RequirePermission(Permission.StaffEdit);
         company.MapDelete("/members/{memberId:guid}", RevokeMember).RequirePermission(Permission.StaffDelete);
         company.MapGet("/invitations", ListInvitations).RequirePermission(Permission.StaffView);
         company.MapPost("/invitations", Invite).RequirePermission(Permission.StaffCreate);
         company.MapDelete("/invitations/{invitationId:guid}", CancelInvitation).RequirePermission(Permission.StaffCreate);
+
+        // The logo is readable by every member; only business settings can change it.
+        company.MapGet("/logo", GetLogo);
+        company.MapPut("/logo", SetLogo).RequirePermission(Permission.SettingsBusiness);
+        company.MapDelete("/logo", DeleteLogo).RequirePermission(Permission.SettingsBusiness);
     }
 
     // ---------------- Current user ----------------
@@ -46,11 +52,11 @@ public static class CompanyEndpoints
             join c in db.Companies on m.CompanyId equals c.Id
             where m.UserId == userId && m.Status == MemberStatus.Active && !c.IsDeleted
             orderby c.Name
-            select new { m, c.Name }).ToListAsync();
+            select new { m, c.Name, c.Calendar }).ToListAsync();
 
         return TypedResults.Ok(new MeResponse(
             user.Id, user.Email!, user.DisplayName,
-            companies.Select(x => Summary(x.m, x.Name)).ToList()));
+            companies.Select(x => Summary(x.m, x.Name, x.Calendar)).ToList()));
     }
 
     private static async Task<Results<NoContent, ValidationProblem, UnauthorizedHttpResult>> UpdateMe(
@@ -86,10 +92,22 @@ public static class CompanyEndpoints
             return problem;
         }
 
+        var calendar = CalendarMode.BS;
+        if (request.Calendar is not null)
+        {
+            if (ParseCalendar(request.Calendar) is not { } chosen)
+            {
+                return CalendarProblem();
+            }
+
+            calendar = chosen;
+        }
+
         var now = clock.GetUtcNow().UtcDateTime;
         var company = new Company
         {
             Name = request.Name.Trim(),
+            Calendar = calendar,
             Phone = request.Phone?.Trim(),
             Address = request.Address?.Trim(),
             Pan = request.Pan?.Trim(),
@@ -121,7 +139,7 @@ public static class CompanyEndpoints
         db.CompanyMembers.Add(owner);
         await db.SaveChangesAsync();
 
-        return TypedResults.Created($"/api/companies/{company.Id}", Summary(owner, company.Name));
+        return TypedResults.Created($"/api/companies/{company.Id}", Summary(owner, company.Name, company.Calendar));
     }
 
     private static async Task<Results<Ok<CompanyDetails>, NotFound>> GetCompany(Guid companyId, PostgresDbContext db)
@@ -131,8 +149,131 @@ public static class CompanyEndpoints
             ? TypedResults.NotFound()
             : TypedResults.Ok(new CompanyDetails(
                 c.Id, c.Name, c.Phone, c.Email, c.Address, c.Pan,
-                c.Calendar.ToString(), c.Currency, c.TimeZoneId, c.FiscalYearStartMonth));
+                c.Calendar.ToString(), c.Currency, c.TimeZoneId, c.FiscalYearStartMonth, HasLogo: c.LogoStorageKey != null));
     }
+
+    /// <summary>Changes only how dates are shown and typed; stored dates are AD either way.</summary>
+    private static async Task<Results<NoContent, NotFound, ValidationProblem>> UpdateCalendar(
+        Guid companyId, UpdateCalendarRequest request, PostgresDbContext db, TimeProvider clock)
+    {
+        if (ParseCalendar(request.Calendar) is not { } calendar)
+        {
+            return CalendarProblem();
+        }
+
+        var company = await db.Companies.SingleOrDefaultAsync(c => c.Id == companyId && !c.IsDeleted);
+        if (company is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (company.Calendar != calendar)
+        {
+            company.Calendar = calendar;
+            company.UpdatedAtUtc = clock.GetUtcNow().UtcDateTime;
+            await db.SaveChangesAsync();
+        }
+
+        return TypedResults.NoContent();
+    }
+
+    // ---------------- Logo ----------------
+
+    private static async Task<Results<FileContentHttpResult, NotFound>> GetLogo(Guid companyId, PostgresDbContext db)
+    {
+        var company = await db.Companies.AsNoTracking().SingleOrDefaultAsync(c => c.Id == companyId && !c.IsDeleted);
+        if (company?.LogoStorageKey is not { } key || company.LogoContentType is not { } contentType
+            || FileStore.StoragePath(companyId, key) is not { } path || !File.Exists(path))
+        {
+            return TypedResults.NotFound();
+        }
+
+        return TypedResults.File(await File.ReadAllBytesAsync(path), contentType);
+    }
+
+    private static async Task<Results<NoContent, NotFound, ValidationProblem>> SetLogo(
+        Guid companyId, HttpRequest request, PostgresDbContext db, TimeProvider clock)
+    {
+        if (!request.HasFormContentType)
+        {
+            return FileProblem("Expected multipart form data.");
+        }
+
+        var form = await request.ReadFormAsync();
+        var file = form.Files.GetFile("file") ?? form.Files.FirstOrDefault();
+        if (file is null || file.Length == 0)
+        {
+            return FileProblem("A file is required.");
+        }
+
+        if (!FileStore.LogoContentTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
+        {
+            return FileProblem("Logo must be a JPEG, PNG or WebP image.");
+        }
+
+        if (file.Length > FileStore.MaxLogoBytes)
+        {
+            return FileProblem("Logo too large. Maximum 2 MB.");
+        }
+
+        var company = await db.Companies.SingleOrDefaultAsync(c => c.Id == companyId && !c.IsDeleted);
+        if (company is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        var contentType = file.ContentType.ToLowerInvariant();
+        var key = FileStore.NewKey(FileStore.LogoExtension(contentType));
+        var path = FileStore.StoragePath(companyId, key)
+            ?? throw new InvalidOperationException("A generated file name must be a plain file name.");
+        Directory.CreateDirectory(FileStore.CompanyFolder(companyId));
+        await using (var stream = File.Create(path))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        // The new file is in place before the row points at it. The old file is removed only after the row is saved.
+        var previous = company.LogoStorageKey;
+        try
+        {
+            company.LogoStorageKey = key;
+            company.LogoContentType = contentType;
+            company.UpdatedAtUtc = clock.GetUtcNow().UtcDateTime;
+            await db.SaveChangesAsync();
+        }
+        catch
+        {
+            FileStore.DeleteQuietly(companyId, key);
+            throw;
+        }
+
+        FileStore.DeleteQuietly(companyId, previous);
+        return TypedResults.NoContent();
+    }
+
+    private static async Task<Results<NoContent, NotFound>> DeleteLogo(Guid companyId, PostgresDbContext db, TimeProvider clock)
+    {
+        var company = await db.Companies.SingleOrDefaultAsync(c => c.Id == companyId && !c.IsDeleted);
+        if (company is null)
+        {
+            return TypedResults.NotFound();
+        }
+
+        if (company.LogoStorageKey is not { } previous)
+        {
+            return TypedResults.NoContent();
+        }
+
+        company.LogoStorageKey = null;
+        company.LogoContentType = null;
+        company.UpdatedAtUtc = clock.GetUtcNow().UtcDateTime;
+        await db.SaveChangesAsync();
+        FileStore.DeleteQuietly(companyId, previous);
+        return TypedResults.NoContent();
+    }
+
+    private static ValidationProblem FileProblem(string message) =>
+        TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["file"] = [message] });
 
     // ---------------- Members ----------------
 
@@ -318,14 +459,20 @@ public static class CompanyEndpoints
         invitation.AcceptedBy = userId;
         await db.SaveChangesAsync();
 
-        var companyName = await db.Companies.Where(c => c.Id == invitation.CompanyId).Select(c => c.Name).SingleAsync();
-        return TypedResults.Ok(Summary(member, companyName));
+        var joined = await db.Companies.Where(c => c.Id == invitation.CompanyId).Select(c => new { c.Name, c.Calendar }).SingleAsync();
+        return TypedResults.Ok(Summary(member, joined.Name, joined.Calendar));
     }
 
     // ---------------- Helpers ----------------
 
-    private static CompanySummary Summary(CompanyMember m, string companyName) =>
-        new(m.CompanyId, companyName, m.Role.ToString(), m.EffectivePermissions.Order(StringComparer.Ordinal).ToList());
+    private static CompanySummary Summary(CompanyMember m, string companyName, CalendarMode calendar) =>
+        new(m.CompanyId, companyName, m.Role.ToString(), m.EffectivePermissions.Order(StringComparer.Ordinal).ToList(), calendar.ToString());
+
+    private static CalendarMode? ParseCalendar(string? calendar) =>
+        Enum.TryParse<CalendarMode>(calendar, ignoreCase: true, out var mode) && Enum.IsDefined(mode) ? mode : null;
+
+    private static ValidationProblem CalendarProblem() =>
+        TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["calendar"] = ["Calendar must be BS or AD."] });
 
     private static MemberDto ToDto(CompanyMember m) =>
         new(m.Id, m.UserId, m.DisplayName, m.Role.ToString(), m.Status.ToString(), m.CustomPermissions,

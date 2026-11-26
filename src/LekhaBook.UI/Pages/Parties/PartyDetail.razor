@@ -7,13 +7,13 @@
 @inject IDialogService Dialogs
 @inject ISnackbar Snackbar
 
-<PageTitle>@(_party?.Name ?? "Party") · Lekha Books</PageTitle>
+<PageTitle>@(_party?.Name ?? Loc["Common.Party"]) · Lekha Books</PageTitle>
 
-<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="parties" Class="mb-2">Parties</MudButton>
+<MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ArrowBack" Href="parties" Class="mb-2 no-print">@Loc["Parties.Title"]</MudButton>
 
 @if (_error is not null)
 {
-    <LoadError Message="@_error" Offline="_offline" What="Parties" OnRetry="LoadAsync" />
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Parties.Title"]" OnRetry="LoadAsync" />
 }
 else if (_party is null)
 {
@@ -28,11 +28,11 @@ else
             <div class="row-main">
                 <MudText Typo="Typo.h6" tabindex="-1">@_party.Name</MudText>
                 <MudText Typo="Typo.body2" Class="mud-text-secondary">
-                    @_party.PartyType@(_party.CategoryName is null ? "" : $" · {_party.CategoryName}")@(_party.Phone is null ? "" : $" · {_party.Phone}")
+                    @(_party.PartyType == "Supplier" ? Loc["Parties.Type.Supplier"] : Loc["Parties.Type.Customer"])@(_party.CategoryName is null ? "" : $" · {_party.CategoryName}")@(_party.Phone is null ? "" : $" · {_party.Phone}")
                 </MudText>
             </div>
             <div class="row-amount">
-                <MudText Typo="Typo.caption" Color="color">@MasterLabels.PartyBalanceTitle(_party.Balance)</MudText>
+                <MudText Typo="Typo.caption" Color="color">@Loc[MasterLabels.PartyBalanceTitle(_party.Balance)]</MudText>
                 <MudText Typo="Typo.h5" Color="color" Class="text-nowrap">@Money.Format(Math.Abs(_party.Balance))</MudText>
             </div>
         </div>
@@ -40,26 +40,27 @@ else
         @if (_party.Address is not null || _party.Email is not null || _party.Pan is not null)
         {
             <MudText Typo="Typo.body2" Class="mud-text-secondary mt-3">
-                @string.Join(" · ", new[] { _party.Address, _party.Email, _party.Pan is null ? null : $"PAN {_party.Pan}" }.Where(s => s is not null))
+                @string.Join(" · ", new[] { _party.Address, _party.Email, _party.Pan is null ? null : Loc["Parties.Detail.PanValue", _party.Pan].Value }.Where(s => s is not null))
             </MudText>
         }
 
-        <MudStack Row="true" Spacing="2" Class="mt-3" Wrap="Wrap.Wrap">
+        <MudStack Row="true" Spacing="2" Class="mt-3 no-print" Wrap="Wrap.Wrap">
             @if (CanEdit)
             {
-                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"parties/{PartyId}/edit")">Edit</MudButton>
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"parties/{PartyId}/edit")">@Loc["Common.Edit"]</MudButton>
             }
             @if (CanDelete)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">Delete</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">@Loc["Common.Delete"]</MudButton>
             }
         </MudStack>
     </MudPaper>
 
-    <MudText Typo="Typo.subtitle1" Class="mb-2">Transactions</MudText>
-    @if (_ledger is not null)
+    <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Ledger.Transactions"]</MudText>
+    @if (_ledger is not null && Session.CurrentCompany is { } company)
     {
-        <LedgerTable Ledger="_ledger" DebitTitle="Gave / Added" CreditTitle="Got / Reduced" FormatBalance="PartyBalance" />
+        <StatementHeader CompanyId="company.CompanyId" Party="_party" Ledger="_ledger" />
+        <LedgerTable Ledger="_ledger" DebitTitle="@Loc["Ledger.GaveAdded"]" CreditTitle="@Loc["Ledger.GotReduced"]" FormatBalance="PartyBalance" />
     }
 }
 
@@ -107,18 +108,18 @@ else
         (_party, _ledger) = (party.Value, ledger.Value);
     }
 
-    private static string PartyBalance(decimal balance)
+    private string PartyBalance(decimal balance)
     {
         var (label, _) = MasterLabels.PartySide(balance);
-        return balance == 0 ? Money.Format(0) : $"{Money.Format(Math.Abs(balance))} {label}";
+        return balance == 0 ? Money.Format(0) : $"{Money.Format(Math.Abs(balance))} {Loc[label]}";
     }
 
     private async Task DeleteAsync()
     {
         var confirmed = await Dialogs.ShowMessageBoxAsync(
-            "Delete party?",
-            $"{_party!.Name} will be removed from your party list.",
-            yesText: "Delete", cancelText: "Cancel");
+            Loc["Parties.Detail.DeleteTitle"],
+            Loc["Parties.Detail.DeleteText", _party!.Name],
+            yesText: Loc["Common.Delete"], cancelText: Loc["Common.Cancel"]);
         if (confirmed != true || Session.CurrentCompany is not { } company)
         {
             return;
@@ -129,12 +130,12 @@ else
         _busy = false;
         if (result.Ok)
         {
-            Snackbar.Add($"Deleted {_party.Name}.", Severity.Success);
+            Snackbar.Add(Loc["Parties.Detail.Deleted", _party.Name], Severity.Success);
             Navigation.NavigateTo("parties");
         }
         else
         {
-            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+            Snackbar.Add(result.Error ?? Loc["Parties.Detail.SomethingWrong"], Severity.Error);
         }
     }
 }

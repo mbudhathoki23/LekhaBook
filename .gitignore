@@ -17,3 +17,7 @@ TestResults/
 
 # Local developer notes (test accounts for the throwaway test database)
 .dev/
+
+# Runtime check captures stay on the machine that took them
+docs/branding/qa-*/*.png
+docs/branding/qa-*/*.mp4

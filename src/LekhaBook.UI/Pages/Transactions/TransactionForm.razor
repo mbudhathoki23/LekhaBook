@@ -8,6 +8,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService Dialogs
 @inject IAttachmentService Attachments
+@inject AttachmentContentCache Cache
 
 <PageTitle>@Title · Lekha Books</PageTitle>
 
@@ -15,7 +16,7 @@
 
 @if (_loadError is not null)
 {
-    <LoadError Message="@_loadError" Offline="_offline" What="Transactions" OnRetry="LoadAsync" />
+    <LoadError Message="@_loadError" Offline="_offline" What="@Loc["Transactions.List.Title"]" OnRetry="LoadAsync" />
 }
 else if (!_loaded)
 {
@@ -23,18 +24,18 @@ else if (!_loaded)
 }
 else if (IsNew && OfferedTypes.Count == 0)
 {
-    <MudAlert Severity="Severity.Info">You don't have permission to add entries in this company.</MudAlert>
+    <MudAlert Severity="Severity.Info">@Loc["Transactions.Form.NoCreatePermission"]</MudAlert>
 }
 else if (_existing is not null && (_existing.Status == "Void" || !FormTypes.Contains(_type)))
 {
     <MudAlert Severity="Severity.Info" Class="mb-3">
-        @(_existing.Status == "Void" ? "This entry was voided. It no longer counts toward any balance." : "This kind of entry can't be edited here yet.")
+        @(_existing.Status == "Void" ? Loc["Transactions.Form.VoidedNotice"] : Loc["Transactions.Form.NotEditableHere"])
     </MudAlert>
-    <MudText Class="mb-3">@MasterLabels.TransactionType(_existing.Type) · @_existing.Date.ToString("yyyy-MM-dd") · @Money.Format(_existing.Amount)</MudText>
-    <MudButton Variant="Variant.Text" Href="transactions">Back to transactions</MudButton>
+    <MudText Class="mb-3">@Loc[MasterLabels.TransactionType(_existing.Type)] · @Session.FormatDate(_existing.Date) · @Money.Format(_existing.Amount)</MudText>
+    <MudButton Variant="Variant.Text" Href="transactions">@Loc["Transactions.Form.BackToList"]</MudButton>
     @if (CanVoid && _existing.Status != "Void")
     {
-        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">Void entry</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">@Loc["Transactions.Form.VoidEntry"]</MudButton>
     }
 }
 else
@@ -43,7 +44,7 @@ else
         <MudPaper Class="pa-4 mb-3" Elevation="1">
             @if (IsNew)
             {
-                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Transaction type</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Transactions.Form.TypeLabel"]</MudText>
                 <MudRadioGroup T="TransactionType" Value="_type" ValueChanged="ChangeType" Name="transaction-type">
                     @foreach (var type in OfferedTypes)
                     {
@@ -52,10 +53,9 @@ else
                 </MudRadioGroup>
             }
 
-            <MudDatePicker @bind-Date="_date" Label="Date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
-                           Variant="Variant.Outlined" Class="mt-2" Disabled="DateLocked"
-                           HelperText="@(DateLocked ? "You can only date entries today." : null)"
-                           Error="@Has("date")" ErrorText="@ErrorOf("date")" />
+            <DateField @ref="_dateField" @bind-Value="_date" Label="@Loc["Common.Date"]" Class="mt-2" Disabled="DateLocked"
+                       HelperText="@(DateLocked ? Loc["Transactions.Form.DateLockedHelp"].Value : null)"
+                       Error="@Has("date")" ErrorText="@ErrorOf("date")" />
 
             <MudAutocomplete T="Choice" @bind-Value="_first" Label="@($"{FirstLabel} *")" SearchFunc="SearchFirst"
                              ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
@@ -64,7 +64,7 @@ else
                 <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
             </MudAutocomplete>
 
-            <MudNumericField T="decimal?" @bind-Value="_amount" Label="Amount (Rs.) *" Placeholder="0" HideSpinButtons="true"
+            <MudNumericField T="decimal?" @bind-Value="_amount" Label="@Loc["Transactions.Form.AmountLabel"]" Placeholder="0" HideSpinButtons="true"
                              InputMode="InputModes.Decimal" Variant="Variant.Outlined" Class="mt-3"
                              Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
 
@@ -77,37 +77,65 @@ else
 
             @if (ShowCheque)
             {
-                <MudTextField @bind-Value="_chequeNo" Label="Cheque no." Variant="Variant.Outlined" Class="mt-3"
+                <MudTextField @bind-Value="_chequeNo" Label="@Loc["Transactions.Form.ChequeNoLabel"]" Variant="Variant.Outlined" Class="mt-3"
                               MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
-                <MudDatePicker @bind-Date="_chequeDate" Label="Cheque date" Editable="true" DateFormat="yyyy-MM-dd"
-                               Placeholder="yyyy-mm-dd" Variant="Variant.Outlined" Class="mt-3" />
+                <DateField @ref="_chequeDateField" @bind-Value="_chequeDate" Label="@Loc["Transactions.Form.ChequeDateLabel"]" Class="mt-3" />
             }
 
-            <MudTextField @bind-Value="_remarks" Label="Remarks" Variant="Variant.Outlined" Class="mt-3"
+            <MudTextField @bind-Value="_remarks" Label="@Loc["Common.Remarks"]" Variant="Variant.Outlined" Class="mt-3"
                           MaxLength="MasterValidation.RemarksMax" Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">Attachments</MudText>
-            @if (IsNew)
+            <MudText Typo="Typo.subtitle2" Class="mb-2">@Loc["Transactions.Form.Attachments"]</MudText>
+            @if (IsNew && _staged.Count > 0)
             {
-                <MudText Typo="Typo.body2" Class="mud-text-secondary">Save the entry first, then open it to add photos or PDFs.</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-1">@Loc["Attachments.SavedWithEntry"]</MudText>
+                @foreach (var staged in _staged)
+                {
+                    <div class="attachment-row">
+                        <div class="attachment-info">
+                            <MudText Typo="Typo.body2" Class="attachment-name">@staged.Name</MudText>
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(staged.Size)</MudText>
+                        </div>
+                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Disabled="_uploading"
+                                       aria-label="@Loc["Attachments.RemoveNamed", staged.Name]" OnClick="() => RemoveStaged(staged)" />
+                    </div>
+                }
             }
-            else
+            @foreach (var attachment in _attachments)
             {
-                @foreach (var attachment in _attachments)
-                {
-                    <MudText Typo="Typo.body2">@attachment.FileName · @FileSize(attachment.SizeBytes)</MudText>
-                }
-                @if (CanEdit)
-                {
-                    <InputFile OnChange="OnFilesSelected" accept="image/*,application/pdf" multiple class="mt-2" aria-label="Add attachments" />
-                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Up to 5 files, 5 MB each: JPEG, PNG, WebP or PDF.</MudText>
-                }
-                @if (_uploading)
-                {
-                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" />
-                }
+                <div class="attachment-row" @key="attachment.Id">
+                    <AttachmentImage CompanyId="CurrentCompanyId" Attachment="attachment" Size="72" />
+                    <div class="attachment-info">
+                        <MudText Typo="Typo.body2" Class="attachment-name">@attachment.FileName</MudText>
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(attachment.SizeBytes)</MudText>
+                    </div>
+                    @if (CanEdit)
+                    {
+                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" Disabled="_uploading"
+                                       aria-label="@Loc["Attachments.RemoveNamed", attachment.FileName]" OnClick="() => DeleteAttachmentAsync(attachment)" />
+                    }
+                </div>
+            }
+            @if (IsNew || CanEdit)
+            {
+                <div class="attachment-pickers">
+                    <div>
+                        <label for="attachment-files" class="attachment-label">@Loc["Attachments.ChooseFiles"]</label>
+                        <InputFile id="attachment-files" OnChange="OnFilesSelected" multiple
+                                   accept="image/jpeg,image/png,image/webp,application/pdf" aria-label="@Loc["Transactions.Form.AddAttachments"]" />
+                    </div>
+                    <div>
+                        <label for="attachment-camera" class="attachment-label">@Loc["Attachments.TakePhoto"]</label>
+                        <InputFile id="attachment-camera" OnChange="OnFilesSelected" accept="image/*" capture="environment" />
+                    </div>
+                </div>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-1">@Loc["Transactions.Form.AttachmentLimits"]</MudText>
+            }
+            @if (_uploading)
+            {
+                <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" />
             }
         </MudPaper>
 
@@ -117,24 +145,24 @@ else
         }
 
         <div class="form-actions">
-            <MudButton Variant="Variant.Text" Href="transactions" data-enter-cancel>Cancel</MudButton>
+            <MudButton Variant="Variant.Text" Href="transactions" data-enter-cancel>@Loc["Common.Cancel"]</MudButton>
             @if (!IsNew && CanVoid)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">Void entry</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="VoidAsync" Disabled="_saving">@Loc["Transactions.Form.VoidEntry"]</MudButton>
             }
             @if (IsNew)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">Save &amp; New</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">@Loc["Transactions.Form.SaveAndNew"]</MudButton>
             }
             @if (IsNew || CanEdit)
             {
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
-                    @(_saving ? "Saving…" : "Save")
+                    @(_saving ? Loc["Transactions.Form.Saving"] : Loc["Common.Save"])
                 </MudButton>
             }
         </div>
         <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
-            Enter moves to the next field · Ctrl+S saves · Esc cancels
+            @Loc["Transactions.Form.KeyboardHint"]
         </MudText>
     </EnterNavForm>
 }
@@ -146,6 +174,15 @@ else
         TransactionType.PaymentIn, TransactionType.PaymentOut, TransactionType.Expense,
         TransactionType.OtherIncome, TransactionType.TransferMoney,
     ];
+
+    private const int MaxAttachments = 5;
+    private const long MaxFileBytes = 5L * 1024 * 1024;
+
+    /// <summary>What the server accepts (HEIC isn't).</summary>
+    private static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp", "application/pdf",
+    };
 
     private EnterNavForm? _form;
     private bool _loaded;
@@ -160,6 +197,8 @@ else
     private List<MoneyAccountDto> _accounts = [];
     private List<CategoryDto> _categories = [];
     private List<AttachmentDto> _attachments = [];
+    /// <summary>Files chosen for a new entry; uploaded once it saves.</summary>
+    private readonly List<StagedFile> _staged = [];
     private TransactionDto? _existing;
 
     private TransactionType _type = TransactionType.PaymentIn;
@@ -170,6 +209,8 @@ else
     private string? _remarks;
     private string? _chequeNo;
     private DateTime? _chequeDate;
+    private DateField? _dateField;
+    private DateField? _chequeDateField;
 
     /// <summary>Kept until a save succeeds, so pressing Save again after a lost reply can't add the entry twice.</summary>
     private Guid _newId = Guid.CreateVersion7();
@@ -182,7 +223,12 @@ else
 
     private bool IsNew => TransactionId is null;
 
-    private string Title => IsNew ? "Add Transaction" : $"Edit {MasterLabels.TransactionType(_type.ToString())}";
+    private Guid CurrentCompanyId => Session.CurrentCompany?.CompanyId ?? Guid.Empty;
+
+    /// <summary>Attachments on the entry, or files staged for a new one.</summary>
+    private int AttachmentCount => IsNew ? _staged.Count : _attachments.Count;
+
+    private string Title => IsNew ? Loc["Transactions.Add"] : Loc["Transactions.Form.EditTitle", Label(_type)];
 
     private List<TransactionType> OfferedTypes =>
         FormTypes.Where(t => Session.Can(EntryRules.PermissionFor(t, EntryAction.Create))).ToList();
@@ -198,12 +244,14 @@ else
 
     private string FirstLabel => _type switch
     {
-        TransactionType.PaymentIn or TransactionType.PaymentOut => "Party",
-        TransactionType.Expense or TransactionType.OtherIncome => "Category",
-        _ => "From account",
+        TransactionType.PaymentIn or TransactionType.PaymentOut => Loc["Common.Party"],
+        TransactionType.Expense or TransactionType.OtherIncome => Loc["Common.Category"],
+        _ => Loc["Transactions.Form.FromAccount"],
     };
 
-    private string SecondLabel => _type == TransactionType.TransferMoney ? "To account" : "Payment method";
+    private string SecondLabel => _type == TransactionType.TransferMoney
+        ? Loc["Transactions.Form.ToAccount"]
+        : Loc["Transactions.Form.PaymentMethod"];
 
     private string FirstKey => MoneyIsFrom ? "toAccountId" : "fromAccountId";
 
@@ -233,17 +281,23 @@ else
 
     private string? ErrorOf(string key) => _errors.TryGetValue(key, out var e) ? string.Join(" ", e) : null;
 
-    private static string Label(TransactionType type) => MasterLabels.TransactionType(type.ToString());
+    private string Label(TransactionType type) => Loc[MasterLabels.TransactionType(type.ToString())];
 
-    private static string? BalanceText(Choice? choice) => choice?.Balance is not { } balance ? null
-        : !choice.IsParty ? $"Balance: {Money.Format(balance)}"
-        : $"Balance: {Money.Format(Math.Abs(balance))} {MasterLabels.PartySide(balance).Label}";
+    /// <summary>The balance without its "Balance:" prefix, e.g. "Rs. 500" or "Rs. 500 To Receive" for a party.</summary>
+    private string? BalanceDetail(Choice? choice) => choice?.Balance is not { } balance ? null
+        : !choice.IsParty ? Money.Format(balance)
+        : $"{Money.Format(Math.Abs(balance))} {Loc[MasterLabels.PartySide(balance).LabelKey]}";
 
-    private static string ItemText(Choice choice) =>
-        BalanceText(choice) is { } balance ? $"{choice.Name} · {balance.Replace("Balance: ", "")}" : choice.Name;
+    private string? BalanceText(Choice? choice) =>
+        BalanceDetail(choice) is { } detail ? Loc["Transactions.Form.Balance", detail].Value : null;
 
-    private static string FileSize(long bytes) =>
-        bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024} KB" : $"{bytes / (1024 * 1024)} MB";
+    private string ItemText(Choice choice) =>
+        BalanceDetail(choice) is { } detail ? $"{choice.Name} · {detail}" : choice.Name;
+
+    private string FileSize(long bytes) =>
+        bytes < 1024 ? Loc["Transactions.Attachment.SizeBytes", bytes]
+        : bytes < 1024 * 1024 ? Loc["Transactions.Attachment.SizeKb", bytes / 1024]
+        : Loc["Transactions.Attachment.SizeMb", bytes / (1024 * 1024)];
 
     private Task<IEnumerable<Choice>> SearchFirst(string? text, CancellationToken cancellationToken) => Search(FirstChoices, text);
 
@@ -319,6 +373,7 @@ else
             _type = wanted is { } w && offered.Contains(w) ? w : offered.FirstOrDefault();
             (_first, _amount, _remarks, _chequeNo, _chequeDate, _saveError) = (null, null, null, null, null, null);
             _errors = [];
+            _staged.Clear();
             _date = DateTime.Today;
             _second = DefaultSecond();
         }
@@ -388,10 +443,21 @@ else
         var create = new CreateTransactionRequest(
             _type.ToString(), DateLocked || _date == DateTime.Today ? null : date, _amount ?? 0, from, to,
             _remarks, chequeNo, chequeDate, _newId);
-        _errors = MasterValidation.Validate(create);
+        _errors = MasterValidation.Validate(create, Loc.ForValidation());
         if (!IsNew && date is null)
         {
-            _errors["date"] = ["A date is required."];
+            _errors["date"] = [Loc["Transactions.Form.DateRequired"]];
+        }
+
+        // An unreadable miti must not fall back to the date the field held before.
+        if (_dateField?.IsInvalid == true)
+        {
+            _errors["date"] = [Loc["Calendar.InvalidBs"]];
+        }
+
+        if (ShowCheque && _chequeDateField?.IsInvalid == true)
+        {
+            _errors["chequeDate"] = [Loc["Calendar.InvalidBs"]];
         }
 
         if (_errors.Count > 0)
@@ -413,7 +479,13 @@ else
                 return;
             }
 
-            Snackbar.Add($"Saved {Label(_type)} of {Money.Format(result.Value!.Amount)}.", Severity.Success);
+            Snackbar.Add(Loc["Transactions.Form.SavedSnackbar", Label(_type), Money.Format(result.Value!.Amount)], Severity.Success);
+            if (IsNew && _staged.Count > 0)
+            {
+                // The entry is saved; the files go to it before this page navigates away or resets.
+                await UploadStagedAsync(company.CompanyId, result.Value!.Id);
+            }
+
             if (!andNew)
             {
                 Navigation.NavigateTo("transactions");
@@ -453,9 +525,9 @@ else
     private async Task VoidAsync()
     {
         var confirmed = await Dialogs.ShowMessageBoxAsync(
-            "Void this entry?",
-            "It stays on record but no longer counts toward any balance.",
-            yesText: "Void entry", cancelText: "Cancel");
+            Loc["Transactions.Form.VoidTitle"],
+            Loc["Transactions.Form.VoidMessage"],
+            yesText: Loc["Transactions.Form.VoidEntry"], cancelText: Loc["Common.Cancel"]);
         if (confirmed != true || Session.CurrentCompany is not { } company || TransactionId is not { } id)
         {
             return;
@@ -466,46 +538,170 @@ else
         _saving = false;
         if (result.Ok)
         {
-            Snackbar.Add("Entry voided.", Severity.Success);
+            Snackbar.Add(Loc["Transactions.Form.VoidedSnackbar"], Severity.Success);
             Navigation.NavigateTo("transactions");
         }
         else
         {
-            Snackbar.Add(result.Error ?? "Something went wrong.", Severity.Error);
+            Snackbar.Add(result.Error ?? Loc["Transactions.Form.GenericError"], Severity.Error);
         }
     }
 
+    /// <summary>The picker and the camera both come here. A new entry keeps the files until it saves; a saved entry uploads them now.</summary>
     private async Task OnFilesSelected(InputFileChangeEventArgs e)
     {
-        if (Session.CurrentCompany is not { } company || TransactionId is not { } id || _uploading)
+        if (Session.CurrentCompany is not { } company || _uploading)
         {
             return;
         }
 
-        if (_attachments.Count + e.FileCount > 5)
+        // GetMultipleFiles throws past its limit, so a bigger pick is refused as a whole.
+        if (e.FileCount > MaxAttachments)
         {
-            Snackbar.Add("An entry can have at most 5 attachments.", Severity.Warning);
+            Snackbar.Add(Loc["Transactions.Form.AttachmentMax"], Severity.Warning);
+            return;
+        }
+
+        var accepted = new List<IBrowserFile>();
+        foreach (var file in e.GetMultipleFiles(MaxAttachments))
+        {
+            if (!AllowedTypes.Contains(file.ContentType))
+            {
+                Snackbar.Add(Loc["Attachments.UnsupportedType", file.Name], Severity.Warning);
+            }
+            else if (file.Size > MaxFileBytes)
+            {
+                Snackbar.Add(Loc["Transactions.Form.FileTooLarge", file.Name], Severity.Warning);
+            }
+            else
+            {
+                accepted.Add(file);
+            }
+        }
+
+        if (accepted.Count == 0)
+        {
+            return;
+        }
+
+        // The same limit the server applies: existing attachments plus the new ones.
+        if (AttachmentCount + accepted.Count > MaxAttachments)
+        {
+            Snackbar.Add(Loc["Transactions.Form.AttachmentMax"], Severity.Warning);
             return;
         }
 
         _uploading = true;
         try
         {
-            foreach (var file in e.GetMultipleFiles(5))
+            if (IsNew)
             {
-                if (file.Size > 5 * 1024 * 1024)
+                foreach (var file in accepted)
                 {
-                    Snackbar.Add($"{file.Name} is larger than 5 MB.", Severity.Warning);
-                    continue;
+                    _staged.Add(await ReadStagedAsync(file));
                 }
 
-                await using var stream = file.OpenReadStream(5 * 1024 * 1024);
-                var result = await Attachments.UploadAttachmentAsync(company.CompanyId, stream, file.Name, file.ContentType, id);
-                Snackbar.Add(result.Ok ? $"Uploaded {file.Name}." : $"Upload failed: {result.Error}",
-                    result.Ok ? Severity.Success : Severity.Error);
+                return;
             }
 
-            _attachments = (await Attachments.GetAttachmentsAsync(company.CompanyId, id)).Value ?? _attachments;
+            if (TransactionId is { } id)
+            {
+                await UploadFilesAsync(company.CompanyId, id, accepted);
+            }
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private async Task UploadFilesAsync(Guid companyId, Guid transactionId, IEnumerable<IBrowserFile> files)
+    {
+        foreach (var file in files)
+        {
+            await using var stream = file.OpenReadStream(MaxFileBytes);
+            var result = await Attachments.UploadAttachmentAsync(companyId, stream, file.Name, file.ContentType, transactionId);
+            Snackbar.Add(result.Ok ? Loc["Transactions.Form.Uploaded", file.Name] : Loc["Transactions.Form.UploadFailed", result.Error ?? string.Empty],
+                result.Ok ? Severity.Success : Severity.Error);
+        }
+
+        var reloaded = await Attachments.GetAttachmentsAsync(companyId, transactionId);
+        _attachments = reloaded.Value ?? _attachments;
+    }
+
+    private static async Task<StagedFile> ReadStagedAsync(IBrowserFile file)
+    {
+        await using var stream = file.OpenReadStream(MaxFileBytes);
+        using var memory = new MemoryStream();
+        await stream.CopyToAsync(memory);
+        return new StagedFile(file.Name, file.ContentType, memory.ToArray());
+    }
+
+    /// <summary>Uploads the files a new entry was saved with. The entry is already saved, so a failure only warns.</summary>
+    private async Task UploadStagedAsync(Guid companyId, Guid transactionId)
+    {
+        _uploading = true;
+        var failed = new List<string>();
+        try
+        {
+            foreach (var staged in _staged)
+            {
+                using var stream = new MemoryStream(staged.Content);
+                var result = await Attachments.UploadAttachmentAsync(companyId, stream, staged.Name, staged.ContentType, transactionId);
+                if (!result.Ok)
+                {
+                    failed.Add(staged.Name);
+                }
+            }
+        }
+        finally
+        {
+            _staged.Clear();
+            _uploading = false;
+        }
+
+        if (failed.Count > 0)
+        {
+            Snackbar.Add(Loc["Attachments.NotUploaded", string.Join(", ", failed)], Severity.Warning);
+        }
+    }
+
+    private void RemoveStaged(StagedFile staged) => _staged.Remove(staged);
+
+    private async Task DeleteAttachmentAsync(AttachmentDto attachment)
+    {
+        if (Session.CurrentCompany is not { } company || TransactionId is not { } id || _uploading)
+        {
+            return;
+        }
+
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            Loc["Attachments.DeleteTitle"],
+            Loc["Attachments.DeleteMessage", attachment.FileName],
+            yesText: Loc["Common.Delete"], cancelText: Loc["Common.Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _uploading = true;
+        try
+        {
+            var result = await Attachments.DeleteAttachmentAsync(company.CompanyId, attachment.Id);
+            if (!result.Ok)
+            {
+                Snackbar.Add(result.Error ?? Loc["Attachments.DeleteFailed"], Severity.Error);
+                return;
+            }
+
+            Cache.Invalidate(company.CompanyId, attachment.Id);
+            Snackbar.Add(Loc["Attachments.Deleted", attachment.FileName], Severity.Success);
+            _attachments = _attachments.Where(a => a.Id != attachment.Id).ToList();
+            var reloaded = await Attachments.GetAttachmentsAsync(company.CompanyId, id);
+            if (reloaded.Ok)
+            {
+                _attachments = reloaded.Value!;
+            }
         }
         finally
         {
@@ -514,4 +710,10 @@ else
     }
 
     private sealed record Choice(Guid Id, string Name, decimal? Balance = null, bool IsParty = false);
+
+    /// <summary>A file held in memory until its entry saves.</summary>
+    private sealed record StagedFile(string Name, string ContentType, byte[] Content)
+    {
+        public long Size => Content.LongLength;
+    }
 }

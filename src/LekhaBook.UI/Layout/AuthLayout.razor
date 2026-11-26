@@ -1,5 +1,7 @@
 @inherits LayoutComponentBase
+@implements IDisposable
 @inject ISessionService Session
+@inject ILanguageService Language
 @inject NavigationManager Navigation
 @* Layout for sign-in and sign-up: no navigation, centred card. Signed-in users go to the app. *@
 
@@ -8,7 +10,10 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="auth-page">
+<div class="auth-page" @key="_languageVersion">
+    <div class="auth-language">
+        <LanguageSwitcher />
+    </div>
     <div class="auth-card">
         <div class="auth-brand">
             <img src="_content/LekhaBook.UI/branding/lekha_books_mark_small.png" alt="" width="48" height="48" />
@@ -26,12 +31,23 @@
 </div>
 
 @code {
+    private int _languageVersion;
+
     protected override async Task OnInitializedAsync()
     {
+        Language.Changed += OnLanguageChanged;
         await Session.InitializeAsync();
         if (Session.IsSignedIn)
         {
             Navigation.NavigateTo("");
         }
     }
+
+    private void OnLanguageChanged(object? sender, EventArgs e) => _ = InvokeAsync(() =>
+    {
+        _languageVersion++;
+        StateHasChanged();
+    });
+
+    public void Dispose() => Language.Changed -= OnLanguageChanged;
 }

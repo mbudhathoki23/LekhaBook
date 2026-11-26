@@ -62,6 +62,8 @@ public abstract class LekhaBookDbContext(DbContextOptions options) : DbContext(o
             e.Property(x => x.Pan).HasMaxLength(20);
             e.Property(x => x.Currency).HasMaxLength(3);
             e.Property(x => x.TimeZoneId).HasMaxLength(64);
+            e.Property(x => x.LogoStorageKey).HasMaxLength(64);
+            e.Property(x => x.LogoContentType).HasMaxLength(32);
         });
 
         modelBuilder.Entity<PartyCategory>(e =>

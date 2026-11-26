@@ -1,0 +1,120 @@
+@using LekhaBook.UI.Formatting
+@inject ICompanyApi Companies
+@inject ISessionService Session
+@inject IJSRuntime JS
+
+@* The heading of a party or account statement: who issued it, who it is for, the period and when it was printed. *@
+<div class="statement-header">
+    <div class="statement-brand">
+        <CompanyLogo CompanyId="CompanyId" Size="72" />
+        <div class="statement-company">
+            <div class="statement-company-name">@(_company?.Name ?? Session.CompanyName)</div>
+            @if (!string.IsNullOrWhiteSpace(_company?.Address))
+            {
+                <div class="statement-field">@_company.Address</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(_company?.Phone))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Common.Phone"]</span>@_company.Phone</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(_company?.Pan))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Statement.Pan"]</span>@_company.Pan</div>
+            }
+        </div>
+    </div>
+
+    <div class="statement-meta">
+        <div class="statement-title">@(Party is not null ? Loc["Statement.PartyTitle"] : Loc["Statement.AccountTitle"])</div>
+        @if (Party is { } party)
+        {
+            <div class="statement-field"><span class="statement-label">@Loc["Statement.Type"]</span>@(party.PartyType == "Supplier" ? Loc["Parties.Type.Supplier"] : Loc["Parties.Type.Customer"])</div>
+            @if (!string.IsNullOrWhiteSpace(party.Phone))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Common.Phone"]</span>@party.Phone</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(party.Email))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Common.Email"]</span>@party.Email</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(party.Address))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Statement.Address"]</span>@party.Address</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(party.Pan))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Statement.Pan"]</span>@party.Pan</div>
+            }
+        }
+        else if (Account is { } account)
+        {
+            <div class="statement-field"><span class="statement-label">@Loc["Statement.Type"]</span>@Loc[MasterLabels.AccountType(account.Type)]</div>
+            @if (!string.IsNullOrWhiteSpace(account.AccountHolderName))
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Statement.AccountHolder"]</span>@account.AccountHolderName</div>
+            }
+            @if (MasterLabels.MaskNumber(account.AccountNumber) is { } masked)
+            {
+                <div class="statement-field"><span class="statement-label">@Loc["Statement.AccountNumber"]</span>@masked</div>
+            }
+        }
+        <div class="statement-field"><span class="statement-label">@Loc["Statement.Period"]</span>@PeriodText</div>
+        <div class="statement-field">@Loc["Statement.PrintDate", Session.FormatDate(DateOnly.FromDateTime(DateTime.Today))]</div>
+    </div>
+
+    <MudButton Class="no-print" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Print" OnClick="PrintAsync">@Loc["Statement.Print"]</MudButton>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    [Parameter, EditorRequired]
+    public LedgerDto Ledger { get; set; } = null!;
+
+    /// <summary>Set for a party statement.</summary>
+    [Parameter]
+    public PartyDto? Party { get; set; }
+
+    /// <summary>Set for an account statement.</summary>
+    [Parameter]
+    public MoneyAccountDto? Account { get; set; }
+
+    private CompanyDetails? _company;
+    private Guid _loadedFor;
+
+    /// <summary>From the opening-as-of date (or the first line) to the last line's date; a dash when there are no lines.</summary>
+    private string PeriodText
+    {
+        get
+        {
+            if (Ledger.Lines.Count == 0)
+            {
+                return "–";
+            }
+
+            var from = Ledger.OpeningAsOf ?? Ledger.Lines[0].Date;
+            var to = Ledger.Lines[^1].Date;
+            return Loc["Statement.PeriodValue", Session.FormatDate(from), Session.FormatDate(to)].Value;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CompanyId == _loadedFor)
+        {
+            return;
+        }
+
+        _loadedFor = CompanyId;
+        _company = null;
+        var companyId = CompanyId;
+        var result = await Companies.GetCompanyAsync(companyId);
+        if (companyId == _loadedFor)
+        {
+            _company = result.Value; // the header still works without it, using the session's name
+        }
+    }
+
+    private async Task PrintAsync() => await JS.InvokeVoidAsync("window.print");
+}

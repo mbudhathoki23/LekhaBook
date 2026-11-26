@@ -2,13 +2,14 @@
 @inject ISessionService Session
 @inject ICompanyApi Companies
 @inject NavigationManager Navigation
+@inject ISnackbar Snackbar
 
-<PageTitle>Create company · Lekha Books</PageTitle>
+<PageTitle>@Loc["Companies.Create.PageTitle"]</PageTitle>
 
 <MudPaper Class="pa-5 mx-auto" Style="max-width: 560px;" Elevation="1">
-    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Create a company</MudText>
+    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Settings.CreateCompany"]</MudText>
     <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">
-        You'll be its Owner. Cash, Cheque, Online Wallet and common income and expense heads are set up for you.
+        @Loc["Companies.Create.Intro"]
     </MudText>
 
     @if (_error is not null)
@@ -18,21 +19,45 @@
 
     <form @onsubmit="CreateAsync">
         <MudStack Spacing="3">
-            <MudTextField @bind-Value="_name" Label="Business name" Variant="Variant.Outlined" Immediate="true" Required="true"
+            <MudTextField @bind-Value="_name" Label="@Loc["Companies.Create.BusinessName"]" Variant="Variant.Outlined" Immediate="true" Required="true"
                           AutoFocus="true" MaxLength="200" UserAttributes="@(new() { ["enterkeyhint"] = "next" })" />
-            <MudTextField @bind-Value="_phone" Label="Phone (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="32"
+            <MudTextField @bind-Value="_phone" Label="@Loc["Companies.Create.Phone"]" Variant="Variant.Outlined" Immediate="true" MaxLength="32"
                           UserAttributes="@(new() { ["inputmode"] = "tel", ["enterkeyhint"] = "next" })" />
-            <MudTextField @bind-Value="_address" Label="Address (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="300"
+            <MudTextField @bind-Value="_address" Label="@Loc["Companies.Create.Address"]" Variant="Variant.Outlined" Immediate="true" MaxLength="300"
                           UserAttributes="@(new() { ["enterkeyhint"] = "next" })" />
-            <MudTextField @bind-Value="_pan" Label="PAN / VAT number (optional)" Variant="Variant.Outlined" Immediate="true" MaxLength="20"
+            <MudTextField @bind-Value="_pan" Label="@Loc["Companies.Create.PanVat"]" Variant="Variant.Outlined" Immediate="true" MaxLength="20"
                           UserAttributes="@(new() { ["inputmode"] = "numeric", ["enterkeyhint"] = "done" })" />
+            <div>
+                <MudText Typo="Typo.body2">@Loc["Calendar.Label"]</MudText>
+                <MudRadioGroup T="string" @bind-Value="_calendar" Name="company-calendar">
+                    <MudRadio Value="@("BS")" Color="Color.Primary">@Loc["Calendar.Bs"]</MudRadio>
+                    <MudRadio Value="@("AD")" Color="Color.Primary">@Loc["Calendar.Ad"]</MudRadio>
+                </MudRadioGroup>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Calendar.Help"]</MudText>
+            </div>
+            <div>
+                <MudText Typo="Typo.body2" Class="mb-1">@Loc["Logo.PickLabel"]</MudText>
+                @if (_logoFile is null)
+                {
+                    <InputFile OnChange="OnLogoSelected" accept="image/jpeg,image/png,image/webp" aria-label="@Loc["Logo.PickLabel"]" />
+                }
+                else
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.body2" Class="attachment-name">@_logoFile.Name</MudText>
+                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" aria-label="@Loc["Attachments.RemoveNamed", _logoFile.Name]"
+                                       OnClick="() => _logoFile = null" />
+                    </MudStack>
+                }
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Logo.Hint"]</MudText>
+            </div>
             <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
                 @if (Session.CurrentCompany is not null)
                 {
-                    <MudButton Variant="Variant.Text" Href="">Cancel</MudButton>
+                    <MudButton Variant="Variant.Text" Href="">@Loc["Common.Cancel"]</MudButton>
                 }
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">
-                    Create company
+                    @Loc["Companies.Create.Submit"]
                 </MudButton>
             </MudStack>
         </MudStack>
@@ -44,21 +69,52 @@
     private string? _phone;
     private string? _address;
     private string? _pan;
+    private string _calendar = "BS";
     private string? _error;
     private bool _busy;
+    private IBrowserFile? _logoFile;
+
+    private const long MaxLogoBytes = 2L * 1024 * 1024;
+
+    private static readonly HashSet<string> LogoTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp",
+    };
+
+    private void OnLogoSelected(InputFileChangeEventArgs e)
+    {
+        if (!LogoTypes.Contains(e.File.ContentType))
+        {
+            Snackbar.Add(Loc["Logo.UnsupportedType"], Severity.Warning);
+            return;
+        }
+
+        if (e.File.Size > MaxLogoBytes)
+        {
+            Snackbar.Add(Loc["Logo.TooLarge", e.File.Name], Severity.Warning);
+            return;
+        }
+
+        _logoFile = e.File;
+    }
 
     private async Task CreateAsync()
     {
         if (string.IsNullOrWhiteSpace(_name))
         {
-            _error = "Enter the business name.";
+            _error = Loc["Companies.Create.NameRequired"];
             return;
         }
 
         _busy = true;
-        var result = await Companies.CreateCompanyAsync(new CreateCompanyRequest(_name, _phone, _address, _pan));
+        var result = await Companies.CreateCompanyAsync(new CreateCompanyRequest(_name, _phone, _address, _pan, _calendar));
         if (result.Ok)
         {
+            if (_logoFile is not null)
+            {
+                await UploadLogoAsync(result.Value!.CompanyId, _logoFile);
+            }
+
             await Session.RefreshAsync();
             await Session.SelectCompanyAsync(result.Value!.CompanyId);
             Navigation.NavigateTo("");
@@ -66,5 +122,16 @@
 
         _error = result.Error;
         _busy = false;
+    }
+
+    /// <summary>The company exists already, so a failed logo only warns; the user still lands on the new company.</summary>
+    private async Task UploadLogoAsync(Guid companyId, IBrowserFile file)
+    {
+        await using var stream = file.OpenReadStream(MaxLogoBytes);
+        var result = await Companies.UploadLogoAsync(companyId, stream, file.Name, file.ContentType);
+        if (!result.Ok)
+        {
+            Snackbar.Add(Loc["Logo.CreateWarning", result.Error ?? string.Empty], Severity.Warning);
+        }
     }
 }

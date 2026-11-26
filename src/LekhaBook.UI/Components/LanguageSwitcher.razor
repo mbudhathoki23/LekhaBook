@@ -1,0 +1,28 @@
+@inject ILanguageService Language
+@* Picks the app language. Each name is written in its own language, so it reads correctly from either one. *@
+
+<MudSelect T="string" Value="_code" ValueChanged="OnChangedAsync" Label="@Loc["Language.Label"]"
+           Variant="Variant.Outlined" Dense="true" Class="language-switcher"
+           Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Translate">
+    @foreach (var (languageCode, languageName) in Languages.Supported)
+    {
+        <MudSelectItem T="string" Value="@languageCode">@languageName</MudSelectItem>
+    }
+</MudSelect>
+
+@code {
+    private string _code = Languages.English;
+
+    protected override void OnInitialized() => _code = Language.CurrentCode;
+
+    private async Task OnChangedAsync(string code)
+    {
+        if (code == _code)
+        {
+            return;
+        }
+
+        _code = code;
+        await Language.SetAsync(code);
+    }
+}

@@ -75,7 +75,9 @@ public sealed record LedgerLineDto(
     decimal Credit,
     decimal Balance,
     string? OtherAccount,
-    string? Remarks);
+    string? Remarks,
+    string? ChequeNo,
+    IReadOnlyList<AttachmentDto> Attachments);
 
 // Transactions (AGENT_PLAN § 5.2, D15). One row moves value From (credited) one account To (debited) another;
 // Type is a TransactionType name and decides which kinds of account fit each side.
@@ -139,6 +141,9 @@ public sealed record AttachmentDto(
     long SizeBytes,
     string? StorageKey,
     DateTime CreatedAtUtc);
+
+/// <summary>An attachment's bytes and name, for showing an image or opening a PDF (also used for a company logo).</summary>
+public sealed record AttachmentFile(string FileName, string ContentType, byte[] Content);
 
 
 // Sync (AGENT_PLAN § 6, D17).

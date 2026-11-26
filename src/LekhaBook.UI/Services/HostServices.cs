@@ -183,6 +183,20 @@ public interface ICompanyApi
     Task<ApiResult<bool>> CancelInvitationAsync(Guid companyId, Guid invitationId);
 
     Task<ApiResult<CompanySummary>> AcceptInvitationAsync(string token);
+
+    /// <summary>Company details, including whether a logo is set.</summary>
+    Task<ApiResult<CompanyDetails>> GetCompanyAsync(Guid companyId);
+
+    /// <summary>The company logo's bytes; an error with StatusCode 404 when there is none.</summary>
+    Task<ApiResult<AttachmentFile>> GetLogoAsync(Guid companyId);
+
+    /// <summary>Sets the company logo (JPEG, PNG or WebP, up to 2 MB). Replaces any existing logo.</summary>
+    Task<ApiResult<bool>> UploadLogoAsync(Guid companyId, Stream fileStream, string fileName, string contentType);
+
+    Task<ApiResult<bool>> DeleteLogoAsync(Guid companyId);
+
+    /// <summary>Sets how the company's dates are shown and typed: "BS" or "AD". Stored dates don't change.</summary>
+    Task<ApiResult<bool>> UpdateCalendarAsync(Guid companyId, string calendar);
 }
 
 /// <summary>Attachments: capture, pick, store, get (AGENT_PLAN § 7).</summary>
@@ -202,6 +216,9 @@ public interface IAttachmentService
 
     /// <summary>Delete an attachment (soft-delete via IsDeleted; syncs like edits).</summary>
     Task<ApiResult<bool>> DeleteAttachmentAsync(Guid companyId, Guid attachmentId, CancellationToken ct = default);
+
+    /// <summary>The file itself, for showing an image or opening a PDF.</summary>
+    Task<ApiResult<AttachmentFile>> GetContentAsync(Guid companyId, Guid attachmentId, CancellationToken ct = default);
 }
 
 /// <summary>Share a PDF statement or other file (AGENT_PLAN § 7).</summary>

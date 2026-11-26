@@ -1,0 +1,43 @@
+@inject ICompanyApi Companies
+
+@* The company's logo. Renders nothing when there is no logo (404) or it can't be loaded. *@
+@if (_dataUrl is not null)
+{
+    <img class="company-logo" src="@_dataUrl" alt="@Loc["Logo.Alt"]" style="width: @(Size)px; height: @(Size)px;" />
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    /// <summary>Width and height in pixels.</summary>
+    [Parameter]
+    public int Size { get; set; } = 96;
+
+    private Guid _loadedFor;
+    private int _generation;
+    private string? _dataUrl;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CompanyId != _loadedFor)
+        {
+            _loadedFor = CompanyId;
+            await Refresh();
+        }
+    }
+
+    /// <summary>Fetches the logo again, e.g. after it was set or removed.</summary>
+    public async Task Refresh()
+    {
+        var generation = ++_generation;
+        var result = await Companies.GetLogoAsync(CompanyId);
+        if (generation != _generation)
+        {
+            return; // a newer load started while this one was waiting
+        }
+
+        _dataUrl = result.Ok ? FileDataUrl.From(result.Value!.ContentType, result.Value.Content) : null;
+        StateHasChanged();
+    }
+}

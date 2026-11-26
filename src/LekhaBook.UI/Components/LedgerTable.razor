@@ -1,31 +1,45 @@
 @using LekhaBook.UI.Formatting
+@inject ISessionService Session
 
 @* An account statement: the opening balance, then each entry with the running balance after it. *@
 <MudTable T="LedgerRow" Items="Rows" Dense="true" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="0" Class="ledger-table">
     <HeaderContent>
-        <MudTh>Date</MudTh>
-        <MudTh>Particulars</MudTh>
-        <MudTh Class="text-right">@DebitTitle</MudTh>
-        <MudTh Class="text-right">@CreditTitle</MudTh>
-        <MudTh Class="text-right">Balance</MudTh>
+        <MudTh>@Loc["Common.Date"]</MudTh>
+        <MudTh>@Loc["Ledger.Particulars"]</MudTh>
+        <MudTh Class="text-right">@(DebitTitle ?? Loc["Ledger.Debit"])</MudTh>
+        <MudTh Class="text-right">@(CreditTitle ?? Loc["Ledger.Credit"])</MudTh>
+        <MudTh Class="text-right">@Loc["Common.Balance"]</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Date" Class="text-nowrap">@context.Date?.ToString("yyyy-MM-dd")</MudTd>
-        <MudTd DataLabel="Particulars">
+        <MudTd DataLabel="@Loc["Common.Date"]" Class="text-nowrap">@(context.Date is { } date ? Session.FormatDate(date) : null)</MudTd>
+        <MudTd DataLabel="@Loc["Ledger.Particulars"]">
             <div>@context.Title</div>
             @if (!string.IsNullOrEmpty(context.Detail))
             {
                 <MudText Typo="Typo.caption" Class="mud-text-secondary">@context.Detail</MudText>
             }
+            @if (!string.IsNullOrEmpty(context.Cheque))
+            {
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Ledger.ChequeNo", context.Cheque]</MudText>
+            }
+            @if (context.Files is { Count: > 0 } files && CompanyId is { } companyId)
+            {
+                <div class="ledger-files">
+                    @foreach (var file in files)
+                    {
+                        <AttachmentImage @key="file.Id" CompanyId="companyId" Attachment="file" Size="40" />
+                    }
+                </div>
+            }
         </MudTd>
-        <MudTd DataLabel="@DebitTitle" Class="text-right text-nowrap">@(context.Debit > 0 ? Money.Number(context.Debit) : "")</MudTd>
-        <MudTd DataLabel="@CreditTitle" Class="text-right text-nowrap">@(context.Credit > 0 ? Money.Number(context.Credit) : "")</MudTd>
-        <MudTd DataLabel="Balance" Class="text-right text-nowrap">@FormatBalance(context.Balance)</MudTd>
+        <MudTd DataLabel="@(DebitTitle ?? Loc["Ledger.Debit"])" Class="text-right text-nowrap">@(context.Debit > 0 ? Money.Number(context.Debit) : "")</MudTd>
+        <MudTd DataLabel="@(CreditTitle ?? Loc["Ledger.Credit"])" Class="text-right text-nowrap">@(context.Credit > 0 ? Money.Number(context.Credit) : "")</MudTd>
+        <MudTd DataLabel="@Loc["Common.Balance"]" Class="text-right text-nowrap">@FormatBalance(context.Balance)</MudTd>
     </RowTemplate>
 </MudTable>
 @if (Ledger.Lines.Count == 0)
 {
-    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">No transactions yet.</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Ledger.Empty"]</MudText>
 }
 
 @code {
@@ -34,28 +48,33 @@
 
     /// <summary>Column for entries that raise the balance (e.g. "Money in").</summary>
     [Parameter]
-    public string DebitTitle { get; set; } = "Debit";
+    public string? DebitTitle { get; set; }
 
     /// <summary>Column for entries that lower the balance (e.g. "Money out").</summary>
     [Parameter]
-    public string CreditTitle { get; set; } = "Credit";
+    public string? CreditTitle { get; set; }
 
     [Parameter]
     public Func<decimal, string> FormatBalance { get; set; } = Money.Format;
+
+    /// <summary>The company the statement belongs to; thumbnails need it to fetch the files.</summary>
+    private Guid? CompanyId => Session.CurrentCompany?.CompanyId;
 
     private IEnumerable<LedgerRow> Rows =>
         Ledger.Lines.Select(l => new LedgerRow(
                 l.Date,
                 VoucherTitle(l),
                 string.Join(" · ", new[] { l.OtherAccount, l.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s))),
-                l.Debit, l.Credit, l.Balance))
-            .Prepend(new LedgerRow(Ledger.OpeningAsOf, "Opening balance", null, 0, 0, Ledger.OpeningBalance));
+                l.Debit, l.Credit, l.Balance, l.ChequeNo, l.Attachments))
+            .Prepend(new LedgerRow(Ledger.OpeningAsOf, Loc["Ledger.OpeningBalance"], null, 0, 0, Ledger.OpeningBalance));
 
     /// <summary>"Payment In #615". A provisional (id-shaped) number isn't shown (D15).</summary>
-    private static string VoucherTitle(LedgerLineDto line) =>
+    private string VoucherTitle(LedgerLineDto line) =>
         Guid.TryParse(line.VoucherNo, out _)
-            ? MasterLabels.TransactionType(line.Type)
-            : $"{MasterLabels.TransactionType(line.Type)} #{line.VoucherNo}";
+            ? Loc[MasterLabels.TransactionType(line.Type)]
+            : $"{Loc[MasterLabels.TransactionType(line.Type)]} #{line.VoucherNo}";
 
-    private sealed record LedgerRow(DateOnly? Date, string Title, string? Detail, decimal Debit, decimal Credit, decimal Balance);
+    private sealed record LedgerRow(
+        DateOnly? Date, string Title, string? Detail, decimal Debit, decimal Credit, decimal Balance,
+        string? Cheque = null, IReadOnlyList<AttachmentDto>? Files = null);
 }

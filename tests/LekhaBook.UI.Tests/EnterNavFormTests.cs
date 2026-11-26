@@ -1,6 +1,7 @@
 using Xunit;
 using Bunit;
 using LekhaBook.UI.Components;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LekhaBook.UI.Tests;
 
@@ -11,6 +12,9 @@ public class EnterNavFormTests : TestContext
         // EnterNavForm loads a JS module via JSRuntime interop on first render; bUnit's
         // loose JS mode accepts those invocations so rendering can be tested in isolation.
         JSInterop.Mode = JSRuntimeMode.Loose;
+
+        // Every component in the shared UI injects the translations (see _Imports.razor).
+        Services.AddLocalization();
     }
 
     [Fact(DisplayName = "Render enters a child fragment without throwing")]

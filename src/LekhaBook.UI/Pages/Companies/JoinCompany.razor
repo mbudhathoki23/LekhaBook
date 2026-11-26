@@ -3,13 +3,12 @@
 @inject ICompanyApi Companies
 @inject NavigationManager Navigation
 
-<PageTitle>Join a company · Lekha Books</PageTitle>
+<PageTitle>@Loc["Companies.Join.PageTitle"]</PageTitle>
 
 <MudPaper Class="pa-5 mx-auto" Style="max-width: 560px;" Elevation="1">
-    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">Join a company</MudText>
+    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Companies.Join.Title"]</MudText>
     <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">
-        Paste the invite code the company owner gave you. You must be signed in with the email it was sent to
-        (@Session.Me?.Email).
+        @(Loc["Companies.Join.Intro", Session.Me?.Email ?? string.Empty])
     </MudText>
 
     @if (_error is not null)
@@ -19,10 +18,10 @@
 
     <form @onsubmit="AcceptAsync">
         <MudStack Spacing="3">
-            <MudTextField @bind-Value="_token" Label="Invite code" Variant="Variant.Outlined" Immediate="true" Required="true"
+            <MudTextField @bind-Value="_token" Label="@Loc["Companies.Join.Code"]" Variant="Variant.Outlined" Immediate="true" Required="true"
                           AutoFocus="true" UserAttributes="@(new() { ["autocomplete"] = "off", ["enterkeyhint"] = "go", ["autocapitalize"] = "off" })" />
             <MudStack Row="true" Justify="Justify.FlexEnd">
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">Join</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">@Loc["Companies.Join.Submit"]</MudButton>
             </MudStack>
         </MudStack>
     </form>
@@ -42,7 +41,7 @@
     {
         if (string.IsNullOrWhiteSpace(_token))
         {
-            _error = "Paste the invite code.";
+            _error = Loc["Companies.Join.CodeRequired"];
             return;
         }
 

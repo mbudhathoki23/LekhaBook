@@ -1,0 +1,143 @@
+@using LekhaBook.Domain
+@inject ISessionService Session
+
+@*
+    A date input in the company's calendar. AD companies get the standard date picker; BS companies type a
+    miti (yyyy/mm/dd) or pick it from the Nepali calendar. The bound value is always the AD date.
+    A miti that can't be read leaves the value as it was and sets IsInvalid, which forms check before saving.
+*@
+@if (Mode == CalendarMode.AD)
+{
+    <MudDatePicker Date="Value" DateChanged="ValueChanged" Label="@Label" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
+                   Variant="Variant.Outlined" Class="@Class" Disabled="Disabled" HelperText="@HelperText" Error="Error" ErrorText="@ErrorText" />
+}
+else
+{
+    <div class="@($"date-field {Class}")" data-popup-open="@(_open ? "true" : "false")" @onkeydown="OnKeyDown">
+        <MudTextField T="string" Value="_text" ValueChanged="OnTypedAsync" Label="@Label" Placeholder="yyyy/mm/dd" Variant="Variant.Outlined"
+                      Disabled="Disabled" HelperText="@Help" Error="@(Error || _invalid)"
+                      ErrorText="@(_invalid ? Loc["Calendar.InvalidBs"].Value : ErrorText)"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.CalendarMonth"
+                      AdornmentAriaLabel="@Loc["Calendar.Open"]" OnAdornmentClick="Toggle" />
+        <MudPopover Open="_open" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+            @if (_open)
+            {
+                <div @onkeydown="OnKeyDown">
+                    <BsCalendar Selected="@(Value is { } value ? DateOnly.FromDateTime(value) : null)" OnPick="OnPickedAsync" />
+                </div>
+            }
+        </MudPopover>
+    </div>
+    <MudOverlay Visible="_open" AutoClose="true" OnClosed="Close" />
+}
+
+@code {
+    [Parameter]
+    public DateTime? Value { get; set; }
+
+    [Parameter]
+    public EventCallback<DateTime?> ValueChanged { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    [Parameter]
+    public string? HelperText { get; set; }
+
+    [Parameter]
+    public bool Error { get; set; }
+
+    [Parameter]
+    public string? ErrorText { get; set; }
+
+    private bool _shownOnce;
+    private DateTime? _shown;
+    private CalendarMode _shownMode;
+    private string? _text;
+    private bool _invalid;
+    private bool _open;
+
+    /// <summary>True while the field holds text that isn't a date in the Nepali calendar.</summary>
+    public bool IsInvalid => Mode == CalendarMode.BS && _invalid;
+
+    private CalendarMode Mode => Session.Calendar();
+
+    /// <summary>The caller's help, else the AD date behind the miti shown.</summary>
+    private string? Help
+    {
+        get
+        {
+            if (HelperText is not null || Value is not { } value)
+            {
+                return HelperText;
+            }
+
+            var date = DateOnly.FromDateTime(value);
+            return NepaliCalendar.TryFromAd(date, out _)
+                ? Loc["Calendar.AdDate", CalendarDates.Format(date, CalendarMode.AD)].Value
+                : Loc["Calendar.OutsideRange"].Value;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        // Text the user is still correcting stays until the value itself changes.
+        if (!_shownOnce || Value != _shown || Mode != _shownMode)
+        {
+            Show(Value);
+        }
+    }
+
+    private void Show(DateTime? value)
+    {
+        (_shownOnce, _shown, _shownMode, _invalid) = (true, value, Mode, false);
+        _text = value is { } v ? CalendarDates.Format(DateOnly.FromDateTime(v), Mode) : null;
+    }
+
+    private Task OnTypedAsync(string? text)
+    {
+        _text = text;
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            return CommitAsync(null);
+        }
+
+        if (!CalendarDates.TryParse(text, CalendarMode.BS, out var date))
+        {
+            _invalid = true;
+            return Task.CompletedTask;
+        }
+
+        return CommitAsync(date.ToDateTime(TimeOnly.MinValue));
+    }
+
+    private Task OnPickedAsync(DateOnly date)
+    {
+        _open = false;
+        return CommitAsync(date.ToDateTime(TimeOnly.MinValue));
+    }
+
+    private Task CommitAsync(DateTime? value)
+    {
+        Show(value);
+        return ValueChanged.InvokeAsync(value);
+    }
+
+    private void Toggle() => _open = !_open && !Disabled;
+
+    private void Close() => _open = false;
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape")
+        {
+            _open = false;
+        }
+    }
+}

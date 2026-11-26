@@ -1,10 +1,14 @@
 @page "/settings"
+@using LekhaBook.Domain
 @inject ISessionService Session
 @inject IPlatformInfo Platform
+@inject ICompanyApi Companies
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
 
-<PageTitle>More · Lekha Books</PageTitle>
+<PageTitle>@Loc["Settings.Title"] · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">More</MudText>
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Settings.Title"]</MudText>
 
 <MudPaper Class="pa-4 mb-4" Elevation="1">
     <MudText Typo="Typo.subtitle1">@Session.UserName</MudText>
@@ -12,31 +16,188 @@
     @if (Session.CurrentCompany is { } company)
     {
         <MudText Typo="Typo.body2" Class="mt-2">
-            @company.Name · <b>@RoleLabels.For(company.Role)</b>
+            @company.Name · <b>@Loc[RoleLabels.For(company.Role)]</b>
         </MudText>
     }
 </MudPaper>
 
+@if (Session.CurrentCompany is { } company)
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Class="mb-3">@Loc["Common.Company"]</MudText>
+        <div class="settings-company">
+            <CompanyLogo @ref="_logo" CompanyId="company.CompanyId" Size="96" />
+            <div class="settings-company-main">
+                <MudText Typo="Typo.h6">@company.Name</MudText>
+                @if (CanChangeCompany)
+                {
+                    <div class="logo-actions">
+                        <div>
+                            <label for="logo-file" class="attachment-label">@Loc["Logo.ChooseImage"]</label>
+                            <InputFile id="logo-file" OnChange="OnLogoSelected" accept="image/jpeg,image/png,image/webp" />
+                        </div>
+                        <div>
+                            <label for="logo-camera" class="attachment-label">@Loc["Attachments.TakePhoto"]</label>
+                            <InputFile id="logo-camera" OnChange="OnLogoSelected" accept="image/*" capture="environment" />
+                        </div>
+                    </div>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" Class="mt-2"
+                               OnClick="RemoveLogoAsync" Disabled="_busy">@Loc["Logo.Remove"]</MudButton>
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-1">@Loc["Logo.Hint"]</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Settings.CompanyReadOnly"]</MudText>
+                }
+            </div>
+        </div>
+        <MudText Typo="Typo.body2" Class="mt-4">@Loc["Calendar.Label"]</MudText>
+        <MudRadioGroup T="string" Value="@Session.Calendar().ToString()" ValueChanged="ChangeCalendarAsync" Name="company-calendar"
+                       Disabled="@(_busy || !CanChangeCompany)">
+            <MudRadio Value="@("BS")" Color="Color.Primary">@Loc["Calendar.Bs"]</MudRadio>
+            <MudRadio Value="@("AD")" Color="Color.Primary">@Loc["Calendar.Ad"]</MudRadio>
+        </MudRadioGroup>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Calendar.Help"]</MudText>
+    </MudPaper>
+}
+
+<MudPaper Class="pa-4 mb-4" Elevation="1">
+    <LanguageSwitcher />
+    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">@Loc["Settings.LanguageHelp"]</MudText>
+</MudPaper>
+
 <MudList T="string" Class="mb-4">
-    <MudListItem T="string" Icon="@Icons.Material.Filled.Group" Href="staff">Staff</MudListItem>
-    <MudListItem T="string" Icon="@Icons.Material.Filled.AddBusiness" Href="companies/new">Create a company</MudListItem>
-    <MudListItem T="string" Icon="@Icons.Material.Filled.GroupAdd" Href="invite">Join with an invite code</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.Group" Href="staff">@Loc["Settings.Staff"]</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.AddBusiness" Href="companies/new">@Loc["Settings.CreateCompany"]</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.GroupAdd" Href="invite">@Loc["Settings.JoinCompany"]</MudListItem>
 </MudList>
 
 <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Logout" OnClick="SignOutAsync"
-           Disabled="_busy">Sign out</MudButton>
+           Disabled="_busy">@Loc["Settings.SignOut"]</MudButton>
 <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">
-    Signs you out on this @(Platform.Platform == "Web" ? "browser" : "device").
+    @(Platform.Platform == "Web" ? Loc["Settings.SignOutHelpWeb"] : Loc["Settings.SignOutHelpDevice"])
 </MudText>
 
-<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">Running on @Platform.Platform (@Platform.FormFactor)</MudText>
+<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">@Loc["Settings.RunningOn", Platform.Platform, Platform.FormFactor]</MudText>
 
 @code {
+    private const long MaxLogoBytes = 2L * 1024 * 1024;
+
+    private static readonly HashSet<string> LogoTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "image/jpeg", "image/png", "image/webp",
+    };
+
     private bool _busy;
+    private CompanyLogo? _logo;
+
+    private bool CanChangeCompany => Session.Can(Permission.SettingsBusiness);
+
+    private async Task ChangeCalendarAsync(string calendar)
+    {
+        if (Session.CurrentCompany is not { } company || calendar == Session.Calendar().ToString())
+        {
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var result = await Companies.UpdateCalendarAsync(company.CompanyId, calendar);
+            if (!result.Ok)
+            {
+                Snackbar.Add(result.Error ?? Loc["Calendar.Failed"], Severity.Error);
+                return;
+            }
+
+            await Session.RefreshAsync(); // the company summary carries the calendar every screen formats with
+            Snackbar.Add(Loc["Calendar.Saved"], Severity.Success);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
 
     private async Task SignOutAsync()
     {
         _busy = true;
         await Session.SignOutAsync(); // the layout sends signed-out users to the sign-in page
+    }
+
+    private async Task OnLogoSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        if (!LogoTypes.Contains(file.ContentType))
+        {
+            Snackbar.Add(Loc["Logo.UnsupportedType"], Severity.Warning);
+            return;
+        }
+
+        if (file.Size > MaxLogoBytes)
+        {
+            Snackbar.Add(Loc["Logo.TooLarge", file.Name], Severity.Warning);
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            await using var stream = file.OpenReadStream(MaxLogoBytes);
+            var result = await Companies.UploadLogoAsync(company.CompanyId, stream, file.Name, file.ContentType);
+            if (result.Ok)
+            {
+                Snackbar.Add(Loc["Logo.Updated"], Severity.Success);
+                if (_logo is not null)
+                {
+                    await _logo.Refresh();
+                }
+            }
+            else
+            {
+                Snackbar.Add(result.Error ?? Loc["Logo.Failed"], Severity.Error);
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RemoveLogoAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            Loc["Logo.RemoveTitle"], Loc["Logo.RemoveMessage"],
+            yesText: Loc["Logo.Remove"], cancelText: Loc["Common.Cancel"]);
+        if (confirmed != true)
+        {
+            return;
+        }
+
+        _busy = true;
+        var result = await Companies.DeleteLogoAsync(company.CompanyId);
+        _busy = false;
+        if (result.Ok)
+        {
+            Snackbar.Add(Loc["Logo.Removed"], Severity.Success);
+            if (_logo is not null)
+            {
+                await _logo.Refresh();
+            }
+        }
+        else
+        {
+            Snackbar.Add(result.Error ?? Loc["Logo.Failed"], Severity.Error);
+        }
     }
 }

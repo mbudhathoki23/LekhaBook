@@ -1,0 +1,39 @@
+<MudDialog>
+    <DialogContent>
+        @if (IsImage)
+        {
+            <img src="@_dataUrl" alt="@Data.FileName" class="attachment-preview-image" />
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3">@Loc["Attachments.PdfPreviewHelp"]</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Download"
+                       Href="@_dataUrl" UserAttributes="_downloadAttributes">@Loc["Attachments.Download"]</MudButton>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Close">@Loc["Common.Close"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    /// <summary>The file, already in memory.</summary>
+    [Parameter, EditorRequired]
+    public AttachmentFile Data { get; set; } = null!;
+
+    private string _dataUrl = string.Empty;
+    private Dictionary<string, object> _downloadAttributes = [];
+
+    private bool IsImage => Data.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+
+    protected override void OnParametersSet()
+    {
+        _dataUrl = FileDataUrl.From(Data.ContentType, Data.Content);
+        _downloadAttributes = new Dictionary<string, object> { ["download"] = Data.FileName };
+    }
+
+    private void Close() => MudDialog.Close();
+}

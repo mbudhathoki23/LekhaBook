@@ -58,6 +58,11 @@ public sealed class Company
     /// <summary>IANA time zone used for "today" (date locks, same-day edits).</summary>
     public string TimeZoneId { get; set; } = CompanyClock.DefaultTimeZoneId;
 
+    /// <summary>Stored logo file key, or null when the company has no logo.</summary>
+    public string? LogoStorageKey { get; set; }
+
+    public string? LogoContentType { get; set; }
+
     public long Version { get; set; }
 
     public DateTime CreatedAtUtc { get; set; }

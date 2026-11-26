@@ -1,0 +1,143 @@
+@using LekhaBook.Domain
+
+@* The Nepali miti calendar: one BS month, weeks starting Sunday, each day with its AD day underneath. *@
+<div class="bs-calendar" role="group" aria-label="@Loc["Calendar.Bs"]">
+    <div class="bs-calendar-header">
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronLeft" Size="Size.Small" aria-label="@Loc["Calendar.PreviousMonth"]"
+                       Disabled="@(!HasMonth(-1))" OnClick="() => Move(-1)" />
+        <select class="bs-calendar-select" aria-label="@Loc["Calendar.Month"]" value="@_month" @onchange="OnMonthChanged">
+            @for (var m = 1; m <= 12; m++)
+            {
+                <option value="@m" disabled="@(NepaliCalendar.DaysInMonth(_year, m) == 0)">@MonthName(m)</option>
+            }
+        </select>
+        <select class="bs-calendar-select" aria-label="@Loc["Calendar.Year"]" value="@_year" @onchange="OnYearChanged">
+            @for (var y = NepaliCalendar.FirstYear; y <= NepaliCalendar.LastYear; y++)
+            {
+                <option value="@y">@y</option>
+            }
+        </select>
+        <MudIconButton Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" aria-label="@Loc["Calendar.NextMonth"]"
+                       Disabled="@(!HasMonth(1))" OnClick="() => Move(1)" />
+    </div>
+
+    <div class="bs-calendar-grid">
+        @for (var d = 0; d < 7; d++)
+        {
+            <span class="@(d == 6 ? "bs-calendar-weekday bs-calendar-holiday" : "bs-calendar-weekday")">@Loc[$"Calendar.Weekday{d}"]</span>
+        }
+        @for (var blank = 0; blank < LeadingBlanks; blank++)
+        {
+            <span></span>
+        }
+        @foreach (var (day, ad) in Days)
+        {
+            <button type="button" @key="ad" class="@DayClass(ad)" aria-pressed="@(ad == Selected ? "true" : "false")"
+                    aria-current="@(ad == _today ? "date" : null)"
+                    aria-label="@($"{new NepaliDate(_year, _month, day)} ({CalendarDates.Format(ad, CalendarMode.AD)})")"
+                    @onclick="() => OnPick.InvokeAsync(ad)">
+                <span>@day</span>
+                <small>@ad.Day</small>
+            </button>
+        }
+    </div>
+
+    <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" Disabled="@(!NepaliCalendar.TryFromAd(_today, out _))"
+               OnClick="() => OnPick.InvokeAsync(_today)">@Loc["Calendar.Today"]</MudButton>
+</div>
+
+@code {
+    [Parameter]
+    public DateOnly? Selected { get; set; }
+
+    [Parameter]
+    public EventCallback<DateOnly> OnPick { get; set; }
+
+    private readonly DateOnly _today = DateOnly.FromDateTime(DateTime.Today);
+    private int _year;
+    private int _month;
+
+    private int LeadingBlanks =>
+        NepaliCalendar.TryToAd(new NepaliDate(_year, _month, 1), out var first) ? (int)first.DayOfWeek : 0;
+
+    private IEnumerable<(int Day, DateOnly Ad)> Days
+    {
+        get
+        {
+            for (var day = 1; day <= NepaliCalendar.DaysInMonth(_year, _month); day++)
+            {
+                if (NepaliCalendar.TryToAd(new NepaliDate(_year, _month, day), out var ad))
+                {
+                    yield return (day, ad);
+                }
+            }
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        // Open on the chosen day's month, else today's; a date outside the table opens at the nearer end.
+        var wanted = Selected ?? _today;
+        wanted = wanted < NepaliCalendar.FirstAdDate ? NepaliCalendar.FirstAdDate
+            : wanted > NepaliCalendar.LastAdDate ? NepaliCalendar.LastAdDate
+            : wanted;
+        NepaliCalendar.TryFromAd(wanted, out var bs);
+        (_year, _month) = (bs.Year, bs.Month);
+    }
+
+    private string MonthName(int month) => Loc[$"Calendar.Month{month}"];
+
+    private (int Year, int Month) Shifted(int months)
+    {
+        var index = _year * 12 + _month - 1 + months;
+        return (index / 12, index % 12 + 1);
+    }
+
+    private bool HasMonth(int months)
+    {
+        var (year, month) = Shifted(months);
+        return NepaliCalendar.DaysInMonth(year, month) > 0;
+    }
+
+    private void Move(int months)
+    {
+        if (HasMonth(months))
+        {
+            (_year, _month) = Shifted(months);
+        }
+    }
+
+    private void OnMonthChanged(ChangeEventArgs e)
+    {
+        if (int.TryParse(e.Value?.ToString(), out var month) && NepaliCalendar.DaysInMonth(_year, month) > 0)
+        {
+            _month = month;
+        }
+    }
+
+    private void OnYearChanged(ChangeEventArgs e)
+    {
+        if (!int.TryParse(e.Value?.ToString(), out var year))
+        {
+            return;
+        }
+
+        _year = year;
+        // The first and last years are partial: move to the nearest month they have.
+        if (NepaliCalendar.DaysInMonth(_year, _month) == 0)
+        {
+            _month = Enumerable.Range(1, 12)
+                .Where(m => NepaliCalendar.DaysInMonth(year, m) > 0)
+                .OrderBy(m => Math.Abs(m - _month))
+                .First();
+        }
+    }
+
+    private string DayClass(DateOnly ad) => string.Join(' ', new[]
+    {
+        "bs-calendar-day",
+        ad.DayOfWeek == DayOfWeek.Saturday ? "bs-calendar-holiday" : null,
+        ad == _today ? "bs-calendar-today" : null,
+        ad == Selected ? "bs-calendar-selected" : null,
+    }.Where(c => c is not null));
+}

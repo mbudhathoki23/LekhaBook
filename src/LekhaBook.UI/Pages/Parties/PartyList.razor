@@ -5,20 +5,20 @@
 @inject ISessionService Session
 @inject NavigationManager Navigation
 
-<PageTitle>Parties · Lekha Books</PageTitle>
+<PageTitle>@Loc["Parties.Title"] · Lekha Books</PageTitle>
 
 <div class="page-header">
-    <MudText Typo="Typo.h5" tabindex="-1">Parties @(_parties is null ? "" : $"({_parties.Count})")</MudText>
+    <MudText Typo="Typo.h5" tabindex="-1">@Loc["Parties.Title"] @(_parties is null ? "" : $"({_parties.Count})")</MudText>
     <MudSpacer />
     @if (CanAdd)
     {
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Href="@NewPartyHref">Add Party</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Href="@NewPartyHref">@Loc["Parties.AddParty"]</MudButton>
     }
 </div>
 
 @if (_error is not null)
 {
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Parties" OnRetry="LoadAsync" />
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Parties.Title"]" OnRetry="LoadAsync" />
 }
 else if (_parties is null)
 {
@@ -29,39 +29,39 @@ else
     <MudGrid Spacing="2" Class="mb-3">
         <MudItem xs="6">
             <MudPaper Class="pa-3 summary-tile" Elevation="1" @onclick="@(() => SetSide("receive"))">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">To Receive</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["PartySide.ToReceive"]</MudText>
                 <MudText Typo="Typo.h6" Color="Color.Success">@Money.Format(_parties.Where(p => p.Balance > 0).Sum(p => p.Balance))</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6">
             <MudPaper Class="pa-3 summary-tile" Elevation="1" @onclick="@(() => SetSide("give"))">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">To Give</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["PartySide.ToGive"]</MudText>
                 <MudText Typo="Typo.h6" Color="Color.Error">@Money.Format(-_parties.Where(p => p.Balance < 0).Sum(p => p.Balance))</MudText>
             </MudPaper>
         </MudItem>
     </MudGrid>
 
     <div class="list-toolbar">
-        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="Search name or phone"
+        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="@Loc["Parties.List.SearchPlaceholder"]"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
-                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="Search parties" />
-        <MudSelect T="string" @bind-Value="_type" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("all")">All parties</MudSelectItem>
-            <MudSelectItem Value="@("Customer")">Customers</MudSelectItem>
-            <MudSelectItem Value="@("Supplier")">Suppliers</MudSelectItem>
+                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="@Loc["Parties.List.SearchAria"]" />
+        <MudSelect T="string" @bind-Value="_type" Label="@Loc["Parties.List.TypeLabel"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">@Loc["Parties.List.TypeAll"]</MudSelectItem>
+            <MudSelectItem Value="@("Customer")">@Loc["Parties.List.TypeCustomers"]</MudSelectItem>
+            <MudSelectItem Value="@("Supplier")">@Loc["Parties.List.TypeSuppliers"]</MudSelectItem>
         </MudSelect>
-        <MudSelect T="string" @bind-Value="_side" Label="Balance" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("all")">All balances</MudSelectItem>
-            <MudSelectItem Value="@("receive")">To Receive</MudSelectItem>
-            <MudSelectItem Value="@("give")">To Give</MudSelectItem>
-            <MudSelectItem Value="@("settled")">Settled</MudSelectItem>
+        <MudSelect T="string" @bind-Value="_side" Label="@Loc["Common.Balance"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">@Loc["Parties.List.BalanceAll"]</MudSelectItem>
+            <MudSelectItem Value="@("receive")">@Loc["PartySide.ToReceive"]</MudSelectItem>
+            <MudSelectItem Value="@("give")">@Loc["PartySide.ToGive"]</MudSelectItem>
+            <MudSelectItem Value="@("settled")">@Loc["PartySide.Settled"]</MudSelectItem>
         </MudSelect>
-        <MudSelect T="string" @bind-Value="_sort" Label="Sort" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("name")">Name A→Z</MudSelectItem>
-            <MudSelectItem Value="@("name-desc")">Name Z→A</MudSelectItem>
-            <MudSelectItem Value="@("latest")">Latest</MudSelectItem>
-            <MudSelectItem Value="@("amount-desc")">Amount high→low</MudSelectItem>
-            <MudSelectItem Value="@("amount")">Amount low→high</MudSelectItem>
+        <MudSelect T="string" @bind-Value="_sort" Label="@Loc["Parties.List.SortLabel"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("name")">@Loc["Parties.List.SortNameAsc"]</MudSelectItem>
+            <MudSelectItem Value="@("name-desc")">@Loc["Parties.List.SortNameDesc"]</MudSelectItem>
+            <MudSelectItem Value="@("latest")">@Loc["Parties.List.SortLatest"]</MudSelectItem>
+            <MudSelectItem Value="@("amount-desc")">@Loc["Parties.List.SortAmountDesc"]</MudSelectItem>
+            <MudSelectItem Value="@("amount")">@Loc["Parties.List.SortAmountAsc"]</MudSelectItem>
         </MudSelect>
     </div>
 
@@ -69,17 +69,17 @@ else
     {
         <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
             <MudIcon Icon="@Icons.Material.Filled.People" Size="Size.Large" Class="mud-text-secondary" />
-            <MudText Typo="Typo.subtitle1" Class="mt-2">No parties yet</MudText>
-            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">Add your customers and suppliers to track what they owe you and what you owe them.</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mt-2">@Loc["Parties.List.EmptyTitle"]</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Loc["Parties.List.EmptyBody"]</MudText>
             @if (CanAdd)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewPartyHref">Add your first party</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewPartyHref">@Loc["Parties.List.EmptyAdd"]</MudButton>
             }
         </MudPaper>
     }
     else if (!Shown.Any())
     {
-        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No parties match.</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">@Loc["Parties.List.NoMatch"]</MudText>
     }
     else
     {
@@ -93,11 +93,11 @@ else
                     </MudAvatar>
                     <div class="row-main">
                         <div class="row-title">@party.Name</div>
-                        <div class="row-sub">@(party.Phone ?? "---") · @(party.PartyType == "Supplier" ? "Supplier" : "Customer")</div>
+                        <div class="row-sub">@(party.Phone ?? "---") · @(party.PartyType == "Supplier" ? Loc["Parties.Type.Supplier"] : Loc["Parties.Type.Customer"])</div>
                     </div>
                     <div class="row-amount">
                         <MudText Typo="Typo.body1" Color="color" Class="text-nowrap">@Money.Format(Math.Abs(party.Balance))</MudText>
-                        <MudText Typo="Typo.caption" Color="color">@label</MudText>
+                        <MudText Typo="Typo.caption" Color="color">@Loc[label]</MudText>
                     </div>
                 </a>
             }

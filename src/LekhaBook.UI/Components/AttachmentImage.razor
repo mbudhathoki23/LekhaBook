@@ -1,0 +1,108 @@
+@inject AttachmentContentCache Cache
+@inject IDialogService Dialogs
+
+@* A proof of payment as a small square: an image shows the picture, a PDF shows an icon and its name. Click or Enter opens a preview. *@
+<div class="attachment-thumb @(IsImage ? string.Empty : "attachment-thumb-file")" style="width: @(Size)px; height: @(Size)px;"
+     role="button" tabindex="0" title="@Attachment.FileName"
+     aria-label="@Loc["Attachments.OpenNamed", Attachment.FileName]"
+     @onclick="OpenAsync" @onkeydown="OnKeyDown">
+    @if (!IsImage)
+    {
+        <MudIcon Icon="@Icons.Material.Filled.PictureAsPdf" Color="Color.Error" />
+        <span class="attachment-thumb-name">@Attachment.FileName</span>
+    }
+    else if (_dataUrl is not null)
+    {
+        <img src="@_dataUrl" alt="" />
+    }
+    else if (_failed)
+    {
+        <MudIcon Icon="@Icons.Material.Filled.BrokenImage" />
+        <span class="attachment-thumb-name">@Loc["Attachments.CantShow"]</span>
+    }
+    else
+    {
+        <span class="attachment-thumb-placeholder" aria-hidden="true"></span>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    [Parameter, EditorRequired]
+    public AttachmentDto Attachment { get; set; } = null!;
+
+    /// <summary>Width and height in pixels.</summary>
+    [Parameter]
+    public int Size { get; set; } = 56;
+
+    private (Guid CompanyId, Guid AttachmentId) _key;
+    private AttachmentFile? _file;
+    private string? _dataUrl;
+    private bool _failed;
+
+    private bool IsImage => Attachment.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase);
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var key = (CompanyId, Attachment.Id);
+        if (key == _key)
+        {
+            return;
+        }
+
+        _key = key;
+        _file = null;
+        _dataUrl = null;
+        _failed = false;
+
+        // PDFs are fetched only when opened, so a list of them doesn't download every file.
+        if (IsImage)
+        {
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        var key = _key;
+        _failed = false;
+        var result = await Cache.GetAsync(CompanyId, Attachment.Id);
+        if (key != _key)
+        {
+            return; // the attachment changed while this was loading
+        }
+
+        if (result.Ok)
+        {
+            _file = result.Value!;
+            _dataUrl = FileDataUrl.From(_file.ContentType, _file.Content);
+        }
+        else
+        {
+            _failed = true;
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OpenAsync()
+    {
+        if (_file is null)
+        {
+            await LoadAsync();
+        }
+
+        if (_file is null)
+        {
+            return; // still can't be shown; the thumbnail says so
+        }
+
+        var parameters = new DialogParameters { ["Data"] = _file };
+        await Dialogs.ShowAsync<AttachmentPreviewDialog>(Attachment.FileName, parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Large, FullWidth = true, CloseOnEscapeKey = true });
+    }
+
+    private Task OnKeyDown(KeyboardEventArgs e) => e.Key == "Enter" ? OpenAsync() : Task.CompletedTask;
+}

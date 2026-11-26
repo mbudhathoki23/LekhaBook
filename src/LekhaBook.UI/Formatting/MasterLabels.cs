@@ -2,31 +2,35 @@ using MudBlazor;
 
 namespace LekhaBook.UI.Formatting;
 
-/// <summary>Words, colours and icons for parties and money accounts.</summary>
+/// <summary>
+/// Words, colours and icons for parties and money accounts. Words are resource keys: show them with
+/// <c>@Loc[MasterLabels.…]</c>.
+/// </summary>
 public static class MasterLabels
 {
-    /// <summary>A party's signed balance as "To Receive" / "To Give" / "Settled".</summary>
-    public static (string Label, Color Color) PartySide(decimal balance) => balance switch
+    /// <summary>A party's signed balance as a resource key ("PartySide.ToReceive" / "PartySide.ToGive" / "PartySide.Settled") and colour.</summary>
+    public static (string LabelKey, Color Color) PartySide(decimal balance) => balance switch
     {
-        > 0 => ("To Receive", Color.Success),
-        < 0 => ("To Give", Color.Error),
-        _ => ("Settled", Color.Default),
+        > 0 => ("PartySide.ToReceive", Color.Success),
+        < 0 => ("PartySide.ToGive", Color.Error),
+        _ => ("PartySide.Settled", Color.Default),
     };
 
-    /// <summary>The ledger header word: Receivable / Payable.</summary>
+    /// <summary>The ledger header word as a resource key: "PartyBalance.Receivable" / "PartyBalance.Payable" / "PartySide.Settled".</summary>
     public static string PartyBalanceTitle(decimal balance) => balance switch
     {
-        > 0 => "Receivable",
-        < 0 => "Payable",
-        _ => "Settled",
+        > 0 => "PartyBalance.Receivable",
+        < 0 => "PartyBalance.Payable",
+        _ => "PartySide.Settled",
     };
 
+    /// <summary>The resource key for a money account type ("Bank", "Wallet", "Cheque", "Cash").</summary>
     public static string AccountType(string type) => type switch
     {
-        "Bank" => "Bank account",
-        "Wallet" => "Wallet",
-        "Cheque" => "Cheque",
-        _ => "Cash",
+        "Bank" => "AccountType.Bank",
+        "Wallet" => "AccountType.Wallet",
+        "Cheque" => "AccountType.Cheque",
+        _ => "AccountType.Cash",
     };
 
     public static string AccountIcon(string type) => type switch
@@ -55,17 +59,18 @@ public static class MasterLabels
         };
     }
 
-    /// <summary>Transaction type keys (TransactionType) as users read them.</summary>
+    /// <summary>The resource key for a transaction type (TransactionType). Unknown types are returned unchanged.</summary>
     public static string TransactionType(string type) => type switch
     {
-        "PaymentIn" => "Payment In",
-        "PaymentOut" => "Payment Out",
-        "PartyAdjustAdd" => "Balance added",
-        "PartyAdjustReduce" => "Balance reduced",
-        "OtherIncome" => "Other Income",
-        "AddMoney" => "Add Money",
-        "ReduceMoney" => "Reduce Money",
-        "TransferMoney" => "Transfer Money",
+        "PaymentIn" => "TxnType.PaymentIn",
+        "PaymentOut" => "TxnType.PaymentOut",
+        "PartyAdjustAdd" => "TxnType.PartyAdjustAdd",
+        "PartyAdjustReduce" => "TxnType.PartyAdjustReduce",
+        "Expense" => "Transactions.Type.Expense",
+        "OtherIncome" => "TxnType.OtherIncome",
+        "AddMoney" => "TxnType.AddMoney",
+        "ReduceMoney" => "TxnType.ReduceMoney",
+        "TransferMoney" => "TxnType.TransferMoney",
         _ => type,
     };
 }

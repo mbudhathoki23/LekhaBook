@@ -47,4 +47,6 @@ The native settings follow Microsoft's [MAUI app-icon documentation](https://lea
 
 ## Verification
 
-Web, Windows and Android debug builds passed with zero warnings and errors. Browser checks cover desktop and phone widths, loaded logo assets, favicon/touch-icon HTTP responses, and the accessible home link. Generated native icons and the Windows manifest were inspected. Native device launch, launcher-cache refresh and iOS compilation have not been verified.
+Web, Windows and Android debug builds passed with zero warnings and errors. Browser checks cover desktop and phone widths, loaded logo assets, favicon/touch-icon HTTP responses, and the accessible home link. Generated native icons and the Windows manifest were inspected.
+
+The [2026-11-26 native runtime check](qa-2026-11-26/README.md) verified the Android emulator's launcher icon, native splash, WebView loading logo and sign-in logo. Windows sign-in and authenticated header logos were also visually verified after the desktop was unlocked. The Windows live shell/taskbar icon and startup sequence remain pending because desktop capture was intermittent and other input interrupted the isolated restart. Physical Android devices and iOS compilation have not been verified.

@@ -31,6 +31,7 @@ public static class TransactionEndpoints
         company.MapPost("/attachments", CreateAttachment);
         company.MapGet("/attachments/{id:guid}", GetAttachment);
         company.MapGet("/attachments", ListAttachments);
+        company.MapDelete("/attachments/{id:guid}", DeleteAttachment);
     }
 
     // ---------------- Income and expense heads ----------------
@@ -178,8 +179,14 @@ public static class TransactionEndpoints
             return Forbidden(denied);
         }
 
-        var storageKey = $"{Guid.CreateVersion7()}{Path.GetExtension(file.FileName)}";
-        var folder = CompanyFolder(companyId);
+        // Checked before the file is written, and again under the company's version lock below, so two quick uploads can't both pass.
+        if ((await AttachmentCount(db, companyId, transactionId)) >= FileStore.MaxAttachmentsPerEntry)
+        {
+            return Invalid("file", AttachmentLimitMessage);
+        }
+
+        var storageKey = FileStore.NewKey(Path.GetExtension(file.FileName));
+        var folder = FileStore.CompanyFolder(companyId);
         Directory.CreateDirectory(folder);
         await using (var stream = File.Create(Path.Combine(folder, storageKey)))
         {
@@ -197,8 +204,15 @@ public static class TransactionEndpoints
         };
 
         db.Attachments.Add(attachment);
-        await db.SaveWithVersionsAsync(companyId, [attachment], member.UserId, clock.GetUtcNow().UtcDateTime);
-        return TypedResults.Created($"/api/companies/{companyId}/attachments/{attachment.Id}", ToDto(attachment));
+        var saved = await db.SaveWithVersionsAsync(companyId, [attachment], member.UserId, clock.GetUtcNow().UtcDateTime,
+            stillValid: async () => (await AttachmentCount(db, companyId, transactionId)) < FileStore.MaxAttachmentsPerEntry);
+        if (!saved)
+        {
+            FileStore.DeleteQuietly(companyId, storageKey);
+            return Invalid("file", AttachmentLimitMessage);
+        }
+
+        return TypedResults.Created($"/api/companies/{companyId}/attachments/{attachment.Id}", FileStore.ToDto(attachment));
     }
 
     private static async Task<IResult> GetAttachment(Guid companyId, Guid id, CompanyAccess access, PostgresDbContext db)
@@ -217,7 +231,7 @@ public static class TransactionEndpoints
             return Forbidden("You don't have permission to view this entry.");
         }
 
-        var storagePath = StoragePath(companyId, attachment.StorageKey ?? attachment.Id.ToString());
+        var storagePath = FileStore.StoragePath(companyId, attachment.StorageKey ?? attachment.Id.ToString());
         return storagePath is not null && File.Exists(storagePath)
             ? TypedResults.File(await File.ReadAllBytesAsync(storagePath), attachment.ContentType, attachment.FileName)
             : TypedResults.NotFound();
@@ -241,7 +255,33 @@ public static class TransactionEndpoints
             .Where(a => a.CompanyId == companyId && a.TransactionId == transactionId && !a.IsDeleted)
             .OrderByDescending(a => a.CreatedAtUtc)
             .ToListAsync();
-        return TypedResults.Ok(attachments.Select(ToDto).ToList());
+        return TypedResults.Ok(attachments.Select(FileStore.ToDto).ToList());
+    }
+
+    private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> DeleteAttachment(
+        Guid companyId, Guid id, CompanyAccess access, PostgresDbContext db, TimeProvider clock)
+    {
+        var member = await access.RequireMemberAsync();
+        // Tracked, so the soft delete and its new version are saved.
+        var attachment = await db.Attachments.SingleOrDefaultAsync(a => a.Id == id && a.CompanyId == companyId && !a.IsDeleted);
+        if (attachment?.TransactionId is not { } transactionId
+            || await FindAsync(db, companyId, transactionId, tracked: false) is not { } transaction)
+        {
+            return TypedResults.NotFound();
+        }
+
+        // Removing proof changes the entry, so it needs the same right as adding it.
+        var zone = await TimeZoneAsync(db, companyId);
+        var today = CompanyClock.Today(zone, clock);
+        if (EntryRules.CheckChange(member, transaction, EntryAction.Edit, null, today, zone) is { } denied)
+        {
+            return Forbidden(denied);
+        }
+
+        // Soft delete only: the file stays on disk, so nothing that still holds the key is left with a dangling file.
+        attachment.IsDeleted = true;
+        await db.SaveWithVersionsAsync(companyId, [attachment], member.UserId, clock.GetUtcNow().UtcDateTime);
+        return TypedResults.NoContent();
     }
 
     // ---------------- Helpers ----------------
@@ -252,17 +292,10 @@ public static class TransactionEndpoints
         return query.SingleOrDefaultAsync(t => t.Id == id && t.CompanyId == companyId && !t.IsDeleted);
     }
 
-    private static string CompanyFolder(Guid companyId) =>
-        Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString());
+    private const string AttachmentLimitMessage = "An entry can have at most 5 attachments.";
 
-    /// <summary>
-    /// Where a stored file lives, or null if the key isn't a plain file name: a path (absolute or with "..") must
-    /// never be able to reach another file on the server.
-    /// </summary>
-    private static string? StoragePath(Guid companyId, string key) =>
-        key.Length > 0 && key is not ("." or "..") && key == Path.GetFileName(key)
-            ? Path.Combine(CompanyFolder(companyId), key)
-            : null;
+    private static Task<int> AttachmentCount(PostgresDbContext db, Guid companyId, Guid transactionId) =>
+        db.Attachments.CountAsync(a => a.CompanyId == companyId && a.TransactionId == transactionId && !a.IsDeleted);
 
     private static Task<string> TimeZoneAsync(PostgresDbContext db, Guid companyId) =>
         db.Companies.Where(c => c.Id == companyId).Select(c => c.TimeZoneId).SingleAsync();
@@ -270,9 +303,6 @@ public static class TransactionEndpoints
     private static TransactionDto ToDto(Transaction t) => new(
         t.Id, t.CompanyId, t.Type.ToString(), t.VoucherNo, t.Date, t.Amount, t.FromAccountId, t.ToAccountId,
         t.Remarks, t.ChequeNo, t.ChequeDate, t.Status.ToString(), t.CreatedBy ?? Guid.Empty, t.CreatedAtUtc);
-
-    private static AttachmentDto ToDto(Attachment a) =>
-        new(a.Id, a.TransactionId, a.AccountId, a.FileName, a.ContentType, a.SizeBytes, a.StorageKey, a.CreatedAtUtc);
 
     private static ValidationProblem Invalid(WriteResult result) =>
         TypedResults.ValidationProblem(result.Errors!.ToDictionary());

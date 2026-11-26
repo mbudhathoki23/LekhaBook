@@ -1,24 +1,24 @@
 namespace LekhaBook.UI.Layout;
 
-/// <summary>Friendly names for role keys sent by the API.</summary>
+/// <summary>
+/// Role names sent by the API, as resource keys. Show them with <c>@Loc[RoleLabels.For(role)]</c>.
+/// </summary>
 public static class RoleLabels
 {
-    /// <summary>Roles staff can be given (Owner can't be assigned).</summary>
+    /// <summary>Roles staff can be given (Owner can't be assigned). These are API role keys, not display text.</summary>
     public static readonly string[] Assignable = ["Partner", "Manager", "Accountant", "EntryPerson"];
 
-    public static string For(string role) => role switch
-    {
-        "EntryPerson" => "Entry Person",
-        _ => role,
-    };
+    /// <summary>The resource key for a role's name, e.g. "Role.EntryPerson".</summary>
+    public static string For(string role) => "Role." + role;
 
+    /// <summary>The resource key for a one-line description of a role's access (empty for unknown roles).</summary>
     public static string Describe(string role) => role switch
     {
-        "Owner" => "Full access, including deleting the company.",
-        "Partner" => "Everything except deleting the company.",
-        "Manager" => "Add and edit entries and parties; no deleting, staff or settings.",
-        "Accountant" => "All books, reports and settings; no staff management.",
-        "EntryPerson" => "Adds entries dated today and can fix their own entries the same day.",
+        "Owner" => "Role.Owner.Description",
+        "Partner" => "Role.Partner.Description",
+        "Manager" => "Role.Manager.Description",
+        "Accountant" => "Role.Accountant.Description",
+        "EntryPerson" => "Role.EntryPerson.Description",
         _ => string.Empty,
     };
 }

@@ -4,24 +4,24 @@
 @inject IDataService Data
 @inject ISessionService Session
 
-<PageTitle>Cash &amp; Bank · Lekha Books</PageTitle>
+<PageTitle>@Loc["Accounts.List.Title"] · Lekha Books</PageTitle>
 
 <div class="page-header">
-    <MudText Typo="Typo.h5" tabindex="-1">Cash &amp; Bank @(_accounts is null ? "" : $"({_accounts.Count})")</MudText>
+    <MudText Typo="Typo.h5" tabindex="-1">@Loc["Accounts.List.Title"] @(_accounts is null ? "" : $"({_accounts.Count})")</MudText>
     <MudSpacer />
     @if (Session.Can(Permission.AccountsAdd))
     {
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="accounts/new">Add Account</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="accounts/new">@Loc["Accounts.Add"]</MudButton>
     }
 </div>
 
 @if (!Session.Can(Permission.AccountsView))
 {
-    <MudAlert Severity="Severity.Info">You don't have permission to view money accounts.</MudAlert>
+    <MudAlert Severity="Severity.Info">@Loc["Accounts.List.NoViewPermission"]</MudAlert>
 }
 else if (_error is not null)
 {
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Cash and bank accounts" OnRetry="LoadAsync" />
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Accounts.List.Subject"]" OnRetry="LoadAsync" />
 }
 else if (_accounts is null)
 {
@@ -30,7 +30,7 @@ else if (_accounts is null)
 else
 {
     <MudPaper Class="pa-3 mb-3" Elevation="1">
-        <MudText Typo="Typo.caption" Class="mud-text-secondary">Total balance</MudText>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Accounts.List.TotalBalance"]</MudText>
         <MudText Typo="Typo.h5" Color="@(Total < 0 ? Color.Error : Color.Default)">@Money.Format(Total)</MudText>
     </MudPaper>
 
@@ -44,7 +44,7 @@ else
                 <div class="row-main">
                     <div class="row-title">@account.Name</div>
                     <div class="row-sub">
-                        @MasterLabels.AccountType(account.Type)@(MasterLabels.MaskNumber(account.AccountNumber) is { } masked ? $" · {masked}" : "")
+                        @Loc[MasterLabels.AccountType(account.Type)]@(MasterLabels.MaskNumber(account.AccountNumber) is { } masked ? $" · {masked}" : "")
                     </div>
                 </div>
                 <div class="row-amount">

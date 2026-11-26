@@ -206,9 +206,12 @@ public static class MasterEndpoints
             return TypedResults.NotFound();
         }
 
-        return member.Has(MasterRules.PartyViewPermission(ledger.Account.PartyType!.Value))
-            ? TypedResults.Ok(ToDto(ledger))
-            : Forbidden("You don't have permission to view this party.");
+        if (!member.Has(MasterRules.PartyViewPermission(ledger.Account.PartyType!.Value)))
+        {
+            return Forbidden("You don't have permission to view this party.");
+        }
+
+        return TypedResults.Ok(await LedgerDtoAsync(db, companyId, member, ledger));
     }
 
     // ---------------- Party categories ----------------
@@ -365,12 +368,13 @@ public static class MasterEndpoints
         return TypedResults.NoContent();
     }
 
-    private static async Task<Results<Ok<LedgerDto>, NotFound>> AccountLedger(Guid companyId, Guid id, PostgresDbContext db)
+    private static async Task<Results<Ok<LedgerDto>, NotFound>> AccountLedger(Guid companyId, Guid id, CompanyAccess access, PostgresDbContext db)
     {
+        var member = await access.RequireMemberAsync();
         var ledger = await db.GetLedgerAsync(companyId, id);
         return ledger is null || !ledger.Account.IsMoneyAccount
             ? TypedResults.NotFound()
-            : TypedResults.Ok(ToDto(ledger));
+            : TypedResults.Ok(await LedgerDtoAsync(db, companyId, member, ledger));
     }
 
     // ---------------- Helpers ----------------
@@ -452,12 +456,29 @@ public static class MasterEndpoints
         new(a.Id, a.Name, a.Type.ToString(), a.AccountHolderName, a.AccountNumber,
             Balances.SignedOpening(a), a.OpeningAsOf, a.IsSystem, balance);
 
-    private static LedgerDto ToDto(AccountLedger ledger) =>
-        new(ledger.Account.Id, Balances.SignedOpening(ledger.Account), ledger.Account.OpeningAsOf,
+    /// <summary>
+    /// The statement with each line's proof. All the ledger's attachments come in one query. A line shows them only to
+    /// a member who may view that kind of entry, the same rule GetAttachment uses.
+    /// </summary>
+    private static async Task<LedgerDto> LedgerDtoAsync(PostgresDbContext db, Guid companyId, CompanyMember member, AccountLedger ledger)
+    {
+        var transactionIds = ledger.Lines.Select(l => l.Transaction.Id).ToList();
+        var attachments = await db.Attachments.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && !a.IsDeleted && a.TransactionId != null && transactionIds.Contains(a.TransactionId.Value))
+            .OrderBy(a => a.CreatedAtUtc).ThenBy(a => a.Id)
+            .ToListAsync();
+        var byTransaction = attachments.ToLookup(a => a.TransactionId!.Value);
+
+        return new(ledger.Account.Id, Balances.SignedOpening(ledger.Account), ledger.Account.OpeningAsOf,
             ledger.Lines.Select(l => new LedgerLineDto(
                 l.Transaction.Id, l.Transaction.Type.ToString(), l.Transaction.VoucherNo, l.Transaction.Date,
-                l.Debit, l.Credit, l.Balance, ledger.OtherSide(l.Transaction), l.Transaction.Remarks)).ToList(),
+                l.Debit, l.Credit, l.Balance, ledger.OtherSide(l.Transaction), l.Transaction.Remarks,
+                l.Transaction.ChequeNo,
+                member.Has(EntryRules.ViewPermissionFor(l.Transaction.Type))
+                    ? byTransaction[l.Transaction.Id].Select(FileStore.ToDto).ToList()
+                    : [])).ToList(),
             ledger.ClosingBalance);
+    }
 
     /// <summary>The user-editable fields, for the audit trail.</summary>
     private static string Snapshot(Account a) => JsonSerializer.Serialize(new

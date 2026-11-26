@@ -6,7 +6,7 @@
     <div>
         @if (Offline)
         {
-            <span>@What need a connection for now. Connect to the internet and try again.</span>
+            <span>@(Loc["Errors.NeedConnection", What ?? Loc["Errors.TheseScreens"]])</span>
         }
         else
         {
@@ -15,7 +15,7 @@
     </div>
     @if (OnRetry.HasDelegate)
     {
-        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" Class="mt-1" OnClick="OnRetry">Try again</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" Class="mt-1" OnClick="OnRetry">@Loc["Common.Retry"]</MudButton>
     }
 </MudAlert>
 
@@ -29,7 +29,7 @@
 
     /// <summary>What needs the connection, e.g. "Parties".</summary>
     [Parameter]
-    public string What { get; set; } = "These screens";
+    public string? What { get; set; }
 
     [Parameter]
     public EventCallback OnRetry { get; set; }

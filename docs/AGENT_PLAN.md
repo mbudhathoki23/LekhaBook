@@ -415,6 +415,7 @@ Field order on a Payment In / Payment Out form (same as Karobar, [discovery 02](
 - `IStringLocalizer` resources for English and Nepali (`.resx`). Language switch in Settings.
 - Amounts use NPR with Indian/Nepali digit grouping (`1,23,456.00`), and optionally Devanagari digits.
 - Dates in BS or AD per the company setting (see [§ 5.5](#55-dates)).
+- **Status (D18, brought forward from phase 10):** English and Nepali are in `LekhaBook.UI/Localization` (`SharedResource.resx`, `SharedResource.ne.resx`). Screens use `@Loc["Key"]`. The picker is in Settings and on the sign-in page. BS dates are in too (D20): per-company BS or AD, with a miti date field and calendar. Still open for phase 10: server or API error messages, which stay English.
 
 ### 8.6 Accessibility and polish
 

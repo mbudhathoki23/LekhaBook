@@ -5,20 +5,20 @@
 @inject ISessionService Session
 @inject NavigationManager Navigation
 
-<PageTitle>Transactions · Lekha Books</PageTitle>
+<PageTitle>@Loc["Transactions.List.Title"] · Lekha Books</PageTitle>
 
 <div class="page-header">
-    <MudText Typo="Typo.h5" tabindex="-1">Transactions @(_transactions is null ? "" : $"({_transactions.Count})")</MudText>
+    <MudText Typo="Typo.h5" tabindex="-1">@Loc["Transactions.List.Title"] @(_transactions is null ? "" : $"({_transactions.Count})")</MudText>
     <MudSpacer />
     @if (CanAdd)
     {
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="@NewTransactionHref">Add Transaction</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="@NewTransactionHref">@Loc["Transactions.Add"]</MudButton>
     }
 </div>
 
 @if (_error is not null)
 {
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="Transactions" OnRetry="LoadAsync" />
+    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Transactions.List.Title"]" OnRetry="LoadAsync" />
 }
 else if (_transactions is null)
 {
@@ -29,35 +29,35 @@ else
     <MudGrid Spacing="2" Class="mb-3">
         <MudItem xs="6">
             <MudPaper Class="pa-3 summary-tile" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">Total</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Common.Total"]</MudText>
                 <MudText Typo="Typo.h6" Color="Color.Success">@Money.Format(TotalBalance)</MudText>
             </MudPaper>
         </MudItem>
         <MudItem xs="6">
             <MudPaper Class="pa-3 summary-tile" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">Count</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Transactions.List.Count"]</MudText>
                 <MudText Typo="Typo.h6" Color="Color.Primary">@_transactions.Count</MudText>
             </MudPaper>
         </MudItem>
     </MudGrid>
 
     <div class="list-toolbar">
-        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="Search type, remarks, date"
+        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="@Loc["Transactions.List.SearchPlaceholder"]"
                       Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
-                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="Search transactions" />
-        <MudSelect T="string" @bind-Value="_type" Label="Type" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("all")">All types</MudSelectItem>
-            <MudSelectItem Value="@("PaymentIn")">Payment In</MudSelectItem>
-            <MudSelectItem Value="@("PaymentOut")">Payment Out</MudSelectItem>
-            <MudSelectItem Value="@("Expense")">Expense</MudSelectItem>
-            <MudSelectItem Value="@("OtherIncome")">Other Income</MudSelectItem>
-            <MudSelectItem Value="@("TransferMoney")">Transfer</MudSelectItem>
+                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="@Loc["Transactions.List.SearchAria"]" />
+        <MudSelect T="string" @bind-Value="_type" Label="@Loc["Transactions.List.Type"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("all")">@Loc["Transactions.List.AllTypes"]</MudSelectItem>
+            <MudSelectItem Value="@("PaymentIn")">@Loc["TxnType.PaymentIn"]</MudSelectItem>
+            <MudSelectItem Value="@("PaymentOut")">@Loc["TxnType.PaymentOut"]</MudSelectItem>
+            <MudSelectItem Value="@("Expense")">@Loc["Transactions.Type.Expense"]</MudSelectItem>
+            <MudSelectItem Value="@("OtherIncome")">@Loc["TxnType.OtherIncome"]</MudSelectItem>
+            <MudSelectItem Value="@("TransferMoney")">@Loc["Transactions.List.Transfer"]</MudSelectItem>
         </MudSelect>
-        <MudSelect T="string" @bind-Value="_sort" Label="Sort" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("latest")">Latest first</MudSelectItem>
-            <MudSelectItem Value="@("oldest")">Oldest first</MudSelectItem>
-            <MudSelectItem Value="@("amount-desc")">Amount high→low</MudSelectItem>
-            <MudSelectItem Value="@("amount")">Amount low→high</MudSelectItem>
+        <MudSelect T="string" @bind-Value="_sort" Label="@Loc["Transactions.List.Sort"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
+            <MudSelectItem Value="@("latest")">@Loc["Transactions.List.LatestFirst"]</MudSelectItem>
+            <MudSelectItem Value="@("oldest")">@Loc["Transactions.List.OldestFirst"]</MudSelectItem>
+            <MudSelectItem Value="@("amount-desc")">@Loc["Transactions.List.AmountHighLow"]</MudSelectItem>
+            <MudSelectItem Value="@("amount")">@Loc["Transactions.List.AmountLowHigh"]</MudSelectItem>
         </MudSelect>
     </div>
 
@@ -65,17 +65,17 @@ else
     {
         <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
             <MudIcon Icon="@Icons.Material.Filled.Receipt" Size="Size.Large" Class="mud-text-secondary" />
-            <MudText Typo="Typo.subtitle1" Class="mt-2">No transactions yet</MudText>
-            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">Add your first transaction to start tracking.</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mt-2">@Loc["Transactions.List.EmptyTitle"]</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Loc["Transactions.List.EmptyBody"]</MudText>
             @if (CanAdd)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewTransactionHref">Add transaction</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewTransactionHref">@Loc["Shell.AddTransaction"]</MudButton>
             }
         </MudPaper>
     }
     else if (!Shown.Any())
     {
-        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No transactions match.</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">@Loc["Transactions.List.NoMatch"]</MudText>
     }
     else
     {
@@ -87,15 +87,15 @@ else
                         <MudIcon Icon="@Icons.Material.Filled.Receipt" />
                     </MudAvatar>
                     <div class="row-main">
-                        <div class="row-title">@MasterLabels.TransactionType(txn.Type)</div>
-                        <div class="row-sub">@(txn.Remarks ?? "---") · @txn.Date.ToString("yyyy-MM-dd")</div>
+                        <div class="row-title">@Loc[MasterLabels.TransactionType(txn.Type)]</div>
+                        <div class="row-sub">@(txn.Remarks ?? "---") · @Session.FormatDate(txn.Date)</div>
                     </div>
                     <div class="row-amount">
                         <MudText Typo="Typo.body1" Color="@TransactionAmountColor(txn)" Class="text-nowrap">@Money.Format(txn.Amount)</MudText>
                     </div>
                     @if (txn.Status == "Void")
                     {
-                        <MudText Typo="Typo.caption" Color="Color.Error" Class="ms-2">Void</MudText>
+                        <MudText Typo="Typo.caption" Color="Color.Error" Class="ms-2">@Loc["Transactions.List.Void"]</MudText>
                     }
                 </a>
             }
@@ -123,7 +123,8 @@ else
             {
                 var s = _search.Trim();
                 query = query.Where(t => t.Type.Contains(s, StringComparison.CurrentCultureIgnoreCase)
-                                         || (t.Remarks?.Contains(s, StringComparison.CurrentCultureIgnoreCase) ?? false));
+                                         || (t.Remarks?.Contains(s, StringComparison.CurrentCultureIgnoreCase) ?? false)
+                                         || Session.FormatDate(t.Date).Contains(s, StringComparison.Ordinal)); // as shown: miti or AD
             }
 
             if (_type != "all")

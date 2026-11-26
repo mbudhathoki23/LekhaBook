@@ -8,13 +8,13 @@
 @inject NavigationManager Navigation
 @inject ISnackbar Snackbar
 
-<PageTitle>@(IsNew ? "Add Account" : "Edit Account") · Lekha Books</PageTitle>
+<PageTitle>@(IsNew ? Loc["Accounts.Add"] : Loc["Accounts.Form.EditTitle"]) · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? "Add Account" : "Edit Account")</MudText>
+<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@(IsNew ? Loc["Accounts.Add"] : Loc["Accounts.Form.EditTitle"])</MudText>
 
 @if (_loadError is not null)
 {
-    <LoadError Message="@_loadError" Offline="_offline" What="Cash and bank accounts" OnRetry="LoadAsync" />
+    <LoadError Message="@_loadError" Offline="_offline" What="@Loc["Accounts.List.Subject"]" OnRetry="LoadAsync" />
 }
 else if (!_loaded)
 {
@@ -26,15 +26,15 @@ else
         <MudPaper Class="pa-4 mb-3" Elevation="1">
             @if (_existing?.IsSystem == true)
             {
-                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@MasterLabels.AccountType(_type) (built-in account)</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary mb-2">@(Loc["Accounts.Form.BuiltInAccount", Loc[MasterLabels.AccountType(_type)]])</MudText>
             }
             else
             {
-                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">Account type</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Accounts.Form.TypeLabel"]</MudText>
                 <MudRadioGroup T="string" @bind-Value="_type" Name="account-type">
-                    <MudRadio Value="@("Bank")" Color="Color.Primary">Bank account</MudRadio>
-                    <MudRadio Value="@("Wallet")" Color="Color.Primary">Wallet</MudRadio>
-                    <MudRadio Value="@("Cash")" Color="Color.Primary">Cash / petty cash</MudRadio>
+                    <MudRadio Value="@("Bank")" Color="Color.Primary">@Loc["AccountType.Bank"]</MudRadio>
+                    <MudRadio Value="@("Wallet")" Color="Color.Primary">@Loc["AccountType.Wallet"]</MudRadio>
+                    <MudRadio Value="@("Cash")" Color="Color.Primary">@Loc["Accounts.Form.CashPettyCash"]</MudRadio>
                 </MudRadioGroup>
             }
 
@@ -43,21 +43,20 @@ else
                           Error="@Has("name")" ErrorText="@ErrorOf("name")" />
             @if (HasBankDetails)
             {
-                <MudTextField @bind-Value="_holder" Label="Account holder name" Variant="Variant.Outlined" Class="mt-3"
+                <MudTextField @bind-Value="_holder" Label="@Loc["Accounts.Form.HolderName"]" Variant="Variant.Outlined" Class="mt-3"
                               MaxLength="MasterValidation.NameMax" Error="@Has("accountHolderName")" ErrorText="@ErrorOf("accountHolderName")" />
-                <MudTextField @bind-Value="_number" Label="@(_type == "Wallet" ? "Wallet ID / phone" : "Account number")" Variant="Variant.Outlined" Class="mt-3"
+                <MudTextField @bind-Value="_number" Label="@(_type == "Wallet" ? Loc["Accounts.Form.WalletId"] : Loc["Accounts.Form.AccountNumber"])" Variant="Variant.Outlined" Class="mt-3"
                               MaxLength="MasterValidation.AccountNumberMax" Error="@Has("accountNumber")" ErrorText="@ErrorOf("accountNumber")" />
             }
         </MudPaper>
 
         <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudNumericField T="decimal?" @bind-Value="_opening" Label="Current account balance (Rs.)" Placeholder="0" HideSpinButtons="true"
+            <MudNumericField T="decimal?" @bind-Value="_opening" Label="@Loc["Accounts.Form.OpeningBalanceLabel"]" Placeholder="0" HideSpinButtons="true"
                              InputMode="InputModes.Decimal" Variant="Variant.Outlined"
-                             HelperText="The balance on the date below. Use a minus sign if the account is overdrawn."
+                             HelperText="@Loc["Accounts.Form.BalanceHelp"]"
                              Error="@Has("openingBalance")" ErrorText="@ErrorOf("openingBalance")" />
-            <MudDatePicker @bind-Date="_asOf" Label="As of date" Editable="true" DateFormat="yyyy-MM-dd" Placeholder="yyyy-mm-dd"
-                           Variant="Variant.Outlined" Class="mt-3" Disabled="DateLocked"
-                           HelperText="@(DateLocked ? "You can only date an opening balance today." : null)" />
+            <DateField @ref="_asOfField" @bind-Value="_asOf" Label="@Loc["Accounts.Form.AsOfLabel"]" Class="mt-3" Disabled="DateLocked"
+                       HelperText="@(DateLocked ? Loc["Accounts.Form.DateLockedHelp"].Value : null)" />
         </MudPaper>
 
         @if (_saveError is not null)
@@ -66,13 +65,13 @@ else
         }
 
         <div class="form-actions">
-            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>Cancel</MudButton>
+            <MudButton Variant="Variant.Text" Href="@CancelHref" data-enter-cancel>@Loc["Common.Cancel"]</MudButton>
             <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync" Disabled="_saving" data-enter-save>
-                @(_saving ? "Saving…" : IsNew ? "Add Account" : "Save")
+                @(_saving ? Loc["Accounts.Form.Saving"] : IsNew ? Loc["Accounts.Add"] : Loc["Common.Save"])
             </MudButton>
         </div>
         <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2 keyboard-hint">
-            Enter moves to the next field · Ctrl+S saves · Esc cancels
+            @Loc["Accounts.Form.KeyboardHint"]
         </MudText>
     </EnterNavForm>
 }
@@ -93,6 +92,7 @@ else
     private string? _number;
     private decimal? _opening;
     private DateTime? _asOf = DateTime.Today;
+    private DateField? _asOfField;
 
     // The picker starts on this device's today. Left untouched on a new entry, no date is sent and the
     // server uses the company's today (D12); a locked date is always the server's today.
@@ -112,16 +112,16 @@ else
 
     private string NameLabel => _type switch
     {
-        "Bank" => "Bank name",
-        "Wallet" => "Wallet name",
-        _ => "Account name",
+        "Bank" => Loc["Accounts.Form.BankName"],
+        "Wallet" => Loc["Accounts.Form.WalletName"],
+        _ => Loc["Accounts.Form.AccountName"],
     };
 
     private string NamePlaceholder => _type switch
     {
-        "Bank" => "e.g. Nabil Bank",
-        "Wallet" => "e.g. eSewa",
-        _ => "e.g. Petty Cash",
+        "Bank" => Loc["Accounts.Form.BankPlaceholder"],
+        "Wallet" => Loc["Accounts.Form.WalletPlaceholder"],
+        _ => Loc["Accounts.Form.CashPlaceholder"],
     };
 
     private bool Has(string key) => _errors.ContainsKey(key);
@@ -165,7 +165,12 @@ else
             HasBankDetails ? _number : null,
             _opening ?? 0,
             SentAsOf);
-        _errors = MasterValidation.Validate(request, IsNew);
+        _errors = MasterValidation.Validate(request, IsNew, Loc.ForValidation());
+        if (_asOfField?.IsInvalid == true)
+        {
+            _errors["openingAsOf"] = [Loc["Calendar.InvalidBs"]];
+        }
+
         if (_errors.Count > 0)
         {
             _form?.FocusFirstErrorAfterRender();
@@ -184,7 +189,7 @@ else
                 return;
             }
 
-            Snackbar.Add($"Saved {result.Value!.Name}.", Severity.Success);
+            Snackbar.Add(Loc["Accounts.Form.SavedSnackbar", result.Value!.Name], Severity.Success);
             Navigation.NavigateTo($"accounts/{result.Value.Id}");
         }
         finally

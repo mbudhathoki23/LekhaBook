@@ -8,12 +8,12 @@
 @code {
     private string Label => (Connectivity.IsOnline, Sync.State) switch
     {
-        (false, _) when Sync.PendingCount > 0 => $"Offline · {Sync.PendingCount} pending",
-        (false, _) => "Offline",
-        (_, SyncState.Syncing) => "Syncing…",
-        (_, SyncState.Error) => "Sync error",
-        (_, SyncState.Pending) => $"{Sync.PendingCount} pending",
-        _ => "Online · Synced",
+        (false, _) when Sync.PendingCount > 0 => Loc["Sync.OfflinePending", Sync.PendingCount],
+        (false, _) => Loc["Sync.Offline"],
+        (_, SyncState.Syncing) => Loc["Sync.Syncing"],
+        (_, SyncState.Error) => Loc["Sync.Error"],
+        (_, SyncState.Pending) => Loc["Sync.Pending", Sync.PendingCount],
+        _ => Loc["Sync.OnlineSynced"],
     };
 
     private Color ChipColor => (Connectivity.IsOnline, Sync.State) switch

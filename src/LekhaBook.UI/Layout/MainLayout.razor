@@ -1,6 +1,7 @@
 ﻿@inherits LayoutComponentBase
 @implements IDisposable
 @inject ISessionService Session
+@inject ILanguageService Language
 @inject NavigationManager Navigation
 
 <MudThemeProvider Theme="AppTheme.Theme" />
@@ -11,21 +12,22 @@
 @if (!Session.IsInitialized || !Session.IsSignedIn)
 {
     @* Restoring the session, or on the way to the sign-in page. *@
-    <div class="brand-loading" role="status" aria-label="Loading Lekha Books">
+    <div class="brand-loading" role="status" aria-label="@Loc["Shell.Loading"]">
         <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
     </div>
 }
 else
 {
-    <MudLayout>
+    @* Keyed on the language: a change re-creates the layout and its pages, so every string is looked up again. *@
+    <MudLayout @key="_languageVersion">
         <MudAppBar Elevation="1" Dense="true">
             <MudHidden Breakpoint="Breakpoint.SmAndDown">
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                       aria-label="Toggle menu" OnClick="ToggleDrawer" />
+                       aria-label="@Loc["Shell.ToggleMenu"]" OnClick="ToggleDrawer" />
             </MudHidden>
             <BrandLogo />
             <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary"
-                     aria-label="Add transaction" Class="quick-add-fab"
+                     aria-label="@Loc["Shell.AddTransaction"]" Class="quick-add-fab"
                      OnClick="NavigateToAddTransaction" />
             <CompanySwitcher />
             <MudSpacer />
@@ -45,7 +47,7 @@ else
                 @if (Session.IsOffline)
                 {
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
-                        You're offline. Showing your saved company list; parties, accounts and staff need a connection until sync arrives.
+                        @Loc["Shell.Offline"]
                     </MudAlert>
                 }
                 @if (Session.CurrentCompany is null && !AllowedWithoutCompany)
@@ -70,13 +72,15 @@ else
 }
 
 <div id="blazor-error-ui" data-nosnippet>
-    An unexpected error has occurred.
-    <a href="." class="reload">Reload</a>
+    @Loc["Shell.UnexpectedError"]
+    <a href="." class="reload">@Loc["Shell.Reload"]</a>
     <span class="dismiss">🗙</span>
 </div>
 
 @code {
     private bool _drawerOpen = true;
+
+    private int _languageVersion;
 
     private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
@@ -90,6 +94,7 @@ else
     {
         Session.Changed += OnSessionChanged;
         Navigation.LocationChanged += OnLocationChanged;
+        Language.Changed += OnLanguageChanged;
         await Session.InitializeAsync();
         RequireSignIn();
     }
@@ -116,9 +121,16 @@ else
     private void OnLocationChanged(object? sender, Microsoft.AspNetCore.Components.Routing.LocationChangedEventArgs e) =>
         _ = InvokeAsync(StateHasChanged);
 
+    private void OnLanguageChanged(object? sender, EventArgs e) => _ = InvokeAsync(() =>
+    {
+        _languageVersion++;
+        StateHasChanged();
+    });
+
     public void Dispose()
     {
         Session.Changed -= OnSessionChanged;
         Navigation.LocationChanged -= OnLocationChanged;
+        Language.Changed -= OnLanguageChanged;
     }
 }
