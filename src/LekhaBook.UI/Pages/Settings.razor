@@ -121,6 +121,7 @@
     }
     @if (!Session.IsLocalMode)
     {
+        <MudListItem T="string" Icon="@Icons.Material.Filled.CreditCard" Href="billing">@Loc["Billing.Title"]</MudListItem>
         <MudListItem T="string" Icon="@Icons.Material.Filled.Security" Href="settings/security">@Loc["Security.Title"]</MudListItem>
         <MudListItem T="string" Icon="@Icons.Material.Filled.UploadFile" Href="import">@Loc["Import.Title"]</MudListItem>
         <MudListItem T="string" Icon="@Icons.Material.Filled.Group" Href="staff">@Loc["Settings.Staff"]</MudListItem>

@@ -2186,4 +2186,88 @@ Sign in to Lekha Books: {4}</value>
   <data name="Backup.Failed" xml:space="preserve">
     <value>Could not process backup file.</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>Plan &amp; Billing</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>Manage your Online Cloud subscription and pay with eSewa, Khalti, or Card (Stripe).</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>Offline Local Mode is free forever</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>Upgrade to Online Cloud Mode first to start a 14-day free cloud trial and unlock cloud backup, web access, and staff accounts.</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>{0} day(s) remaining · Active until {1}</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>Your Online Cloud plan has expired. Renew below to continue cloud sync and team features.</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>Up to {0} business(es)</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>Up to {0} team members per business</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>Owner account only</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>Billing cycle</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>Yearly (Save ~30%)</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>Payment method</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>Sandbox Test Activate</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>year</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>month</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>Subscribe / Renew</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>No live payment gateway is enabled on this server yet. Configure eSewa, Khalti, or Stripe in server settings.</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>Payment history</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>Provider</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>Could not load subscription status.</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>Could not start payment checkout.</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>Payment was cancelled. Your account was not charged.</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>Verifying your payment…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>Subscription activated!</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>Payment could not be verified.</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>Back to Billing</value>
+  </data>
 </root>

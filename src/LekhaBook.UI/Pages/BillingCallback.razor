@@ -1,0 +1,102 @@
+@page "/billing/callback"
+@inject IBillingApi BillingApi
+@inject NavigationManager Navigation
+
+<PageTitle>@Loc["Billing.Title"] · Lekha Books</PageTitle>
+
+<div class="mx-auto" style="max-width: 560px;">
+    <MudPaper Class="pa-6" Elevation="2">
+        @if (_verifying)
+        {
+            <MudStack Spacing="3" AlignItems="AlignItems.Center">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+                <MudText Typo="Typo.h6">@Loc["Billing.Verifying"]</MudText>
+            </MudStack>
+        }
+        else if (_activated)
+        {
+            <MudStack Spacing="3" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.CheckCircle" Color="Color.Success" Size="Size.Large" />
+                <MudText Typo="Typo.h5" Align="Align.Center">@Loc["Billing.ActivatedSuccess"]</MudText>
+                @if (!string.IsNullOrWhiteSpace(_message))
+                {
+                    <MudText Typo="Typo.body2" Align="Align.Center" Class="mud-text-secondary">@_message</MudText>
+                }
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/">@Loc["Upgrade.GoToBooks"]</MudButton>
+                    <MudButton Variant="Variant.Outlined" Href="billing">@Loc["Billing.Title"]</MudButton>
+                </MudStack>
+            </MudStack>
+        }
+        else
+        {
+            <MudStack Spacing="3" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.ErrorOutline" Color="Color.Error" Size="Size.Large" />
+                <MudText Typo="Typo.h6" Align="Align.Center">@Loc["Billing.VerifyFailed"]</MudText>
+                @if (!string.IsNullOrWhiteSpace(_message))
+                {
+                    <MudText Typo="Typo.body2" Align="Align.Center" Class="mud-text-secondary">@_message</MudText>
+                }
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="billing">@Loc["Billing.BackToBilling"]</MudButton>
+            </MudStack>
+        }
+    </MudPaper>
+</div>
+
+@code {
+    [SupplyParameterFromQuery(Name = "provider")]
+    public string? Provider { get; set; }
+
+    [SupplyParameterFromQuery(Name = "data")]
+    public string? ESewaData { get; set; }
+
+    [SupplyParameterFromQuery(Name = "pidx")]
+    public string? KhaltiPidx { get; set; }
+
+    [SupplyParameterFromQuery(Name = "session_id")]
+    public string? StripeSessionId { get; set; }
+
+    [SupplyParameterFromQuery(Name = "ref")]
+    public string? TransactionRef { get; set; }
+
+    [SupplyParameterFromQuery(Name = "failed")]
+    public string? Failed { get; set; }
+
+    private bool _verifying = true;
+    private bool _activated;
+    private string? _message;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Failed == "1")
+        {
+            _verifying = false;
+            _message = Loc["Billing.PaymentCancelled"];
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Provider))
+        {
+            _verifying = false;
+            _message = Loc["Billing.VerifyFailed"];
+            return;
+        }
+
+        var res = await BillingApi.VerifyPaymentAsync(new VerifyPaymentRequest(
+            Provider: Provider,
+            TransactionRef: TransactionRef,
+            ESewaData: ESewaData,
+            KhaltiPidx: KhaltiPidx,
+            StripeSessionId: StripeSessionId));
+        _verifying = false;
+        if (res.Ok && res.Value is { Activated: true } verified)
+        {
+            _activated = true;
+            _message = verified.Message;
+        }
+        else
+        {
+            _message = res.Error ?? Loc["Billing.VerifyFailed"];
+        }
+    }
+}

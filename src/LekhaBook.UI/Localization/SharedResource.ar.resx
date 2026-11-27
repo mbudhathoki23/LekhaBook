@@ -2258,4 +2258,88 @@
   <data name="Backup.Failed" xml:space="preserve">
     <value>تعذرت معالجة ملف النسخة الاحتياطية.</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>الخطة والفوترة</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>أدر اشتراكك السحابي وادفع عبر eSewa أو Khalti أو البطاقة (Stripe).</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>الوضع المحلي دون اتصال مجاني دائماً</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>قم بالترقية إلى الوضع السحابي أولاً لبدء تجربة مجانية لمدة 14 يوماً وفتح النسخ السحابي وحسابات الموظفين.</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>متبقي {0} يوم · نشط حتى {1}</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>انتهت صلاحية خطتك السحابية. جدد أدناه لمواصلة المزامنة السحابية وميزات الفريق.</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>حتى {0} أعمال</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>حتى {0} موظفين لكل نشاط</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>حساب المالك فقط</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>دورة الفوترة</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>سنوي (وفر ~30%)</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>شهري</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>طريقة الدفع</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>تفعيل تجريبي (Sandbox)</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>سنة</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>شهر</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>اشترك / جدد الآن</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>لم يتم تفعيل أي بوابة دفع على هذا الخادم بعد. قم بإعداد eSewa أو Khalti أو Stripe في إعدادات الخادم.</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>سجل المدفوعات</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>الخطة</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>المزود</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>تعذر تحميل حالة الاشتراك.</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>تعذر بدء عملية الدفع.</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>تم إلغاء الدفع. لم يتم خصم أي مبلغ من حسابك.</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>جارٍ التحقق من الدفع…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>تم تفعيل الاشتراك!</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>تعذر التحقق من الدفع.</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>العودة إلى الفوترة</value>
+  </data>
 </root>

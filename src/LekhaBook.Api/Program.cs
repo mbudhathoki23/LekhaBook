@@ -16,6 +16,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient(BillingEndpoints.GatewayHttpClient, c => c.Timeout = TimeSpan.FromSeconds(20));
 builder.Services.AddSingleton(TimeProvider.System);
 
 // Persist data-protection keys in production (D4/D10) so bearer tokens survive restarts.
@@ -142,6 +143,7 @@ app.MapSyncEndpoints();
 app.MapReportLinkEndpoints();
 app.MapImportEndpoints();
 app.MapBookExtrasEndpoints();
+app.MapBillingEndpoints();
 
 app.Run();
 

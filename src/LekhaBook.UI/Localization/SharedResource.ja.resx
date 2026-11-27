@@ -2258,4 +2258,88 @@ Lekha Books にサインイン: {4}</value>
   <data name="Backup.Failed" xml:space="preserve">
     <value>バックアップファイルを処理できませんでした。</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>プランと請求</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>オンラインクラウドの契約を管理し、eSewa・Khalti・カード (Stripe) でお支払いいただけます。</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>オフラインローカルモードは永久無料です</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>まずはオンラインクラウドモードへアップグレードして14日間無料トライアルを開始してください。</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>残り {0} 日 · 有効期限: {1}</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>オンラインクラウドプランの有効期限が切れました。クラウド同期を継続するには以下から更新してください。</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>最大 {0} ビジネス</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>1ビジネスあたり最大 {0} 名のスタッフ</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>オーナーアカウントのみ</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>請求サイクル</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>年払い（約30%お得）</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>月払い</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>お支払い方法</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>サンドボックステスト有効化</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>年</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>月</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>申し込む / 更新する</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>このサーバーでは決済ゲートウェイがまだ有効になっていません。eSewa・Khalti・Stripe を設定してください。</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>お支払い履歴</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>プラン</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>決済方法</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>サブスクリプション状態を読み込めませんでした。</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>決済を開始できませんでした。</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>お支払いはキャンセルされました。請求は行われていません。</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>お支払いを確認しています…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>サブスクリプションが有効になりました！</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>お支払いを確認できませんでした。</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>請求画面へ戻る</value>
+  </data>
 </root>

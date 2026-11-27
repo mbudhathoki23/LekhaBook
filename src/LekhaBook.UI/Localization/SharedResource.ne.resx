@@ -2258,4 +2258,88 @@ Lekha Books मा साइन इन: {4}</value>
   <data name="Backup.Failed" xml:space="preserve">
     <value>ब्याकअप फाइल प्रशोधन गर्न सकिएन।</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>योजना र बिलिङ</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>आफ्नो अनलाइन क्लाउड सदस्यता व्यवस्थापन गर्नुहोस् र eSewa, Khalti वा कार्ड (Stripe) बाट भुक्तानी गर्नुहोस्।</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>अफलाइन स्थानीय मोड सधैं निःशुल्क छ</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>१४-दिने निःशुल्क क्लाउड परीक्षण सुरु गर्न र क्लाउड ब्याकअप, वेब पहुँच र कर्मचारी खाता अनलक गर्न पहिले अनलाइन क्लाउड मोडमा अपग्रेड गर्नुहोस्।</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>{0} दिन बाँकी · {1} सम्म सक्रिय</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>तपाईंको अनलाइन क्लाउड योजना समाप्त भयो। क्लाउड सिंक र टिम सुविधा जारी राख्न तल नवीकरण गर्नुहोस्।</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>{0} व्यवसाय सम्म</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>प्रति व्यवसाय {0} कर्मचारी सम्म</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>मालिक खाता मात्र</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>बिलिङ अवधि</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>वार्षिक (~३०% बचत)</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>मासिक</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>भुक्तानी माध्यम</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>स्यान्डबक्स परीक्षण सक्रियता</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>वर्ष</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>महिना</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>सदस्यता / नवीकरण गर्नुहोस्</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>यस सर्भरमा अझै कुनै भुक्तानी गेटवे सक्रिय छैन। सर्भर सेटिङमा eSewa, Khalti वा Stripe सेटअप गर्नुहोस्।</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>भुक्तानी इतिहास</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>योजना</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>माध्यम</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>सदस्यता स्थिति लोड गर्न सकिएन।</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>भुक्तानी सुरु गर्न सकिएन।</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>भुक्तानी रद्द गरियो। तपाईंको खाताबाट रकम काटिएको छैन।</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>तपाईंको भुक्तानी प्रमाणित गरिँदै छ…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>सदस्यता सक्रिय भयो!</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>भुक्तानी प्रमाणित हुन सकेन।</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>बिलिङमा फर्कनुहोस्</value>
+  </data>
 </root>

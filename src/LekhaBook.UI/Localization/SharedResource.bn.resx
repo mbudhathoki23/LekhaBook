@@ -2258,4 +2258,88 @@ Lekha Books-এ সাইন ইন: {4}</value>
   <data name="Backup.Failed" xml:space="preserve">
     <value>ব্যাকআপ ফাইল প্রক্রিয়া করা যায়নি।</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>প্ল্যান ও বিলিং</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>আপনার অনলাইন ক্লাউড সাবস্ক্রিপশন পরিচালনা করুন এবং eSewa, Khalti বা কার্ড (Stripe) দিয়ে পেমেন্ট করুন।</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>অফলাইন লোকাল মোড চিরকাল বিনামূল্যে</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>১৪ দিনের ফ্রি ক্লাউড ট্রায়াল শুরু করতে এবং ক্লাউড ব্যাকআপ, ওয়েব অ্যাক্সেস ও স্টাফ অ্যাকাউন্ট পেতে আগে অনলাইন ক্লাউড মোডে আপগ্রেড করুন।</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>{0} দিন বাকি · {1} পর্যন্ত সক্রিয়</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>আপনার অনলাইন ক্লাউড প্ল্যানের মেয়াদ শেষ। ক্লাউড সিঙ্ক ও টিম সুবিধা চালু রাখতে নিচে নবায়ন করুন।</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>সর্বোচ্চ {0}টি ব্যবসা</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>প্রতি ব্যবসায় সর্বোচ্চ {0} জন স্টাফ</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>শুধু মালিক অ্যাকাউন্ট</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>বিলিং সময়কাল</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>বার্ষিক (~৩০% সাশ্রয়)</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>মাসিক</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>পেমেন্ট মাধ্যম</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>স্যান্ডবক্স টেস্ট অ্যাক্টিভেট</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>বছর</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>মাস</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>সাবস্ক্রাইব / নবায়ন করুন</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>এই সার্ভারে এখনো কোনো পেমেন্ট গেটওয়ে সক্রিয় নয়। সার্ভার সেটিংসে eSewa, Khalti বা Stripe কনফিগার করুন।</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>পেমেন্ট ইতিহাস</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>প্ল্যান</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>মাধ্যম</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>সাবস্ক্রিপশন তথ্য লোড করা যায়নি।</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>পেমেন্ট চেকআউট শুরু করা যায়নি।</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>পেমেন্ট বাতিল করা হয়েছে। আপনার অ্যাকাউন্ট থেকে টাকা কাটা হয়নি।</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>আপনার পেমেন্ট যাচাই করা হচ্ছে…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>সাবস্ক্রিপশন সক্রিয় হয়েছে!</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>পেমেন্ট যাচাই করা যায়নি।</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>বিলিংয়ে ফিরে যান</value>
+  </data>
 </root>

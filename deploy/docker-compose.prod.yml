@@ -32,6 +32,18 @@ services:
       PublicSite__BaseUrl: https://${WEB_DOMAIN:?Set WEB_DOMAIN in deploy/.env}
       Database__MigrateOnStartup: ${MIGRATE_ON_STARTUP:-false}
       RateLimits__AuthPerMinute: ${AUTH_RATE_LIMIT:-30}
+      Billing__EnforceLimits: ${BILLING_ENFORCE_LIMITS:-true}
+      Billing__AllowSandboxTestMode: ${BILLING_SANDBOX_TEST:-false}
+      Billing__ESewa__Enabled: ${ESEWA_ENABLED:-false}
+      Billing__ESewa__UseSandbox: ${ESEWA_USE_SANDBOX:-false}
+      Billing__ESewa__ProductCode: ${ESEWA_PRODUCT_CODE:-}
+      Billing__ESewa__SecretKey: ${ESEWA_SECRET_KEY:-}
+      Billing__Khalti__Enabled: ${KHALTI_ENABLED:-false}
+      Billing__Khalti__UseSandbox: ${KHALTI_USE_SANDBOX:-false}
+      Billing__Khalti__SecretKey: ${KHALTI_SECRET_KEY:-}
+      Billing__Stripe__Enabled: ${STRIPE_ENABLED:-false}
+      Billing__Stripe__SecretKey: ${STRIPE_SECRET_KEY:-}
+      Billing__Stripe__WebhookSecret: ${STRIPE_WEBHOOK_SECRET:-}
     volumes:
       - api_attachments:/data/attachments
       - api_keys:/data/keys

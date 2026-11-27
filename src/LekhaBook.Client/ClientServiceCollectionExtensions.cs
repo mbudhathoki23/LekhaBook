@@ -49,6 +49,7 @@ public static class ClientServiceCollectionExtensions
             services.AddScoped<BookExtrasApi>();
             services.AddScoped<IBookExtrasApi>(sp => sp.GetRequiredService<BookExtrasApi>());
             services.AddScoped<IImportService, ImportApi>();
+            services.AddScoped<IBillingApi, BillingApi>();
         }
         else
         {
@@ -70,6 +71,7 @@ public static class ClientServiceCollectionExtensions
             services.AddSingleton<BookExtrasApi>();
             services.AddSingleton<IBookExtrasApi>(sp => sp.GetRequiredService<BookExtrasApi>());
             services.AddSingleton<IImportService, ImportApi>();
+            services.AddSingleton<IBillingApi, BillingApi>();
         }
 
         return services;

@@ -30,9 +30,14 @@
                 <MudText Typo="Typo.body1" Align="Align.Center">
                     @Loc["Upgrade.SuccessSummary", done.CompaniesMigrated, done.TransactionsMigrated, done.AttachmentsUploaded]
                 </MudText>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/">
-                    @Loc["Upgrade.GoToBooks"]
-                </MudButton>
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" Justify="Justify.Center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/">
+                        @Loc["Upgrade.GoToBooks"]
+                    </MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Large" StartIcon="@Icons.Material.Filled.CreditCard" Href="billing">
+                        @Loc["Billing.Title"]
+                    </MudButton>
+                </MudStack>
             </MudStack>
         </MudPaper>
     }

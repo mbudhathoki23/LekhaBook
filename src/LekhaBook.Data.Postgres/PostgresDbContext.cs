@@ -17,6 +17,10 @@ public sealed class PostgresDbContext(DbContextOptions<PostgresDbContext> option
 
     public DbSet<ReportShareLink> ReportShareLinks => Set<ReportShareLink>();
 
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+
+    public DbSet<PaymentTransaction> PaymentTransactions => Set<PaymentTransaction>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -61,6 +65,35 @@ public sealed class PostgresDbContext(DbContextOptions<PostgresDbContext> option
             e.HasOne<Account>().WithMany().HasForeignKey(x => x.AccountId).OnDelete(DeleteBehavior.Restrict);
             e.HasIndex(x => x.TokenHash).IsUnique();
             e.HasIndex(x => new { x.CompanyId, x.AccountId });
+        });
+
+        modelBuilder.Entity<Subscription>(e =>
+        {
+            e.ToTable("Subscriptions");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Plan).HasConversion<string>().HasMaxLength(32);
+            e.Property(x => x.Status).HasConversion<string>().HasMaxLength(24);
+            e.Property(x => x.LastProvider).HasConversion<string>().HasMaxLength(24);
+            e.Property(x => x.ProviderCustomerId).HasMaxLength(128);
+            e.Property(x => x.ProviderSubscriptionId).HasMaxLength(128);
+            e.HasIndex(x => x.UserId).IsUnique();
+        });
+
+        modelBuilder.Entity<PaymentTransaction>(e =>
+        {
+            e.ToTable("PaymentTransactions");
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Plan).HasConversion<string>().HasMaxLength(32);
+            e.Property(x => x.Provider).HasConversion<string>().HasMaxLength(24);
+            e.Property(x => x.Status).HasConversion<string>().HasMaxLength(24);
+            e.Property(x => x.Amount).HasPrecision(18, 2);
+            e.Property(x => x.Currency).HasMaxLength(8);
+            e.Property(x => x.TransactionRef).HasMaxLength(100);
+            e.Property(x => x.ProviderRef).HasMaxLength(256);
+            e.Property(x => x.FailureReason).HasMaxLength(500);
+            e.HasOne<Subscription>().WithMany().HasForeignKey(x => x.SubscriptionId).OnDelete(DeleteBehavior.Restrict);
+            e.HasIndex(x => x.TransactionRef).IsUnique();
+            e.HasIndex(x => new { x.UserId, x.CreatedAtUtc });
         });
     }
 }

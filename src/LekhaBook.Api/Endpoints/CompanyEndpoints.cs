@@ -80,12 +80,22 @@ public static class CompanyEndpoints
 
     // ---------------- Companies ----------------
 
-    private static async Task<Results<Created<CompanySummary>, ValidationProblem, UnauthorizedHttpResult>> CreateCompany(
-        CreateCompanyRequest request, HttpContext http, AuthDbContext auth, PostgresDbContext db, TimeProvider clock)
+    private static async Task<Results<Created<CompanySummary>, ValidationProblem, ProblemHttpResult, UnauthorizedHttpResult>> CreateCompany(
+        CreateCompanyRequest request, HttpContext http, AuthDbContext auth, PostgresDbContext db, IConfiguration config, TimeProvider clock)
     {
         if (CompanyAccess.UserId(http.User) is not { } userId || await auth.Users.FindAsync(userId) is not { } user)
         {
             return TypedResults.Unauthorized();
+        }
+
+        if (BillingEndpoints.IsEnforcementEnabled(config))
+        {
+            var sub = await BillingEndpoints.GetOrCreateSubscriptionAsync(db, userId, clock);
+            var owned = await db.CompanyMembers.CountAsync(m => m.UserId == userId && m.Role == CompanyRole.Owner && m.Status == MemberStatus.Active);
+            if (BillingCatalog.CheckCreateCompany(sub, owned, clock.GetUtcNow().UtcDateTime) is { } billingBlock)
+            {
+                return BillingEndpoints.PaymentRequired(billingBlock);
+            }
         }
 
         if (Invalid(request.Name, 200, "name") is { } problem)
@@ -782,9 +792,23 @@ public static class CompanyEndpoints
     }
 
     private static async Task<Results<Ok<InviteResponse>, ProblemHttpResult, ValidationProblem>> Invite(
-        Guid companyId, InviteRequest request, CompanyAccess access, PostgresDbContext db, AuthDbContext auth, TimeProvider clock)
+        Guid companyId, InviteRequest request, CompanyAccess access, PostgresDbContext db, AuthDbContext auth, IConfiguration config, TimeProvider clock)
     {
         var actor = await access.RequireMemberAsync();
+
+        if (BillingEndpoints.IsEnforcementEnabled(config))
+        {
+            var ownerUserId = await db.CompanyMembers.AsNoTracking()
+                .Where(m => m.CompanyId == companyId && m.Role == CompanyRole.Owner && m.Status == MemberStatus.Active)
+                .Select(m => (Guid?)m.UserId)
+                .FirstOrDefaultAsync() ?? actor.UserId;
+            var sub = await BillingEndpoints.GetOrCreateSubscriptionAsync(db, ownerUserId, clock);
+            var activeCount = await db.CompanyMembers.CountAsync(m => m.CompanyId == companyId && m.Status == MemberStatus.Active);
+            if (BillingCatalog.CheckInviteStaff(sub, activeCount, clock.GetUtcNow().UtcDateTime) is { } billingBlock)
+            {
+                return BillingEndpoints.PaymentRequired(billingBlock);
+            }
+        }
 
         if (Invalid(request.DisplayName, 200, "displayName") is { } nameProblem)
         {

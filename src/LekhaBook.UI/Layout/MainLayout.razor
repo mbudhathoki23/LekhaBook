@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @implements IDisposable
 @inject ISessionService Session
 @inject ISyncService Sync
@@ -117,13 +117,12 @@ else
     private int _languageVersion;
     private int _syncVersion;
 
+    private string BodyKey => $"{Session.CurrentCompany?.CompanyId}:{_syncVersion}";
+
     private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
-    /// <summary>The upgrade screen signs in and changes company while it runs: it keeps its progress and errors.</summary>
-    private string BodyKey => CurrentPath == "upgrade" ? "upgrade" : $"{Session.CurrentCompany?.CompanyId}:{_syncVersion}";
-
     /// <summary>Pages that work before the user has a company.</summary>
-    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings" or "settings/security" or "upgrade" or "sync"
+    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings" or "settings/security" or "upgrade" or "sync" or "billing" or "billing/callback"
         || CurrentPath.StartsWith("shared-report/", StringComparison.Ordinal);
 
     /// <summary>Add and edit forms (…/new, …/edit).</summary>
@@ -170,18 +169,11 @@ else
         StateHasChanged();
     });
 
-    /// <summary>
-    /// Pages that only show the books: rebuilding one loses nothing the user typed. Everything else (forms, settings,
-    /// import, security, upgrade) keeps its state and shows new data when next opened.
-    /// </summary>
-    private bool CanReload => CurrentPath is "" or "parties" or "accounts" or "transactions"
-        || (CurrentPath.Split('/') is ["parties" or "accounts", var id] && Guid.TryParse(id, out _));
-
     private void OnThemeChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
 
     private void OnSyncDataChanged(object? sender, EventArgs e) => _ = InvokeAsync(() =>
     {
-        if (CanReload)
+        if (!IsFormPage)
         {
             _syncVersion++;
             StateHasChanged();

@@ -2258,4 +2258,88 @@
   <data name="Backup.Failed" xml:space="preserve">
     <value>无法处理备份文件。</value>
   </data>
+  <data name="Billing.Title" xml:space="preserve">
+    <value>套餐与账单</value>
+  </data>
+  <data name="Billing.Subtitle" xml:space="preserve">
+    <value>管理您的在线云订阅，支持通过 eSewa、Khalti 或银行卡 (Stripe) 支付。</value>
+  </data>
+  <data name="Billing.LocalModeHeading" xml:space="preserve">
+    <value>离线本地模式永久免费</value>
+  </data>
+  <data name="Billing.LocalModeBody" xml:space="preserve">
+    <value>先升级到在线云模式即可开启 14 天免费试用，解锁云备份、网页版和员工账户。</value>
+  </data>
+  <data name="Billing.ActiveUntil" xml:space="preserve">
+    <value>剩余 {0} 天 · 有效期至 {1}</value>
+  </data>
+  <data name="Billing.ExpiredMessage" xml:space="preserve">
+    <value>您的在线云套餐已到期，请在下方续费以继续使用云同步和团队功能。</value>
+  </data>
+  <data name="Billing.MaxCompanies" xml:space="preserve">
+    <value>最多 {0} 个账套</value>
+  </data>
+  <data name="Billing.MaxStaff" xml:space="preserve">
+    <value>每个账套最多 {0} 名成员</value>
+  </data>
+  <data name="Billing.OwnerOnly" xml:space="preserve">
+    <value>仅限所有者账户</value>
+  </data>
+  <data name="Billing.ChooseCycle" xml:space="preserve">
+    <value>计费周期</value>
+  </data>
+  <data name="Billing.YearlySave" xml:space="preserve">
+    <value>按年付费（省约 30%）</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>按月付费</value>
+  </data>
+  <data name="Billing.ChooseProvider" xml:space="preserve">
+    <value>支付方式</value>
+  </data>
+  <data name="Billing.SandboxTest" xml:space="preserve">
+    <value>沙盒测试激活</value>
+  </data>
+  <data name="Billing.PerYear" xml:space="preserve">
+    <value>年</value>
+  </data>
+  <data name="Billing.PerMonth" xml:space="preserve">
+    <value>月</value>
+  </data>
+  <data name="Billing.SubscribeNow" xml:space="preserve">
+    <value>立即订阅 / 续费</value>
+  </data>
+  <data name="Billing.NoProviderConfigured" xml:space="preserve">
+    <value>此服务器尚未配置在线支付网关。请在服务器配置中启用 eSewa、Khalti 或 Stripe。</value>
+  </data>
+  <data name="Billing.HistoryTitle" xml:space="preserve">
+    <value>付款记录</value>
+  </data>
+  <data name="Billing.ColumnPlan" xml:space="preserve">
+    <value>套餐</value>
+  </data>
+  <data name="Billing.ColumnProvider" xml:space="preserve">
+    <value>支付渠道</value>
+  </data>
+  <data name="Billing.LoadFailed" xml:space="preserve">
+    <value>无法加载订阅状态。</value>
+  </data>
+  <data name="Billing.CheckoutFailed" xml:space="preserve">
+    <value>无法启动支付结算。</value>
+  </data>
+  <data name="Billing.PaymentCancelled" xml:space="preserve">
+    <value>支付已取消，未从您的账户扣款。</value>
+  </data>
+  <data name="Billing.Verifying" xml:space="preserve">
+    <value>正在验证您的付款…</value>
+  </data>
+  <data name="Billing.ActivatedSuccess" xml:space="preserve">
+    <value>订阅已激活！</value>
+  </data>
+  <data name="Billing.VerifyFailed" xml:space="preserve">
+    <value>无法验证付款。</value>
+  </data>
+  <data name="Billing.BackToBilling" xml:space="preserve">
+    <value>返回账单</value>
+  </data>
 </root>

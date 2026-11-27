@@ -1,0 +1,284 @@
+@page "/billing"
+@inject ISessionService Session
+@inject IBillingApi BillingApi
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@inject ISnackbar Snackbar
+
+<PageTitle>@Loc["Billing.Title"] · Lekha Books</PageTitle>
+
+<div class="mx-auto" style="max-width: 920px;">
+    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Billing.Title"]</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc["Billing.Subtitle"]</MudText>
+
+    @if (Session.IsLocalMode)
+    {
+        <MudPaper Class="pa-5" Elevation="1">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">@Loc["Billing.LocalModeHeading"]</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Billing.LocalModeBody"]</MudText>
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" Href="upgrade">
+                        @Loc["Upgrade.Button"]
+                    </MudButton>
+                </div>
+            </MudStack>
+        </MudPaper>
+    }
+    else if (_loading)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+    }
+    else if (_loadError is not null)
+    {
+        <LoadError Message="@_loadError" Offline="_offline" What="@Loc["Billing.Title"]" OnRetry="LoadAsync" />
+    }
+    else if (_status is { } status)
+    {
+        @if (Cancelled == "1")
+        {
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">@Loc["Billing.PaymentCancelled"]</MudAlert>
+        }
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+        }
+
+        <MudPaper Class="pa-4 mb-4" Elevation="1">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="2">
+                <div>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                        <MudText Typo="Typo.h6">@status.PlanName</MudText>
+                        <MudChip T="string" Size="Size.Small" Color="@(status.IsActive ? Color.Success : Color.Error)">
+                            @status.Status
+                        </MudChip>
+                    </MudStack>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary mt-1">
+                        @(status.IsActive
+                            ? Loc["Billing.ActiveUntil", status.DaysRemaining, status.CurrentPeriodEndUtc.ToLocalTime().ToString("yyyy-MM-dd")]
+                            : Loc["Billing.ExpiredMessage"])
+                    </MudText>
+                </div>
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                    <MudChip T="string" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Filled.Business">
+                        @Loc["Billing.MaxCompanies", status.MaxCompanies]
+                    </MudChip>
+                    <MudChip T="string" Variant="Variant.Outlined" Size="Size.Small" Icon="@Icons.Material.Filled.Group">
+                        @(status.IncludesStaff ? Loc["Billing.MaxStaff", status.MaxStaffPerCompany] : Loc["Billing.OwnerOnly"])
+                    </MudChip>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+
+        <MudPaper Class="pa-4 mb-4" Elevation="1">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="3">
+                <div>
+                    <MudText Typo="Typo.subtitle2" Class="mb-1">@Loc["Billing.ChooseCycle"]</MudText>
+                    <MudRadioGroup T="string" @bind-Value="_cycle" Name="billing-cycle">
+                        <MudRadio Value="@("Yearly")" Color="Color.Primary">@Loc["Billing.YearlySave"]</MudRadio>
+                        <MudRadio Value="@("Monthly")" Color="Color.Primary">@Loc["Billing.Monthly"]</MudRadio>
+                    </MudRadioGroup>
+                </div>
+                <div>
+                    <MudText Typo="Typo.subtitle2" Class="mb-1">@Loc["Billing.ChooseProvider"]</MudText>
+                    <MudRadioGroup T="string" @bind-Value="_provider" Name="billing-provider">
+                        <MudRadio Value="@("ESewa")" Color="Color.Success" Disabled="@(!status.Providers.ESewa)">eSewa (NPR)</MudRadio>
+                        <MudRadio Value="@("Khalti")" Color="Color.Secondary" Disabled="@(!status.Providers.Khalti)">Khalti (NPR)</MudRadio>
+                        <MudRadio Value="@("Stripe")" Color="Color.Primary" Disabled="@(!status.Providers.Stripe)">Card / Stripe (USD)</MudRadio>
+                        @if (status.Providers.SandboxTestMode)
+                        {
+                            <MudRadio Value="@("Manual")" Color="Color.Warning">@Loc["Billing.SandboxTest"]</MudRadio>
+                        }
+                    </MudRadioGroup>
+                </div>
+            </MudStack>
+        </MudPaper>
+
+        <MudGrid Spacing="3" Class="mb-5">
+            @foreach (var plan in VisiblePlans(status))
+            {
+                var isBusiness = plan.IncludesStaff;
+                <MudItem xs="12" sm="6">
+                    <MudPaper Class="pa-5" Elevation="@(isBusiness ? 3 : 1)"
+                              Style="@(isBusiness ? "height:100%; border: 2px solid var(--mud-palette-primary);" : "height:100%;")">
+                        <MudStack Spacing="2" Style="height:100%;">
+                            <MudText Typo="Typo.h6" Color="@(isBusiness ? Color.Primary : Color.Default)">@plan.Name</MudText>
+                            <MudText Typo="Typo.h4">
+                                @(_provider == "Stripe"
+                                    ? $"${plan.PriceUsd:0.##}"
+                                    : $"Rs. {plan.PriceNpr:N0}")
+                                <MudText Typo="Typo.caption" Class="mud-text-secondary d-inline">
+                                    / @(plan.BillingCycle == "Yearly" ? Loc["Billing.PerYear"] : Loc["Billing.PerMonth"])
+                                </MudText>
+                            </MudText>
+                            <MudList T="string" Dense="true">
+                                <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
+                                    @Loc["Upgrade.PlanCloud1"]
+                                </MudListItem>
+                                <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
+                                    @Loc["Billing.MaxCompanies", plan.MaxCompanies]
+                                </MudListItem>
+                                <MudListItem T="string" Icon="@(plan.IncludesStaff ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.Person)"
+                                             IconColor="@(plan.IncludesStaff ? Color.Success : Color.Default)">
+                                    @(plan.IncludesStaff ? Loc["Billing.MaxStaff", plan.MaxStaffPerCompany] : Loc["Billing.OwnerOnly"])
+                                </MudListItem>
+                                <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">
+                                    @Loc["Upgrade.PlanCloud4"]
+                                </MudListItem>
+                            </MudList>
+                            <MudSpacer />
+                            <MudButton Variant="@(isBusiness ? Variant.Filled : Variant.Outlined)" Color="Color.Primary"
+                                       FullWidth="true" Size="Size.Large" Disabled="@(_busy || !CanPayWithSelectedProvider(status))"
+                                       OnClick="() => CheckoutAsync(plan.Code)">
+                                @Loc["Billing.SubscribeNow"]
+                            </MudButton>
+                        </MudStack>
+                    </MudPaper>
+                </MudItem>
+            }
+        </MudGrid>
+
+        @if (!CanPayWithSelectedProvider(status))
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-4">@Loc["Billing.NoProviderConfigured"]</MudAlert>
+        }
+
+        @if (status.History.Count > 0)
+        {
+            <MudText Typo="Typo.h6" Class="mb-2">@Loc["Billing.HistoryTitle"]</MudText>
+            <MudPaper Elevation="1" Class="mb-4">
+                <MudSimpleTable Dense="true" Hover="true">
+                    <thead>
+                        <tr>
+                            <th>@Loc["Common.Date"]</th>
+                            <th>@Loc["Billing.ColumnPlan"]</th>
+                            <th>@Loc["Billing.ColumnProvider"]</th>
+                            <th>@Loc["Common.Amount"]</th>
+                            <th>@Loc["Common.Status"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var h in status.History)
+                        {
+                            <tr>
+                                <td>@h.CreatedAtUtc.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>@h.Plan</td>
+                                <td>@h.Provider</td>
+                                <td>@h.Currency @h.Amount.ToString("0.00")</td>
+                                <td>
+                                    <MudChip T="string" Size="Size.Small" Color="@(h.Status == "Completed" ? Color.Success : h.Status == "Pending" ? Color.Warning : Color.Error)">
+                                        @h.Status
+                                    </MudChip>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudPaper>
+        }
+    }
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? Cancelled { get; set; }
+
+    private BillingStatusResponse? _status;
+    private bool _loading = true;
+    private bool _offline;
+    private string? _loadError;
+    private string? _error;
+    private bool _busy;
+    private string _cycle = "Yearly";
+    private string _provider = "ESewa";
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsLocalMode)
+        {
+            await LoadAsync();
+        }
+        else
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _loadError = null;
+        var res = await BillingApi.GetStatusAsync();
+        _loading = false;
+        if (!res.Ok || res.Value is null)
+        {
+            _loadError = res.Error ?? Loc["Billing.LoadFailed"];
+            _offline = res.IsNetworkError;
+            return;
+        }
+
+        _status = res.Value;
+        PickDefaultProvider(_status.Providers);
+    }
+
+    private void PickDefaultProvider(BillingProviderAvailabilityDto p)
+    {
+        if (p.ESewa) _provider = "ESewa";
+        else if (p.Khalti) _provider = "Khalti";
+        else if (p.Stripe) _provider = "Stripe";
+        else if (p.SandboxTestMode) _provider = "Manual";
+    }
+
+    private bool CanPayWithSelectedProvider(BillingStatusResponse s) => _provider switch
+    {
+        "ESewa" => s.Providers.ESewa,
+        "Khalti" => s.Providers.Khalti,
+        "Stripe" => s.Providers.Stripe,
+        "Manual" => s.Providers.SandboxTestMode,
+        _ => false,
+    };
+
+    private IEnumerable<BillingPlanDto> VisiblePlans(BillingStatusResponse s) =>
+        s.Plans.Where(p => string.Equals(p.BillingCycle, _cycle, StringComparison.OrdinalIgnoreCase));
+
+    private async Task CheckoutAsync(string planCode)
+    {
+        if (_busy) return;
+        _busy = true;
+        _error = null;
+        try
+        {
+            var baseUri = new Uri(Navigation.BaseUri).GetLeftPart(UriPartial.Authority);
+            var res = await BillingApi.StartCheckoutAsync(new StartCheckoutRequest(planCode, _provider, baseUri));
+            if (!res.Ok || res.Value is null)
+            {
+                _error = res.Error ?? Loc["Billing.CheckoutFailed"];
+                return;
+            }
+
+            var checkout = res.Value;
+            if (checkout.CompletedImmediately)
+            {
+                Snackbar.Add(Loc["Billing.ActivatedSuccess"], Severity.Success);
+                await LoadAsync();
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(checkout.FormActionUrl) && checkout.FormFields is not null)
+            {
+                await using var js = await JS.InvokeAsync<IJSObjectReference>("import", "./_content/LekhaBook.UI/js/billing.js");
+                await js.InvokeVoidAsync("submitForm", checkout.FormActionUrl, checkout.FormFields);
+                return;
+            }
+
+            if (!string.IsNullOrWhiteSpace(checkout.RedirectUrl))
+            {
+                Navigation.NavigateTo(checkout.RedirectUrl, forceLoad: true);
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

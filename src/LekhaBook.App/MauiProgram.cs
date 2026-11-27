@@ -1,4 +1,4 @@
-﻿using LekhaBook.App.Services;
+using LekhaBook.App.Services;
 using LekhaBook.Client;
 using LekhaBook.Data.Sqlite;
 using LekhaBook.Offline;
@@ -61,16 +61,16 @@ public static class MauiProgram
         builder.Services.AddSingleton<IDbContextFactory<SqliteDbContext>>(databases);
         builder.Services.AddSingleton(localStore);
         builder.Services.AddSingleton<IUserChangeListener, DeviceDatabaseOpener>();
-        builder.Services.AddSingleton<ILocalSessionProvider, MauiLocalSessionProvider>();
+        builder.Services.AddSingleton<ILocalSessionProvider, DeviceLocalSessionProvider>();
 
         // Full offline-first sync engine + SQLite services supporting both Offline Local Mode and Online-Synced Mode.
-        builder.Services.AddSingleton<ISyncService, MauiSyncEngine>();
+        builder.Services.AddSingleton<ISyncService, DeviceSyncEngine>();
         builder.Services.AddSingleton<IDataService, SqliteDataService>();
         builder.Services.AddSingleton<ICompanyApi, HybridCompanyService>();
         builder.Services.AddSingleton<IBookExtrasApi, SqliteBookExtrasService>();
         builder.Services.AddSingleton<IAttachmentService, SqliteAttachmentService>();
         builder.Services.AddSingleton<IBackupService, LocalBackupService>();
-        builder.Services.AddSingleton<IOfflineUpgradeService>(sp => new MauiOfflineUpgradeService(
+        builder.Services.AddSingleton<IOfflineUpgradeService>(sp => new OfflineUpgradeService(
             databases,
             filesRoot,
             sp.GetRequiredService<ISessionService>(),
