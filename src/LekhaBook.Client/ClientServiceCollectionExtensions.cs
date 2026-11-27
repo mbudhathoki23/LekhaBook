@@ -16,6 +16,11 @@ public static class ClientServiceCollectionExtensions
         {
             c.BaseAddress = apiBaseAddress;
             c.Timeout = TimeSpan.FromSeconds(30);
+        }).ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            // All clients use explicit bearer tokens. A pooled handler must never share Identity
+            // cookies (including pending two-factor cookies) between web users or devices.
+            UseCookies = false,
         });
         services.AddSingleton(TimeProvider.System);
 
@@ -26,6 +31,8 @@ public static class ClientServiceCollectionExtensions
 
         if (perUserScope)
         {
+            services.AddScoped<IAccountSecurity, AccountSecurity>();
+            services.AddScoped<IDeviceUnlock, UnsupportedDeviceUnlock>();
             services.AddScoped(api);
             services.AddScoped<SessionService>();
             services.AddScoped<ISessionService>(sp => sp.GetRequiredService<SessionService>());
@@ -33,10 +40,13 @@ public static class ClientServiceCollectionExtensions
             services.AddScoped<IDataService, ApiDataService>();
             services.AddScoped<IAttachmentService, ApiAttachmentService>();
             services.AddScoped<IReportLinkApi, ReportLinkApi>();
+            services.AddScoped<IBookExtrasApi, BookExtrasApi>();
             services.AddScoped<IImportService, ImportApi>();
         }
         else
         {
+            services.AddSingleton<IAccountSecurity, AccountSecurity>();
+            services.AddSingleton<IDeviceUnlock, UnsupportedDeviceUnlock>();
             services.AddSingleton(api);
             services.AddSingleton<SessionService>();
             services.AddSingleton<ISessionService>(sp => sp.GetRequiredService<SessionService>());
@@ -44,6 +54,7 @@ public static class ClientServiceCollectionExtensions
             services.AddSingleton<IDataService, ApiDataService>();
             services.AddSingleton<IAttachmentService, ApiAttachmentService>();
             services.AddSingleton<IReportLinkApi, ReportLinkApi>();
+            services.AddSingleton<IBookExtrasApi, BookExtrasApi>();
             services.AddSingleton<IImportService, ImportApi>();
         }
 

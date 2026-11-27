@@ -57,6 +57,7 @@
 
   <ItemGroup>
     <!-- Versions follow the installed MAUI workload. -->
+    <PackageReference Include="Xamarin.AndroidX.Biometric" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'" />
     <PackageReference Include="Microsoft.Maui.Controls" VersionOverride="$(MauiVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebView.Maui" VersionOverride="$(MauiVersion)" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" />

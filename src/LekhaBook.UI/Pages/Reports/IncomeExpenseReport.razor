@@ -1,0 +1,97 @@
+@page "/reports/income-expense"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject ICompanyApi Companies
+@inject ISessionService Session
+
+@* Expense and other income by category over a period. Party payments are not income or expense. *@
+<PageTitle>@Loc["Reports.IncomeExpense"] · Lekha Books</PageTitle>
+
+@if (!ReportCatalog.IncomeExpenseSummary.IsAllowed(Session))
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+    return;
+}
+
+<ReportHeader Title="@Loc["Reports.IncomeExpense"]" Preset="_preset" Range="_range" Today="_periods?.Today ?? default"
+              FiscalYearStartMonth="_periods?.FiscalYearStartMonth ?? 4" PeriodChanged="SetPeriod"
+              Csv="@(_entries is null ? null : BuildCsv)" FileName="income-expense" />
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Nav.Reports"]" OnRetry="LoadAsync" />
+}
+else if (_entries is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    var expense = Totals(TransactionType.Expense);
+    var income = Totals(TransactionType.OtherIncome);
+
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Nav.OtherIncome"]" Value="@Money.Format(income.Sum(c => c.Amount))" /></MudItem>
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Nav.Expense"]" Value="@Money.Format(expense.Sum(c => c.Amount))" /></MudItem>
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Home.Net"]" Value="@Money.Format(income.Sum(c => c.Amount) - expense.Sum(c => c.Amount))" /></MudItem>
+    </MudGrid>
+
+    <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Nav.Expense"]</MudText>
+    <CategoryTable Totals="expense" />
+    <MudText Typo="Typo.subtitle1" Class="mt-4 mb-2">@Loc["Nav.OtherIncome"]</MudText>
+    <CategoryTable Totals="income" />
+}
+
+@code {
+    private List<TransactionDto>? _entries;
+    private List<CategoryDto> _categories = [];
+    private CompanyPeriods? _periods;
+    private PeriodPreset _preset;
+    private ReportRange _range;
+    private string? _error;
+    private bool _offline;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company || !ReportCatalog.IncomeExpenseSummary.IsAllowed(Session))
+        {
+            return;
+        }
+
+        (_error, _entries) = (null, null);
+        _periods = await CompanyPeriods.LoadAsync(Companies, company.CompanyId);
+        _preset = PeriodPreset.ThisMonth;
+        _range = ReportPeriods.For(_preset, _periods.Today, Session.Calendar(), _periods.FiscalYearStartMonth);
+
+        var entries = await Data.GetTransactionsAsync(company.CompanyId);
+        var categories = await Data.GetCategoriesAsync(company.CompanyId);
+        if (!entries.Ok || !categories.Ok)
+        {
+            (_error, _offline) = (entries.Error ?? categories.Error, entries.IsNetworkError || categories.IsNetworkError);
+            return;
+        }
+
+        (_entries, _categories) = (entries.Value!, categories.Value!);
+    }
+
+    private List<CategoryTotal> Totals(TransactionType type) => EntryReports.ByCategory(_entries!, _categories, type, _range);
+
+    private void SetPeriod((PeriodPreset Preset, ReportRange Range) period) => (_preset, _range) = period;
+
+    private string BuildCsv()
+    {
+        var rows = new List<string?[]>
+        {
+            new string?[] { Loc["Statement.Type"], Loc["Common.Category"], Loc["Transactions.List.Count"], Loc["Reports.Amount"] },
+        };
+        foreach (var (type, label) in new[] { (TransactionType.Expense, Loc["Nav.Expense"]), (TransactionType.OtherIncome, Loc["Nav.OtherIncome"]) })
+        {
+            rows.AddRange(Totals(type).Select(c => new string?[] { label, c.Name, c.Count.ToString(), CsvText.Amount(c.Amount) }));
+        }
+
+        return CsvText.Build(rows);
+    }
+}

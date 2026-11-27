@@ -41,6 +41,11 @@ else
             {
                 <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"accounts/{AccountId}/edit")">@Loc["Common.Edit"]</MudButton>
             }
+            @if (Session.Can(Permission.AccountsAdjust))
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Tune" Class="adjust-balance"
+                           OnClick="AdjustAsync">@Loc["Adjust.AccountButton"]</MudButton>
+            }
             @if (Session.Can(Permission.AccountsDelete) && !_account.IsSystem)
             {
                 <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">@Loc["Common.Delete"]</MudButton>
@@ -92,6 +97,28 @@ else
         }
 
         (_account, _ledger) = (account.Value, ledger.Value);
+    }
+
+    private async Task AdjustAsync()
+    {
+        if (Session.CurrentCompany is not { } company || _account is not { } account)
+        {
+            return;
+        }
+
+        var parameters = new DialogParameters<AdjustBalanceDialog>
+        {
+            { x => x.CompanyId, company.CompanyId },
+            { x => x.AccountId, account.Id },
+            { x => x.Name, account.Name },
+            { x => x.Balance, account.Balance },
+        };
+        var dialog = await Dialogs.ShowAsync<AdjustBalanceDialog>(Loc["Adjust.AccountButton"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is { Canceled: false })
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task DeleteAsync()

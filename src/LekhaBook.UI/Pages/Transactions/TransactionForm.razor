@@ -9,10 +9,11 @@
 @inject IDialogService Dialogs
 @inject IAttachmentService Attachments
 @inject AttachmentContentCache Cache
+@inject IDocumentCapture Capture
 
 <PageTitle>@Title · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-3" tabindex="-1">@Title</MudText>
+<MudText Typo="Typo.h5" HtmlTag="h1" Class="transaction-heading" tabindex="-1">@Title</MudText>
 
 @if (_loadError is not null)
 {
@@ -40,111 +41,140 @@ else if (_existing is not null && (_existing.Status == "Void" || !FormTypes.Cont
 }
 else
 {
-    <EnterNavForm @ref="_form" Class="entry-form">
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            @if (IsNew)
-            {
-                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Loc["Transactions.Form.TypeLabel"]</MudText>
-                <MudRadioGroup T="TransactionType" Value="_type" ValueChanged="ChangeType" Name="transaction-type">
-                    @foreach (var type in OfferedTypes)
+    <EnterNavForm @ref="_form" Class="entry-form transaction-form">
+        <div class="transaction-form-layout">
+            <MudPaper Class="transaction-entry-panel" Elevation="0" Outlined="true">
+                <fieldset class="transaction-fields" disabled="@_saving">
+                    @if (IsNew)
                     {
-                        <MudRadio Value="@type" Color="Color.Primary">@Label(type)</MudRadio>
-                    }
-                </MudRadioGroup>
-            }
-
-            <DateField @ref="_dateField" @bind-Value="_date" Label="@Loc["Common.Date"]" Class="mt-2" Disabled="DateLocked"
-                       HelperText="@(DateLocked ? Loc["Transactions.Form.DateLockedHelp"].Value : null)"
-                       Error="@Has("date")" ErrorText="@ErrorOf("date")" />
-
-            <MudAutocomplete T="Choice" @bind-Value="_first" Label="@($"{FirstLabel} *")" SearchFunc="SearchFirst"
-                             ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
-                             ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
-                             HelperText="@BalanceText(_first)" Error="@Has(FirstKey)" ErrorText="@ErrorOf(FirstKey)">
-                <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
-            </MudAutocomplete>
-
-            <MudNumericField T="decimal?" @bind-Value="_amount" Label="@Loc["Transactions.Form.AmountLabel"]" Placeholder="0" HideSpinButtons="true"
-                             InputMode="InputModes.Decimal" Variant="Variant.Outlined" Class="mt-3"
-                             Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
-
-            <MudAutocomplete T="Choice" @bind-Value="_second" Label="@($"{SecondLabel} *")" SearchFunc="SearchSecond"
-                             ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
-                             ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
-                             HelperText="@BalanceText(_second)" Error="@Has(SecondKey)" ErrorText="@ErrorOf(SecondKey)">
-                <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
-            </MudAutocomplete>
-
-            @if (ShowCheque)
-            {
-                <MudTextField @bind-Value="_chequeNo" Label="@Loc["Transactions.Form.ChequeNoLabel"]" Variant="Variant.Outlined" Class="mt-3"
-                              MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
-                <DateField @ref="_chequeDateField" @bind-Value="_chequeDate" Label="@Loc["Transactions.Form.ChequeDateLabel"]" Class="mt-3" />
-            }
-
-            <MudTextField @bind-Value="_remarks" Label="@Loc["Common.Remarks"]" Variant="Variant.Outlined" Class="mt-3"
-                          MaxLength="MasterValidation.RemarksMax" Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
-        </MudPaper>
-
-        <MudPaper Class="pa-4 mb-3" Elevation="1">
-            <MudText Typo="Typo.subtitle2" Class="mb-2">@Loc["Transactions.Form.Attachments"]</MudText>
-            @if (IsNew && _staged.Count > 0)
-            {
-                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-1">@Loc["Attachments.SavedWithEntry"]</MudText>
-                @foreach (var staged in _staged)
-                {
-                    <div class="attachment-row">
-                        <div class="attachment-info">
-                            <MudText Typo="Typo.body2" Class="attachment-name">@staged.Name</MudText>
-                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(staged.Size)</MudText>
+                        <div class="transaction-type-field">
+                            <MudText Typo="Typo.subtitle2" id="transaction-type-label">@Loc["Transactions.Form.TypeLabel"]</MudText>
+                            <MudRadioGroup T="TransactionType" Value="_type" ValueChanged="ChangeType" Name="transaction-type"
+                                           aria-labelledby="transaction-type-label">
+                                @foreach (var type in OfferedTypes)
+                                {
+                                    <MudRadio Value="@type" Color="Color.Primary">@Label(type)</MudRadio>
+                                }
+                            </MudRadioGroup>
                         </div>
-                        <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Disabled="_uploading"
-                                       aria-label="@Loc["Attachments.RemoveNamed", staged.Name]" OnClick="() => RemoveStaged(staged)" />
+                    }
+
+                    <DateField @ref="_dateField" @bind-Value="_date" Label="@Loc["Common.Date"]" Class="mt-2" Disabled="DateLocked"
+                               HelperText="@(DateLocked ? Loc["Transactions.Form.DateLockedHelp"].Value : null)"
+                               Error="@Has("date")" ErrorText="@ErrorOf("date")" />
+
+                    <MudAutocomplete T="Choice" @bind-Value="_first" Label="@($"{FirstLabel} *")" SearchFunc="SearchFirst"
+                                     ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
+                                     ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
+                                     HelperText="@BalanceText(_first)" Error="@Has(FirstKey)" ErrorText="@ErrorOf(FirstKey)">
+                        <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
+                    </MudAutocomplete>
+
+                    <MudNumericField T="decimal?" @bind-Value="_amount" Label="@Loc["Transactions.Form.AmountLabel"]" Placeholder="0" HideSpinButtons="true"
+                                     InputMode="InputModes.Decimal" Variant="Variant.Outlined" Class="mt-3"
+                                     Error="@Has("amount")" ErrorText="@ErrorOf("amount")" />
+
+                    <MudAutocomplete T="Choice" @bind-Value="_second" Label="@($"{SecondLabel} *")" SearchFunc="SearchSecond"
+                                     ToStringFunc="c => c?.Name" OpenOnFocus="false" SelectOnActivation="false" Clearable="true"
+                                     ResetValueOnEmptyText="true" Variant="Variant.Outlined" Class="mt-3"
+                                     HelperText="@BalanceText(_second)" Error="@Has(SecondKey)" ErrorText="@ErrorOf(SecondKey)">
+                        <ItemTemplate Context="choice">@ItemText(choice)</ItemTemplate>
+                    </MudAutocomplete>
+
+                    @if (ShowCheque)
+                    {
+                        <MudTextField @bind-Value="_chequeNo" Label="@Loc["Transactions.Form.ChequeNoLabel"]" Variant="Variant.Outlined" Class="mt-3"
+                                      MaxLength="MasterValidation.ChequeNoMax" Error="@Has("chequeNo")" ErrorText="@ErrorOf("chequeNo")" />
+                        <DateField @ref="_chequeDateField" @bind-Value="_chequeDate" Label="@Loc["Transactions.Form.ChequeDateLabel"]" Class="mt-3" />
+                    }
+
+                    <MudTextField @bind-Value="_remarks" Label="@Loc["Common.Remarks"]" Variant="Variant.Outlined" Class="mt-3 transaction-remarks"
+                                  MaxLength="MasterValidation.RemarksMax" Error="@Has("remarks")" ErrorText="@ErrorOf("remarks")" />
+                </fieldset>
+            </MudPaper>
+
+            <MudPaper Class="transaction-entry-panel transaction-attachments" Elevation="0" Outlined="true">
+                <div class="transaction-section-title">
+                    <MudIcon Icon="@Icons.Material.Filled.AttachFile" Size="Size.Small" aria-hidden="true" />
+                    <MudText Typo="Typo.subtitle2" HtmlTag="h2">@Loc["Transactions.Form.Attachments"]</MudText>
+                </div>
+                @if (IsNew && _staged.Count > 0)
+                {
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-1">@Loc["Attachments.SavedWithEntry"]</MudText>
+                    @foreach (var staged in _staged)
+                    {
+                        <div class="attachment-row">
+                            <div class="attachment-info">
+                                <MudText Typo="Typo.body2" Class="attachment-name">@staged.Name</MudText>
+                                <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(staged.Size)</MudText>
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" Disabled="@(_uploading || _saving)"
+                                           aria-label="@Loc["Attachments.RemoveNamed", staged.Name]" OnClick="() => RemoveStaged(staged)" />
+                        </div>
+                    }
+                }
+                @foreach (var attachment in _attachments)
+                {
+                    <div class="attachment-row" @key="attachment.Id">
+                        <AttachmentImage CompanyId="CurrentCompanyId" Attachment="attachment" Size="72" />
+                        <div class="attachment-info">
+                            <MudText Typo="Typo.body2" Class="attachment-name">@attachment.FileName</MudText>
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(attachment.SizeBytes)</MudText>
+                        </div>
+                        @if (CanEdit)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" Disabled="@(_uploading || _saving)"
+                                           aria-label="@Loc["Attachments.RemoveNamed", attachment.FileName]" OnClick="() => DeleteAttachmentAsync(attachment)" />
+                        }
                     </div>
                 }
-            }
-            @foreach (var attachment in _attachments)
-            {
-                <div class="attachment-row" @key="attachment.Id">
-                    <AttachmentImage CompanyId="CurrentCompanyId" Attachment="attachment" Size="72" />
-                    <div class="attachment-info">
-                        <MudText Typo="Typo.body2" Class="attachment-name">@attachment.FileName</MudText>
-                        <MudText Typo="Typo.caption" Class="mud-text-secondary">@FileSize(attachment.SizeBytes)</MudText>
+                @if (IsNew || CanEdit)
+                {
+                    <div class="attachment-pickers">
+                        <div>
+                            <label for="attachment-files" class="attachment-label">@Loc["Attachments.ChooseFiles"]</label>
+                            <InputFile id="attachment-files" OnChange="OnFilesSelected" multiple
+                                       disabled="@(_uploading || _saving)"
+                                       accept="image/jpeg,image/png,image/webp,application/pdf" aria-label="@Loc["Transactions.Form.AddAttachments"]" />
+                        </div>
+                        @if (Capture.Capabilities.NativeCamera)
+                        {
+                            <div>
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.PhotoCamera" Disabled="@(_uploading || _saving)"
+                                           OnClick="() => TakePhotoAsync()">@Loc["Attachments.TakePhoto"]</MudButton>
+                            </div>
+                        }
+                        else
+                        {
+                            <div>
+                                <label for="attachment-camera" class="attachment-label">@Loc["Attachments.TakePhoto"]</label>
+                                <InputFile id="attachment-camera" OnChange="OnFilesSelected" accept="image/*" capture="environment"
+                                           disabled="@(_uploading || _saving)" />
+                            </div>
+                        }
+                        @if (Capture.Capabilities.Scanner)
+                        {
+                            <div>
+                                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.DocumentScanner" Disabled="@(_uploading || _saving)"
+                                           OnClick="() => ScanAsync()">@Loc["Attachments.ScanDocument"]</MudButton>
+                            </div>
+                        }
                     </div>
-                    @if (CanEdit)
-                    {
-                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" Size="Size.Small" Disabled="_uploading"
-                                       aria-label="@Loc["Attachments.RemoveNamed", attachment.FileName]" OnClick="() => DeleteAttachmentAsync(attachment)" />
-                    }
-                </div>
-            }
-            @if (IsNew || CanEdit)
-            {
-                <div class="attachment-pickers">
-                    <div>
-                        <label for="attachment-files" class="attachment-label">@Loc["Attachments.ChooseFiles"]</label>
-                        <InputFile id="attachment-files" OnChange="OnFilesSelected" multiple
-                                   accept="image/jpeg,image/png,image/webp,application/pdf" aria-label="@Loc["Transactions.Form.AddAttachments"]" />
-                    </div>
-                    <div>
-                        <label for="attachment-camera" class="attachment-label">@Loc["Attachments.TakePhoto"]</label>
-                        <InputFile id="attachment-camera" OnChange="OnFilesSelected" accept="image/*" capture="environment" />
-                    </div>
-                </div>
-                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-1">@Loc["Transactions.Form.AttachmentLimits"]</MudText>
-            }
-            @if (_uploading)
-            {
-                <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" />
-            }
-        </MudPaper>
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-1">@Loc["Transactions.Form.AttachmentLimits"]</MudText>
+                }
+                @if (_uploading)
+                {
+                    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" />
+                }
+            </MudPaper>
+        </div>
 
         @if (_saveError is not null)
         {
             <MudAlert Severity="Severity.Error" Class="mb-3" role="alert">@_saveError</MudAlert>
         }
 
-        <div class="form-actions">
+        <div class="form-actions transaction-actions">
             <MudButton Variant="Variant.Text" Href="transactions" data-enter-cancel>@Loc["Common.Cancel"]</MudButton>
             @if (!IsNew && CanVoid)
             {
@@ -152,11 +182,13 @@ else
             }
             @if (IsNew)
             {
-                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))" Disabled="_saving">@Loc["Transactions.Form.SaveAndNew"]</MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: true))"
+                           Disabled="@(_saving || _uploading)">@Loc["Transactions.Form.SaveAndNew"]</MudButton>
             }
             @if (IsNew || CanEdit)
             {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))" Disabled="_saving" data-enter-save>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => SaveAsync(andNew: false))"
+                           Disabled="@(_saving || _uploading)" Class="transaction-save" data-enter-save>
                     @(_saving ? Loc["Transactions.Form.Saving"] : Loc["Common.Save"])
                 </MudButton>
             }
@@ -426,7 +458,7 @@ else
 
     private async Task SaveAsync(bool andNew)
     {
-        if (Session.CurrentCompany is not { } company || _saving)
+        if (Session.CurrentCompany is not { } company || _saving || _uploading)
         {
             return;
         }
@@ -438,11 +470,13 @@ else
         var date = _date is { } d ? DateOnly.FromDateTime(d) : (DateOnly?)null;
         var chequeDate = ShowCheque && _chequeDate is { } cd ? DateOnly.FromDateTime(cd) : (DateOnly?)null;
         var chequeNo = ShowCheque ? _chequeNo : null;
+        var partyName = _first is { IsParty: true } party ? party.Name : null;
+        var checkForDuplicates = partyName is not null;
 
         // A new entry left on this device's today sends no date, so the server uses the company's today (D12).
         var create = new CreateTransactionRequest(
             _type.ToString(), DateLocked || _date == DateTime.Today ? null : date, _amount ?? 0, from, to,
-            _remarks, chequeNo, chequeDate, _newId);
+            _remarks, chequeNo, chequeDate, _newId, CheckForDuplicates: checkForDuplicates);
         _errors = MasterValidation.Validate(create, Loc.ForValidation());
         if (!IsNew && date is null)
         {
@@ -469,10 +503,30 @@ else
         _saving = true;
         try
         {
-            var result = IsNew
-                ? await Data.AddTransactionAsync(company.CompanyId, create)
-                : await Data.UpdateTransactionAsync(company.CompanyId, TransactionId!.Value,
-                    new UpdateTransactionRequest(date!.Value, _amount!.Value, from, to, _remarks, chequeNo, chequeDate));
+            var formUri = Navigation.Uri;
+            var transactionId = TransactionId;
+            var update = new UpdateTransactionRequest(date.GetValueOrDefault(), create.Amount, from, to,
+                create.Remarks, chequeNo, chequeDate, CheckForDuplicates: checkForDuplicates);
+            var result = transactionId is { } id
+                ? await Data.UpdateTransactionAsync(company.CompanyId, id, update)
+                : await Data.AddTransactionAsync(company.CompanyId, create);
+            if (result.DuplicateWarning is { } warning && partyName is not null)
+            {
+                bool IsSameDraft() => Navigation.Uri == formUri && Session.CurrentCompany?.CompanyId == company.CompanyId;
+                if (!IsSameDraft() || !await ConfirmDuplicateAsync(warning, partyName) || !IsSameDraft())
+                {
+                    return;
+                }
+
+                result = transactionId is { } confirmedId
+                    ? await Data.UpdateTransactionAsync(company.CompanyId, confirmedId, update with { CheckForDuplicates = false })
+                    : await Data.AddTransactionAsync(company.CompanyId, create with
+                    {
+                        Date = warning.Matches[0].Date,
+                        CheckForDuplicates = false,
+                    });
+            }
+
             if (!result.Ok)
             {
                 _saveError = result.Error;
@@ -496,16 +550,26 @@ else
             _newId = Guid.CreateVersion7();
             (_first, _amount, _remarks, _chequeNo, _chequeDate) = (null, null, null, null, null);
             await ReloadBalancesAsync(company.CompanyId);
-            StateHasChanged();
-            if (_form is not null)
-            {
-                await _form.FocusFirstAsync();
-            }
+            _form?.FocusFirstAfterRender();
         }
         finally
         {
             _saving = false;
         }
+    }
+
+    private async Task<bool> ConfirmDuplicateAsync(DuplicateTransactionWarning warning, string partyName)
+    {
+        var accountNames = _accounts.ToDictionary(a => a.Id, a => a.Name);
+        var parameters = new DialogParameters<DuplicateTransactionDialog>
+        {
+            { x => x.Warning, warning },
+            { x => x.PartyName, partyName },
+            { x => x.AccountNames, accountNames },
+        };
+        var dialog = await Dialogs.ShowAsync<DuplicateTransactionDialog>(Loc["Transactions.Duplicate.Title"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true });
+        return await dialog.Result is { Canceled: false, Data: true };
     }
 
     private async Task ReloadBalancesAsync(Guid companyId)
@@ -664,6 +728,71 @@ else
         {
             Snackbar.Add(Loc["Attachments.NotUploaded", string.Join(", ", failed)], Severity.Warning);
         }
+    }
+
+    /// <summary>Takes a photo with the device camera. Only native hosts offer this; the browser uses its own camera input.</summary>
+    private Task TakePhotoAsync() => AddCapturedAsync(() => Capture.TakePhotoAsync(), "Attachments.CaptureFailed");
+
+    /// <summary>Scans one page from a connected scanner. Only the Windows app offers this.</summary>
+    private Task ScanAsync() => AddCapturedAsync(() => Capture.ScanPageAsync(), "Attachments.ScanFailed");
+
+    /// <summary>A photo or scan follows the same limits and paths as a picked file.</summary>
+    private async Task AddCapturedAsync(Func<Task<CapturedDocument?>> capture, string failedKey)
+    {
+        if (Session.CurrentCompany is not { } company || _uploading)
+        {
+            return;
+        }
+
+        if (AttachmentCount >= MaxAttachments)
+        {
+            Snackbar.Add(Loc["Transactions.Form.AttachmentMax"], Severity.Warning);
+            return;
+        }
+
+        _uploading = true;
+        try
+        {
+            var document = await capture();
+            if (document is null)
+            {
+                return; // the user cancelled
+            }
+
+            if (document.Content.Length > MaxFileBytes)
+            {
+                Snackbar.Add(Loc["Transactions.Form.FileTooLarge", document.FileName], Severity.Warning);
+                return;
+            }
+
+            if (IsNew)
+            {
+                _staged.Add(new StagedFile(document.FileName, document.ContentType, document.Content));
+            }
+            else if (TransactionId is { } id)
+            {
+                await UploadCapturedAsync(company.CompanyId, id, document);
+            }
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            Snackbar.Add(Loc[failedKey], Severity.Warning);
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private async Task UploadCapturedAsync(Guid companyId, Guid transactionId, CapturedDocument document)
+    {
+        using var stream = new MemoryStream(document.Content);
+        var result = await Attachments.UploadAttachmentAsync(companyId, stream, document.FileName, document.ContentType, transactionId);
+        Snackbar.Add(result.Ok ? Loc["Transactions.Form.Uploaded", document.FileName] : Loc["Transactions.Form.UploadFailed", result.Error ?? string.Empty],
+            result.Ok ? Severity.Success : Severity.Error);
+
+        var reloaded = await Attachments.GetAttachmentsAsync(companyId, transactionId);
+        _attachments = reloaded.Value ?? _attachments;
     }
 
     private void RemoveStaged(StagedFile staged) => _staged.Remove(staged);

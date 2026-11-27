@@ -33,7 +33,7 @@ public sealed class ApiFixture : IAsyncLifetime
             ["Database:MigrateOnStartup"] = "true",
             ["RateLimits:AuthPerMinute"] = "10000",
             // Pinned, so a developer's PublicSite__BaseUrl override doesn't change what the tests see.
-            ["PublicSite:BaseUrl"] = "https://lekhabooknepal.com",
+            ["PublicSite:BaseUrl"] = "https://books.example.test",
         });
         _ = Factory.Server; // start now: runs the migrations
         return Task.CompletedTask;

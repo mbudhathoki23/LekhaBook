@@ -17,14 +17,17 @@ public sealed class SessionService : ISessionService
     private readonly ITokenStore _tokens;
     private readonly ILocalSettings _settings;
     private readonly IEnumerable<IUserChangeListener> _listeners;
+    private readonly IDeviceUnlock? _deviceUnlock;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
-    public SessionService(LekhaBookApi api, ITokenStore tokens, ILocalSettings settings, IEnumerable<IUserChangeListener> listeners)
+    public SessionService(LekhaBookApi api, ITokenStore tokens, ILocalSettings settings,
+        IEnumerable<IUserChangeListener> listeners, IDeviceUnlock? deviceUnlock = null)
     {
         _api = api;
         _tokens = tokens;
         _settings = settings;
         _listeners = listeners;
+        _deviceUnlock = deviceUnlock;
         _api.SessionExpired += OnSessionExpired;
     }
 
@@ -44,6 +47,8 @@ public sealed class SessionService : ISessionService
     public bool IsInitialized { get; private set; }
 
     public bool IsSignedIn => Me is not null;
+
+    public bool IsLocked { get; private set; }
 
     public bool IsOffline { get; private set; }
 
@@ -72,10 +77,18 @@ public sealed class SessionService : ISessionService
                 return;
             }
 
-            if (await _tokens.LoadAsync() is { } saved)
+            if (_deviceUnlock is not null && (await _deviceUnlock.GetStateAsync()).Enabled)
             {
-                _api.SetTokens(saved);
-                await LoadProfileAsync(allowCached: true);
+                // No token, cached profile, company or local database is opened before device proof.
+                IsLocked = true;
+                if ((await _deviceUnlock.UnlockAsync()).Succeeded)
+                {
+                    await RestoreSavedSessionAsync();
+                }
+            }
+            else
+            {
+                await RestoreSavedSessionAsync();
             }
 
             IsInitialized = true;
@@ -88,15 +101,71 @@ public sealed class SessionService : ISessionService
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    public async Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl)
+    public async Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl,
+        string? twoFactorCode = null, string? recoveryCode = null)
     {
-        var login = await _api.LoginAsync(email.Trim(), password);
+        var login = await _api.LoginAsync(email.Trim(), password, twoFactorCode, recoveryCode);
         if (!login.Ok)
         {
-            return new(login.Error);
+            return new(login.Error, RequiresTwoFactor: login.RequiresTwoFactor);
         }
 
         return await CompleteSignInAsync(login.Value!, returnUrl, "Signed in, but your profile couldn't be loaded. Please try again.");
+    }
+
+    public async Task<SignInOutcome> UnlockAsync()
+    {
+        await _initLock.WaitAsync();
+        try
+        {
+            if (IsSignedIn)
+            {
+                return new(null);
+            }
+
+            if (!IsLocked || _deviceUnlock is null)
+            {
+                return new("Please sign in with your account password.");
+            }
+
+            var proof = await _deviceUnlock.UnlockAsync();
+            if (!proof.Succeeded)
+            {
+                return new(proof.Error ?? "Device unlock was cancelled. Please try again or use your account password.");
+            }
+
+            await RestoreSavedSessionAsync();
+            Changed?.Invoke(this, EventArgs.Empty);
+            return IsSignedIn ? new(null) : new("Your saved session could not be restored. Please sign in with your account password.");
+        }
+        finally
+        {
+            _initLock.Release();
+        }
+    }
+
+    private async Task RestoreSavedSessionAsync()
+    {
+        if (await _tokens.LoadAsync() is not { } saved)
+        {
+            IsLocked = false;
+            if (_deviceUnlock is not null)
+            {
+                await _deviceUnlock.ForgetAsync();
+            }
+            return;
+        }
+
+        _api.SetTokens(saved);
+        await LoadProfileAsync(allowCached: true);
+        if (IsSignedIn)
+        {
+            IsLocked = false;
+        }
+        else
+        {
+            _api.SetTokens(null);
+        }
     }
 
     public async Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl)
@@ -122,6 +191,13 @@ public sealed class SessionService : ISessionService
         if (!await LoadProfileAsync(allowCached: false))
         {
             return new(profileError);
+        }
+
+        IsLocked = false;
+        if (_deviceUnlock is not null && !await _deviceUnlock.IsEnabledForAsync(Me!.UserId))
+        {
+            // A different account must explicitly opt in on this device after its own sign-in.
+            await _deviceUnlock.ForgetAsync();
         }
 
         var navigated = await _tokens.SaveAsync(tokens, returnUrl);
@@ -199,6 +275,7 @@ public sealed class SessionService : ISessionService
     {
         var wasSignedIn = Me is not null;
         Me = null;
+        IsLocked = false;
         CurrentCompany = null;
         IsOffline = false;
         _api.SetTokens(null);
@@ -217,6 +294,10 @@ public sealed class SessionService : ISessionService
 
         if (clearStoredTokens)
         {
+            if (_deviceUnlock is not null)
+            {
+                await _deviceUnlock.ForgetAsync();
+            }
             await _tokens.ClearAsync();
         }
     }

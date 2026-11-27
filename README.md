@@ -146,7 +146,7 @@ dotnet build src/LekhaBook.App -t:Run -f net10.0-android
 & "$env:LOCALAPPDATA\Android\Sdk\emulator\emulator.exe" -avd LekhaBook_Pixel
 ```
 
-**Shared report links** (D24). "Share" on a party or account statement makes a public link whose address comes from `PublicSite:BaseUrl` on the API. It is `https://lekhabooknepal.com` (a demo address) until the web app is deployed, so those links don't open yet. To try them locally, start the API from a shell with:
+**Shared report links** (D24). "Share" on a party or account statement makes a public link whose address comes from `PublicSite:BaseUrl` on the API. There is no default: set it to the address where the web app is deployed, or no links can be made. To try them locally, start the API from a shell with:
 
 ```powershell
 $env:PublicSite__BaseUrl = 'http://localhost:5121'

@@ -115,7 +115,8 @@ public sealed record CreateTransactionRequest(
     string? Remarks = null,
     string? ChequeNo = null,
     DateOnly? ChequeDate = null,
-    Guid? Id = null);
+    Guid? Id = null,
+    bool CheckForDuplicates = false);
 
 /// <summary>
 /// An edit sends every editable field, so a cleared field is cleared. The type can't change;
@@ -129,7 +130,14 @@ public sealed record UpdateTransactionRequest(
     string? Remarks = null,
     string? ChequeNo = null,
     DateOnly? ChequeDate = null,
-    string? Type = null);
+    string? Type = null,
+    bool CheckForDuplicates = false);
+
+/// <summary>Posted entries matching a proposed party, date and amount, returned before any write.</summary>
+public sealed record DuplicateTransactionWarning(IReadOnlyList<TransactionDto> Matches)
+{
+    public const string ProblemType = "urn:lekhabook:duplicate-transaction";
+}
 
 /// <summary>A photo or PDF proof attached to a transaction.</summary>
 public sealed record AttachmentDto(

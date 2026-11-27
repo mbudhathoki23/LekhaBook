@@ -1,0 +1,98 @@
+@using LekhaBook.Domain
+@inject IBookExtrasApi Books
+@inject ISessionService Session
+@inject ISnackbar Snackbar
+
+@* Party "Adjust Balance" and account "Add / Reduce Money", with the balance it will leave. *@
+<MudDialog>
+    <DialogContent>
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3" role="alert">@_error</MudAlert>
+        }
+
+        <MudText Typo="Typo.body2" Class="mb-2">@Name · @Loc["Transactions.Form.Balance", Describe(Balance)]</MudText>
+        <MudRadioGroup T="bool" @bind-Value="_increase" Name="adjust-direction">
+            <MudRadio T="bool" Value="true" Color="Color.Primary">@Loc[IsParty ? "Adjust.AddBalance" : "Adjust.AddMoney"]</MudRadio>
+            <MudRadio T="bool" Value="false" Color="Color.Primary">@Loc[IsParty ? "Adjust.ReduceBalance" : "Adjust.ReduceMoney"]</MudRadio>
+        </MudRadioGroup>
+        <MudNumericField T="decimal?" @bind-Value="_amount" Label="@Loc["Transactions.Form.AmountLabel"]" Immediate="true"
+                         HideSpinButtons="true" InputMode="InputModes.Decimal" Variant="Variant.Outlined" Class="mt-2" />
+        @if (!Session.Can(Permission.RestrictLockDate))
+        {
+            <DateField @ref="_dateField" @bind-Value="_date" Label="@Loc["Common.Date"]" Class="mt-3" />
+        }
+        <MudTextField @bind-Value="_remarks" Label="@Loc["Common.Remarks"]" Immediate="true" Variant="Variant.Outlined" Class="mt-3"
+                      MaxLength="200" />
+        @if (_amount is > 0)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-3">@Loc["Adjust.NewBalance", Describe(NewBalance)]</MudText>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => MudDialog.Cancel())">@Loc["Common.Cancel"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(_busy || _amount is not > 0)" OnClick="SaveAsync">@Loc["Common.Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private bool _increase = true;
+    private decimal? _amount;
+    private DateTime? _date = DateTime.Today;
+    private string? _remarks;
+    private string? _error;
+    private bool _busy;
+    private DateField? _dateField;
+
+    /// <summary>Kept until the dialog closes, so pressing Save again after a lost reply can't post it twice.</summary>
+    private readonly Guid _id = Guid.CreateVersion7();
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    [Parameter, EditorRequired]
+    public Guid AccountId { get; set; }
+
+    [Parameter, EditorRequired]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsParty { get; set; }
+
+    /// <summary>The balance now: for a party, positive is To Receive.</summary>
+    [Parameter]
+    public decimal Balance { get; set; }
+
+    private decimal NewBalance => Balance + (_increase ? _amount ?? 0 : -(_amount ?? 0));
+
+    private string Describe(decimal balance) => !IsParty || balance == 0
+        ? Money.Format(balance)
+        : $"{Money.Format(Math.Abs(balance))} {Loc[MasterLabels.PartySide(balance).LabelKey]}";
+
+    private async Task SaveAsync()
+    {
+        if (_dateField?.IsInvalid == true)
+        {
+            _error = Loc["Calendar.InvalidBs"];
+            return;
+        }
+
+        (_busy, _error) = (true, null);
+        // A date left on this device's today sends none, so the server uses the company's today (D12).
+        var date = _date is { } d && d != DateTime.Today ? DateOnly.FromDateTime(d) : (DateOnly?)null;
+        var result = await Books.AdjustBalanceAsync(CompanyId, AccountId,
+            new AdjustBalanceRequest(_increase, _amount!.Value, _id, date, _remarks));
+        _busy = false;
+        if (!result.Ok)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        Snackbar.Add(Loc["Adjust.Saved"], Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

@@ -19,7 +19,7 @@ public sealed class ShareLinksTests
     [Fact]
     public void WhatsApp_keeps_the_whole_message_including_links_and_Nepali_text()
     {
-        const string message = "नमस्ते\nhttps://lekhabooknepal.com/r/a_b-c?x=1&y=2";
+        const string message = "नमस्ते\nhttps://books.example.test/r/a_b-c?x=1&y=2";
 
         var url = ShareLinks.WhatsApp(message, "9801234567");
 

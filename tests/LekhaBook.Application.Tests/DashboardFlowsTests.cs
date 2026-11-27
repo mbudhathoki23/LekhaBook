@@ -130,6 +130,22 @@ public sealed class DashboardFlowsTests
         Assert.Equal(900m, report.TopParties[0].Balance);
     }
 
+    [Fact]
+    public void Months_and_years_without_entries_are_left_out_of_the_lists()
+    {
+        var report = Build(
+            [
+                Txn("Expense", new(2026, 9, 5), 75, Cash, Expense),
+                Txn("PaymentIn", new(2026, 11, 3), 300, Guid.CreateVersion7(), Cash),
+            ],
+            []);
+
+        Assert.Equal(new[] { (2026, 9), (2026, 11) }, report.ActiveMonths.Select(m => (m.Year, m.Month)).ToArray());
+        Assert.Equal(new[] { 2026 }, report.ActiveFiscalYears.Select(y => y.StartYear).ToArray());
+        Assert.Empty(Build([], []).ActiveMonths);
+        Assert.Empty(Build([], []).ActiveFiscalYears);
+    }
+
     private static DashboardReport Build(
         IReadOnlyList<TransactionDto> transactions,
         IReadOnlyList<PartyDto> parties,

@@ -1757,4 +1757,307 @@ Lekha Books मा साइन इन: {4}</value>
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>कैफियत छोट्याइनेछ</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>कागजात स्क्यान गर्नुहोस्</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>फोटो खिच्न सकिएन। क्यामेरा खाली छ र LekhaBook लाई अनुमति दिइएको छ कि जाँच गर्नुहोस्।</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>कागजात स्क्यान गर्न सकिएन। स्क्यानर खुला र जडान भएको छ कि जाँच गर्नुहोस्।</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>साइन इन र सुरक्षा</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>अथेन्टिकेटर कोड</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>मान्य छ अङ्कको कोड दिनुहोस् वा रिकभरी कोड प्रयोग गर्नुहोस्।</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>बाँकी रिकभरी कोड: {0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>फोन प्रमाणीकरण रद्द भयो वा सफल भएन। फेरि प्रयास गर्नुहोस् वा खाताको पासवर्ड प्रयोग गर्नुहोस्।</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>फोनको फिङ्गरप्रिन्ट, पिन, प्याटर्न वा पासवर्डबाट प्रमाणित गरेपछि सुरक्षित खाता स्वतः खोल्नुहोस्।</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>फोनबाट प्रमाणित गर्नुहोस्</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>यो साइन इन विकल्प सुरक्षित गर्न सकिएन। फेरि प्रयास गर्नुहोस्।</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>फोन अनलक र स्वचालित साइन इन</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>फोनको सेटिङमा स्क्रिन लक राखेर फेरि प्रयास गर्नुहोस्।</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>दुई-चरण प्रमाणीकरण बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>यो खाताको थप साइन इन कोड बन्द गर्ने?</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>फोन अनलक बन्द गर्नुहोस्</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>दुई-चरण प्रमाणीकरण सक्रिय छ।</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>स्वचालित साइन इनका लागि फोन अनलक प्रयोग गर्नुहोस्</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>अथेन्टिकेटर वा प्रयोग नभएको रिकभरी कोड</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>वा अथेन्टिकेटर एपमा यो सेटअप कि प्रविष्ट गर्नुहोस्:</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>नयाँ रिकभरी कोड बनाउनुहोस्</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>नयाँ रिकभरी कोडले अघिल्ला सबै कोड बदल्छन्। जारी राख्ने?</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>अथेन्टिकेटर सेटअपको क्यूआर कोड</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>रिकभरी कोड</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>यो पृष्ठ छोड्नुअघि यी रिकभरी कोड सुरक्षित राख्नुहोस्। प्रत्येक कोड एक पटक मात्र चल्छ। यी कोड फेरि देखिने छैनन्।</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>मैले यी कोड सुरक्षित राखें</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>अथेन्टिकेटर एपबाट यो क्यूआर स्क्यान गरी हालको छ अङ्कको कोड दिनुहोस्।</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>अथेन्टिकेटर एप सेटअप गर्नुहोस्</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>Google Authenticator, Microsoft Authenticator, Authy वा अन्य TOTP एप प्रयोग गर्नुहोस्। नयाँ साइन इनमा पासवर्ड र कोड चाहिन्छ।</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>अथेन्टिकेटर एपबाट प्रमाणीकरण</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>फोनबाट अनलक गर्नुहोस्</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>अथेन्टिकेटर कोड प्रयोग गर्नुहोस्</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>खाताको पासवर्ड प्रयोग गर्नुहोस्</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>रिकभरी कोड प्रयोग गर्नुहोस्</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>प्रमाणित गरी जारी राख्नुहोस्</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>अथेन्टिकेटर एपको हालको कोड वा प्रयोग नभएको एउटा रिकभरी कोड दिनुहोस्।</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>साइन इन प्रमाणित गर्नुहोस्</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>सम्भावित दोहोरो प्रविष्टि</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>यही पक्ष, मिति र रकम भएको प्रविष्टि पहिले नै दर्ता छ। मिल्ने प्रविष्टि हेर्नुहोस् वा यो छुट्टै कारोबार हो भने अगाडि बढ्नुहोस्।</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>प्रविष्टिमा फर्कनुहोस्</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>मिल्ने प्रविष्टि हेर्नुहोस्</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>मिल्ने प्रविष्टि लुकाउनुहोस्</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>अगाडि बढ्नुहोस् र सुरक्षित गर्नुहोस्</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>पछाडि</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>यो हेर्ने अनुमति तपाईंसँग छैन।</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>प्रिन्ट / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>अवधि</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>आज</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>यो महिना</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>गत महिना</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>यो आर्थिक वर्ष</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>सबै समय</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>मिति आफैँ छान्नुहोस्</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>देखि मिति</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>सम्म मिति</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>यस अवधिमा कुनै प्रविष्टि छैन।</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>अन्तिम मौज्दात</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>रकम</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>बाट</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>मा</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>समायोजन</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>सबै नगद खाता</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>विवरण हेर्न पार्टी छान्नुहोस्।</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>देखाउने पार्टी छैन।</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>यस प्रकारको खाता अहिलेसम्म छैन।</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>सबै पार्टी</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>सबै बाँकी</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>सबै वर्ग</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>प्रविष्टि</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>पार्टी</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>आम्दानी र खर्च</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>नगद र बैंक</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>दैनिक खाता</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>एक दिनमा लेखिएका सबै प्रविष्टि</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>सबै प्रविष्टि</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>अवधिभरका प्रविष्टि, प्रकार अनुसार</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>पार्टी विवरण</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>एउटा पार्टीका प्रविष्टि र बाँकी</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>सबै पार्टी</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>प्रत्येक पार्टीको लिनुपर्ने र दिनुपर्ने</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>आम्दानी र खर्च</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>वर्ग अनुसार जम्मा</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>हातमा नगद</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>नगद र खुद्रा नगदको विवरण</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>बैंक विवरण</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>बैंक, वालेट र चेक खाता</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>वर्ग थप्नुहोस्</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>{0} थपियो।</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>वर्गको नाम</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>वर्ग अनुसार</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>खर्च थप्नुहोस्</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>आम्दानी थप्नुहोस्</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>बाँकी मिलान</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>रकम थप / घट</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>बाँकी थप्ने (लिनुपर्ने बढ्छ)</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>बाँकी घटाउने (लिनुपर्ने घट्छ)</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>रकम थप्ने</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>रकम घटाउने</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>सेभ गरेपछिको बाँकी: {0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>बाँकी मिलान भयो।</value>
+  </data>
 </root>

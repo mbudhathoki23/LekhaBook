@@ -1,0 +1,155 @@
+@page "/reports/day-book"
+@page "/reports/all-entries"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject ICompanyApi Companies
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+@* Day Book (one day, today by default) and All Entries (a period, filtered by type). *@
+<PageTitle>@Title · Lekha Books</PageTitle>
+
+@if (!Report.IsAllowed(Session))
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+    return;
+}
+
+<ReportHeader Title="@Title" Preset="_preset" Range="_range" Today="_periods?.Today ?? default"
+              FiscalYearStartMonth="_periods?.FiscalYearStartMonth ?? 4" PeriodChanged="SetPeriod"
+              Csv="@(_entries is null ? null : BuildCsv)" FileName="@(IsDayBook ? "day-book" : "all-entries")" />
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Nav.Reports"]" OnRetry="LoadAsync" />
+}
+else if (_entries is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    var shown = Shown;
+    var totals = EntryReports.Totals(shown);
+
+    <MudSelect T="string" @bind-Value="_type" Label="@Loc["Transactions.List.Type"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true"
+               Class="mb-3 no-print" Style="max-width: 260px">
+        <MudSelectItem T="string" Value="@("all")">@Loc["Transactions.List.AllTypes"]</MudSelectItem>
+        @foreach (var type in Enum.GetValues<TransactionType>())
+        {
+            <MudSelectItem T="string" Value="@type.ToString()">@Loc[MasterLabels.TransactionType(type.ToString())]</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Home.MoneyIn"]" Value="@Money.Format(totals.MoneyIn)" /></MudItem>
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Home.MoneyOut"]" Value="@Money.Format(totals.MoneyOut)" /></MudItem>
+        <MudItem xs="4"><SummaryFigure Label="@Loc["Home.Net"]" Value="@Money.Format(totals.Net)" /></MudItem>
+    </MudGrid>
+
+    @if (shown.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Reports.Empty"]</MudText>
+    }
+    else
+    {
+        <MudTable T="TransactionDto" Items="shown" Dense="true" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1">
+            <HeaderContent>
+                <MudTh>@Loc["Common.Date"]</MudTh>
+                <MudTh>@Loc["Ledger.Particulars"]</MudTh>
+                <MudTh>@Loc["Reports.FromAccount"]</MudTh>
+                <MudTh>@Loc["Reports.ToAccount"]</MudTh>
+                <MudTh Class="text-right">@Loc["Reports.Amount"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@Loc["Common.Date"]" Class="text-nowrap">@Session.FormatDate(context.Date)</MudTd>
+                <MudTd DataLabel="@Loc["Ledger.Particulars"]">
+                    <MudLink Href="@($"transactions/{context.Id}/edit")">@Loc[MasterLabels.TransactionType(context.Type)]</MudLink>
+                    @if (!string.IsNullOrWhiteSpace(context.Remarks))
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@context.Remarks</MudText>
+                    }
+                </MudTd>
+                <MudTd DataLabel="@Loc["Reports.FromAccount"]">@NameOf(context.FromAccountId)</MudTd>
+                <MudTd DataLabel="@Loc["Reports.ToAccount"]">@NameOf(context.ToAccountId)</MudTd>
+                <MudTd DataLabel="@Loc["Reports.Amount"]" Class="text-right text-nowrap">@Money.Number(context.Amount)</MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}
+
+@code {
+    private List<TransactionDto>? _entries;
+    private Dictionary<Guid, string> _names = [];
+    private CompanyPeriods? _periods;
+    private PeriodPreset _preset;
+    private ReportRange _range;
+    private string _type = "all";
+    private string? _error;
+    private bool _offline;
+    private string? _loadedPath;
+
+    private bool IsDayBook => Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith("reports/day-book", StringComparison.Ordinal);
+
+    private ReportLink Report => IsDayBook ? ReportCatalog.DayBook : ReportCatalog.AllEntries;
+
+    private string Title => Loc[$"Reports.{Report.Key}"];
+
+    private List<TransactionDto> Shown =>
+        EntryReports.InPeriod(_entries ?? [], _range).Where(e => _type == "all" || e.Type == _type).ToList();
+
+    // Both routes use this component, so moving between them only changes the parameters.
+    protected override async Task OnParametersSetAsync()
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri);
+        if (path != _loadedPath)
+        {
+            _loadedPath = path;
+            _type = "all";
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company || !Report.IsAllowed(Session))
+        {
+            return;
+        }
+
+        (_error, _entries) = (null, null);
+        _periods = await CompanyPeriods.LoadAsync(Companies, company.CompanyId);
+        _preset = IsDayBook ? PeriodPreset.Today : PeriodPreset.ThisMonth;
+        _range = ReportPeriods.For(_preset, _periods.Today, Session.Calendar(), _periods.FiscalYearStartMonth);
+
+        var entries = await Data.GetTransactionsAsync(company.CompanyId);
+        if (!entries.Ok)
+        {
+            (_error, _offline) = (entries.Error, entries.IsNetworkError);
+            return;
+        }
+
+        _names = await AccountNames.LoadAsync(Data, Session, company.CompanyId);
+        _entries = entries.Value!;
+    }
+
+    private void SetPeriod((PeriodPreset Preset, ReportRange Range) period) => (_preset, _range) = period;
+
+    /// <summary>The system Adjustment account is in no list the app can read.</summary>
+    private string NameOf(Guid account) => _names.GetValueOrDefault(account) ?? Loc["Reports.Adjustment"];
+
+    private string BuildCsv()
+    {
+        var rows = new List<string?[]>
+        {
+            new string?[] { Loc["Common.Date"], Loc["Ledger.Particulars"], Loc["Reports.FromAccount"], Loc["Reports.ToAccount"], Loc["Common.Remarks"], Loc["Reports.Amount"] },
+        };
+        rows.AddRange(Shown.Select(e => new string?[]
+        {
+            Session.FormatDate(e.Date), Loc[MasterLabels.TransactionType(e.Type)], NameOf(e.FromAccountId), NameOf(e.ToAccountId),
+            e.Remarks, CsvText.Amount(e.Amount),
+        }));
+        return CsvText.Build(rows);
+    }
+}

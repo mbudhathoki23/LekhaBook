@@ -21,8 +21,6 @@ public static class ReportLinkEndpoints
 {
     public const string RateLimitPolicy = "public-reports";
 
-    private const string DefaultPublicSite = "https://lekhabooknepal.com";
-
     private static readonly string[] ServedFileTypes = ["image/jpeg", "image/png", "image/webp", "application/pdf"];
 
     public static void MapReportLinkEndpoints(this IEndpointRouteBuilder app)
@@ -92,6 +90,14 @@ public static class ReportLinkEndpoints
             return Forbidden();
         }
 
+        // Links carry their key in the address, so they must never point at a site nobody chose.
+        if (PublicSite(configuration) is not { } site)
+        {
+            return TypedResults.Problem(
+                "Sharing isn't set up yet: the server has no public web address.",
+                statusCode: StatusCodes.Status503ServiceUnavailable);
+        }
+
         var token = System.Buffers.Text.Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(32));
         var now = clock.GetUtcNow().UtcDateTime;
         var link = new ReportShareLink
@@ -108,7 +114,6 @@ public static class ReportLinkEndpoints
         Audit(db, member, link, "Create", now);
         await db.SaveChangesAsync();
 
-        var site = PublicSite(configuration);
         return TypedResults.Ok(new CreatedReportLinkDto(ToDto(link, await TimeZoneAsync(db, companyId)), $"{site}/r/{token}", $"{site}/signin"));
     }
 
@@ -311,8 +316,12 @@ public static class ReportLinkEndpoints
         return account is not null && ReportShareLink.CanShare(account) ? account : null;
     }
 
-    private static string PublicSite(IConfiguration configuration) =>
-        (configuration["PublicSite:BaseUrl"] is { Length: > 0 } url ? url : DefaultPublicSite).TrimEnd('/');
+    /// <summary>The web app's own address from PublicSite:BaseUrl, or null when it isn't a usable one.</summary>
+    private static string? PublicSite(IConfiguration configuration) =>
+        Uri.TryCreate(configuration["PublicSite:BaseUrl"], UriKind.Absolute, out var url)
+        && (url.Scheme == Uri.UriSchemeHttps || url.Scheme == Uri.UriSchemeHttp)
+            ? url.AbsoluteUri.TrimEnd('/')
+            : null;
 
     private static string Hash(string token) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
 

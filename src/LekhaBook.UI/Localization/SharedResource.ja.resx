@@ -1757,4 +1757,307 @@ Lekha Books にサインイン: {4}</value>
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>備考は短縮されます</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>書類をスキャン</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>写真を撮影できませんでした。カメラがほかで使用中でないこと、LekhaBook に許可されていることを確認してください。</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>書類をスキャンできませんでした。スキャナーの電源と接続を確認してください。</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>ログインとセキュリティ</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>認証アプリのコード</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>有効な6桁のコード、またはリカバリーコードを入力してください。</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>残りのリカバリーコード：{0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>端末認証がキャンセルされたか失敗しました。再試行するか、アカウントのパスワードを使ってください。</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>端末の指紋、PIN、パターンまたはパスワードで認証すると、保存されたアカウントに自動でログインします。</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>端末で認証してください</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>ログイン方法を保存できませんでした。もう一度お試しください。</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>端末認証と自動ログイン</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>端末の設定で画面ロックを設定してから再試行してください。</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>二要素認証を無効にする</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>このアカウントの追加ログインコードを無効にしますか？</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>端末認証を無効にする</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>二要素認証は有効です。</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>端末認証で自動ログインする</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>認証コードまたは未使用のリカバリーコード</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>または認証アプリにこの設定キーを入力してください：</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>新しいリカバリーコードを生成</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>新しいコードを生成すると以前のコードはすべて無効になります。続行しますか？</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>認証アプリ設定用QRコード</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>リカバリーコード</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>このページを離れる前にコードを安全な場所に保管してください。各コードは1回限り有効で、再表示できません。</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>コードを保存しました</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>認証アプリでQRコードを読み取り、現在の6桁のコードを入力して設定を完了してください。</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>認証アプリを設定する</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>Google Authenticator、Microsoft Authenticator、AuthyなどのTOTPアプリを使います。新しいログインにはパスワードとコードが必要です。</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>認証アプリによる確認</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>端末でロック解除</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>認証アプリのコードを使う</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>アカウントのパスワードを使う</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>リカバリーコードを使う</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>確認して続行</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>認証アプリの現在のコード、または未使用のリカバリーコードを入力してください。</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>ログインを確認</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>重複の可能性がある取引</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>同じ取引先、日付、金額の記帳済み取引があります。該当する取引を確認するか、別の取引であれば保存に進んでください。</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>入力に戻る</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>該当する取引を確認</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>該当する取引を非表示</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>続けて保存</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>これを表示する権限がありません。</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>印刷 / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>今月</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>先月</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>今会計年度</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>全期間</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>日付を指定</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>開始日</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>終了日</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>この期間の記録はありません。</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>期末残高</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>金額</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>出金元</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>入金先</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>調整</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>すべての現金口座</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>明細を表示する取引先を選んでください。</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>表示する取引先がありません。</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>この種類の口座はまだありません。</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>すべての取引先</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>すべての残高</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>すべてのカテゴリ</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>記録</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>取引先</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>収支</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>現金と銀行</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>日記帳</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>1日のすべての記録</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>すべての記録</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>期間内の記録を種類別に表示</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>取引先明細</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>1つの取引先の記録と残高</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>取引先一覧</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>各取引先の受取・支払予定</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>収支</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>カテゴリ別の合計</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>手持現金</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>現金と小口現金の明細</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>銀行明細</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>銀行・ウォレット・小切手口座</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>カテゴリを追加</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>{0} を追加しました。</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>カテゴリ名</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>カテゴリ別</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>支出を追加</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>収入を追加</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>残高を調整</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>入金 / 減額</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>残高を増やす（受取額が増える）</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>残高を減らす（受取額が減る）</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>入金する</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>減額する</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>保存後の残高: {0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>残高を調整しました。</value>
+  </data>
 </root>

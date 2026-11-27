@@ -113,7 +113,8 @@ public sealed class DateFieldTests : TestContext
         public string? CompanyName => CurrentCompany?.Name;
         public event EventHandler? Changed { add { } remove { } }
         public Task InitializeAsync() => Task.CompletedTask;
-        public Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl) => throw new NotSupportedException();
+        public Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl,
+            string? twoFactorCode = null, string? recoveryCode = null) => throw new NotSupportedException();
         public Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl) => throw new NotSupportedException();
         public Task SignOutAsync() => Task.CompletedTask;
         public Task SelectCompanyAsync(Guid companyId) => Task.CompletedTask;

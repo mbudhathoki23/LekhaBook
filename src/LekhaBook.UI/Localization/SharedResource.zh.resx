@@ -1757,4 +1757,307 @@
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>备注将被截短</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>扫描文档</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>无法拍照。请检查相机是否空闲，并且已允许 LekhaBook 使用。</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>无法扫描文档。请检查扫描仪是否已开启并连接。</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>登录与安全</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>身份验证器代码</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>请输入有效的六位代码，或使用恢复代码。</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>剩余恢复代码：{0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>手机验证已取消或未成功。请重试或使用账户密码。</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>通过手机指纹、PIN、图案或密码验证后，自动打开已保存的账户。</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>使用手机验证</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>无法保存此登录选项。请重试。</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>手机解锁与自动登录</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>请先在手机设置中启用屏幕锁定，然后重试。</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>关闭双重身份验证</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>要关闭此账户的额外登录验证码吗？</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>关闭手机解锁</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>双重身份验证已开启。</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>使用手机解锁以自动登录</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>身份验证器代码或未使用的恢复代码</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>或在身份验证器应用中输入此设置密钥：</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>生成新的恢复代码</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>新的恢复代码将替换所有旧代码。是否继续？</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>身份验证器设置二维码</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>恢复代码</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>离开此页面前，请妥善保存恢复代码。每个代码只能使用一次，之后不会再次显示。</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>我已保存这些代码</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>使用身份验证器应用扫描此二维码，然后输入当前六位代码以完成设置。</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>设置身份验证器应用</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>使用 Google Authenticator、Microsoft Authenticator、Authy 或其他 TOTP 应用。新的登录将需要密码和验证码。</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>身份验证器应用验证</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>使用手机解锁</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>使用身份验证器代码</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>改用账户密码</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>使用恢复代码</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>验证并继续</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>输入身份验证器应用中的当前代码，或使用一个未使用的恢复代码。</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>验证登录</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>可能重复的记录</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>已有相同往来对象、日期和金额的已入账记录。请查看匹配记录，如果这是另一笔交易，可以继续保存。</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>返回录入</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>查看匹配记录</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>隐藏匹配记录</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>继续保存</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>您没有查看此内容的权限。</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>打印 / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>期间</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>今天</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>本月</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>上月</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>本财年</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>全部时间</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>自定义日期</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>开始日期</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>结束日期</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>此期间没有记录。</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>期末余额</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>金额</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>来源</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>去向</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>调整</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>全部现金账户</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>请选择往来单位以查看对账单。</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>没有可显示的往来单位。</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>还没有此类账户。</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>全部往来单位</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>全部余额</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>全部类别</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>记录</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>往来单位</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>收支</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>现金与银行</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>日记账</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>某一天的全部记录</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>全部记录</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>按类型查看某期间的记录</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>往来对账单</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>单个往来单位的记录和余额</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>往来汇总</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>每个往来单位的应收应付</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>收支汇总</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>按类别汇总</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>库存现金</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>现金和备用金明细</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>银行明细</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>银行、钱包和支票账户</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>添加类别</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>已添加 {0}。</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>类别名称</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>按类别</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>添加支出</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>添加收入</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>调整余额</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>增加 / 减少资金</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>增加余额（对方欠款增加）</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>减少余额（对方欠款减少）</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>增加资金</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>减少资金</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>保存后余额：{0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>余额已调整。</value>
+  </data>
 </root>

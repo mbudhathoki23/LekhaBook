@@ -1,12 +1,15 @@
 @page "/signin"
 @layout AuthLayout
+@implements IDisposable
 @inject ISessionService Session
 @inject NavigationManager Navigation
+@inject IDeviceUnlock DeviceUnlock
+@inject ISnackbar Snackbar
 
 <PageTitle>@Loc["Auth.SignIn.PageTitle"]</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Auth.SignIn.Title"]</MudText>
-<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc["Auth.SignIn.Subtitle"]</MudText>
+<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc[_requiresTwoFactor ? "Security.VerifyTitle" : "Auth.SignIn.Title"]</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc[_requiresTwoFactor ? "Security.VerifyHelp" : "Auth.SignIn.Subtitle"]</MudText>
 
 @if (Error == "expired")
 {
@@ -17,24 +20,50 @@
     <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
 }
 
-<form @onsubmit="SignInAsync">
+@if (Session.IsLocked && !_usePassword)
+{
+    <MudText Class="mb-3">@Loc["Security.DeviceHelp"]</MudText>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+               StartIcon="@Icons.Material.Filled.Fingerprint" OnClick="UnlockAsync">@Loc["Security.Unlock"]</MudButton>
+    <MudButton Variant="Variant.Text" Class="mt-3" FullWidth="true" Disabled="_busy" OnClick="UseAccountPassword">@Loc["Security.UsePassword"]</MudButton>
+}
+else
+{
+<form @onsubmit="SignInAsync" @onsubmit:preventDefault="true">
     <MudStack Spacing="3">
+        @if (!_requiresTwoFactor)
+        {
         <MudTextField @bind-Value="_email" Label="@Loc["Common.Email"]" InputType="InputType.Email" Variant="Variant.Outlined"
                       Immediate="true" Required="true" AutoFocus="true"
                       UserAttributes="@(new() { ["autocomplete"] = "username", ["enterkeyhint"] = "next", ["inputmode"] = "email" })" />
         <MudTextField @bind-Value="_password" Label="@Loc["Common.Password"]" InputType="InputType.Password" Variant="Variant.Outlined"
                       Immediate="true" Required="true"
                       UserAttributes="@(new() { ["autocomplete"] = "current-password", ["enterkeyhint"] = "go" })" />
+            @if (_deviceState is { Supported: true, Available: true })
+            {
+                <MudCheckBox T="bool" @bind-Value="_enableDevice" Color="Color.Primary" Label="@Loc["Security.EnableDevice"]" Disabled="_busy" />
+            }
+        }
+        else
+        {
+            <MudText Typo="Typo.body2">@_email</MudText>
+            <MudTextField @bind-Value="_code" Label="@Loc[_useRecovery ? "Security.RecoveryCode" : "Security.AuthenticatorCode"]"
+                          Immediate="true" Required="true" AutoFocus="true" MaxLength="32" Variant="Variant.Outlined"
+                          UserAttributes="@(new() { ["autocomplete"] = "one-time-code", ["inputmode"] = _useRecovery ? "text" : "numeric" })" />
+            <MudButton Variant="Variant.Text" OnClick="ToggleRecovery" Disabled="_busy">@Loc[_useRecovery ? "Security.UseAuthenticator" : "Security.UseRecovery"]</MudButton>
+            <MudButton Variant="Variant.Text" OnClick="RestartSignIn" Disabled="_busy">@Loc["Common.Cancel"]</MudButton>
+        }
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
                    FullWidth="true" Disabled="_busy">
             @if (_busy)
             {
                 <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="me-2" />
             }
-            @Loc["Auth.SignIn.Submit"]
+            @Loc[_requiresTwoFactor ? "Security.Verify" : "Auth.SignIn.Submit"]
         </MudButton>
     </MudStack>
 </form>
+}
 
 <MudText Typo="Typo.body2" Class="mt-5" Align="Align.Center">
     @Loc["Auth.SignIn.NewPrompt"] <MudLink Href="@SignUpHref">@Loc["Auth.SignIn.CreateAccount"]</MudLink>
@@ -51,26 +80,76 @@
     private string _password = string.Empty;
     private string? _error;
     private bool _busy;
+    private bool _requiresTwoFactor;
+    private bool _useRecovery;
+    private bool _usePassword;
+    private bool _enableDevice;
+    private string _code = string.Empty;
+    private DeviceUnlockState? _deviceState;
+
+    protected override async Task OnInitializedAsync() => _deviceState = await DeviceUnlock.GetStateAsync();
 
     private string SignUpHref => ReturnUrl is { Length: > 0 } r ? $"signup?returnUrl={Uri.EscapeDataString(r)}" : "signup";
 
     private async Task SignInAsync()
     {
+        if (_busy) return;
         if (string.IsNullOrWhiteSpace(_email) || string.IsNullOrEmpty(_password))
         {
             _error = Loc["Auth.SignIn.CredentialsRequired"];
             return;
         }
 
+        var code = _useRecovery ? _code.Trim().Replace(" ", string.Empty, StringComparison.Ordinal) : AuthenticatorSetup.NormalizeCode(_code);
+        if (_requiresTwoFactor && (string.IsNullOrWhiteSpace(code) || (!_useRecovery && (code.Length != 6 || !code.All(char.IsAsciiDigit)))))
+        {
+            _error = Loc["Security.CodeRequired"];
+            return;
+        }
+
         _busy = true;
-        var outcome = await Session.SignInAsync(_email, _password, SafeReturnUrl(ReturnUrl));
+        var outcome = await Session.SignInAsync(_email, _password, SafeReturnUrl(ReturnUrl),
+            _requiresTwoFactor && !_useRecovery ? code : null,
+            _requiresTwoFactor && _useRecovery ? code : null);
+        if (outcome.RequiresTwoFactor)
+        {
+            _requiresTwoFactor = true;
+            _code = string.Empty;
+            _error = null;
+            _busy = false;
+            return;
+        }
         _error = outcome.Error;
-        _busy = outcome.Ok && outcome.HostNavigated; // keep the spinner while the page reloads
+        _busy = outcome.Ok; // keep the spinner during native opt-in or the web cookie redirect
         if (outcome.Ok && !outcome.HostNavigated)
         {
+            _password = _code = string.Empty;
+            if (_enableDevice && Session.Me is { } me)
+            {
+                var enabled = await DeviceUnlock.EnableAsync(me.UserId);
+                if (!enabled.Succeeded) Snackbar.Add(enabled.Error ?? Loc["Security.DeviceCancelled"], Severity.Warning);
+            }
             Navigation.NavigateTo(SafeReturnUrl(ReturnUrl));
         }
     }
+
+    private async Task UnlockAsync()
+    {
+        if (_busy) return;
+        _busy = true;
+        try
+        {
+            var result = await Session.UnlockAsync();
+            _error = result.Error;
+            if (result.Ok) Navigation.NavigateTo(SafeReturnUrl(ReturnUrl));
+        }
+        finally { _busy = false; }
+    }
+
+    private void UseAccountPassword() { _usePassword = true; _error = null; }
+    private void ToggleRecovery() { _useRecovery = !_useRecovery; _code = string.Empty; _error = null; }
+    private void RestartSignIn() { _requiresTwoFactor = false; _useRecovery = false; _password = _code = string.Empty; _error = null; }
+    public void Dispose() => _password = _code = string.Empty;
 
     /// <summary>Only same-app relative paths, never another site.</summary>
     internal static string SafeReturnUrl(string? returnUrl) =>

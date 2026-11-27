@@ -4,4 +4,5 @@
 
 <MudText Typo="Typo.h5" Class="mb-2" tabindex="-1">@Loc["NotFound.Title"]</MudText>
 <MudText Class="mb-4">@Loc["NotFound.Body"]</MudText>
-<MudButton Variant="Variant.Outlined" Href="">@Loc["NotFound.BackToDashboard"]</MudButton>
+@* An empty Href would make MudButton a button that does nothing. *@
+<MudButton Variant="Variant.Outlined" Href="/">@Loc["NotFound.BackToDashboard"]</MudButton>

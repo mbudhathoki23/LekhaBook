@@ -1,0 +1,278 @@
+@page "/reports/party-statement"
+@page "/reports/cash"
+@page "/reports/bank"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject ICompanyApi Companies
+@inject ISessionService Session
+@inject NavigationManager Navigation
+
+@* Statements over a period: one party, the cash boxes (one or all together), or a bank, wallet or cheque account. *@
+<PageTitle>@Title · Lekha Books</PageTitle>
+
+@if (!Report.IsAllowed(Session))
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+    return;
+}
+
+<ReportHeader Title="@Title" Preset="_preset" Range="_range" Today="_periods?.Today ?? default"
+              FiscalYearStartMonth="_periods?.FiscalYearStartMonth ?? 4" PeriodChanged="SetPeriod"
+              Csv="@(_view is null ? null : BuildCsv)" FileName="@($"{Report.Key.ToLowerInvariant()}-statement")" />
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Nav.Reports"]" OnRetry="LoadAsync" />
+}
+else if (_choices is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else if (_choices.Count == 0)
+{
+    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc[IsParty ? "Reports.NoParties" : "Reports.NoAccounts"]</MudText>
+}
+else
+{
+    @if (IsParty)
+    {
+        <MudAutocomplete T="Choice" Value="_selected" ValueChanged="SelectAsync" Label="@Loc["Common.Party"]" SearchFunc="Search"
+                         ToStringFunc="c => c?.Name" Variant="Variant.Outlined" Margin="Margin.Dense" Class="mb-3 no-print"
+                         MaxItems="50" Style="max-width: 420px" />
+    }
+    else
+    {
+        <MudSelect T="Choice" Value="_selected" ValueChanged="SelectAsync" Label="@Loc["Accounts.Detail.Title"]" Variant="Variant.Outlined"
+                   Margin="Margin.Dense" Dense="true" Class="mb-3 no-print" Style="max-width: 420px" ToStringFunc="c => c?.Name">
+            @foreach (var choice in _choices)
+            {
+                <MudSelectItem T="Choice" Value="choice">@choice.Name</MudSelectItem>
+            }
+        </MudSelect>
+    }
+
+    @if (_selected is null)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Reports.ChooseParty"]</MudText>
+    }
+    else if (_view is null)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+    }
+    else
+    {
+        <MudText Typo="Typo.subtitle1" Class="mb-2">@_selected.Name</MudText>
+        <MudGrid Spacing="2" Class="mb-3">
+            <MudItem xs="6" sm="3"><SummaryFigure Label="@Loc["Ledger.OpeningBalance"]" Value="@Balance(_view.Opening)" /></MudItem>
+            <MudItem xs="6" sm="3"><SummaryFigure Label="@DebitTitle" Value="@Money.Format(_view.TotalDebit)" /></MudItem>
+            <MudItem xs="6" sm="3"><SummaryFigure Label="@CreditTitle" Value="@Money.Format(_view.TotalCredit)" /></MudItem>
+            <MudItem xs="6" sm="3"><SummaryFigure Label="@Loc["Reports.Closing"]" Value="@Balance(_view.Closing)" /></MudItem>
+        </MudGrid>
+
+        @if (_view.Rows.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Reports.Empty"]</MudText>
+        }
+        else
+        {
+            <MudTable T="StatementRow" Items="_view.Rows" Dense="true" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1">
+                <HeaderContent>
+                    <MudTh>@Loc["Common.Date"]</MudTh>
+                    <MudTh>@Loc["Ledger.Particulars"]</MudTh>
+                    <MudTh Class="text-right">@DebitTitle</MudTh>
+                    <MudTh Class="text-right">@CreditTitle</MudTh>
+                    <MudTh Class="text-right">@Loc["Common.Balance"]</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@Loc["Common.Date"]" Class="text-nowrap">@Session.FormatDate(context.Line.Date)</MudTd>
+                    <MudTd DataLabel="@Loc["Ledger.Particulars"]">
+                        <MudLink Href="@($"transactions/{context.Line.TransactionId}/edit")">@Loc[MasterLabels.TransactionType(context.Line.Type)]</MudLink>
+                        @if (Detail(context) is { Length: > 0 } detail)
+                        {
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@detail</MudText>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="@DebitTitle" Class="text-right text-nowrap">@(context.Line.Debit > 0 ? Money.Number(context.Line.Debit) : "")</MudTd>
+                    <MudTd DataLabel="@CreditTitle" Class="text-right text-nowrap">@(context.Line.Credit > 0 ? Money.Number(context.Line.Credit) : "")</MudTd>
+                    <MudTd DataLabel="@Loc["Common.Balance"]" Class="text-right text-nowrap">@Balance(context.Balance)</MudTd>
+                </RowTemplate>
+            </MudTable>
+        }
+    }
+}
+
+@code {
+    private List<Choice>? _choices;
+    private Choice? _selected;
+    private StatementView? _view;
+    private List<(string Account, LedgerDto Ledger)> _ledgers = [];
+    private CompanyPeriods? _periods;
+    private PeriodPreset _preset;
+    private ReportRange _range;
+    private string? _error;
+    private bool _offline;
+    private string? _loadedPath;
+
+    private string Kind => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
+
+    private bool IsParty => Kind == "reports/party-statement";
+
+    private ReportLink Report => Kind switch
+    {
+        "reports/cash" => ReportCatalog.CashStatement,
+        "reports/bank" => ReportCatalog.BankStatement,
+        _ => ReportCatalog.PartyStatement,
+    };
+
+    private string Title => Loc[$"Reports.{Report.Key}"];
+
+    private string DebitTitle => IsParty ? Loc["Ledger.GaveAdded"] : Loc["Accounts.Detail.MoneyIn"];
+
+    private string CreditTitle => IsParty ? Loc["Ledger.GotReduced"] : Loc["Accounts.Detail.MoneyOut"];
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Kind != _loadedPath)
+        {
+            _loadedPath = Kind;
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company || !Report.IsAllowed(Session))
+        {
+            return;
+        }
+
+        (_error, _choices, _selected, _view, _ledgers) = (null, null, null, null, []);
+        _periods = await CompanyPeriods.LoadAsync(Companies, company.CompanyId);
+        _preset = PeriodPreset.ThisMonth;
+        _range = ReportPeriods.For(_preset, _periods.Today, Session.Calendar(), _periods.FiscalYearStartMonth);
+
+        if (IsParty)
+        {
+            var parties = await Data.GetPartiesAsync(company.CompanyId);
+            if (!Loaded(parties))
+            {
+                return;
+            }
+
+            _choices = parties.Value!.Select(p => new Choice(p.Id, p.Name, [(p.Id, p.Name)])).ToList();
+            return;
+        }
+
+        var accounts = await Data.GetMoneyAccountsAsync(company.CompanyId);
+        if (!Loaded(accounts))
+        {
+            return;
+        }
+
+        var wanted = accounts.Value!.Where(a => (a.Type == "Cash") == (Kind == "reports/cash")).ToList();
+        _choices = wanted.Select(a => new Choice(a.Id, a.Name, [(a.Id, a.Name)])).ToList();
+        if (Kind == "reports/cash" && wanted.Count > 1)
+        {
+            _choices.Insert(0, new Choice(Guid.Empty, Loc["Reports.AllCash"], wanted.Select(a => (a.Id, a.Name)).ToList()));
+        }
+
+        if (_choices.Count > 0)
+        {
+            await SelectAsync(_choices[0]);
+        }
+    }
+
+    private async Task SelectAsync(Choice? choice)
+    {
+        (_selected, _view, _ledgers) = (choice, null, []);
+        if (choice is null || Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        var ledgers = new List<(string, LedgerDto)>();
+        foreach (var (id, name) in choice.Accounts)
+        {
+            var ledger = IsParty
+                ? await Data.GetPartyLedgerAsync(company.CompanyId, id)
+                : await Data.GetAccountLedgerAsync(company.CompanyId, id);
+            if (!Loaded(ledger))
+            {
+                return;
+            }
+
+            ledgers.Add((name, ledger.Value!));
+        }
+
+        if (_selected != choice)
+        {
+            return; // another one was picked while this one loaded
+        }
+
+        _ledgers = ledgers;
+        Compute();
+    }
+
+    private bool Loaded<T>(ApiResult<T> result)
+    {
+        if (!result.Ok)
+        {
+            (_error, _offline) = (result.Error, result.IsNetworkError);
+        }
+
+        return result.Ok;
+    }
+
+    private void Compute() => _view = _ledgers.Count switch
+    {
+        0 => null,
+        1 => Statements.Slice(_ledgers[0].Ledger, _range),
+        _ => Statements.Combine(_ledgers, _range),
+    };
+
+    private void SetPeriod((PeriodPreset Preset, ReportRange Range) period)
+    {
+        (_preset, _range) = period;
+        Compute();
+    }
+
+    private Task<IEnumerable<Choice>> Search(string? text, CancellationToken cancellationToken) =>
+        Task.FromResult(string.IsNullOrWhiteSpace(text)
+            ? _choices!.AsEnumerable()
+            : _choices!.Where(c => c.Name.Contains(text.Trim(), StringComparison.CurrentCultureIgnoreCase)));
+
+    private static string Detail(StatementRow row) =>
+        string.Join(" · ", new[] { row.Account, row.Line.OtherAccount, row.Line.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s)));
+
+    private string Balance(decimal balance)
+    {
+        if (!IsParty || balance == 0)
+        {
+            return Money.Format(balance);
+        }
+
+        return $"{Money.Format(Math.Abs(balance))} {Loc[MasterLabels.PartySide(balance).LabelKey]}";
+    }
+
+    private string BuildCsv()
+    {
+        var view = _view!;
+        var rows = new List<string?[]>
+        {
+            new string?[] { _selected!.Name },
+            new string?[] { Loc["Common.Date"], Loc["Ledger.Particulars"], Loc["PublicReport.Details"], DebitTitle, CreditTitle, Loc["Common.Balance"] },
+            new string?[] { null, Loc["Ledger.OpeningBalance"], null, null, null, CsvText.Amount(view.Opening) },
+        };
+        rows.AddRange(view.Rows.Select(r => new string?[]
+        {
+            Session.FormatDate(r.Line.Date), Loc[MasterLabels.TransactionType(r.Line.Type)], Detail(r),
+            r.Line.Debit > 0 ? CsvText.Amount(r.Line.Debit) : null,
+            r.Line.Credit > 0 ? CsvText.Amount(r.Line.Credit) : null,
+            CsvText.Amount(r.Balance),
+        }));
+        return CsvText.Build(rows);
+    }
+
+    private sealed record Choice(Guid Id, string Name, IReadOnlyList<(Guid Id, string Name)> Accounts);
+}

@@ -58,6 +58,9 @@ public interface ISessionService
 
     bool IsSignedIn { get; }
 
+    /// <summary>A saved native session is waiting for the phone's device unlock.</summary>
+    bool IsLocked => false;
+
     /// <summary>True when signed in from cached data because the server couldn't be reached.</summary>
     bool IsOffline { get; }
 
@@ -79,7 +82,10 @@ public interface ISessionService
     /// Signs in. On success the caller should go to <paramref name="returnUrl"/> unless
     /// <see cref="SignInOutcome.HostNavigated"/> (the web host reloads the page to set its cookie).
     /// </summary>
-    Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl);
+    Task<SignInOutcome> SignInAsync(string email, string password, string? returnUrl,
+        string? twoFactorCode = null, string? recoveryCode = null);
+
+    Task<SignInOutcome> UnlockAsync() => Task.FromResult(new SignInOutcome("Device unlock is unavailable."));
 
     /// <summary>Creates the account and signs in.</summary>
     Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl);
@@ -96,15 +102,17 @@ public interface ISessionService
 }
 
 /// <summary>Error to show (null = success), and whether the host already navigated away.</summary>
-public sealed record SignInOutcome(string? Error, bool HostNavigated = false)
+public sealed record SignInOutcome(string? Error, bool HostNavigated = false, bool RequiresTwoFactor = false)
 {
-    public bool Ok => Error is null;
+    public bool Ok => Error is null && !RequiresTwoFactor;
 }
 
 /// <summary>Result of an API call: a value, or a message to show.</summary>
 public sealed record ApiResult<T>(T? Value, string? Error, int StatusCode)
 {
     public bool Ok => Error is null;
+
+    public DuplicateTransactionWarning? DuplicateWarning { get; init; }
 
     /// <summary>The server couldn't be reached (offline, DNS, timeout).</summary>
     public bool IsNetworkError => StatusCode == 0;

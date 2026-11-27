@@ -54,7 +54,7 @@
             <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
                 @if (Session.CurrentCompany is not null)
                 {
-                    <MudButton Variant="Variant.Text" Href="">@Loc["Common.Cancel"]</MudButton>
+                    <MudButton Variant="Variant.Text" Href="/">@Loc["Common.Cancel"]</MudButton>
                 }
                 <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy">
                     @Loc["Companies.Create.Submit"]

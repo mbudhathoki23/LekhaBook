@@ -21,6 +21,8 @@ public static class ServiceCollectionExtensions
         services.AddTransient<MudLocalizer, ResxMudLocalizer>();
         // Attachment bytes shown as thumbnails; scoped, so each user session or window has its own.
         services.AddScoped<AttachmentContentCache>();
+        // Back button of a phone (the MAUI router injects it; the browser has its own).
+        services.AddScoped<BackNavigator>();
         return services;
     }
 }

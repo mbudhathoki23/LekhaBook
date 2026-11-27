@@ -49,6 +49,11 @@ else
             {
                 <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Edit" Href="@($"parties/{PartyId}/edit")">@Loc["Common.Edit"]</MudButton>
             }
+            @if (Session.Can(Permission.PartyAdjustmentsManage))
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Tune" Class="adjust-balance"
+                           OnClick="AdjustAsync">@Loc["Adjust.PartyButton"]</MudButton>
+            }
             @if (CanDelete)
             {
                 <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Filled.Delete" OnClick="DeleteAsync" Disabled="_busy">@Loc["Common.Delete"]</MudButton>
@@ -112,6 +117,29 @@ else
     {
         var (label, _) = MasterLabels.PartySide(balance);
         return balance == 0 ? Money.Format(0) : $"{Money.Format(Math.Abs(balance))} {Loc[label]}";
+    }
+
+    private async Task AdjustAsync()
+    {
+        if (Session.CurrentCompany is not { } company || _party is not { } party)
+        {
+            return;
+        }
+
+        var parameters = new DialogParameters<AdjustBalanceDialog>
+        {
+            { x => x.CompanyId, company.CompanyId },
+            { x => x.AccountId, party.Id },
+            { x => x.Name, party.Name },
+            { x => x.IsParty, true },
+            { x => x.Balance, party.Balance },
+        };
+        var dialog = await Dialogs.ShowAsync<AdjustBalanceDialog>(Loc["Adjust.PartyButton"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is { Canceled: false })
+        {
+            await LoadAsync();
+        }
     }
 
     private async Task DeleteAsync()

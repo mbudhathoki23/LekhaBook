@@ -1,0 +1,53 @@
+@inject IBookExtrasApi Books
+@inject ISnackbar Snackbar
+
+@* A new expense or income category. *@
+<MudDialog>
+    <DialogContent>
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3" role="alert">@_error</MudAlert>
+        }
+        <MudTextField @bind-Value="_name" Label="@Loc["Categories.Name"]" Immediate="true" AutoFocus="true" MaxLength="100"
+                      Variant="Variant.Outlined" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="@(() => MudDialog.Cancel())">@Loc["Common.Cancel"]</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(_busy || string.IsNullOrWhiteSpace(_name))"
+                   OnClick="SaveAsync">@Loc["Common.Save"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private string _name = string.Empty;
+    private string? _error;
+    private bool _busy;
+
+    /// <summary>Kept until the dialog closes, so pressing Save again after a lost reply can't add it twice.</summary>
+    private readonly Guid _id = Guid.CreateVersion7();
+
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public Guid CompanyId { get; set; }
+
+    /// <summary>"Expense" or "Income".</summary>
+    [Parameter, EditorRequired]
+    public string CategoryType { get; set; } = "Expense";
+
+    private async Task SaveAsync()
+    {
+        (_busy, _error) = (true, null);
+        var result = await Books.AddCategoryAsync(CompanyId, new SaveCategoryRequest(_name.Trim(), CategoryType, _id));
+        _busy = false;
+        if (!result.Ok)
+        {
+            _error = result.Error;
+            return;
+        }
+
+        Snackbar.Add(Loc["Categories.Added", _name.Trim()], Severity.Success);
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+}

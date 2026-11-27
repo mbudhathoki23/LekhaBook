@@ -1,0 +1,184 @@
+@page "/settings/security"
+@implements IDisposable
+@inject ISessionService Session
+@inject IAccountSecurity SecurityApi
+@inject IDeviceUnlock DeviceUnlock
+@inject IDialogService Dialogs
+
+<PageTitle>@Loc["Security.Title"] · Lekha Books</PageTitle>
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Security.Title"]</MudText>
+
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+}
+@if (_loading)
+{
+    <MudProgressCircular Indeterminate="true" Color="Color.Primary" />
+}
+else
+{
+    @if (_device is { Supported: true })
+    {
+        <MudPaper Class="pa-4 mb-4" Elevation="1">
+            <MudText Typo="Typo.h6">@Loc["Security.DeviceTitle"]</MudText>
+            <MudText Class="mt-2 mb-3">@Loc["Security.DeviceHelp"]</MudText>
+            @if (_device.Available)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Disabled="_busy" StartIcon="@Icons.Material.Filled.Fingerprint"
+                           OnClick="ChangeDeviceUnlockAsync">@Loc[_device.Enabled ? "Security.DisableDevice" : "Security.EnableDevice"]</MudButton>
+            }
+            else
+            {
+                <MudAlert Severity="Severity.Info">@Loc["Security.DeviceUnavailable"]</MudAlert>
+            }
+        </MudPaper>
+    }
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.h6">@Loc["Security.TwoFactorTitle"]</MudText>
+        <MudText Class="mt-2 mb-3">@Loc["Security.TwoFactorHelp"]</MudText>
+        @if (_state is null)
+        {
+            <MudButton OnClick="LoadAsync" Disabled="_busy">@Loc["Common.Retry"]</MudButton>
+        }
+        else if (_state.IsTwoFactorEnabled)
+        {
+            <MudAlert Severity="Severity.Success" Dense="true" Class="mb-3">@Loc["Security.Enabled"]</MudAlert>
+            <MudText Typo="Typo.body2" Class="mb-3">@Loc["Security.CodesLeft", _state.RecoveryCodesLeft]</MudText>
+            @if (_recoveryCodes is null)
+            {
+                <MudTextField @bind-Value="_managementCode" Label="@Loc["Security.ManagementCode"]" Variant="Variant.Outlined"
+                              Immediate="true" MaxLength="32" UserAttributes="@(new() { ["autocomplete"] = "one-time-code" })" />
+                <MudStack Row="true" Wrap="Wrap.Wrap" Class="mt-3">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RegenerateAsync"
+                               Disabled="@(_busy || string.IsNullOrWhiteSpace(_managementCode))">@Loc["Security.NewCodes"]</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="DisableTwoFactorAsync"
+                               Disabled="@(_busy || string.IsNullOrWhiteSpace(_managementCode))">@Loc["Security.Disable"]</MudButton>
+                </MudStack>
+            }
+        }
+        else if (!_enrolling)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="BeginSetupAsync">@Loc["Security.SetUp"]</MudButton>
+        }
+
+        @if (_enrolling && _qrImage is not null)
+        {
+            <MudText Class="mb-3">@Loc["Security.ScanHelp"]</MudText>
+            <img src="@_qrImage" alt="@Loc["Security.QrAlt"]" width="256" height="256" class="authenticator-qr" />
+            <MudText Typo="Typo.body2" Class="mt-3">@Loc["Security.ManualKey"]</MudText>
+            <code class="authenticator-key" dir="ltr">@_setupKey</code>
+            <MudTextField @bind-Value="_verificationCode" Label="@Loc["Security.AuthenticatorCode"]" Variant="Variant.Outlined"
+                          Immediate="true" MaxLength="8" Class="mt-3"
+                          UserAttributes="@(new() { ["autocomplete"] = "one-time-code", ["inputmode"] = "numeric" })" />
+            <MudStack Row="true" Class="mt-3">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="EnableTwoFactorAsync" Disabled="_busy">@Loc["Security.Verify"]</MudButton>
+                <MudButton OnClick="CancelSetup" Disabled="_busy">@Loc["Common.Cancel"]</MudButton>
+            </MudStack>
+        }
+
+        @if (_recoveryCodes is { } codes)
+        {
+            <MudAlert Severity="Severity.Warning" Class="mt-4 mb-3">@Loc["Security.SaveCodes"]</MudAlert>
+            <div class="recovery-codes" dir="ltr">
+                @foreach (var recoveryCode in codes) { <code>@recoveryCode</code> }
+            </div>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="HideRecoveryCodes" Class="mt-3">@Loc["Security.SavedCodes"]</MudButton>
+        }
+    </MudPaper>
+}
+
+@code {
+    private bool _loading = true, _busy, _enrolling;
+    private string? _error, _setupKey, _qrImage;
+    private string _verificationCode = string.Empty, _managementCode = string.Empty;
+    private string[]? _recoveryCodes;
+    private TwoFactorState? _state;
+    private DeviceUnlockState? _device;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _device = await DeviceUnlock.GetStateAsync();
+        var response = await SecurityApi.GetTwoFactorAsync();
+        _error = response.Error;
+        _state = response.Ok ? response.Value : null;
+        _loading = false;
+    }
+
+    private async Task BeginSetupAsync()
+    {
+        var result = await ChangeTwoFactorAsync(new());
+        if (result is not { IsTwoFactorEnabled: false } || Session.Me is null) return;
+        _setupKey = result.SharedKey;
+        _qrImage = AuthenticatorSetup.QrImage(Session.Me.Email, _setupKey);
+        _enrolling = true;
+    }
+
+    private async Task EnableTwoFactorAsync()
+    {
+        var code = AuthenticatorSetup.NormalizeCode(_verificationCode);
+        if (code.Length != 6 || !code.All(char.IsAsciiDigit)) { _error = Loc["Security.CodeRequired"]; return; }
+        var result = await ChangeTwoFactorAsync(new(Enable: true, TwoFactorCode: code));
+        _verificationCode = string.Empty;
+        if (result is { IsTwoFactorEnabled: true }) CancelSetup();
+    }
+
+    private async Task DisableTwoFactorAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(Loc["Security.Disable"], Loc["Security.DisableConfirm"],
+            yesText: Loc["Security.Disable"], cancelText: Loc["Common.Cancel"]);
+        if (confirmed != true) return;
+        var result = await ChangeTwoFactorAsync(new(Enable: false, TwoFactorCode: ManagementCode));
+        _managementCode = string.Empty;
+        if (result is { IsTwoFactorEnabled: false }) HideRecoveryCodes();
+    }
+
+    private async Task RegenerateAsync()
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync(Loc["Security.NewCodes"], Loc["Security.NewCodesConfirm"],
+            yesText: Loc["Security.NewCodes"], cancelText: Loc["Common.Cancel"]);
+        if (confirmed != true) return;
+        await ChangeTwoFactorAsync(new(TwoFactorCode: ManagementCode, ResetRecoveryCodes: true));
+        _managementCode = string.Empty;
+    }
+
+    private string ManagementCode => _managementCode.Trim().Replace(" ", string.Empty, StringComparison.Ordinal);
+
+    private async Task<TwoFactorState?> ChangeTwoFactorAsync(TwoFactorChange change)
+    {
+        if (_busy) return null;
+        _busy = true;
+        _error = null;
+        try
+        {
+            var response = await SecurityApi.ConfigureTwoFactorAsync(change);
+            if (!response.Ok) { _error = response.Error; return null; }
+            var result = response.Value!;
+            _state = result with { SharedKey = string.Empty, RecoveryCodes = null };
+            if (result.RecoveryCodes is { Length: > 0 } codes) _recoveryCodes = codes;
+            return result;
+        }
+        finally { _busy = false; }
+    }
+
+    private async Task ChangeDeviceUnlockAsync()
+    {
+        if (_busy || Session.Me is null) return;
+        _busy = true;
+        try
+        {
+            var result = _device?.Enabled == true
+                ? await DeviceUnlock.DisableAsync() : await DeviceUnlock.EnableAsync(Session.Me.UserId);
+            _error = result.Succeeded ? null : result.Error;
+            _device = await DeviceUnlock.GetStateAsync();
+        }
+        finally { _busy = false; }
+    }
+
+    private void CancelSetup() { _enrolling = false; _setupKey = _qrImage = null; _verificationCode = string.Empty; }
+    private void HideRecoveryCodes() => _recoveryCodes = null;
+    public void Dispose() { CancelSetup(); HideRecoveryCodes(); _managementCode = string.Empty; _state = null; }
+}

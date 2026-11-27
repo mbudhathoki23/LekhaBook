@@ -26,6 +26,9 @@
   </ItemGroup>
 
   <ItemGroup Label="UI">
+    <PackageVersion Include="QRCoder" Version="1.9.0" />
+    <!-- Binding aligned with the AndroidX versions in the installed MAUI 10.0.20 workload. -->
+    <PackageVersion Include="Xamarin.AndroidX.Biometric" Version="1.1.0.30" />
     <PackageVersion Include="MudBlazor" Version="9.14.0" />
   </ItemGroup>
 

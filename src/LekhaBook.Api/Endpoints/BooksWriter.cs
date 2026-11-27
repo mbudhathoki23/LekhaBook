@@ -18,12 +18,14 @@ internal enum WriteStatus
     Invalid,
     Forbidden,
     Conflict,
+    PossibleDuplicate,
     NotFound,
 }
 
 /// <summary>What a write did, without saying how to report it: REST turns it into a status code, sync into an item result.</summary>
 internal sealed record WriteResult(
-    WriteStatus Status, SyncEntity? Row = null, string? Error = null, IReadOnlyDictionary<string, string[]>? Errors = null)
+    WriteStatus Status, SyncEntity? Row = null, string? Error = null, IReadOnlyDictionary<string, string[]>? Errors = null,
+    IReadOnlyList<Transaction>? Duplicates = null)
 {
     public bool Ok => Status is WriteStatus.Created or WriteStatus.Saved or WriteStatus.Replayed;
 
@@ -63,7 +65,7 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
             return Replay(existing);
         }
 
-        var (zone, today) = await TodayAsync();
+        var (_, today) = await TodayAsync();
         var date = request.Date ?? today;
         if (date > today)
         {
@@ -100,7 +102,11 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
         Audit(transaction, "Create", before: null);
         try
         {
-            await SaveAsync(transaction);
+            if (await SaveTransactionAsync(transaction, request.CheckForDuplicates) is { } blocked)
+            {
+                // Another copy of this same request may have saved while this one waited for the company lock.
+                return await FindTransactionByIdAsync(id) is { } saved ? Replay(saved) : blocked;
+            }
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
@@ -171,6 +177,10 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
         }
 
         var before = Snapshot(transaction);
+        var checkDuplicates = request.CheckForDuplicates
+            && (transaction.Date != request.Date || transaction.Amount != request.Amount
+                || PartyId(transaction.Type, transaction.FromAccountId, transaction.ToAccountId)
+                    != PartyId(transaction.Type, request.FromAccountId, request.ToAccountId));
         transaction.Date = request.Date;
         transaction.Amount = request.Amount;
         transaction.FromAccountId = request.FromAccountId;
@@ -184,9 +194,8 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
         }
 
         Audit(transaction, "Update", before);
-        return await SaveAsync(transaction, expectedVersion is null ? null : basedOn)
-            ? new WriteResult(WriteStatus.Saved, transaction)
-            : WriteResult.Conflict(ChangedElsewhere);
+        return await SaveTransactionAsync(transaction, checkDuplicates, expectedVersion is null ? null : basedOn)
+            ?? new WriteResult(WriteStatus.Saved, transaction);
     }
 
     /// <summary>"Delete" voids: the row is kept, and balances and statements skip it (D15).</summary>
@@ -261,12 +270,60 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
 
     // ---------------- Helpers ----------------
 
+    private async Task<WriteResult?> SaveTransactionAsync(Transaction transaction, bool checkDuplicates, long? version = null)
+    {
+        var party = checkDuplicates ? PartyId(transaction.Type, transaction.FromAccountId, transaction.ToAccountId) : null;
+        if (party is not { } partyId)
+        {
+            return await SaveAsync(transaction, version) ? null : WriteResult.Conflict(ChangedElsewhere);
+        }
+
+        var visible = Enum.GetValues<TransactionType>()
+            .Where(t => PartyId(t, Guid.Empty, Guid.Empty) is not null && member.Has(EntryRules.ViewPermissionFor(t)))
+            .ToArray();
+        WriteResult? blocked = null;
+        await db.SaveWithVersionsAsync(companyId, [transaction], member.UserId, clock.GetUtcNow().UtcDateTime, async () =>
+        {
+            if (version is { } expected && !await IsStillAtAsync(transaction.Id, expected))
+            {
+                blocked = WriteResult.Conflict(ChangedElsewhere);
+                return false;
+            }
+
+            // This runs under the company version lock, so a concurrent save can't pass the same check.
+            var matches = await db.Transactions.AsNoTracking()
+                .Where(t => t.CompanyId == companyId && t.Id != transaction.Id && !t.IsDeleted
+                    && t.Status == TransactionStatus.Posted && t.Date == transaction.Date && t.Amount == transaction.Amount
+                    && (t.FromAccountId == partyId || t.ToAccountId == partyId) && visible.Contains(t.Type))
+                .OrderByDescending(t => t.CreatedAtUtc).ThenBy(t => t.Id)
+                .ToListAsync();
+            if (matches.Count == 0)
+            {
+                return true;
+            }
+
+            blocked = new WriteResult(WriteStatus.PossibleDuplicate, Duplicates: matches);
+            return false;
+        });
+        return blocked;
+    }
+
+    private static Guid? PartyId(TransactionType type, Guid from, Guid to) => PostingRules.RolesFor(type) switch
+    {
+        (PostingRules.AccountRole.Party, _) => from,
+        (_, PostingRules.AccountRole.Party) => to,
+        _ => null,
+    };
+
     private async Task<bool> SaveAsync(SyncEntity row, long? onlyIfStillAt = null) =>
         await db.SaveWithVersionsAsync(
             companyId, [row], member.UserId, clock.GetUtcNow().UtcDateTime,
             onlyIfStillAt is { } version
-                ? () => db.Transactions.AsNoTracking().AnyAsync(t => t.Id == row.Id && t.Version == version)
+                ? () => IsStillAtAsync(row.Id, version)
                 : null);
+
+    private Task<bool> IsStillAtAsync(Guid id, long version) =>
+        db.Transactions.AsNoTracking().AnyAsync(t => t.Id == id && t.Version == version);
 
     private Task<Transaction?> FindTransactionAsync(Guid id) =>
         db.Transactions.SingleOrDefaultAsync(t => t.Id == id && t.CompanyId == companyId && !t.IsDeleted);

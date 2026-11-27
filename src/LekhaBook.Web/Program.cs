@@ -15,6 +15,7 @@ builder.Services.AddRazorComponents()
 // Shared UI + browser-host implementations (the web app is online-only in v1, decision D1).
 builder.Services.AddLekhaBookUI();
 builder.Services.AddSingleton<IPlatformInfo, WebPlatformInfo>();
+builder.Services.AddSingleton<IDocumentCapture, BrowserDocumentCapture>();
 builder.Services.AddSingleton<IConnectivityService, WebConnectivityService>();
 builder.Services.AddSingleton<ISyncService, OnlineOnlySyncService>();
 builder.Services.AddScoped<ILanguageService, WebLanguageService>(); // culture cookie, see WebCulture

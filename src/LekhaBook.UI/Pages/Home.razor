@@ -10,99 +10,125 @@
 
 <PageTitle>@Loc["Home.Title"] · Lekha Books</PageTitle>
 
-<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Home.Title"]</MudText>
+<div class="dashboard">
+    <h1 class="dashboard-title" tabindex="-1">@Loc["Home.Title"]</h1>
 
-@if (_error is not null)
-{
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Home.Totals"]" OnRetry="LoadAsync" />
-}
-
-<MudGrid Spacing="2">
-    @foreach (var tile in Tiles)
+    @if (_error is not null)
     {
-        <MudItem xs="6" md="3">
-            <a class="tile-link" href="@tile.Href">
-                <MudPaper Class="pa-3" Elevation="1">
-                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@tile.Label</MudText>
-                    <MudText Typo="Typo.h6" Color="@tile.Color">@(tile.Amount is { } amount ? Money.Format(amount) : "—")</MudText>
-                </MudPaper>
+        <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Home.Totals"]" OnRetry="LoadAsync" />
+    }
+
+    <section class="balance-grid" aria-label="@Loc["Home.Totals"]">
+        @foreach (var tile in Tiles)
+        {
+            <a class="balance-tile @tile.Tone" href="@tile.Href">
+                <span class="balance-label">
+                    <span class="balance-icon"><MudIcon Icon="@tile.Icon" Size="Size.Small" aria-hidden="true" /></span>
+                    <span>@tile.Label</span>
+                </span>
+                <strong class="balance-value">@(tile.Amount is { } amount ? Money.Format(amount) : "—")</strong>
             </a>
-        </MudItem>
-    }
-</MudGrid>
+        }
+    </section>
 
-<MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">@Loc["Home.QuickEntry"]</MudText>
-<MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
-    <MudButton Variant="Variant.Filled" Color="Color.Success" StartIcon="@Icons.Material.Filled.CallReceived" Href="transactions/new?type=PaymentIn" Disabled="@(!CanAdd(TransactionType.PaymentIn))">@Loc["TxnType.PaymentIn"]</MudButton>
-    <MudButton Variant="Variant.Filled" Color="Color.Error" StartIcon="@Icons.Material.Filled.CallMade" Href="transactions/new?type=PaymentOut" Disabled="@(!CanAdd(TransactionType.PaymentOut))">@Loc["TxnType.PaymentOut"]</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.ReceiptLong" Href="transactions/new?type=Expense" Disabled="@(!CanAdd(TransactionType.Expense))">@Loc["Transactions.Type.Expense"]</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Savings" Href="transactions/new?type=OtherIncome" Disabled="@(!CanAdd(TransactionType.OtherIncome))">@Loc["TxnType.OtherIncome"]</MudButton>
-    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney" Disabled="@(!CanAdd(TransactionType.TransferMoney))">@Loc["TxnType.TransferMoney"]</MudButton>
-</MudStack>
-
-@if (_dashboard is { Months.Count: > 0 } dashboard)
-{
-    <MudText Typo="Typo.subtitle1" Class="mt-6 mb-2">@Loc["Home.ThisMonth"] · @MonthLabel(dashboard.Months[^1])</MudText>
-    <MudGrid Spacing="2">
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="pa-3" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.MoneyIn"]</MudText>
-                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.MoneyIn)</MudText>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="pa-3" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.MoneyOut"]</MudText>
-                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.MoneyOut)</MudText>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="12" sm="4">
-            <MudPaper Class="pa-3" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Home.Net"]</MudText>
-                <MudText Typo="Typo.subtitle1">@Money.Format(dashboard.ThisMonth.Net)</MudText>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-
-    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.Monthly"]</MudText>
-    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.MonthlyHint"]</MudText>
-    <FlowBars Rows="@MonthRows(dashboard)" />
-
-    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.Yearly"]</MudText>
-    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.YearlyHint"]</MudText>
-    <FlowBars Rows="@YearRows(dashboard)" />
-
-    <MudText Typo="Typo.subtitle1" Class="mt-6">@Loc["Home.TopParties"]</MudText>
-    <MudText Typo="Typo.caption" Class="mud-text-secondary mb-2">@Loc["Home.TopPartiesHint"]</MudText>
-    @if (dashboard.TopParties.Count == 0)
-    {
-        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Home.FlowsEmpty"]</MudText>
-    }
-    else
-    {
-        <div class="flow-list">
-            @foreach (var party in dashboard.TopParties)
+    <section aria-labelledby="quick-entry-heading">
+        <h2 class="dashboard-section-title" id="quick-entry-heading">@Loc["Home.QuickEntry"]</h2>
+        <div class="quick-entry">
+            @foreach (var entry in QuickEntries)
             {
-                <a class="flow-row flow-link" href="@($"parties/{party.PartyId}")">
-                    <div class="flow-head">
-                        <span class="flow-label">@party.Name</span>
-                        <span class="flow-net">@BalanceText(party.Balance)</span>
-                    </div>
-                    <div class="flow-track">
-                        <div class="flow-area" aria-hidden="true"><div class="flow-bar party" style="width: @Share(party.Total, dashboard.TopParties[0].Total)%"></div></div>
-                        <span class="flow-value">@Loc["Home.Business"] @Money.Format(party.Total)</span>
-                    </div>
-                </a>
+                <MudButton Class="@($"entry-shortcut {entry.Tone}")" Variant="Variant.Outlined" Href="@($"transactions/new?type={entry.Type}")"
+                           Disabled="@(!CanAdd(entry.Type))">
+                    <span class="shortcut-icon"><MudIcon Icon="@entry.Icon" Size="Size.Small" aria-hidden="true" /></span>
+                    <span>@Loc[entry.LabelKey]</span>
+                </MudButton>
             }
         </div>
+    </section>
+
+    @if (_dashboard is { Months.Count: > 0 } dashboard)
+    {
+        <section class="dashboard-panel" aria-labelledby="month-totals-heading">
+            <h2 class="dashboard-section-title" id="month-totals-heading">@Loc["Home.ThisMonth"] <span>· @MonthLabel(dashboard.Months[^1])</span></h2>
+            <dl class="month-totals">
+                <div class="incoming">
+                    <dt>@Loc["Home.MoneyIn"]</dt>
+                    <dd>@Money.Format(dashboard.ThisMonth.MoneyIn)</dd>
+                </div>
+                <div class="outgoing">
+                    <dt>@Loc["Home.MoneyOut"]</dt>
+                    <dd>@Money.Format(dashboard.ThisMonth.MoneyOut)</dd>
+                </div>
+                <div>
+                    <dt>@Loc["Home.Net"]</dt>
+                    <dd>@Money.Format(dashboard.ThisMonth.Net)</dd>
+                </div>
+            </dl>
+        </section>
+
+        <div class="dashboard-reports">
+            <section class="dashboard-panel" aria-labelledby="monthly-report-heading">
+                <h2 class="dashboard-section-title" id="monthly-report-heading">@Loc["Home.Monthly"]</h2>
+                <p class="report-hint">@Loc["Home.MonthlyHint"]</p>
+                @if (dashboard.ActiveMonths.Count == 0)
+                {
+                    <p class="report-empty">@Loc["Home.FlowsEmpty"]</p>
+                }
+                else
+                {
+                    <FlowBars Rows="@MonthRows(dashboard)" />
+                }
+            </section>
+
+            <section class="dashboard-panel" aria-labelledby="yearly-report-heading">
+                <h2 class="dashboard-section-title" id="yearly-report-heading">@Loc["Home.Yearly"]</h2>
+                <p class="report-hint">@Loc["Home.YearlyHint"]</p>
+                @if (dashboard.ActiveFiscalYears.Count == 0)
+                {
+                    <p class="report-empty">@Loc["Home.FlowsEmpty"]</p>
+                }
+                else
+                {
+                    <FlowBars Rows="@YearRows(dashboard)" />
+                }
+            </section>
+        </div>
+
+        <section class="dashboard-panel" aria-labelledby="top-parties-heading">
+            <h2 class="dashboard-section-title" id="top-parties-heading">@Loc["Home.TopParties"]</h2>
+            <p class="report-hint">@Loc["Home.TopPartiesHint"]</p>
+            @if (dashboard.TopParties.Count == 0)
+            {
+                <p class="report-empty">@Loc["Home.FlowsEmpty"]</p>
+            }
+            else
+            {
+                <div class="flow-list">
+                    @foreach (var party in dashboard.TopParties)
+                    {
+                        <a class="flow-row flow-link" href="@($"parties/{party.PartyId}")">
+                            <div class="flow-head">
+                                <span class="flow-label">@party.Name</span>
+                                <span class="flow-net">@BalanceText(party.Balance)</span>
+                            </div>
+                            <div class="flow-track">
+                                <div class="flow-area" aria-hidden="true"><div class="flow-bar party" style="width: @Share(party.Total, dashboard.TopParties[0].Total)%"></div></div>
+                                <span class="flow-value">@Loc["Home.Business"] @Money.Format(party.Total)</span>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+        </section>
+
+        <p class="dashboard-note">@Loc["Home.FlowsNote"]</p>
+    }
+    else if (_loading && Session.Can(Permission.ReportsDashboard))
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="@Loc["Shell.Loading"]" />
     }
 
-    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-4">@Loc["Home.FlowsNote"]</MudText>
-}
-
-<MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-8">
-    @(Loc["Settings.RunningOn", PlatformInfo.Platform, PlatformInfo.FormFactor])
-</MudText>
+    <p class="dashboard-note">@Loc["Settings.RunningOn", PlatformInfo.Platform, PlatformInfo.FormFactor]</p>
+</div>
 
 @code {
     private List<PartyDto>? _parties;
@@ -110,13 +136,27 @@
     private DashboardReport? _dashboard;
     private CalendarMode _calendar;
     private ApiError? _error;
+    private bool _loading = true;
 
-    private IEnumerable<(string Label, decimal? Amount, Color Color, string Href)> Tiles =>
+    private static readonly (TransactionType Type, string LabelKey, string Icon, string Tone)[] QuickEntries =
     [
-        (Loc["PartySide.ToReceive"], _parties?.Where(p => p.Balance > 0).Sum(p => p.Balance), Color.Success, "parties?balance=receive"),
-        (Loc["PartySide.ToGive"], _parties is null ? null : -_parties.Where(p => p.Balance < 0).Sum(p => p.Balance), Color.Error, "parties?balance=give"),
-        (Loc["Home.CashInHand"], _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance), Color.Default, "accounts"),
-        (Loc["Home.BankBalance"], _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance), Color.Default, "accounts"),
+        (TransactionType.PaymentIn, "TxnType.PaymentIn", Icons.Material.Filled.CallReceived, "incoming"),
+        (TransactionType.PaymentOut, "TxnType.PaymentOut", Icons.Material.Filled.CallMade, "outgoing"),
+        (TransactionType.Expense, "Transactions.Type.Expense", Icons.Material.Filled.ReceiptLong, ""),
+        (TransactionType.OtherIncome, "TxnType.OtherIncome", Icons.Material.Filled.Savings, ""),
+        (TransactionType.TransferMoney, "TxnType.TransferMoney", Icons.Material.Filled.SwapHoriz, ""),
+    ];
+
+    private IEnumerable<(string Label, decimal? Amount, string Icon, string Tone, string Href)> Tiles =>
+    [
+        (Loc["PartySide.ToReceive"], _parties?.Where(p => p.Balance > 0).Sum(p => p.Balance),
+            Icons.Material.Filled.CallReceived, "incoming", "parties?balance=receive"),
+        (Loc["PartySide.ToGive"], _parties is null ? null : -_parties.Where(p => p.Balance < 0).Sum(p => p.Balance),
+            Icons.Material.Filled.CallMade, "outgoing", "parties?balance=give"),
+        (Loc["Home.CashInHand"], _accounts?.Where(a => a.Type == "Cash").Sum(a => a.Balance),
+            Icons.Material.Filled.Payments, "", "accounts"),
+        (Loc["Home.BankBalance"], _accounts?.Where(a => a.Type == "Bank").Sum(a => a.Balance),
+            Icons.Material.Filled.AccountBalance, "", "accounts"),
     ];
 
     private bool CanAdd(TransactionType type) => Session.Can(EntryRules.PermissionFor(type, EntryAction.Create));
@@ -131,6 +171,7 @@
         }
 
         _error = null;
+        _loading = true;
         if (Session.Can(Permission.CustomersView) || Session.Can(Permission.SuppliersView))
         {
             var parties = await Data.GetPartiesAsync(company.CompanyId);
@@ -149,6 +190,8 @@
         {
             await LoadDashboardAsync(company.CompanyId);
         }
+
+        _loading = false;
     }
 
     private async Task LoadDashboardAsync(Guid companyId)
@@ -186,10 +229,10 @@
     private static string FiscalYearLabel(int startYear) => $"{startYear}/{(startYear + 1) % 100:00}";
 
     private IReadOnlyList<(string Label, FlowTotals Totals)> MonthRows(DashboardReport report) =>
-        report.Months.Select(m => (MonthLabel(m), m.Totals)).ToList();
+        report.ActiveMonths.Select(m => (MonthLabel(m), m.Totals)).ToList();
 
     private static IReadOnlyList<(string Label, FlowTotals Totals)> YearRows(DashboardReport report) =>
-        report.FiscalYears.Select(y => (FiscalYearLabel(y.StartYear), y.Totals)).ToList();
+        report.ActiveFiscalYears.Select(y => (FiscalYearLabel(y.StartYear), y.Totals)).ToList();
 
     private string BalanceText(decimal balance)
     {

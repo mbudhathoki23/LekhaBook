@@ -4,6 +4,10 @@
     --bottom-nav-height: 60px;
 }
 
+.authenticator-qr { display: block; max-width: 100%; height: auto; background: white; }
+.authenticator-key { display: block; overflow-wrap: anywhere; user-select: all; margin-top: 8px; }
+.recovery-codes { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; user-select: text; }
+
 /* The same mark and accessible wordmark are shared by both hosts. */
 .brand-logo {
     display: inline-flex;
@@ -80,15 +84,6 @@ h1:focus, .mud-typography:focus {
     white-space: nowrap;
 }
 
-.company-name {
-    min-width: 0;
-    max-width: 40vw;
-    opacity: .85;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
 /* ---------- Phone bottom navigation ---------- */
 .bottom-nav {
     position: fixed;
@@ -125,6 +120,10 @@ h1:focus, .mud-typography:focus {
 @media (max-width: 959.98px) {
     .page-content {
         padding-bottom: calc(var(--bottom-nav-height) + 24px + env(safe-area-inset-bottom));
+    }
+
+    .page-content-form {
+        padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 }
 
@@ -192,27 +191,46 @@ h1:focus, .mud-typography:focus {
 }
 
 /* ---------- Company switcher in the app bar ---------- */
-.company-switcher-button {
+.company-switcher {
     min-width: 0;
-    text-transform: none;
-    font-weight: 400;
-}
-
-.company-switcher-button .company-name {
-    max-width: 38vw;
 }
 
 .company-switcher .mud-menu-button-activator {
+    position: relative;
+    width: 100%;
     min-width: 0;
     max-width: 42vw;
+    min-height: 44px;
+    padding-inline: 8px 30px;
     text-transform: none;
     font-weight: 400;
 }
 
 .company-switcher .mud-menu-button-activator .mud-button-label {
+    display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    text-align: start;
+}
+
+.company-switcher .mud-button-icon-end {
+    position: absolute;
+    top: 50%;
+    inset-inline-end: 4px;
+    margin: 0;
+    transform: translateY(-50%);
+}
+
+.mud-appbar .quick-add-fab {
+    flex-shrink: 0;
+    min-width: 44px;
+    min-height: 44px;
+    margin-inline-end: 4px;
+}
+
+.mud-appbar .sync-chip {
+    flex-shrink: 0;
 }
 
 /* Phones: keep the app bar to one line. Icon-only sync chip (its label stays for screen readers
@@ -228,6 +246,10 @@ h1:focus, .mud-typography:focus {
 
     .mud-appbar .brand-logo > span {
         display: none;
+    }
+
+    .company-switcher .mud-menu-button-activator {
+        max-width: 100%;
     }
 }
 
@@ -364,6 +386,209 @@ h1:focus, .mud-typography:focus {
     display: block;
     color: inherit;
     text-decoration: none;
+}
+
+/* ---------- Transaction entry ---------- */
+.transaction-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.transaction-heading {
+    margin-bottom: 14px;
+    font-weight: 650;
+    overflow-wrap: anywhere;
+}
+
+.page-content .transaction-form {
+    max-width: 1040px;
+}
+
+.transaction-form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.transaction-entry-panel {
+    min-width: 0;
+    padding: clamp(14px, 2.5vw, 24px);
+    border-radius: 14px;
+}
+
+.transaction-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0 14px;
+    min-inline-size: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.transaction-type-field {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--mud-palette-lines-default);
+}
+
+.transaction-type-field .mud-radio {
+    min-height: 44px;
+    margin: 0;
+    padding-inline-end: 10px;
+}
+
+.transaction-type-field .mud-input-control .mud-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.transaction-section-title {
+    color: var(--mud-palette-primary);
+    margin-bottom: 10px;
+}
+
+.transaction-attachments .attachment-pickers {
+    display: grid;
+    gap: 12px;
+}
+
+.transaction-attachments input[type=file] {
+    width: 100%;
+    max-width: 100%;
+    color: var(--mud-palette-text-secondary);
+    font: inherit;
+    font-size: .8125rem;
+}
+
+.transaction-attachments input[type=file]::file-selector-button {
+    min-height: 44px;
+    margin-inline-end: 8px;
+    padding-inline: 10px;
+    border: 1px solid var(--mud-palette-lines-inputs);
+    border-radius: 8px;
+    background: var(--mud-palette-background);
+    color: var(--mud-palette-text-primary);
+    font: inherit;
+    cursor: pointer;
+}
+
+.transaction-actions .mud-button-root,
+.duplicate-actions .mud-button-root {
+    min-height: 44px;
+}
+
+.duplicate-summary {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-inline-start: 3px solid var(--mud-palette-warning);
+    border-radius: 10px;
+    background: var(--mud-palette-background);
+    overflow-wrap: anywhere;
+}
+
+.duplicate-summary .mud-icon-root {
+    flex-shrink: 0;
+}
+
+.duplicate-summary p {
+    margin-bottom: 4px;
+}
+
+.duplicate-key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 8px;
+    font-variant-numeric: tabular-nums;
+}
+
+.duplicate-matches {
+    display: grid;
+    gap: 8px;
+    padding: 0;
+    margin: 12px 0 0;
+    list-style: none;
+}
+
+.duplicate-matches li {
+    padding: 10px 12px;
+    border: 1px solid var(--mud-palette-lines-default);
+    border-radius: 8px;
+    overflow-wrap: anywhere;
+}
+
+.duplicate-actions {
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.duplicate-actions .mud-button-root {
+    margin: 0;
+}
+
+@media (min-width: 600px) {
+    .transaction-fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .transaction-type-field,
+    .transaction-fields .transaction-remarks {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (min-width: 960px) {
+    .transaction-form-layout {
+        grid-template-columns: minmax(0, 2fr) minmax(235px, 1fr);
+        align-items: start;
+    }
+}
+
+@media (max-width: 599.98px) {
+    .transaction-type-field .mud-input-control .mud-radio-group {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .transaction-type-field .mud-radio-group > .mud-input-control {
+        min-width: 0;
+    }
+
+    .transaction-type-field .mud-radio {
+        padding-inline-end: 4px;
+    }
+
+    .transaction-type-field .mud-radio .mud-typography {
+        font-size: .875rem;
+        overflow-wrap: anywhere;
+    }
+
+    .transaction-actions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .transaction-actions .transaction-save {
+        grid-column: 1 / -1;
+    }
+
+    .duplicate-actions .mud-button-root {
+        flex: 1 1 auto;
+    }
+
+    .mud-dialog .duplicate-title,
+    .mud-dialog .duplicate-content {
+        padding-inline: 14px;
+    }
+
+    .duplicate-summary {
+        gap: 8px;
+        padding: 10px;
+    }
 }
 
 /* ---------- Attachments (transactions and ledger rows) ---------- */

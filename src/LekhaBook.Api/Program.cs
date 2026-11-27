@@ -39,7 +39,7 @@ builder.Services.AddScoped<IAuthorizationHandler, CompanyAccessHandler>();
 // limited: many phones on one mobile carrier share a public IP (CGNAT) and refresh every hour.
 // Per-account guessing is stopped by the Identity lockout (5 attempts).
 // Behind a reverse proxy, configure UseForwardedHeaders so this sees client IPs (D4).
-string[] limitedAuthPaths = ["/api/auth/login", "/api/auth/register", "/api/auth/forgotPassword", "/api/auth/resendConfirmationEmail"];
+string[] limitedAuthPaths = ["/api/auth/login", "/api/auth/register", "/api/auth/forgotPassword", "/api/auth/resendConfirmationEmail", "/api/auth/manage/2fa"];
 builder.Services.AddRateLimiter(o =>
 {
     o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -96,7 +96,10 @@ app.UseRateLimiter();
 app.MapHealthChecks("/health");
 
 // /api/auth/register, /login, /refresh, /manage/info, …
-app.MapGroup("/api/auth").MapIdentityApi<AppUser>().RequireRateLimiting("auth");
+var auth = app.MapGroup("/api/auth");
+auth.AddEndpointFilter<IdentitySecurityFilter>();
+auth.MapIdentityApi<AppUser>().RequireRateLimiting("auth");
+app.MapAccountSecurityEndpoints();
 
 app.MapCompanyEndpoints();
 app.MapMasterEndpoints();
@@ -104,6 +107,7 @@ app.MapTransactionEndpoints();
 app.MapSyncEndpoints();
 app.MapReportLinkEndpoints();
 app.MapImportEndpoints();
+app.MapBookExtrasEndpoints();
 
 app.Run();
 

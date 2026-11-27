@@ -28,16 +28,27 @@ public sealed class LekhaBookApi(HttpClient http, ITokenStore tokenStore, TimePr
 
     // ---------------- Auth ----------------
 
-    public async Task<ApiResult<ApiTokens>> LoginAsync(string email, string password)
+    public async Task<LoginResult> LoginAsync(string email, string password,
+        string? twoFactorCode = null, string? recoveryCode = null)
     {
-        var result = await SendAsync<TokenResponse>(HttpMethod.Post, "/api/auth/login", new { email, password }, authenticated: false);
+        var result = await SendAsync<TokenResponse>(HttpMethod.Post, "/api/auth/login",
+            new { email, password, twoFactorCode, twoFactorRecoveryCode = recoveryCode }, authenticated: false);
         if (!result.Ok)
         {
-            return new(null, result.StatusCode == 401 ? "Email or password is incorrect." : result.Error, result.StatusCode);
+            if (result.StatusCode == 401 && result.Error == "RequiresTwoFactor")
+            {
+                return new(null, null, RequiresTwoFactor: true);
+            }
+
+            return new(null, result.StatusCode == 401
+                ? (twoFactorCode is not null || recoveryCode is not null
+                    ? "The sign-in details or verification code are incorrect. Please try again."
+                    : "Email or password is incorrect.")
+                : result.Error);
         }
 
         _tokens = ToTokens(result.Value!);
-        return new(_tokens, null, 200);
+        return new(_tokens, null);
     }
 
     public async Task<ApiResult<bool>> RegisterAsync(string email, string password)
@@ -269,6 +280,27 @@ public sealed class LekhaBookApi(HttpClient http, ITokenStore tokenStore, TimePr
             return new(await response.Content.ReadFromJsonAsync<T>(Json), null, status);
         }
 
+        if (response.StatusCode == HttpStatusCode.Conflict && typeof(T) == typeof(TransactionDto))
+        {
+            try
+            {
+                using var problem = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                var root = problem.RootElement;
+                if (root.ValueKind == JsonValueKind.Object
+                    && root.TryGetProperty("type", out var type) && type.ValueKind == JsonValueKind.String
+                    && type.GetString() == DuplicateTransactionWarning.ProblemType
+                    && root.TryGetProperty("duplicateWarning", out var warning)
+                    && warning.Deserialize<DuplicateTransactionWarning>(Json) is { Matches.Count: > 0 } duplicate)
+                {
+                    return new(default, "Possible duplicate entry.", status) { DuplicateWarning = duplicate };
+                }
+            }
+            catch (JsonException)
+            {
+                // Use the regular error path if the response doesn't contain a duplicate warning.
+            }
+        }
+
         return new(default, await ErrorMessageAsync(response), status);
     }
 
@@ -316,4 +348,9 @@ public sealed class LekhaBookApi(HttpClient http, ITokenStore tokenStore, TimePr
         new(r.AccessToken, r.RefreshToken, clock.GetUtcNow().UtcDateTime.AddSeconds(r.ExpiresIn));
 
     private sealed record TokenResponse(string TokenType, string AccessToken, long ExpiresIn, string RefreshToken);
+}
+
+public sealed record LoginResult(ApiTokens? Value, string? Error, bool RequiresTwoFactor = false)
+{
+    public bool Ok => Error is null && !RequiresTwoFactor;
 }

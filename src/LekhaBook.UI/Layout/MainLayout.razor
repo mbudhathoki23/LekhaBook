@@ -3,6 +3,7 @@
 @inject ISessionService Session
 @inject ILanguageService Language
 @inject NavigationManager Navigation
+@inject BackNavigator Back
 
 @* The wrapper sets the reading direction (Arabic is right to left) and the language for font choice. *@
 <MudRTLProvider RightToLeft="@Languages.IsRightToLeft(Language.CurrentCode)" lang="@Language.CurrentCode">
@@ -27,12 +28,21 @@ else
                 <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
                        aria-label="@Loc["Shell.ToggleMenu"]" OnClick="ToggleDrawer" />
             </MudHidden>
+            @* Every screen but the dashboard can go back, on phones and in the browser alike. *@
+            @if (CurrentPath.Length > 0)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" Color="Color.Inherit" Class="app-back mud-flip-x-rtl"
+                       aria-label="@Loc["Shell.Back"]" OnClick="GoBackAsync" />
+            }
             <BrandLogo />
-            <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Primary"
-                     aria-label="@Loc["Shell.AddTransaction"]" Class="quick-add-fab"
-                     OnClick="NavigateToAddTransaction" />
             <CompanySwitcher />
             <MudSpacer />
+            @if (!IsFormPage)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Inherit"
+                               aria-label="@Loc["Shell.AddTransaction"]" Class="quick-add-fab"
+                               OnClick="NavigateToAddTransaction" />
+            }
             <SyncStatusChip />
         </MudAppBar>
 
@@ -45,7 +55,7 @@ else
         </MudHidden>
 
         <MudMainContent>
-            <MudContainer MaxWidth="MaxWidth.Large" Class="page-content">
+            <MudContainer MaxWidth="MaxWidth.Large" Class="@(IsFormPage ? "page-content page-content-form" : "page-content")">
                 @if (Session.IsOffline)
                 {
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
@@ -89,7 +99,7 @@ else
     private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
     /// <summary>Pages that work before the user has a company.</summary>
-    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings"
+    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings" or "settings/security"
         || CurrentPath.StartsWith("shared-report/", StringComparison.Ordinal);
 
     /// <summary>Add and edit forms (…/new, …/edit).</summary>
@@ -105,6 +115,9 @@ else
     }
 
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    /// <summary>The previous screen; the dashboard when there is none, never out of the app.</summary>
+    private Task GoBackAsync() => Back.HandleAsync(() => Navigation.NavigateTo(""));
 
     private void NavigateToAddTransaction() => Navigation.NavigateTo("/transactions/new");
 

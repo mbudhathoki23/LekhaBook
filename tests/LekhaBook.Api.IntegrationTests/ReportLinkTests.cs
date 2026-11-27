@@ -20,8 +20,8 @@ public sealed class ReportLinkTests(ApiFixture api) : IClassFixture<ApiFixture>
         var books = await SetUpAsync();
         var created = await CreateAsync(books, books.Owner, books.Party);
 
-        Assert.StartsWith("https://lekhabooknepal.com/r/", created.ReportUrl);
-        Assert.Equal("https://lekhabooknepal.com/signin", created.SignInUrl);
+        Assert.StartsWith("https://books.example.test/r/", created.ReportUrl);
+        Assert.Equal("https://books.example.test/signin", created.SignInUrl);
 
         var response = await GetPublicAsync("/api/public/report", Token(created));
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -119,6 +119,22 @@ public sealed class ReportLinkTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var live = await books.Owner.Http.GetFromJsonAsync<List<ReportLinkDto>>($"{books.Url}/report-links?accountId={books.Party}");
         Assert.Empty(live!);
+    }
+
+    [PostgresFact]
+    public async Task No_link_is_made_until_the_public_site_is_set()
+    {
+        var books = await SetUpAsync();
+        await using var unset = api.Factory.WithTestSettings(new() { ["PublicSite:BaseUrl"] = "" });
+        var client = unset.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", books.Owner.Token.AccessToken);
+
+        var response = await client.PostAsJsonAsync($"{books.Url}/report-links", new CreateReportLinkRequest(books.Party));
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        Assert.Contains("public web address", await response.Content.ReadAsStringAsync());
+        var links = await books.Owner.Http.GetFromJsonAsync<List<ReportLinkDto>>($"{books.Url}/report-links?accountId={books.Party}");
+        Assert.Empty(links!);
     }
 
     [PostgresFact]

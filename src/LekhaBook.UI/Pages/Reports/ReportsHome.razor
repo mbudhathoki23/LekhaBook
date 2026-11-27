@@ -1,0 +1,35 @@
+@page "/reports"
+@inject ISessionService Session
+
+<PageTitle>@Loc["Nav.Reports"] · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Nav.Reports"]</MudText>
+
+@if (Groups.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+}
+
+@foreach (var group in Groups)
+{
+    <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc[$"Reports.Group.{group.Key}"]</MudText>
+    <MudPaper Elevation="1" Class="row-list mb-4">
+        @foreach (var report in group)
+        {
+            <a class="row-item" href="@report.Href">
+                <MudAvatar Color="Color.Primary" Variant="Variant.Outlined">
+                    <MudIcon Icon="@report.Icon" />
+                </MudAvatar>
+                <div class="row-main">
+                    <div class="row-title">@Loc[$"Reports.{report.Key}"]</div>
+                    <div class="row-sub">@Loc[$"Reports.{report.Key}.Help"]</div>
+                </div>
+            </a>
+        }
+    </MudPaper>
+}
+
+@code {
+    private List<IGrouping<string, ReportLink>> Groups =>
+        ReportCatalog.All.Where(r => r.IsAllowed(Session)).GroupBy(r => r.Group).ToList();
+}

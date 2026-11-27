@@ -1,0 +1,164 @@
+@page "/expenses"
+@page "/income"
+@using LekhaBook.Application
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject ICompanyApi Companies
+@inject ISessionService Session
+@inject NavigationManager Navigation
+@inject IDialogService Dialogs
+
+@* The Expense and Other Income menus: this period's entries and their totals by category. *@
+<PageTitle>@Title · Lekha Books</PageTitle>
+
+<div class="page-header">
+    <MudText Typo="Typo.h5" tabindex="-1">@Title</MudText>
+    <MudSpacer />
+    <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap" Class="no-print">
+        @if (Session.Can(Permission.SettingsFeatures))
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CreateNewFolder"
+                       Class="add-category" OnClick="AddCategoryAsync">@Loc["Categories.Add"]</MudButton>
+        }
+        @if (Session.Can(EntryRules.PermissionFor(Type, EntryAction.Create)))
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Class="add-category-entry"
+                       Href="@($"transactions/new?type={Type}")">@Loc[IsExpense ? "Categories.NewExpense" : "Categories.NewIncome"]</MudButton>
+        }
+    </MudStack>
+</div>
+
+@if (!Session.Can(Permission.IncomeExpenseView))
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+}
+else if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="@Title" OnRetry="LoadAsync" />
+}
+else if (_entries is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    var shown = EntryReports.InPeriod(_entries, _range).Where(e => e.Type == Type.ToString()).ToList();
+
+    <MudSelect T="PeriodPreset" Value="_preset" ValueChanged="SetPreset" Label="@Loc["Reports.Period"]" Variant="Variant.Outlined"
+               Margin="Margin.Dense" Dense="true" Class="mb-3" Style="max-width: 220px">
+        @foreach (var preset in Enum.GetValues<PeriodPreset>().Where(p => p != PeriodPreset.Custom))
+        {
+            <MudSelectItem T="PeriodPreset" Value="preset">@Loc[$"Reports.Period.{preset}"]</MudSelectItem>
+        }
+    </MudSelect>
+
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="6"><SummaryFigure Label="@Loc["Common.Total"]" Value="@Money.Format(shown.Sum(e => e.Amount))" /></MudItem>
+        <MudItem xs="6"><SummaryFigure Label="@Loc["Transactions.List.Count"]" Value="@shown.Count.ToString()" /></MudItem>
+    </MudGrid>
+
+    @if (shown.Count == 0)
+    {
+        <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Reports.Empty"]</MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Categories.ByCategory"]</MudText>
+        <CategoryTable Totals="@EntryReports.ByCategory(_entries, _categories, Type, _range)" />
+
+        <MudText Typo="Typo.subtitle1" Class="mt-4 mb-2">@Loc["Ledger.Transactions"]</MudText>
+        <MudPaper Elevation="1" Class="row-list">
+            @foreach (var entry in shown)
+            {
+                <a class="row-item" href="@($"transactions/{entry.Id}/edit")" @key="entry.Id">
+                    <div class="row-main">
+                        <div class="row-title">@NameOf(EntryReports.CategoryOf(entry))</div>
+                        <div class="row-sub">@Session.FormatDate(entry.Date)@(string.IsNullOrWhiteSpace(entry.Remarks) ? "" : $" · {entry.Remarks}")</div>
+                    </div>
+                    <div class="row-amount">
+                        <MudText Typo="Typo.body1" Color="@(IsExpense ? Color.Error : Color.Success)" Class="text-nowrap">@Money.Format(entry.Amount)</MudText>
+                    </div>
+                </a>
+            }
+        </MudPaper>
+    }
+}
+
+@code {
+    private List<TransactionDto>? _entries;
+    private List<CategoryDto> _categories = [];
+    private CompanyPeriods? _periods;
+    private PeriodPreset _preset;
+    private ReportRange _range;
+    private string? _error;
+    private bool _offline;
+    private bool? _loadedExpense;
+
+    private bool IsExpense => Navigation.ToBaseRelativePath(Navigation.Uri).StartsWith("expenses", StringComparison.Ordinal);
+
+    private TransactionType Type => IsExpense ? TransactionType.Expense : TransactionType.OtherIncome;
+
+    private string Title => Loc[IsExpense ? "Nav.Expense" : "Nav.OtherIncome"];
+
+    // Both menu items use this component, so moving between them only changes the parameters.
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_loadedExpense != IsExpense)
+        {
+            _loadedExpense = IsExpense;
+            await LoadAsync();
+        }
+    }
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company || !Session.Can(Permission.IncomeExpenseView))
+        {
+            return;
+        }
+
+        (_error, _entries) = (null, null);
+        _periods = await CompanyPeriods.LoadAsync(Companies, company.CompanyId);
+        SetPreset(PeriodPreset.ThisMonth);
+
+        var entries = await Data.GetTransactionsAsync(company.CompanyId);
+        var categories = await Data.GetCategoriesAsync(company.CompanyId);
+        if (!entries.Ok || !categories.Ok)
+        {
+            (_error, _offline) = (entries.Error ?? categories.Error, entries.IsNetworkError || categories.IsNetworkError);
+            return;
+        }
+
+        (_entries, _categories) = (entries.Value!, categories.Value!);
+    }
+
+    private void SetPreset(PeriodPreset preset)
+    {
+        _preset = preset;
+        _range = ReportPeriods.For(preset, _periods!.Today, Session.Calendar(), _periods.FiscalYearStartMonth);
+    }
+
+    private string NameOf(Guid category) => _categories.FirstOrDefault(c => c.Id == category)?.Name ?? "—";
+
+    private async Task AddCategoryAsync()
+    {
+        if (Session.CurrentCompany is not { } company)
+        {
+            return;
+        }
+
+        var parameters = new DialogParameters<AddCategoryDialog>
+        {
+            { x => x.CompanyId, company.CompanyId },
+            { x => x.CategoryType, IsExpense ? "Expense" : "Income" },
+        };
+        var dialog = await Dialogs.ShowAsync<AddCategoryDialog>(Loc["Categories.Add"], parameters,
+            new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is { Canceled: false })
+        {
+            _categories = (await Data.GetCategoriesAsync(company.CompanyId)).Value ?? _categories;
+        }
+    }
+}

@@ -1,0 +1,34 @@
+@using LekhaBook.Application
+
+@* Totals per expense or income category. *@
+@if (Totals.Count == 0)
+{
+    <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Reports.Empty"]</MudText>
+}
+else
+{
+    <MudSimpleTable Dense="true" Elevation="1">
+        <thead>
+            <tr>
+                <th>@Loc["Common.Category"]</th>
+                <th class="text-right">@Loc["Transactions.List.Count"]</th>
+                <th class="text-right">@Loc["Reports.Amount"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var total in Totals)
+            {
+                <tr>
+                    <td>@total.Name</td>
+                    <td class="text-right">@total.Count</td>
+                    <td class="text-right text-nowrap">@Money.Number(total.Amount)</td>
+                </tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<CategoryTotal> Totals { get; set; } = [];
+}

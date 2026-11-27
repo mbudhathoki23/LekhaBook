@@ -1,0 +1,77 @@
+@inject ISessionService Session
+
+<MudDialog DefaultFocus="DefaultFocus.Element" TitleClass="duplicate-title" ContentClass="duplicate-content" ActionsClass="duplicate-actions">
+    <DialogContent>
+        <div class="duplicate-summary">
+            <MudIcon Icon="@Icons.Material.Filled.WarningAmber" Color="Color.Warning" aria-hidden="true" />
+            <div>
+                <MudText Typo="Typo.body2">@Loc["Transactions.Duplicate.Message"]</MudText>
+                <MudText Typo="Typo.subtitle2" Class="mt-1">@PartyName</MudText>
+                <div class="duplicate-key">
+                    <MudText Typo="Typo.body2" HtmlTag="span">@Session.FormatDate(Match.Date)</MudText>
+                    <MudText Typo="Typo.body2" HtmlTag="span">@Money.Format(Match.Amount)</MudText>
+                </div>
+            </div>
+        </div>
+
+        @if (_reviewing)
+        {
+            <ul class="duplicate-matches">
+                @foreach (var match in Warning.Matches)
+                {
+                    <li @key="match.Id">
+                        <MudText Typo="Typo.subtitle2">@Loc[MasterLabels.TransactionType(match.Type)]</MudText>
+                        @if (PaymentMethod(match) is { } name)
+                        {
+                            <MudText Typo="Typo.body2">@Loc["Transactions.Form.PaymentMethod"] · @name</MudText>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(match.ChequeNo))
+                        {
+                            <MudText Typo="Typo.body2">@Loc["Transactions.Form.ChequeNoLabel"] · @match.ChequeNo</MudText>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(match.Remarks))
+                        {
+                            <MudText Typo="Typo.body2">@match.Remarks</MudText>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">@Loc["Transactions.Duplicate.Back"]</MudButton>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ToggleReview"
+                   aria-expanded="@(_reviewing ? "true" : "false")">
+            @Loc[_reviewing ? "Transactions.Duplicate.Hide" : "Transactions.Duplicate.Review"]
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Continue">@Loc["Transactions.Duplicate.Continue"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public DuplicateTransactionWarning Warning { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public string PartyName { get; set; } = string.Empty;
+
+    [Parameter, EditorRequired]
+    public IReadOnlyDictionary<Guid, string> AccountNames { get; set; } = null!;
+
+    private bool _reviewing;
+    private TransactionDto Match => Warning.Matches[0];
+
+    private string? PaymentMethod(TransactionDto match) => match.Type switch
+    {
+        "PaymentIn" => AccountNames.GetValueOrDefault(match.ToAccountId),
+        "PaymentOut" => AccountNames.GetValueOrDefault(match.FromAccountId),
+        _ => null,
+    };
+
+    private void ToggleReview() => _reviewing = !_reviewing;
+    private void Cancel() => MudDialog.Cancel();
+    private void Continue() => MudDialog.Close(DialogResult.Ok(true));
+}

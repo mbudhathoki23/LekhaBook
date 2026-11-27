@@ -1,0 +1,129 @@
+@page "/reports/all-parties"
+@using LekhaBook.Application
+@inject IDataService Data
+@inject ICompanyApi Companies
+@inject ISessionService Session
+
+@* Every party's receivable or payable, today. *@
+<PageTitle>@Loc["Reports.AllParties"] · Lekha Books</PageTitle>
+
+@if (!ReportCatalog.AllParties.IsAllowed(Session))
+{
+    <MudAlert Severity="Severity.Info">@Loc["Reports.NoPermission"]</MudAlert>
+    return;
+}
+
+<ReportHeader Title="@Loc["Reports.AllParties"]" ShowPeriod="false" Today="_periods?.Today ?? default"
+              Csv="@(_parties is null ? null : BuildCsv)" FileName="all-parties" />
+
+@if (_error is not null)
+{
+    <LoadError Message="@_error" Offline="_offline" What="@Loc["Nav.Reports"]" OnRetry="LoadAsync" />
+}
+else if (_parties is null)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
+}
+else
+{
+    var shown = Shown;
+
+    <div class="d-flex flex-wrap gap-3 mb-3 no-print">
+        <MudSelect T="string" @bind-Value="_type" Label="@Loc["Statement.Type"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Style="max-width: 200px">
+            <MudSelectItem T="string" Value="@("all")">@Loc["Reports.AllPartyTypes"]</MudSelectItem>
+            <MudSelectItem T="string" Value="@("Customer")">@Loc["Parties.Type.Customer"]</MudSelectItem>
+            <MudSelectItem T="string" Value="@("Supplier")">@Loc["Parties.Type.Supplier"]</MudSelectItem>
+        </MudSelect>
+        <MudSelect T="string" @bind-Value="_due" Label="@Loc["Common.Balance"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Style="max-width: 200px">
+            <MudSelectItem T="string" Value="@("all")">@Loc["Reports.AllBalances"]</MudSelectItem>
+            <MudSelectItem T="string" Value="@("receive")">@Loc["PartySide.ToReceive"]</MudSelectItem>
+            <MudSelectItem T="string" Value="@("give")">@Loc["PartySide.ToGive"]</MudSelectItem>
+        </MudSelect>
+        @if (_categories.Count > 0)
+        {
+            <MudSelect T="Guid" @bind-Value="_category" Label="@Loc["Common.Category"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Style="max-width: 220px">
+                <MudSelectItem T="Guid" Value="Guid.Empty">@Loc["Reports.AllCategories"]</MudSelectItem>
+                @foreach (var category in _categories)
+                {
+                    <MudSelectItem T="Guid" Value="category.Id">@category.Name</MudSelectItem>
+                }
+            </MudSelect>
+        }
+    </div>
+
+    <MudGrid Spacing="2" Class="mb-3">
+        <MudItem xs="6"><SummaryFigure Label="@Loc["PartySide.ToReceive"]" Value="@Money.Format(shown.Sum(PartyReports.Receivable))" /></MudItem>
+        <MudItem xs="6"><SummaryFigure Label="@Loc["PartySide.ToGive"]" Value="@Money.Format(shown.Sum(PartyReports.Payable))" /></MudItem>
+    </MudGrid>
+
+    @if (shown.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-3">@Loc["Reports.NoParties"]</MudText>
+    }
+    else
+    {
+        <MudTable T="PartyDto" Items="shown" Dense="true" Hover="true" Breakpoint="Breakpoint.Xs" Elevation="1">
+            <HeaderContent>
+                <MudTh>@Loc["Common.Party"]</MudTh>
+                <MudTh>@Loc["Common.Phone"]</MudTh>
+                <MudTh Class="text-right">@Loc["PartySide.ToReceive"]</MudTh>
+                <MudTh Class="text-right">@Loc["PartySide.ToGive"]</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="@Loc["Common.Party"]"><MudLink Href="@($"parties/{context.Id}")">@context.Name</MudLink></MudTd>
+                <MudTd DataLabel="@Loc["Common.Phone"]">@context.Phone</MudTd>
+                <MudTd DataLabel="@Loc["PartySide.ToReceive"]" Class="text-right text-nowrap">@(context.Balance > 0 ? Money.Number(context.Balance) : "")</MudTd>
+                <MudTd DataLabel="@Loc["PartySide.ToGive"]" Class="text-right text-nowrap">@(context.Balance < 0 ? Money.Number(-context.Balance) : "")</MudTd>
+            </RowTemplate>
+        </MudTable>
+    }
+}
+
+@code {
+    private List<PartyDto>? _parties;
+    private List<PartyCategoryDto> _categories = [];
+    private CompanyPeriods? _periods;
+    private string _type = "all";
+    private string _due = "all";
+    private Guid _category;
+    private string? _error;
+    private bool _offline;
+
+    private List<PartyDto> Shown => PartyReports.Filter(
+        _parties ?? [], _type == "all" ? null : _type, _due, _category == Guid.Empty ? null : _category);
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        if (Session.CurrentCompany is not { } company || !ReportCatalog.AllParties.IsAllowed(Session))
+        {
+            return;
+        }
+
+        (_error, _parties) = (null, null);
+        _periods = await CompanyPeriods.LoadAsync(Companies, company.CompanyId);
+        var parties = await Data.GetPartiesAsync(company.CompanyId);
+        if (!parties.Ok)
+        {
+            (_error, _offline) = (parties.Error, parties.IsNetworkError);
+            return;
+        }
+
+        _categories = (await Data.GetPartyCategoriesAsync(company.CompanyId)).Value ?? [];
+        _parties = parties.Value!;
+    }
+
+    private string BuildCsv()
+    {
+        var rows = new List<string?[]>
+        {
+            new string?[] { Loc["Common.Party"], Loc["Common.Phone"], Loc["PartySide.ToReceive"], Loc["PartySide.ToGive"] },
+        };
+        rows.AddRange(Shown.Select(p => new string?[]
+        {
+            p.Name, p.Phone, CsvText.Amount(PartyReports.Receivable(p)), CsvText.Amount(PartyReports.Payable(p)),
+        }));
+        return CsvText.Build(rows);
+    }
+}

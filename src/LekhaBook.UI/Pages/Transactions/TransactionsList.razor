@@ -3,105 +3,119 @@
 @using LekhaBook.UI.Formatting
 @inject IDataService Data
 @inject ISessionService Session
-@inject NavigationManager Navigation
 
 <PageTitle>@Loc["Transactions.List.Title"] · Lekha Books</PageTitle>
 
-<div class="page-header">
-    <MudText Typo="Typo.h5" tabindex="-1">@Loc["Transactions.List.Title"] @(_transactions is null ? "" : $"({_transactions.Count})")</MudText>
-    <MudSpacer />
-    @if (CanAdd)
+<div class="transaction-list">
+    <header class="transaction-header">
+        <h1 tabindex="-1">@Loc["Transactions.List.Title"]</h1>
+        @if (CanAdd)
+        {
+            <MudButton Class="add-transaction" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.Add" Href="@NewTransactionHref">@Loc["Transactions.Add"]</MudButton>
+        }
+    </header>
+
+    @if (_error is not null)
     {
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Href="@NewTransactionHref">@Loc["Transactions.Add"]</MudButton>
+        <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Transactions.List.Title"]" OnRetry="LoadAsync" />
     }
-</div>
-
-@if (_error is not null)
-{
-    <LoadError Message="@_error.Error" Offline="_error.IsNetworkError" What="@Loc["Transactions.List.Title"]" OnRetry="LoadAsync" />
-}
-else if (_transactions is null)
-{
-    <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="my-4" />
-}
-else
-{
-    <MudGrid Spacing="2" Class="mb-3">
-        <MudItem xs="6">
-            <MudPaper Class="pa-3 summary-tile" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Common.Total"]</MudText>
-                <MudText Typo="Typo.h6" Color="Color.Success">@Money.Format(TotalBalance)</MudText>
-            </MudPaper>
-        </MudItem>
-        <MudItem xs="6">
-            <MudPaper Class="pa-3 summary-tile" Elevation="1">
-                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Loc["Transactions.List.Count"]</MudText>
-                <MudText Typo="Typo.h6" Color="Color.Primary">@_transactions.Count</MudText>
-            </MudPaper>
-        </MudItem>
-    </MudGrid>
-
-    <div class="list-toolbar">
-        <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="@Loc["Transactions.List.SearchPlaceholder"]"
-                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
-                      Margin="Margin.Dense" Clearable="true" Class="list-search" aria-label="@Loc["Transactions.List.SearchAria"]" />
-        <MudSelect T="string" @bind-Value="_type" Label="@Loc["Transactions.List.Type"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("all")">@Loc["Transactions.List.AllTypes"]</MudSelectItem>
-            <MudSelectItem Value="@("PaymentIn")">@Loc["TxnType.PaymentIn"]</MudSelectItem>
-            <MudSelectItem Value="@("PaymentOut")">@Loc["TxnType.PaymentOut"]</MudSelectItem>
-            <MudSelectItem Value="@("Expense")">@Loc["Transactions.Type.Expense"]</MudSelectItem>
-            <MudSelectItem Value="@("OtherIncome")">@Loc["TxnType.OtherIncome"]</MudSelectItem>
-            <MudSelectItem Value="@("TransferMoney")">@Loc["Transactions.List.Transfer"]</MudSelectItem>
-        </MudSelect>
-        <MudSelect T="string" @bind-Value="_sort" Label="@Loc["Transactions.List.Sort"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true" Class="list-filter">
-            <MudSelectItem Value="@("latest")">@Loc["Transactions.List.LatestFirst"]</MudSelectItem>
-            <MudSelectItem Value="@("oldest")">@Loc["Transactions.List.OldestFirst"]</MudSelectItem>
-            <MudSelectItem Value="@("amount-desc")">@Loc["Transactions.List.AmountHighLow"]</MudSelectItem>
-            <MudSelectItem Value="@("amount")">@Loc["Transactions.List.AmountLowHigh"]</MudSelectItem>
-        </MudSelect>
-    </div>
-
-    @if (_transactions.Count == 0)
+    else if (_transactions is null)
     {
-        <MudPaper Class="pa-6 text-center" Elevation="0" Outlined="true">
-            <MudIcon Icon="@Icons.Material.Filled.Receipt" Size="Size.Large" Class="mud-text-secondary" />
-            <MudText Typo="Typo.subtitle1" Class="mt-2">@Loc["Transactions.List.EmptyTitle"]</MudText>
-            <MudText Typo="Typo.body2" Class="mud-text-secondary mb-3">@Loc["Transactions.List.EmptyBody"]</MudText>
-            @if (CanAdd)
-            {
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="@NewTransactionHref">@Loc["Shell.AddTransaction"]</MudButton>
-            }
-        </MudPaper>
-    }
-    else if (!Shown.Any())
-    {
-        <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">@Loc["Transactions.List.NoMatch"]</MudText>
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="@Loc["Shell.Loading"]" />
     }
     else
     {
-        <MudPaper Elevation="1" Class="row-list">
-            @foreach (var txn in Shown)
+        <dl class="transaction-summary">
+            <div>
+                <dt>@Loc["Common.Total"]</dt>
+                <dd>@Money.Format(TotalBalance)</dd>
+            </div>
+            <div>
+                <dt>@Loc["Transactions.List.Count"]</dt>
+                <dd>@_transactions.Count</dd>
+            </div>
+        </dl>
+
+        <section class="transaction-panel" aria-label="@Loc["Transactions.List.Title"]">
+            @if (_transactions.Count == 0)
             {
-                <a class="row-item" href="@($"transactions/{txn.Id}/edit")">
-                    <MudAvatar Color="@TransactionColor(txn.Type)" Size="Size.Medium" Variant="Variant.Outlined">
-                        <MudIcon Icon="@Icons.Material.Filled.Receipt" />
-                    </MudAvatar>
-                    <div class="row-main">
-                        <div class="row-title">@Loc[MasterLabels.TransactionType(txn.Type)]</div>
-                        <div class="row-sub">@(txn.Remarks ?? "---") · @Session.FormatDate(txn.Date)</div>
-                    </div>
-                    <div class="row-amount">
-                        <MudText Typo="Typo.body1" Color="@TransactionAmountColor(txn)" Class="text-nowrap">@Money.Format(txn.Amount)</MudText>
-                    </div>
-                    @if (txn.Status == "Void")
+                <div class="transaction-empty">
+                    <MudIcon Icon="@Icons.Material.Filled.ReceiptLong" Size="Size.Large" Color="Color.Primary" aria-hidden="true" />
+                    <h2>@Loc["Transactions.List.EmptyTitle"]</h2>
+                    <p>@Loc["Transactions.List.EmptyBody"]</p>
+                    @if (CanAdd)
                     {
-                        <MudText Typo="Typo.caption" Color="Color.Error" Class="ms-2">@Loc["Transactions.List.Void"]</MudText>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" Href="@NewTransactionHref">@Loc["Shell.AddTransaction"]</MudButton>
                     }
-                </a>
+                </div>
             }
-        </MudPaper>
+            else
+            {
+                <div class="transaction-filters" role="search" aria-label="@Loc["Transactions.List.SearchAria"]">
+                    <MudTextField @bind-Value="_search" Immediate="true" DebounceInterval="200" Placeholder="@Loc["Transactions.List.SearchAria"]"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Variant="Variant.Outlined"
+                                  Margin="Margin.Dense" Clearable="true" Class="transaction-search" aria-label="@Loc["Transactions.List.SearchAria"]" />
+                    <MudSelect T="string" @bind-Value="_type" Label="@Loc["Transactions.List.Type"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+                        <MudSelectItem Value="@("all")">@Loc["Transactions.List.AllTypes"]</MudSelectItem>
+                        <MudSelectItem Value="@("PaymentIn")">@Loc["TxnType.PaymentIn"]</MudSelectItem>
+                        <MudSelectItem Value="@("PaymentOut")">@Loc["TxnType.PaymentOut"]</MudSelectItem>
+                        <MudSelectItem Value="@("Expense")">@Loc["Transactions.Type.Expense"]</MudSelectItem>
+                        <MudSelectItem Value="@("OtherIncome")">@Loc["TxnType.OtherIncome"]</MudSelectItem>
+                        <MudSelectItem Value="@("TransferMoney")">@Loc["Transactions.List.Transfer"]</MudSelectItem>
+                    </MudSelect>
+                    <MudSelect T="string" @bind-Value="_sort" Label="@Loc["Transactions.List.Sort"]" Variant="Variant.Outlined" Margin="Margin.Dense" Dense="true">
+                        <MudSelectItem Value="@("latest")">@Loc["Transactions.List.LatestFirst"]</MudSelectItem>
+                        <MudSelectItem Value="@("oldest")">@Loc["Transactions.List.OldestFirst"]</MudSelectItem>
+                        <MudSelectItem Value="@("amount-desc")">@Loc["Transactions.List.AmountHighLow"]</MudSelectItem>
+                        <MudSelectItem Value="@("amount")">@Loc["Transactions.List.AmountLowHigh"]</MudSelectItem>
+                    </MudSelect>
+                </div>
+
+                var shown = Shown.ToList();
+                @if (shown.Count == 0)
+                {
+                    <p class="transaction-empty" role="status">@Loc["Transactions.List.NoMatch"]</p>
+                }
+                else
+                {
+                    <ul class="transaction-rows" role="list">
+                        @foreach (var txn in shown)
+                        {
+                            <li @key="txn.Id">
+                                <a class="transaction-row" href="@($"transactions/{txn.Id}/edit")">
+                                    <span class="transaction-icon @TransactionTone(txn.Type)">
+                                        <MudIcon Icon="@TransactionIcon(txn.Type)" Size="Size.Small" aria-hidden="true" />
+                                    </span>
+                                    <span class="transaction-description">
+                                        <strong>@Loc[MasterLabels.TransactionType(txn.Type)]</strong>
+                                        <span class="transaction-meta">
+                                            <time datetime="@txn.Date.ToString("O")">@Session.FormatDate(txn.Date)</time>
+                                            @if (!string.IsNullOrWhiteSpace(txn.Remarks))
+                                            {
+                                                <span class="transaction-note">@txn.Remarks</span>
+                                            }
+                                        </span>
+                                    </span>
+                                    <span class="transaction-amount @TransactionTone(txn.Type)">
+                                        @Money.Format(txn.Amount)
+                                        @if (txn.Status == "Void")
+                                        {
+                                            <small>@Loc["Transactions.List.Void"]</small>
+                                        }
+                                    </span>
+                                    <span class="transaction-chevron rtl-flip-icon" aria-hidden="true">
+                                        <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" />
+                                    </span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                }
+            }
+        </section>
     }
-}
+</div>
 
 @code {
     private List<TransactionDto>? _transactions;
@@ -142,8 +156,8 @@ else
         }
     }
 
-    private decimal TotalBalance =>
-        _transactions?.Sum(t => t.Type is "PaymentIn" or "OtherIncome" ? t.Amount : -t.Amount) ?? 0;
+    /// <summary>Money in less money out. Transfers and balance adjustments are neither.</summary>
+    private decimal TotalBalance => LekhaBook.Application.EntryReports.Totals(_transactions ?? []).Net;
 
     protected override async Task OnInitializedAsync()
     {
@@ -170,12 +184,19 @@ else
         }
     }
 
-    private static Color TransactionColor(string type) => type switch
+    private static string TransactionTone(string type) => type switch
     {
-        "PaymentIn" or "OtherIncome" => Color.Success,
-        "PaymentOut" or "Expense" => Color.Error,
-        _ => Color.Primary,
+        "PaymentIn" or "OtherIncome" => "incoming",
+        "PaymentOut" or "Expense" => "outgoing",
+        _ => "",
     };
 
-    private static Color TransactionAmountColor(TransactionDto txn) => TransactionColor(txn.Type);
+    private static string TransactionIcon(string type) => type switch
+    {
+        "PaymentIn" => Icons.Material.Filled.CallReceived,
+        "PaymentOut" => Icons.Material.Filled.CallMade,
+        "OtherIncome" => Icons.Material.Filled.Savings,
+        "TransferMoney" => Icons.Material.Filled.SwapHoriz,
+        _ => Icons.Material.Filled.ReceiptLong,
+    };
 }

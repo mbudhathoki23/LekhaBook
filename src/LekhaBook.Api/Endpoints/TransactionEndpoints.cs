@@ -100,6 +100,7 @@ public static class TransactionEndpoints
             WriteStatus.Created => TypedResults.Created(
                 $"/api/companies/{companyId}/transactions/{result.Row!.Id}", ToDto((Transaction)result.Row)),
             WriteStatus.Replayed => TypedResults.Ok(ToDto((Transaction)result.Row!)),
+            WriteStatus.PossibleDuplicate => DuplicateWarning(result.Duplicates!),
             WriteStatus.Invalid => Invalid(result),
             WriteStatus.Forbidden => Forbidden(result.Error!),
             _ => Conflict(result.Error!),
@@ -114,12 +115,24 @@ public static class TransactionEndpoints
         return result.Status switch
         {
             WriteStatus.Saved => TypedResults.Ok(ToDto((Transaction)result.Row!)),
+            WriteStatus.PossibleDuplicate => DuplicateWarning(result.Duplicates!),
             WriteStatus.NotFound => TypedResults.NotFound(),
             WriteStatus.Invalid => Invalid(result),
             WriteStatus.Forbidden => Forbidden(result.Error!),
             _ => Conflict(result.Error!),
         };
     }
+
+    private static ProblemHttpResult DuplicateWarning(IReadOnlyList<Transaction> matches) =>
+        TypedResults.Problem(
+            type: DuplicateTransactionWarning.ProblemType,
+            title: "Possible duplicate entry",
+            detail: "A posted entry already has this party, date and amount.",
+            statusCode: StatusCodes.Status409Conflict,
+            extensions: new Dictionary<string, object?>
+            {
+                ["duplicateWarning"] = new DuplicateTransactionWarning(matches.Select(ToDto).ToList()),
+            });
 
     private static async Task<Results<NoContent, NotFound, ProblemHttpResult>> VoidTransaction(
         Guid companyId, Guid transactionId, CompanyAccess access, PostgresDbContext db, TimeProvider clock)

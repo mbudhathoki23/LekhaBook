@@ -1,7 +1,10 @@
 @page "/signup"
 @layout AuthLayout
+@implements IDisposable
 @inject ISessionService Session
 @inject NavigationManager Navigation
+@inject IDeviceUnlock DeviceUnlock
+@inject ISnackbar Snackbar
 
 <PageTitle>@Loc["Auth.SignUp.PageTitle"]</PageTitle>
 
@@ -13,7 +16,7 @@
     <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
 }
 
-<form @onsubmit="RegisterAsync">
+<form @onsubmit="RegisterAsync" @onsubmit:preventDefault="true">
     <MudStack Spacing="3">
         <MudTextField @bind-Value="_name" Label="@Loc["Auth.SignUp.Name"]" Variant="Variant.Outlined" Immediate="true" Required="true"
                       AutoFocus="true" MaxLength="200"
@@ -28,6 +31,10 @@
         <MudTextField @bind-Value="_confirm" Label="@Loc["Auth.SignUp.ConfirmPassword"]" InputType="InputType.Password" Variant="Variant.Outlined"
                       Immediate="true" Required="true"
                       UserAttributes="@(new() { ["autocomplete"] = "new-password", ["enterkeyhint"] = "go" })" />
+        @if (_deviceState is { Supported: true, Available: true })
+        {
+            <MudCheckBox T="bool" @bind-Value="_enableDevice" Color="Color.Primary" Label="@Loc["Security.EnableDevice"]" Disabled="_busy" />
+        }
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
                    FullWidth="true" Disabled="_busy">
             @if (_busy)
@@ -53,11 +60,16 @@
     private string _confirm = string.Empty;
     private string? _error;
     private bool _busy;
+    private bool _enableDevice;
+    private DeviceUnlockState? _deviceState;
+
+    protected override async Task OnInitializedAsync() => _deviceState = await DeviceUnlock.GetStateAsync();
 
     private string SignInHref => ReturnUrl is { Length: > 0 } r ? $"signin?returnUrl={Uri.EscapeDataString(r)}" : "signin";
 
     private async Task RegisterAsync()
     {
+        if (_busy) return;
         _error = (string.IsNullOrWhiteSpace(_name), string.IsNullOrWhiteSpace(_email), _password.Length < 8, _password != _confirm) switch
         {
             (true, _, _, _) => Loc["Auth.SignUp.NameRequired"].Value,
@@ -74,10 +86,18 @@
         _busy = true;
         var outcome = await Session.RegisterAsync(_name, _email, _password, SignIn.SafeReturnUrl(ReturnUrl));
         _error = outcome.Error;
-        _busy = outcome.Ok && outcome.HostNavigated; // keep the spinner while the page reloads
+        _busy = outcome.Ok; // keep the spinner during native opt-in or the web cookie redirect
         if (outcome.Ok && !outcome.HostNavigated)
         {
+            _password = _confirm = string.Empty;
+            if (_enableDevice && Session.Me is { } me)
+            {
+                var enabled = await DeviceUnlock.EnableAsync(me.UserId);
+                if (!enabled.Succeeded) Snackbar.Add(enabled.Error ?? Loc["Security.DeviceCancelled"], Severity.Warning);
+            }
             Navigation.NavigateTo(SignIn.SafeReturnUrl(ReturnUrl));
         }
     }
+
+    public void Dispose() => _password = _confirm = string.Empty;
 }

@@ -67,6 +67,10 @@
 </MudPaper>
 
 <MudList T="string" Class="mb-4">
+    @* The side menu is hidden on phones, so its other screens are listed here too. *@
+    <MudListItem T="string" Icon="@Icons.Material.Filled.ReceiptLong" Href="expenses">@Loc["Nav.Expense"]</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.Savings" Href="income">@Loc["Nav.OtherIncome"]</MudListItem>
+    <MudListItem T="string" Icon="@Icons.Material.Filled.Security" Href="settings/security">@Loc["Security.Title"]</MudListItem>
     <MudListItem T="string" Icon="@Icons.Material.Filled.UploadFile" Href="import">@Loc["Import.Title"]</MudListItem>
     <MudListItem T="string" Icon="@Icons.Material.Filled.Group" Href="staff">@Loc["Settings.Staff"]</MudListItem>
     <MudListItem T="string" Icon="@Icons.Material.Filled.AddBusiness" Href="companies/new">@Loc["Settings.CreateCompany"]</MudListItem>

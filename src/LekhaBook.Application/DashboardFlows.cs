@@ -184,4 +184,10 @@ public sealed record DashboardReport(
 {
     /// <summary>Used when today can't be placed in the company's calendar.</summary>
     public static DashboardReport Empty { get; } = new([], default, [], 0, []);
+
+    /// <summary>The months that had money in or out, oldest first. Empty months are left out.</summary>
+    public IReadOnlyList<MonthFlow> ActiveMonths => Months.Where(m => m.Totals != FlowTotals.Zero).ToList();
+
+    /// <summary>The fiscal years that had money in or out, oldest first. Empty years are left out.</summary>
+    public IReadOnlyList<FiscalYearFlow> ActiveFiscalYears => FiscalYears.Where(y => y.Totals != FlowTotals.Zero).ToList();
 }

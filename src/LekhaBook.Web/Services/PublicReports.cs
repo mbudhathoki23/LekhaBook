@@ -1,7 +1,7 @@
-using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Threading.RateLimiting;
+using LekhaBook.Application;
 using LekhaBook.Contracts;
 using LekhaBook.Domain;
 using LekhaBook.UI.Formatting;
@@ -93,9 +93,9 @@ public static class PublicReports
     {
         var calendar = report.Calendar == nameof(CalendarMode.AD) ? CalendarMode.AD : CalendarMode.BS;
         var isParty = report.PartyType is not null;
-        var csv = new StringBuilder();
+        var rows = new List<string?[]>();
 
-        void Row(params string?[] cells) => csv.AppendJoin(',', cells.Select(Quote)).Append("\r\n");
+        void Row(params string?[] cells) => rows.Add(cells);
 
         Row(report.CompanyName, report.Name);
         Row(
@@ -105,7 +105,7 @@ public static class PublicReports
             loc["Common.Balance"]);
         Row(
             report.OpeningAsOf is { } asOf ? CalendarDates.Format(asOf, calendar) : null,
-            loc["Ledger.OpeningBalance"], null, null, null, null, Amount(report.OpeningBalance));
+            loc["Ledger.OpeningBalance"], null, null, null, null, CsvText.Amount(report.OpeningBalance));
         foreach (var line in report.Lines)
         {
             var title = loc[MasterLabels.TransactionType(line.Type)].Value;
@@ -114,30 +114,12 @@ public static class PublicReports
                 line.VoucherNo.Length == 0 ? title : $"{title} #{line.VoucherNo}",
                 string.Join(" · ", new[] { line.OtherAccount, line.Remarks }.Where(s => !string.IsNullOrWhiteSpace(s))),
                 line.ChequeNo,
-                line.Debit > 0 ? Amount(line.Debit) : null,
-                line.Credit > 0 ? Amount(line.Credit) : null,
-                Amount(line.Balance));
+                line.Debit > 0 ? CsvText.Amount(line.Debit) : null,
+                line.Credit > 0 ? CsvText.Amount(line.Credit) : null,
+                CsvText.Amount(line.Balance));
         }
 
-        return csv.ToString();
-    }
-
-    private static string Amount(decimal value) => value.ToString("0.00", CultureInfo.InvariantCulture);
-
-    /// <summary>
-    /// Quotes a cell. Text starting like a formula gets a leading apostrophe, so a remark can't run in a
-    /// spreadsheet; plain negative numbers are left as numbers.
-    /// </summary>
-    private static string Quote(string? cell)
-    {
-        var text = cell ?? string.Empty;
-        if (text.Length > 0 && "=+-@\t\r".Contains(text[0])
-            && !decimal.TryParse(text, NumberStyles.Number, CultureInfo.InvariantCulture, out _))
-        {
-            text = "'" + text;
-        }
-
-        return $"\"{text.Replace("\"", "\"\"")}\"";
+        return CsvText.Build(rows);
     }
 
     private static async Task<(PublicReportDto? Report, HttpStatusCode Status)> ReadAsync(

@@ -25,12 +25,14 @@ public static class MauiProgram
         // Shared UI + device implementations (offline-first host).
         builder.Services.AddLekhaBookUI();
         builder.Services.AddSingleton<IPlatformInfo, MauiPlatformInfo>();
+        builder.Services.AddSingleton<IDocumentCapture, MauiDocumentCapture>();
         builder.Services.AddSingleton<IConnectivityService, MauiConnectivityService>();
         builder.Services.AddSingleton<ISyncService, MauiSyncEngine>();
         builder.Services.AddSingleton<ILanguageService, DeviceLanguageService>();
 
         // Sign-in: one user per app install, so the session is a singleton. Tokens live in SecureStorage.
         builder.Services.AddLekhaBookClient(ApiEndpoint.BaseAddress, perUserScope: false);
+        builder.Services.AddSingleton<IDeviceUnlock, DeviceUnlock>();
         builder.Services.AddSingleton<ITokenStore, SecureTokenStore>();
         builder.Services.AddSingleton<ILocalSettings, PreferencesSettings>();
 

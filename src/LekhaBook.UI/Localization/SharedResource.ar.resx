@@ -1757,4 +1757,307 @@
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>ستُختصر الملاحظات</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>مسح مستند ضوئيًا</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>تعذّر التقاط الصورة. تأكد من أن الكاميرا غير مستخدمة وأنه مسموح لتطبيق LekhaBook باستخدامها.</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>تعذّر مسح المستند ضوئيًا. تأكد من تشغيل الماسح الضوئي وتوصيله.</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>تسجيل الدخول والأمان</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>رمز تطبيق المصادقة</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>أدخل رمزًا صالحًا من ستة أرقام أو استخدم رمز استرداد.</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>رموز الاسترداد المتبقية: {0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>أُلغي التحقق بالهاتف أو لم ينجح. حاول مجددًا أو استخدم كلمة مرور حسابك.</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>افتح حسابك المحفوظ تلقائيًا بعد التحقق ببصمة الهاتف أو رمز PIN أو النمط أو كلمة المرور.</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>تحقق باستخدام هاتفك</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>تعذر حفظ طريقة تسجيل الدخول. يرجى المحاولة مجددًا.</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>فتح الهاتف وتسجيل الدخول التلقائي</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>أعدّ قفل الشاشة في إعدادات هاتفك، ثم حاول مجددًا.</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>إيقاف المصادقة الثنائية</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>هل تريد إيقاف رمز التحقق الإضافي لهذا الحساب؟</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>إيقاف فتح الحساب بالهاتف</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>المصادقة الثنائية مفعّلة.</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>استخدام فتح الهاتف لتسجيل الدخول التلقائي</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>رمز المصادقة أو رمز استرداد غير مستخدم</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>أو أدخل مفتاح الإعداد هذا في تطبيق المصادقة:</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>إنشاء رموز استرداد جديدة</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>ستستبدل رموز الاسترداد الجديدة جميع الرموز السابقة. هل تريد المتابعة؟</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>رمز QR لإعداد تطبيق المصادقة</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>رمز الاسترداد</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>احفظ رموز الاسترداد في مكان آمن قبل مغادرة الصفحة. كل رمز صالح لمرة واحدة ولن تُعرض هذه الرموز مجددًا.</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>لقد حفظت هذه الرموز</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>امسح رمز QR بتطبيق المصادقة، ثم أدخل الرمز الحالي المكوّن من ستة أرقام لإكمال الإعداد.</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>إعداد تطبيق المصادقة</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>استخدم Google Authenticator أو Microsoft Authenticator أو Authy أو تطبيق TOTP آخر. سيتطلب تسجيل الدخول الجديد كلمة المرور ورمزًا.</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>التحقق بتطبيق المصادقة</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>فتح الحساب باستخدام الهاتف</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>استخدام رمز تطبيق المصادقة</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>استخدام كلمة مرور الحساب</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>استخدام رمز استرداد</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>التحقق والمتابعة</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>أدخل الرمز الحالي من تطبيق المصادقة أو استخدم رمز استرداد غير مستخدم.</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>التحقق من تسجيل الدخول</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>قيد مكرر محتمل</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>يوجد قيد مرحّل بالطرف والتاريخ والمبلغ نفسها. راجع القيود المطابقة أو تابع إذا كان هذا قيدًا مستقلًا.</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>العودة إلى القيد</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>مراجعة القيود المطابقة</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>إخفاء القيود المطابقة</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>المتابعة والحفظ</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>رجوع</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>ليس لديك إذن لعرض هذا.</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>طباعة / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>الفترة</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>هذا الشهر</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>الشهر الماضي</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>السنة المالية الحالية</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>كل الفترات</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>تواريخ مخصصة</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>من تاريخ</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>إلى تاريخ</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>لا توجد قيود في هذه الفترة.</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>الرصيد الختامي</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>المبلغ</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>من</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>إلى</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>تسوية</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>جميع حسابات النقد</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>اختر طرفًا لعرض كشف الحساب.</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>لا توجد أطراف لعرضها.</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>لا توجد حسابات من هذا النوع بعد.</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>كل الأطراف</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>كل الأرصدة</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>القيود</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>الأطراف</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>الإيرادات والمصروفات</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>النقد والبنك</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>دفتر اليومية</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>كل ما سُجل في يوم واحد</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>كل القيود</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>قيود فترة حسب النوع</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>كشف حساب الطرف</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>قيود ورصيد طرف واحد</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>جميع الأطراف</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>ما لكل طرف وما عليه</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>الإيرادات والمصروفات</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>الإجماليات حسب الفئة</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>النقد في الصندوق</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>كشف النقد والمصروفات النثرية</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>كشف البنك</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>حسابات البنك والمحفظة والشيكات</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>إضافة فئة</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>تمت إضافة {0}.</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>اسم الفئة</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>حسب الفئة</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>إضافة مصروف</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>إضافة إيراد</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>تعديل الرصيد</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>إضافة / خصم مبلغ</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>زيادة الرصيد (يزيد ما عليهم)</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>خفض الرصيد (يقل ما عليهم)</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>إضافة مبلغ</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>خصم مبلغ</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>الرصيد بعد الحفظ: {0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>تم تعديل الرصيد.</value>
+  </data>
 </root>

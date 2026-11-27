@@ -1757,4 +1757,307 @@ Lekha Books-এ সাইন ইন: {4}</value>
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>মন্তব্য ছোট করা হবে</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>ডকুমেন্ট স্ক্যান করুন</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>ছবি তোলা যায়নি। ক্যামেরা অন্য কাজে ব্যস্ত নয় এবং LekhaBook-এর অনুমতি আছে কিনা দেখুন।</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>ডকুমেন্ট স্ক্যান করা যায়নি। স্ক্যানার চালু ও সংযুক্ত আছে কিনা দেখুন।</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>সাইন ইন ও নিরাপত্তা</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>অথেন্টিকেটর কোড</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>একটি বৈধ ছয় সংখ্যার কোড দিন অথবা পুনরুদ্ধার কোড ব্যবহার করুন।</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>অবশিষ্ট পুনরুদ্ধার কোড: {0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>ফোন যাচাই বাতিল হয়েছে বা সফল হয়নি। আবার চেষ্টা করুন অথবা অ্যাকাউন্টের পাসওয়ার্ড ব্যবহার করুন।</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>ফোনের আঙুলের ছাপ, পিন, প্যাটার্ন বা পাসওয়ার্ড দিয়ে যাচাই করে সংরক্ষিত অ্যাকাউন্ট স্বয়ংক্রিয়ভাবে খুলুন।</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>ফোন দিয়ে যাচাই করুন</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>এই সাইন ইন বিকল্পটি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>ফোন আনলক ও স্বয়ংক্রিয় সাইন ইন</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>ফোনের সেটিংসে স্ক্রিন লক চালু করে আবার চেষ্টা করুন।</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>দুই ধাপের যাচাই বন্ধ করুন</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>এই অ্যাকাউন্টের অতিরিক্ত সাইন ইন কোড বন্ধ করবেন?</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>ফোন আনলক বন্ধ করুন</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>দুই ধাপের যাচাই চালু আছে।</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>স্বয়ংক্রিয় সাইন ইনের জন্য ফোন আনলক ব্যবহার করুন</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>অথেন্টিকেটর বা অব্যবহৃত পুনরুদ্ধার কোড</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>অথবা অথেন্টিকেটর অ্যাপে এই সেটআপ কী লিখুন:</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>নতুন পুনরুদ্ধার কোড তৈরি করুন</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>নতুন পুনরুদ্ধার কোড আগের সব কোড প্রতিস্থাপন করবে। চালিয়ে যাবেন?</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>অথেন্টিকেটর সেটআপের কিউআর কোড</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>পুনরুদ্ধার কোড</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>এই পৃষ্ঠা ছাড়ার আগে পুনরুদ্ধার কোডগুলো নিরাপদে রাখুন। প্রতিটি কোড একবার ব্যবহার করা যায়। এগুলো আর দেখানো হবে না।</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>আমি কোডগুলো সংরক্ষণ করেছি</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>অথেন্টিকেটর অ্যাপ দিয়ে কিউআর কোড স্ক্যান করে বর্তমান ছয় সংখ্যার কোড দিন।</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>অথেন্টিকেটর অ্যাপ সেটআপ করুন</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>Google Authenticator, Microsoft Authenticator, Authy বা অন্য TOTP অ্যাপ ব্যবহার করুন। নতুন সাইন ইনে পাসওয়ার্ড ও কোড লাগবে।</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>অথেন্টিকেটর অ্যাপ দিয়ে যাচাই</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>ফোন দিয়ে আনলক করুন</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>অথেন্টিকেটর কোড ব্যবহার করুন</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>অ্যাকাউন্টের পাসওয়ার্ড ব্যবহার করুন</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>পুনরুদ্ধার কোড ব্যবহার করুন</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>যাচাই করে চালিয়ে যান</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>অথেন্টিকেটর অ্যাপের বর্তমান কোড অথবা একটি অব্যবহৃত পুনরুদ্ধার কোড দিন।</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>সাইন ইন যাচাই করুন</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>সম্ভাব্য সদৃশ এন্ট্রি</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>একই পক্ষ, তারিখ ও পরিমাণের একটি এন্ট্রি ইতিমধ্যে নথিভুক্ত আছে। মিল থাকা এন্ট্রি দেখুন, অথবা এটি আলাদা এন্ট্রি হলে এগিয়ে যান।</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>এন্ট্রিতে ফিরুন</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>মিল থাকা এন্ট্রি দেখুন</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>মিল থাকা এন্ট্রি লুকান</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>এগিয়ে যান ও সংরক্ষণ করুন</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>পিছনে</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>এটি দেখার অনুমতি আপনার নেই।</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>প্রিন্ট / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>সময়কাল</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>আজ</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>এই মাস</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>গত মাস</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>এই অর্থবছর</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>সব সময়</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>নিজস্ব তারিখ</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>শুরুর তারিখ</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>শেষ তারিখ</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>এই সময়ে কোনো এন্ট্রি নেই।</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>সমাপনী ব্যালেন্স</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>পরিমাণ</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>উৎস</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>গন্তব্য</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>সমন্বয়</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>সব নগদ হিসাব</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>বিবরণী দেখতে একটি পার্টি বেছে নিন।</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>দেখানোর মতো কোনো পার্টি নেই।</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>এই ধরনের কোনো হিসাব এখনো নেই।</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>সব পার্টি</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>সব ব্যালেন্স</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>সব শ্রেণি</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>এন্ট্রি</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>পার্টি</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>আয় ও ব্যয়</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>নগদ ও ব্যাংক</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>দিনপঞ্জি খাতা</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>এক দিনের সব এন্ট্রি</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>সব এন্ট্রি</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>সময়কালের এন্ট্রি, ধরন অনুযায়ী</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>পার্টি বিবরণী</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>একটি পার্টির এন্ট্রি ও ব্যালেন্স</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>সব পার্টি</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>প্রতিটি পার্টির পাওনা ও দেনা</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>আয় ও ব্যয়</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>শ্রেণি অনুযায়ী মোট</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>হাতে নগদ</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>নগদ ও খুচরা নগদের বিবরণী</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>ব্যাংক বিবরণী</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>ব্যাংক, ওয়ালেট ও চেক হিসাব</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>শ্রেণি যোগ করুন</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>{0} যোগ হয়েছে।</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>শ্রেণির নাম</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>শ্রেণি অনুযায়ী</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>ব্যয় যোগ করুন</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>আয় যোগ করুন</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>ব্যালেন্স সমন্বয়</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>টাকা যোগ / কমান</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>ব্যালেন্স যোগ (পাওনা বাড়ে)</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>ব্যালেন্স কমান (পাওনা কমে)</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>টাকা যোগ করুন</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>টাকা কমান</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>সংরক্ষণের পর ব্যালেন্স: {0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>ব্যালেন্স সমন্বয় হয়েছে।</value>
+  </data>
 </root>

@@ -1685,4 +1685,307 @@ Sign in to Lekha Books: {4}</value>
   <data name="Import.Row.RemarksShortened" xml:space="preserve">
     <value>The remarks will be shortened</value>
   </data>
+  <data name="Attachments.ScanDocument" xml:space="preserve">
+    <value>Scan document</value>
+  </data>
+  <data name="Attachments.CaptureFailed" xml:space="preserve">
+    <value>The photo could not be taken. Check that the camera is free and allowed for LekhaBook.</value>
+  </data>
+  <data name="Attachments.ScanFailed" xml:space="preserve">
+    <value>The document could not be scanned. Check that the scanner is on and connected.</value>
+  </data>
+  <data name="Security.Title" xml:space="preserve">
+    <value>Sign-in and security</value>
+  </data>
+  <data name="Security.AuthenticatorCode" xml:space="preserve">
+    <value>Authenticator code</value>
+  </data>
+  <data name="Security.CodeRequired" xml:space="preserve">
+    <value>Enter a valid six-digit code or use a recovery code.</value>
+  </data>
+  <data name="Security.CodesLeft" xml:space="preserve">
+    <value>Recovery codes remaining: {0}</value>
+  </data>
+  <data name="Security.DeviceCancelled" xml:space="preserve">
+    <value>Phone verification was cancelled or unsuccessful. Try again or use your account password.</value>
+  </data>
+  <data name="Security.DeviceHelp" xml:space="preserve">
+    <value>Automatically open your saved account after verifying with your phone's fingerprint, PIN, pattern or password.</value>
+  </data>
+  <data name="Security.DevicePrompt" xml:space="preserve">
+    <value>Verify with your phone</value>
+  </data>
+  <data name="Security.DeviceStorageError" xml:space="preserve">
+    <value>This sign-in option could not be saved. Please try again.</value>
+  </data>
+  <data name="Security.DeviceTitle" xml:space="preserve">
+    <value>Phone unlock and automatic sign-in</value>
+  </data>
+  <data name="Security.DeviceUnavailable" xml:space="preserve">
+    <value>Set up a screen lock in your phone settings, then try again.</value>
+  </data>
+  <data name="Security.Disable" xml:space="preserve">
+    <value>Turn off two-factor authentication</value>
+  </data>
+  <data name="Security.DisableConfirm" xml:space="preserve">
+    <value>Turn off the extra sign-in code for this account?</value>
+  </data>
+  <data name="Security.DisableDevice" xml:space="preserve">
+    <value>Turn off phone unlock</value>
+  </data>
+  <data name="Security.Enabled" xml:space="preserve">
+    <value>Two-factor authentication is on.</value>
+  </data>
+  <data name="Security.EnableDevice" xml:space="preserve">
+    <value>Use phone unlock for automatic sign-in</value>
+  </data>
+  <data name="Security.ManagementCode" xml:space="preserve">
+    <value>Authenticator or unused recovery code</value>
+  </data>
+  <data name="Security.ManualKey" xml:space="preserve">
+    <value>Or enter this setup key in your authenticator app:</value>
+  </data>
+  <data name="Security.NewCodes" xml:space="preserve">
+    <value>Create new recovery codes</value>
+  </data>
+  <data name="Security.NewCodesConfirm" xml:space="preserve">
+    <value>New recovery codes replace all previous codes. Continue?</value>
+  </data>
+  <data name="Security.QrAlt" xml:space="preserve">
+    <value>Authenticator setup QR code</value>
+  </data>
+  <data name="Security.RecoveryCode" xml:space="preserve">
+    <value>Recovery code</value>
+  </data>
+  <data name="Security.SaveCodes" xml:space="preserve">
+    <value>Save these recovery codes somewhere safe before leaving this page. Each code works once. You will not see these codes again.</value>
+  </data>
+  <data name="Security.SavedCodes" xml:space="preserve">
+    <value>I have saved these codes</value>
+  </data>
+  <data name="Security.ScanHelp" xml:space="preserve">
+    <value>Scan this QR code with your authenticator app, then enter its current six-digit code to finish setup.</value>
+  </data>
+  <data name="Security.SetUp" xml:space="preserve">
+    <value>Set up an authenticator app</value>
+  </data>
+  <data name="Security.TwoFactorHelp" xml:space="preserve">
+    <value>Use Google Authenticator, Microsoft Authenticator, Authy or another TOTP app. New sign-ins will require your password and a code.</value>
+  </data>
+  <data name="Security.TwoFactorTitle" xml:space="preserve">
+    <value>Authenticator app verification</value>
+  </data>
+  <data name="Security.Unlock" xml:space="preserve">
+    <value>Unlock with your phone</value>
+  </data>
+  <data name="Security.UseAuthenticator" xml:space="preserve">
+    <value>Use an authenticator code</value>
+  </data>
+  <data name="Security.UsePassword" xml:space="preserve">
+    <value>Use account password instead</value>
+  </data>
+  <data name="Security.UseRecovery" xml:space="preserve">
+    <value>Use a recovery code</value>
+  </data>
+  <data name="Security.Verify" xml:space="preserve">
+    <value>Verify and continue</value>
+  </data>
+  <data name="Security.VerifyHelp" xml:space="preserve">
+    <value>Enter the current code from your authenticator app, or use one unused recovery code.</value>
+  </data>
+  <data name="Security.VerifyTitle" xml:space="preserve">
+    <value>Verify your sign-in</value>
+  </data>
+  <data name="Transactions.Duplicate.Title" xml:space="preserve">
+    <value>Possible duplicate entry</value>
+  </data>
+  <data name="Transactions.Duplicate.Message" xml:space="preserve">
+    <value>A posted entry already has this party, date, and amount. Review the match or continue if this is a separate entry.</value>
+  </data>
+  <data name="Transactions.Duplicate.Back" xml:space="preserve">
+    <value>Back to entry</value>
+  </data>
+  <data name="Transactions.Duplicate.Review" xml:space="preserve">
+    <value>Review matches</value>
+  </data>
+  <data name="Transactions.Duplicate.Hide" xml:space="preserve">
+    <value>Hide matches</value>
+  </data>
+  <data name="Transactions.Duplicate.Continue" xml:space="preserve">
+    <value>Continue and save</value>
+  </data>
+  <data name="Shell.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Reports.NoPermission" xml:space="preserve">
+    <value>You don't have permission to see this.</value>
+  </data>
+  <data name="Reports.Print" xml:space="preserve">
+    <value>Print / PDF</value>
+  </data>
+  <data name="Reports.Csv" xml:space="preserve">
+    <value>Excel (CSV)</value>
+  </data>
+  <data name="Reports.Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Reports.Period.Today" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="Reports.Period.ThisMonth" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="Reports.Period.LastMonth" xml:space="preserve">
+    <value>Last month</value>
+  </data>
+  <data name="Reports.Period.ThisFiscalYear" xml:space="preserve">
+    <value>This fiscal year</value>
+  </data>
+  <data name="Reports.Period.AllTime" xml:space="preserve">
+    <value>All time</value>
+  </data>
+  <data name="Reports.Period.Custom" xml:space="preserve">
+    <value>Custom dates</value>
+  </data>
+  <data name="Reports.From" xml:space="preserve">
+    <value>From date</value>
+  </data>
+  <data name="Reports.To" xml:space="preserve">
+    <value>To date</value>
+  </data>
+  <data name="Reports.Empty" xml:space="preserve">
+    <value>No entries in this period.</value>
+  </data>
+  <data name="Reports.Closing" xml:space="preserve">
+    <value>Closing balance</value>
+  </data>
+  <data name="Reports.Amount" xml:space="preserve">
+    <value>Amount</value>
+  </data>
+  <data name="Reports.FromAccount" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Reports.ToAccount" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Reports.Adjustment" xml:space="preserve">
+    <value>Adjustment</value>
+  </data>
+  <data name="Reports.AllCash" xml:space="preserve">
+    <value>All cash accounts</value>
+  </data>
+  <data name="Reports.ChooseParty" xml:space="preserve">
+    <value>Choose a party to see the statement.</value>
+  </data>
+  <data name="Reports.NoParties" xml:space="preserve">
+    <value>No parties to show.</value>
+  </data>
+  <data name="Reports.NoAccounts" xml:space="preserve">
+    <value>No accounts of this kind yet.</value>
+  </data>
+  <data name="Reports.AllPartyTypes" xml:space="preserve">
+    <value>All parties</value>
+  </data>
+  <data name="Reports.AllBalances" xml:space="preserve">
+    <value>All balances</value>
+  </data>
+  <data name="Reports.AllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="Reports.Group.Transactions" xml:space="preserve">
+    <value>Entries</value>
+  </data>
+  <data name="Reports.Group.Parties" xml:space="preserve">
+    <value>Parties</value>
+  </data>
+  <data name="Reports.Group.IncomeExpense" xml:space="preserve">
+    <value>Income and expense</value>
+  </data>
+  <data name="Reports.Group.Business" xml:space="preserve">
+    <value>Cash and bank</value>
+  </data>
+  <data name="Reports.DayBook" xml:space="preserve">
+    <value>Day Book</value>
+  </data>
+  <data name="Reports.DayBook.Help" xml:space="preserve">
+    <value>Everything recorded on one day</value>
+  </data>
+  <data name="Reports.AllEntries" xml:space="preserve">
+    <value>All Entries</value>
+  </data>
+  <data name="Reports.AllEntries.Help" xml:space="preserve">
+    <value>Entries over a period, by type</value>
+  </data>
+  <data name="Reports.PartyStatement" xml:space="preserve">
+    <value>Party Statement</value>
+  </data>
+  <data name="Reports.PartyStatement.Help" xml:space="preserve">
+    <value>One party's entries and balance</value>
+  </data>
+  <data name="Reports.AllParties" xml:space="preserve">
+    <value>All Parties</value>
+  </data>
+  <data name="Reports.AllParties.Help" xml:space="preserve">
+    <value>What every party owes or is owed</value>
+  </data>
+  <data name="Reports.IncomeExpense" xml:space="preserve">
+    <value>Income and Expense</value>
+  </data>
+  <data name="Reports.IncomeExpense.Help" xml:space="preserve">
+    <value>Totals by category</value>
+  </data>
+  <data name="Reports.Cash" xml:space="preserve">
+    <value>Cash in Hand</value>
+  </data>
+  <data name="Reports.Cash.Help" xml:space="preserve">
+    <value>Cash and petty cash statement</value>
+  </data>
+  <data name="Reports.Bank" xml:space="preserve">
+    <value>Bank Statement</value>
+  </data>
+  <data name="Reports.Bank.Help" xml:space="preserve">
+    <value>Bank, wallet and cheque accounts</value>
+  </data>
+  <data name="Categories.Add" xml:space="preserve">
+    <value>Add category</value>
+  </data>
+  <data name="Categories.Added" xml:space="preserve">
+    <value>Added {0}.</value>
+  </data>
+  <data name="Categories.Name" xml:space="preserve">
+    <value>Category name</value>
+  </data>
+  <data name="Categories.ByCategory" xml:space="preserve">
+    <value>By category</value>
+  </data>
+  <data name="Categories.NewExpense" xml:space="preserve">
+    <value>Add expense</value>
+  </data>
+  <data name="Categories.NewIncome" xml:space="preserve">
+    <value>Add income</value>
+  </data>
+  <data name="Adjust.PartyButton" xml:space="preserve">
+    <value>Adjust balance</value>
+  </data>
+  <data name="Adjust.AccountButton" xml:space="preserve">
+    <value>Add / reduce money</value>
+  </data>
+  <data name="Adjust.AddBalance" xml:space="preserve">
+    <value>Add balance (they owe more)</value>
+  </data>
+  <data name="Adjust.ReduceBalance" xml:space="preserve">
+    <value>Reduce balance (they owe less)</value>
+  </data>
+  <data name="Adjust.AddMoney" xml:space="preserve">
+    <value>Add money</value>
+  </data>
+  <data name="Adjust.ReduceMoney" xml:space="preserve">
+    <value>Reduce money</value>
+  </data>
+  <data name="Adjust.NewBalance" xml:space="preserve">
+    <value>Balance after saving: {0}</value>
+  </data>
+  <data name="Adjust.Saved" xml:space="preserve">
+    <value>Balance adjusted.</value>
+  </data>
 </root>

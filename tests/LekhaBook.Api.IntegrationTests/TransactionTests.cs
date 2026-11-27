@@ -148,6 +148,62 @@ public sealed class TransactionTests(ApiFixture api) : IClassFixture<ApiFixture>
         Assert.Equal(1900m, await books.MoneyBalanceAsync(books.Cash));
     }
 
+    [PostgresFact]
+    public async Task Matching_party_payments_require_confirmation_even_when_submitted_concurrently()
+    {
+        var books = await SetUpAsync();
+        var first = new CreateTransactionRequest("PaymentIn", null, 125m, books.Customer, books.Cash,
+            Remarks: "Cash receipt", Id: Guid.CreateVersion7(), CheckForDuplicates: true);
+        var second = new CreateTransactionRequest("PaymentOut", null, 125m, books.Bank, books.Customer,
+            Remarks: "Bank refund", Id: Guid.CreateVersion7(), CheckForDuplicates: true);
+
+        var replies = await Task.WhenAll(books.PostAsync(first), books.PostAsync(second));
+        var saved = (await Assert.Single(replies, r => r.StatusCode == HttpStatusCode.Created)
+            .Content.ReadFromJsonAsync<TransactionDto>())!;
+        var warning = await ReadWarningAsync(Assert.Single(replies, r => r.StatusCode == HttpStatusCode.Conflict));
+        var match = Assert.Single(warning.Matches);
+        Assert.Equal((saved.Id, saved.Date, saved.Amount, saved.Type, saved.Remarks),
+            (match.Id, match.Date, match.Amount, match.Type, match.Remarks));
+
+        var blocked = saved.Id == first.Id ? second : first;
+        Assert.Equal(HttpStatusCode.NotFound, (await books.Owner.Http.GetAsync($"{books.Url}/transactions/{blocked.Id}")).StatusCode);
+        var confirmed = await books.PostAsync(blocked with { CheckForDuplicates = false, Date = saved.Date });
+        Assert.Equal(HttpStatusCode.Created, confirmed.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await books.PostAsync(blocked)).StatusCode);
+    }
+
+    [PostgresFact]
+    public async Task Duplicate_checks_skip_voided_entries_other_parties_other_dates_and_unchanged_edit_keys()
+    {
+        var books = await SetUpAsync();
+        var match = await books.AddAsync("PaymentIn", books.Customer, books.Cash, 200m);
+        var separate = await books.AddAsync("PaymentIn", books.Customer, books.Bank, 220m);
+        var sameAmount = new CreateTransactionRequest("PaymentIn", match.Date, match.Amount, books.Customer, books.Bank,
+            CheckForDuplicates: true);
+
+        Assert.Equal(HttpStatusCode.Created, (await books.PostAsync(sameAmount with { FromAccountId = books.Supplier })).StatusCode);
+        Assert.Equal(HttpStatusCode.Created, (await books.PostAsync(sameAmount with { Date = match.Date.AddDays(-1) })).StatusCode);
+
+        var url = $"{books.Url}/transactions/{separate.Id}";
+        var edit = new UpdateTransactionRequest(match.Date, match.Amount, books.Customer, books.Bank, CheckForDuplicates: true);
+        var warning = await ReadWarningAsync(await books.Owner.Http.PutAsJsonAsync(url, edit));
+        Assert.Equal(match.Id, Assert.Single(warning.Matches).Id);
+        Assert.Equal(HttpStatusCode.OK, (await books.Owner.Http.PutAsJsonAsync(url, edit with { CheckForDuplicates = false })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await books.Owner.Http.PutAsJsonAsync(url, edit with { Remarks = "Updated note" })).StatusCode);
+
+        Assert.Equal(HttpStatusCode.NoContent, (await books.Owner.Http.DeleteAsync($"{books.Url}/transactions/{match.Id}")).StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, (await books.Owner.Http.DeleteAsync(url)).StatusCode);
+        Assert.Equal(HttpStatusCode.Created, (await books.PostAsync(sameAmount)).StatusCode);
+    }
+
+    private static async Task<DuplicateTransactionWarning> ReadWarningAsync(HttpResponseMessage response)
+    {
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(DuplicateTransactionWarning.ProblemType, body.GetProperty("type").GetString());
+        return body.GetProperty("duplicateWarning").Deserialize<DuplicateTransactionWarning>(JsonSerializerOptions.Web)!;
+    }
+
     // ---------------- Who may write ----------------
 
     [PostgresFact]
