@@ -36,10 +36,14 @@
   <ItemGroup>
     <!-- App Icon -->
     <!-- Use the shared master artwork; MAUI generates each platform's icon sizes. -->
-    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png" ForegroundScale="0.75" Color="#FFFFFF" />
+    <MauiIcon Include="Resources\AppIcon\appicon.svg"
+              ForegroundFile="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png"
+              ForegroundScale="0.75" Color="#FFFFFF" />
 
     <!-- Splash Screen -->
-    <MauiSplashScreen Include="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png" Link="Resources\Splash\lekha_books_mark.png" Color="#FFFFFF" BaseSize="160,160" Resize="true" />
+    <MauiSplashScreen Include="..\LekhaBook.UI\wwwroot\branding\lekha_books_mark.png"
+                      Link="Resources\Splash\lekha_books_mark.png"
+                      Color="#FFFFFF" BaseSize="160,160" Resize="true" />
 
     <!-- Images -->
     <MauiImage Include="Resources\Images\*" />
@@ -71,17 +75,32 @@
   </ItemGroup>
 
   <!-- A test build for a server on the local network:
-       dotnet build src/LekhaBook.App -c Release -f net10.0-android -p:LekhaBookServer=http://192.168.1.20:5050/
-       Only such a build allows plain HTTP; without the property, only HTTPS and the emulator host work. -->
-  <ItemGroup Condition="'$(LekhaBookServer)' != ''">
-    <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
-      <_Parameter1>LekhaBookServer</_Parameter1>
-      <_Parameter2>$(LekhaBookServer)</_Parameter2>
-    </AssemblyAttribute>
-  </ItemGroup>
-  <ItemGroup Condition="'$(LekhaBookServer)' != '' And $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+       dotnet build src/LekhaBook.App -c Release -f net10.0-android -p:ApiBaseUrl=http://192.168.1.20:5050/
+       Plain HTTP is allowed only when the address given starts with http://. Otherwise only HTTPS and the
+       emulator host work. -->
+  <ItemGroup Condition="$(ApiBaseUrl.StartsWith('http://')) And $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
     <AndroidResource Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
-    <AndroidResource Include="Platforms\Android\TestNetwork\network_security_config.xml" Link="Platforms\Android\Resources\xml\network_security_config.xml" />
+    <AndroidResource Include="Platforms\Android\TestNetwork\network_security_config.xml"
+                     Link="Platforms\Android\Resources\xml\network_security_config.xml" />
   </ItemGroup>
 
+  <!-- Which of the two network files applies depends on the address given, but the build only copies a file that is
+       newer than the last copy. Drop a copy that is not the wanted one, so a normal build after a test build is strict
+       again. -->
+  <Target Name="RefreshNetworkSecurityConfig" BeforeTargets="_ComputeAndroidResourcePaths"
+          Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PropertyGroup>
+      <_NetworkConfigCopy>$(IntermediateOutputPath)res\xml\network_security_config.xml</_NetworkConfigCopy>
+      <_NetworkConfigSource>Platforms\Android\Resources\xml\network_security_config.xml</_NetworkConfigSource>
+      <_NetworkConfigSource Condition="$(ApiBaseUrl.StartsWith('http://'))">Platforms\Android\TestNetwork\network_security_config.xml</_NetworkConfigSource>
+    </PropertyGroup>
+    <GetFileHash Files="$(_NetworkConfigSource)">
+      <Output TaskParameter="Hash" PropertyName="_NetworkConfigWanted" />
+    </GetFileHash>
+    <GetFileHash Files="$(_NetworkConfigCopy)" Condition="Exists('$(_NetworkConfigCopy)')">
+      <Output TaskParameter="Hash" PropertyName="_NetworkConfigHave" />
+    </GetFileHash>
+    <!-- The flag file goes too, or an unchanged build would not copy the resource back. -->
+    <Delete Condition="'$(_NetworkConfigHave)' != '$(_NetworkConfigWanted)'" Files="$(_NetworkConfigCopy);$(_AndroidResFlagFile)" />
+  </Target>
 </Project>

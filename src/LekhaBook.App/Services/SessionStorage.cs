@@ -5,7 +5,10 @@ using LekhaBook.Data.Sqlite;
 
 namespace LekhaBook.App.Services;
 
-/// <summary>Where the app finds LekhaBook.Api. Pass -p:ApiBaseUrl=https://api.yourdomain.com/ on release builds.</summary>
+/// <summary>
+/// Where the app finds LekhaBook.Api. A release build is given it: -p:ApiBaseUrl=https://api.yourdomain.com/.
+/// For a test server on the local network: -p:ApiBaseUrl=http://192.168.1.20:5050/ (see the project file).
+/// </summary>
 public static class ApiEndpoint
 {
     public static Uri BaseAddress { get; } = ResolveBaseAddress();
@@ -26,7 +29,8 @@ public static class ApiEndpoint
             ? new Uri("http://10.0.2.2:5050/")
             : new Uri("http://localhost:5050/");
 #else
-        return new Uri("https://api.lekhabooks.com/");
+        // No server is configured: an address that resolves nowhere, so nothing is ever sent to a stranger.
+        return new Uri("https://api.lekhabooks.invalid/");
 #endif
     }
 }
