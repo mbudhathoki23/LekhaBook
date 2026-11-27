@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -749,7 +749,7 @@
     <value>لا توجد شركة</value>
   </data>
   <data name="Shell.Offline" xml:space="preserve">
-    <value>أنت غير متصل بالإنترنت. تُعرض قائمة شركاتك المحفوظة؛ أما الأطراف والحسابات والموظفون فتحتاج إلى اتصال إلى أن تتوفر المزامنة.</value>
+    <value>أنت غير متصل. يمكنك عرض دفاترك وإضافة القيود، وسيتم رفعها عند توفر الخادم. الأطراف والحسابات والموظفون والصور تحتاج إلى اتصال.</value>
   </data>
   <data name="Shell.Reload" xml:space="preserve">
     <value>إعادة التحميل</value>
@@ -2059,5 +2059,203 @@
   </data>
   <data name="Adjust.Saved" xml:space="preserve">
     <value>تم تعديل الرصيد.</value>
+  </data>
+  <data name="Sync.NotUploaded" xml:space="preserve">
+    <value>لم يتم رفع {0}</value>
+  </data>
+  <data name="Sync.ProblemsTitle" xml:space="preserve">
+    <value>تغييرات لم تُرفع</value>
+  </data>
+  <data name="Sync.Discard" xml:space="preserve">
+    <value>تجاهل</value>
+  </data>
+  <data name="Offline.ContinueLocal" xml:space="preserve">
+    <value>المتابعة دون اتصال (الوضع المحلي المجاني)</value>
+  </data>
+  <data name="Offline.ContinueLocalHint" xml:space="preserve">
+    <value>استخدم ليخا بوكس على هذا الجهاز دون إنترنت. يمكنك الترقية إلى المزامنة السحابية في أي وقت.</value>
+  </data>
+  <data name="Offline.SetupTitle" xml:space="preserve">
+    <value>بدء الدفاتر دون اتصال</value>
+  </data>
+  <data name="Offline.DefaultBusinessPlaceholder" xml:space="preserve">
+    <value>نشاطي التجاري</value>
+  </data>
+  <data name="Offline.StartNow" xml:space="preserve">
+    <value>ابدأ دون اتصال</value>
+  </data>
+  <data name="Offline.LocalAccountTitle" xml:space="preserve">
+    <value>الوضع المحلي دون اتصال (هذا الجهاز فقط)</value>
+  </data>
+  <data name="Offline.LeaveLocal" xml:space="preserve">
+    <value>الخروج من الوضع المحلي</value>
+  </data>
+  <data name="Offline.LeaveLocalHelp" xml:space="preserve">
+    <value>العودة إلى شاشة تسجيل الدخول. تبقى دفاترك المحلية محفوظة بأمان على هذا الجهاز.</value>
+  </data>
+  <data name="Shell.LocalModeBanner" xml:space="preserve">
+    <value>الوضع المحلي دون اتصال — الدفاتر محفوظة على هذا الجهاز فقط. قم بالترقية للنسخ السحابي والمزامنة.</value>
+  </data>
+  <data name="Sync.LocalOnlyChip" xml:space="preserve">
+    <value>محلي فقط · ترقية</value>
+  </data>
+  <data name="Sync.PageTitle" xml:space="preserve">
+    <value>المزامنة السحابية</value>
+  </data>
+  <data name="Sync.LocalOnlyHeading" xml:space="preserve">
+    <value>أنت في الوضع المحلي دون اتصال</value>
+  </data>
+  <data name="Sync.LocalOnlyBody" xml:space="preserve">
+    <value>بياناتك محفوظة محلياً على هذا الجهاز. قم بالترقية إلى الوضع السحابي في أي وقت للنسخ الاحتياطي والمزامنة وإضافة الموظفين.</value>
+  </data>
+  <data name="Sync.StatusOnline" xml:space="preserve">
+    <value>متصل بالسحابة</value>
+  </data>
+  <data name="Sync.StatusOffline" xml:space="preserve">
+    <value>العمل دون اتصال</value>
+  </data>
+  <data name="Sync.PendingSummary" xml:space="preserve">
+    <value>{0} تغييرات بانتظار المزامنة</value>
+  </data>
+  <data name="Sync.LastSynced" xml:space="preserve">
+    <value>آخر مزامنة: {0}</value>
+  </data>
+  <data name="Sync.SyncNow" xml:space="preserve">
+    <value>مزامنة الآن</value>
+  </data>
+  <data name="Sync.NoProblems" xml:space="preserve">
+    <value>جميع التغييرات سليمة ولا توجد تعارضات في المزامنة.</value>
+  </data>
+  <data name="Upgrade.PageTitle" xml:space="preserve">
+    <value>الترقية إلى الوضع المتصل</value>
+  </data>
+  <data name="Upgrade.Title" xml:space="preserve">
+    <value>الترقية إلى الوضع السحابي المتصل</value>
+  </data>
+  <data name="Upgrade.Subtitle" xml:space="preserve">
+    <value>احتفظ بجميع قيودك وأطرافك وحساباتك وإيصالاتك المحلية وافتح المزامنة السحابية والوصول عبر الويب وصلاحيات الفريق.</value>
+  </data>
+  <data name="Upgrade.Button" xml:space="preserve">
+    <value>الترقية إلى المتصل</value>
+  </data>
+  <data name="Upgrade.AppOnly" xml:space="preserve">
+    <value>أنت تستخدم بالفعل البوابة السحابية على الويب.</value>
+  </data>
+  <data name="Upgrade.AlreadyOnline" xml:space="preserve">
+    <value>حسابك متصل بالفعل بالوضع السحابي مع مزامنة تلقائية عند الاتصال أو دونه.</value>
+  </data>
+  <data name="Upgrade.SuccessTitle" xml:space="preserve">
+    <value>مرحباً بك في الوضع السحابي المتصل!</value>
+  </data>
+  <data name="Upgrade.SuccessSummary" xml:space="preserve">
+    <value>تم نقل {0} نشاطاً و{1} قيداً و{2} مرفقاً بأمان إلى السحابة. لا يزال بإمكانك العمل دون اتصال في أي وقت.</value>
+  </data>
+  <data name="Upgrade.GoToBooks" xml:space="preserve">
+    <value>فتح دفاتري</value>
+  </data>
+  <data name="Upgrade.DeviceDataTitle" xml:space="preserve">
+    <value>البيانات الجاهزة للنقل من هذا الجهاز</value>
+  </data>
+  <data name="Upgrade.CountCompanies" xml:space="preserve">
+    <value>{0} أعمال</value>
+  </data>
+  <data name="Upgrade.CountParties" xml:space="preserve">
+    <value>{0} أطراف</value>
+  </data>
+  <data name="Upgrade.CountAccounts" xml:space="preserve">
+    <value>{0} حسابات</value>
+  </data>
+  <data name="Upgrade.CountEntries" xml:space="preserve">
+    <value>{0} قيود</value>
+  </data>
+  <data name="Upgrade.CountAttachments" xml:space="preserve">
+    <value>{0} مرفقات</value>
+  </data>
+  <data name="Upgrade.PlanLocalTitle" xml:space="preserve">
+    <value>الوضع المحلي دون اتصال (الحالي)</value>
+  </data>
+  <data name="Upgrade.PlanLocal1" xml:space="preserve">
+    <value>يعمل دون اتصال بنسبة 100% على هذا الجهاز</value>
+  </data>
+  <data name="Upgrade.PlanLocal2" xml:space="preserve">
+    <value>نسخ احتياطي يدوي بصيغة JSON على الجهاز</value>
+  </data>
+  <data name="Upgrade.PlanLocal3" xml:space="preserve">
+    <value>لا يوجد نسخ احتياطي سحابي تلقائي عند فقدان الهاتف</value>
+  </data>
+  <data name="Upgrade.PlanLocal4" xml:space="preserve">
+    <value>جهاز واحد فقط دون صلاحيات للموظفين</value>
+  </data>
+  <data name="Upgrade.PlanCloudTitle" xml:space="preserve">
+    <value>الوضع السحابي المتصل</value>
+  </data>
+  <data name="Upgrade.PlanCloud1" xml:space="preserve">
+    <value>يعمل دون اتصال ويتزامن تلقائياً عند توفر الإنترنت</value>
+  </data>
+  <data name="Upgrade.PlanCloud2" xml:space="preserve">
+    <value>نسخ احتياطي سحابي فوري والوصول من الهاتف والحاسوب والويب</value>
+  </data>
+  <data name="Upgrade.PlanCloud3" xml:space="preserve">
+    <value>دعوة المحاسب والمدير ومُدخل البيانات بصلاحيات مخصصة</value>
+  </data>
+  <data name="Upgrade.PlanCloud4" xml:space="preserve">
+    <value>مشاركة روابط كشوف الحساب المباشرة عبر واتساب والبريد</value>
+  </data>
+  <data name="Upgrade.NeedInternet" xml:space="preserve">
+    <value>اتصل بالإنترنت لترقية دفاترك المحلية إلى الوضع السحابي المتصل.</value>
+  </data>
+  <data name="Upgrade.TabNewAccount" xml:space="preserve">
+    <value>إنشاء حساب سحابي جديد</value>
+  </data>
+  <data name="Upgrade.TabExistingAccount" xml:space="preserve">
+    <value>تسجيل الدخول إلى حساب حالي</value>
+  </data>
+  <data name="Upgrade.SubmitNew" xml:space="preserve">
+    <value>إنشاء الحساب ورفع البيانات المحلية</value>
+  </data>
+  <data name="Upgrade.SubmitExisting" xml:space="preserve">
+    <value>تسجيل الدخول ورفع البيانات المحلية</value>
+  </data>
+  <data name="Upgrade.Starting" xml:space="preserve">
+    <value>جارٍ تحضير الترقية…</value>
+  </data>
+  <data name="Upgrade.Failed" xml:space="preserve">
+    <value>تعذر إكمال الترقية. لا تزال بياناتك المحلية آمنة على هذا الجهاز.</value>
+  </data>
+  <data name="Upgrade.SettingsCardTitle" xml:space="preserve">
+    <value>الترقية إلى الوضع السحابي</value>
+  </data>
+  <data name="Upgrade.SettingsCardBody" xml:space="preserve">
+    <value>انسخ دفاترك المحلية سحابياً وزامنها عبر الهاتف والحاسوب وأضف فريقك.</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineTitle" xml:space="preserve">
+    <value>تتطلب إدارة الموظفين والصلاحيات الوضع السحابي</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineBody" xml:space="preserve">
+    <value>قم بترقية دفاترك المحلية إلى حساب سحابي لدعوة المحاسبين والمديرين ومُدخلي البيانات بصلاحيات مخصصة.</value>
+  </data>
+  <data name="Settings.DarkMode" xml:space="preserve">
+    <value>الوضع الداكن</value>
+  </data>
+  <data name="Backup.Title" xml:space="preserve">
+    <value>النسخ الاحتياطي والاستعادة المحلية</value>
+  </data>
+  <data name="Backup.Help" xml:space="preserve">
+    <value>تصدير هذا النشاط كملف نسخ احتياطي JSON للحفظ الآمن.</value>
+  </data>
+  <data name="Backup.Export" xml:space="preserve">
+    <value>تصدير نسخة احتياطية (.json)</value>
+  </data>
+  <data name="Backup.Restore" xml:space="preserve">
+    <value>استعادة من نسخة احتياطية</value>
+  </data>
+  <data name="Backup.Exported" xml:space="preserve">
+    <value>تم حفظ ملف النسخة الاحتياطية.</value>
+  </data>
+  <data name="Backup.Restored" xml:space="preserve">
+    <value>تمت استعادة "{0}" على هذا الجهاز.</value>
+  </data>
+  <data name="Backup.Failed" xml:space="preserve">
+    <value>تعذرت معالجة ملف النسخة الاحتياطية.</value>
   </data>
 </root>

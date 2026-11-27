@@ -1,0 +1,171 @@
+@page "/sync"
+@implements IDisposable
+@inject ISyncService Sync
+@inject IConnectivityService Connectivity
+@inject ISessionService Session
+@inject ISnackbar Snackbar
+
+<PageTitle>@Loc["Sync.PageTitle"] · Lekha Books</PageTitle>
+
+<div class="mx-auto" style="max-width: 720px;">
+    <MudText Typo="Typo.h5" Class="mb-4" tabindex="-1">@Loc["Sync.PageTitle"]</MudText>
+
+    @if (Session.IsLocalMode)
+    {
+        <MudPaper Class="pa-5 mb-4" Elevation="1">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.h6">@Loc["Sync.LocalOnlyHeading"]</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Sync.LocalOnlyBody"]</MudText>
+                <div>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" Href="upgrade">
+                        @Loc["Upgrade.Button"]
+                    </MudButton>
+                </div>
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        <MudPaper Class="pa-4 mb-4" Elevation="1">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="2">
+                <div>
+                    <MudText Typo="Typo.subtitle1">
+                        @(Connectivity.IsOnline ? Loc["Sync.StatusOnline"] : Loc["Sync.StatusOffline"])
+                    </MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                        @Loc["Sync.PendingSummary", Sync.PendingCount]
+                    </MudText>
+                    @if (Sync.LastSyncedAtUtc is { } last)
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">
+                            @Loc["Sync.LastSynced", last.ToLocalTime().ToString("g")]
+                        </MudText>
+                    }
+                </div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Sync"
+                           Disabled="@(!Connectivity.IsOnline || Sync.State == SyncState.Syncing || _busy)"
+                           OnClick="SyncNowAsync">
+                    @Loc["Sync.SyncNow"]
+                </MudButton>
+            </MudStack>
+
+            @if (Sync.LastError is not null)
+            {
+                <MudAlert Severity="Severity.Warning" Dense="true" Class="mt-3">@Sync.LastError</MudAlert>
+            }
+        </MudPaper>
+
+        @if (_issues.Count > 0)
+        {
+            <MudText Typo="Typo.h6" Class="mb-2">@Loc["Sync.ProblemsTitle"]</MudText>
+            <MudStack Spacing="2">
+                @foreach (var issue in _issues)
+                {
+                    <MudPaper Class="pa-4" Elevation="1">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="2">
+                            <div>
+                                <MudText Typo="Typo.subtitle2">@issue.EntityType · @issue.Operation</MudText>
+                                <MudText Typo="Typo.body2" Color="Color.Error">@issue.Error</MudText>
+                                <MudText Typo="Typo.caption" Class="mud-text-secondary">
+                                    @issue.CreatedAtUtc.ToLocalTime().ToString("g")
+                                </MudText>
+                            </div>
+                            <MudStack Row="true" Spacing="1">
+                                @* A conflict would only repeat: the entry changed on the server. Discard takes that version. *@
+                                @if (!issue.Error.StartsWith("Conflict", StringComparison.Ordinal))
+                                {
+                                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Primary"
+                                               Disabled="_busy" OnClick="() => RetryAsync(issue.Id)">
+                                        @Loc["Common.Retry"]
+                                    </MudButton>
+                                }
+                                <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Error"
+                                           Disabled="_busy" OnClick="() => DiscardAsync(issue.Id)">
+                                    @Loc["Sync.Discard"]
+                                </MudButton>
+                            </MudStack>
+                        </MudStack>
+                    </MudPaper>
+                }
+            </MudStack>
+        }
+        else
+        {
+            <MudAlert Severity="Severity.Success" Dense="true">@Loc["Sync.NoProblems"]</MudAlert>
+        }
+    }
+</div>
+
+@code {
+    private IReadOnlyList<SyncIssueDto> _issues = [];
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Sync.StateChanged += OnChanged;
+        Connectivity.OnlineChanged += OnOnlineChanged;
+        await LoadIssuesAsync();
+    }
+
+    private async Task LoadIssuesAsync()
+    {
+        _issues = await Sync.GetIssuesAsync();
+    }
+
+    private async Task SyncNowAsync()
+    {
+        _busy = true;
+        try
+        {
+            await Sync.SyncNowAsync();
+            await LoadIssuesAsync();
+            Snackbar.Add(Loc["Sync.OnlineSynced"], Severity.Success);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task RetryAsync(long id)
+    {
+        _busy = true;
+        try
+        {
+            await Sync.RetryIssueAsync(id);
+            await LoadIssuesAsync();
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task DiscardAsync(long id)
+    {
+        _busy = true;
+        try
+        {
+            await Sync.DiscardIssueAsync(id);
+            await LoadIssuesAsync();
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void OnChanged(object? sender, EventArgs e) => _ = InvokeAsync(async () =>
+    {
+        await LoadIssuesAsync();
+        StateHasChanged();
+    });
+
+    private void OnOnlineChanged(object? sender, bool online) => _ = InvokeAsync(StateHasChanged);
+
+    public void Dispose()
+    {
+        Sync.StateChanged -= OnChanged;
+        Connectivity.OnlineChanged -= OnOnlineChanged;
+    }
+}

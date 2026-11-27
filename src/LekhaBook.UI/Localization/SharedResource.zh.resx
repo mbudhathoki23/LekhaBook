@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -749,7 +749,7 @@
     <value>无公司</value>
   </data>
   <data name="Shell.Offline" xml:space="preserve">
-    <value>您处于离线状态。当前显示已保存的公司列表；在同步功能推出前，往来单位、账户和员工需联网使用。</value>
+    <value>当前离线。可以查看账本和记账，连接到服务器后自动上传。往来单位、账户、员工和照片需要联网。</value>
   </data>
   <data name="Shell.Reload" xml:space="preserve">
     <value>重新加载</value>
@@ -2059,5 +2059,203 @@
   </data>
   <data name="Adjust.Saved" xml:space="preserve">
     <value>余额已调整。</value>
+  </data>
+  <data name="Sync.NotUploaded" xml:space="preserve">
+    <value>{0} 项未上传</value>
+  </data>
+  <data name="Sync.ProblemsTitle" xml:space="preserve">
+    <value>未上传的更改</value>
+  </data>
+  <data name="Sync.Discard" xml:space="preserve">
+    <value>放弃</value>
+  </data>
+  <data name="Offline.ContinueLocal" xml:space="preserve">
+    <value>离线继续使用（免费本地模式）</value>
+  </data>
+  <data name="Offline.ContinueLocalHint" xml:space="preserve">
+    <value>无需联网即可在此设备上使用，随时可升级到在线云同步。</value>
+  </data>
+  <data name="Offline.SetupTitle" xml:space="preserve">
+    <value>开始离线记账</value>
+  </data>
+  <data name="Offline.DefaultBusinessPlaceholder" xml:space="preserve">
+    <value>我的店铺</value>
+  </data>
+  <data name="Offline.StartNow" xml:space="preserve">
+    <value>开始离线使用</value>
+  </data>
+  <data name="Offline.LocalAccountTitle" xml:space="preserve">
+    <value>离线本地模式（仅限本设备）</value>
+  </data>
+  <data name="Offline.LeaveLocal" xml:space="preserve">
+    <value>退出离线模式</value>
+  </data>
+  <data name="Offline.LeaveLocalHelp" xml:space="preserve">
+    <value>返回登录界面。您的离线账簿仍会安全保存在本设备上。</value>
+  </data>
+  <data name="Shell.LocalModeBanner" xml:space="preserve">
+    <value>离线本地模式 — 账簿仅保存在本设备。升级即可享受云备份与多设备同步。</value>
+  </data>
+  <data name="Sync.LocalOnlyChip" xml:space="preserve">
+    <value>仅本地 · 升级</value>
+  </data>
+  <data name="Sync.PageTitle" xml:space="preserve">
+    <value>云同步</value>
+  </data>
+  <data name="Sync.LocalOnlyHeading" xml:space="preserve">
+    <value>您当前处于离线本地模式</value>
+  </data>
+  <data name="Sync.LocalOnlyBody" xml:space="preserve">
+    <value>您的数据保存在本设备上。随时升级到在线云模式即可自动备份、多设备同步并邀请员工。</value>
+  </data>
+  <data name="Sync.StatusOnline" xml:space="preserve">
+    <value>已连接云端</value>
+  </data>
+  <data name="Sync.StatusOffline" xml:space="preserve">
+    <value>离线工作中</value>
+  </data>
+  <data name="Sync.PendingSummary" xml:space="preserve">
+    <value>有 {0} 项更改等待同步</value>
+  </data>
+  <data name="Sync.LastSynced" xml:space="preserve">
+    <value>上次同步：{0}</value>
+  </data>
+  <data name="Sync.SyncNow" xml:space="preserve">
+    <value>立即同步</value>
+  </data>
+  <data name="Sync.NoProblems" xml:space="preserve">
+    <value>所有更改均正常，没有同步冲突。</value>
+  </data>
+  <data name="Upgrade.PageTitle" xml:space="preserve">
+    <value>升级到在线模式</value>
+  </data>
+  <data name="Upgrade.Title" xml:space="preserve">
+    <value>升级到在线云模式</value>
+  </data>
+  <data name="Upgrade.Subtitle" xml:space="preserve">
+    <value>保留您现有的全部离线记录、往来单位、账户和凭证，并解锁自动云同步、网页端访问和团队权限。</value>
+  </data>
+  <data name="Upgrade.Button" xml:space="preserve">
+    <value>升级到在线版</value>
+  </data>
+  <data name="Upgrade.AppOnly" xml:space="preserve">
+    <value>您已经在使用在线网页版。</value>
+  </data>
+  <data name="Upgrade.AlreadyOnline" xml:space="preserve">
+    <value>您的账户已连接到在线云模式，支持离线与在线自动同步。</value>
+  </data>
+  <data name="Upgrade.SuccessTitle" xml:space="preserve">
+    <value>欢迎使用在线云模式！</value>
+  </data>
+  <data name="Upgrade.SuccessSummary" xml:space="preserve">
+    <value>已安全将 {0} 个账套、{1} 条记录和 {2} 个附件迁移至云端。您仍可随时离线记账，联网后自动同步。</value>
+  </data>
+  <data name="Upgrade.GoToBooks" xml:space="preserve">
+    <value>打开我的账簿</value>
+  </data>
+  <data name="Upgrade.DeviceDataTitle" xml:space="preserve">
+    <value>本设备待迁移数据</value>
+  </data>
+  <data name="Upgrade.CountCompanies" xml:space="preserve">
+    <value>{0} 个账套</value>
+  </data>
+  <data name="Upgrade.CountParties" xml:space="preserve">
+    <value>{0} 个往来单位</value>
+  </data>
+  <data name="Upgrade.CountAccounts" xml:space="preserve">
+    <value>{0} 个资金账户</value>
+  </data>
+  <data name="Upgrade.CountEntries" xml:space="preserve">
+    <value>{0} 条记录</value>
+  </data>
+  <data name="Upgrade.CountAttachments" xml:space="preserve">
+    <value>{0} 个附件</value>
+  </data>
+  <data name="Upgrade.PlanLocalTitle" xml:space="preserve">
+    <value>离线本地模式（当前）</value>
+  </data>
+  <data name="Upgrade.PlanLocal1" xml:space="preserve">
+    <value>本设备 100% 离线可用</value>
+  </data>
+  <data name="Upgrade.PlanLocal2" xml:space="preserve">
+    <value>支持手动导出本地 JSON 备份</value>
+  </data>
+  <data name="Upgrade.PlanLocal3" xml:space="preserve">
+    <value>手机丢失时无自动云端备份</value>
+  </data>
+  <data name="Upgrade.PlanLocal4" xml:space="preserve">
+    <value>仅限单设备，不支持员工权限</value>
+  </data>
+  <data name="Upgrade.PlanCloudTitle" xml:space="preserve">
+    <value>在线云模式</value>
+  </data>
+  <data name="Upgrade.PlanCloud1" xml:space="preserve">
+    <value>支持离线记账，联网自动双向同步</value>
+  </data>
+  <data name="Upgrade.PlanCloud2" xml:space="preserve">
+    <value>实时云端备份，手机/电脑/网页多端同步</value>
+  </data>
+  <data name="Upgrade.PlanCloud3" xml:space="preserve">
+    <value>支持邀请会计、经理和录入员并配置细粒度权限</value>
+  </data>
+  <data name="Upgrade.PlanCloud4" xml:space="preserve">
+    <value>支持通过 WhatsApp 和邮件分享实时对账单链接</value>
+  </data>
+  <data name="Upgrade.NeedInternet" xml:space="preserve">
+    <value>请先连接互联网，再将您的离线账簿升级到在线云模式。</value>
+  </data>
+  <data name="Upgrade.TabNewAccount" xml:space="preserve">
+    <value>创建在线账户</value>
+  </data>
+  <data name="Upgrade.TabExistingAccount" xml:space="preserve">
+    <value>登录已有账户</value>
+  </data>
+  <data name="Upgrade.SubmitNew" xml:space="preserve">
+    <value>创建账户并上传离线数据</value>
+  </data>
+  <data name="Upgrade.SubmitExisting" xml:space="preserve">
+    <value>登录并上传离线数据</value>
+  </data>
+  <data name="Upgrade.Starting" xml:space="preserve">
+    <value>正在准备升级…</value>
+  </data>
+  <data name="Upgrade.Failed" xml:space="preserve">
+    <value>未能完成升级，您的离线数据仍安全保存在本设备上。</value>
+  </data>
+  <data name="Upgrade.SettingsCardTitle" xml:space="preserve">
+    <value>升级到在线云模式</value>
+  </data>
+  <data name="Upgrade.SettingsCardBody" xml:space="preserve">
+    <value>将离线账簿备份至云端，跨手机与电脑同步，并邀请员工协作。</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineTitle" xml:space="preserve">
+    <value>员工与权限管理需要在线云模式</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineBody" xml:space="preserve">
+    <value>将您的离线账簿升级为在线云账户后，即可邀请会计、经理和录入员并设置权限。</value>
+  </data>
+  <data name="Settings.DarkMode" xml:space="preserve">
+    <value>深色模式</value>
+  </data>
+  <data name="Backup.Title" xml:space="preserve">
+    <value>本地备份与恢复</value>
+  </data>
+  <data name="Backup.Help" xml:space="preserve">
+    <value>将此账套导出为便携 JSON 备份文件以妥善保存。</value>
+  </data>
+  <data name="Backup.Export" xml:space="preserve">
+    <value>导出备份 (.json)</value>
+  </data>
+  <data name="Backup.Restore" xml:space="preserve">
+    <value>从备份恢复</value>
+  </data>
+  <data name="Backup.Exported" xml:space="preserve">
+    <value>备份文件已保存。</value>
+  </data>
+  <data name="Backup.Restored" xml:space="preserve">
+    <value>已在本设备恢复“{0}”。</value>
+  </data>
+  <data name="Backup.Failed" xml:space="preserve">
+    <value>无法处理备份文件。</value>
   </data>
 </root>

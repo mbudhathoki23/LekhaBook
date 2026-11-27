@@ -198,21 +198,23 @@
     {
         var details = await Companies.GetCompanyAsync(companyId);
         var transactions = await Data.GetTransactionsAsync(companyId);
-        _error ??= details.Ok ? null : new ApiError(details.Error, details.IsNetworkError);
+        // Offline, the company settings can't be asked: use the saved calendar and the Nepali defaults.
+        _error ??= details.Ok || details.IsNetworkError ? null : new ApiError(details.Error, details.IsNetworkError);
         _error ??= transactions.Ok ? null : new ApiError(transactions.Error, transactions.IsNetworkError);
-        if (details.Value is not { } settings || transactions.Value is not { } entries)
+        if ((details.Value is null && !details.IsNetworkError) || transactions.Value is not { } entries)
         {
             _dashboard = null;
             return;
         }
 
-        _calendar = Enum.TryParse(settings.Calendar, out CalendarMode calendar) ? calendar : CalendarMode.BS;
+        var wanted = details.Value?.Calendar ?? Session.CurrentCompany?.Calendar;
+        _calendar = Enum.TryParse(wanted, out CalendarMode calendar) ? calendar : CalendarMode.BS;
         _dashboard = DashboardFlows.Build(
             entries,
             _parties ?? [],
             _calendar,
-            settings.FiscalYearStartMonth,
-            CompanyClock.Today(settings.TimeZoneId, TimeProvider.System));
+            details.Value?.FiscalYearStartMonth ?? 4,
+            CompanyClock.Today(details.Value?.TimeZoneId ?? CompanyClock.DefaultTimeZoneId, TimeProvider.System));
     }
 
     private string MonthLabel(MonthFlow month)

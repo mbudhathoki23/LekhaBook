@@ -1,13 +1,15 @@
 ﻿@inherits LayoutComponentBase
 @implements IDisposable
 @inject ISessionService Session
+@inject ISyncService Sync
+@inject IThemeService Theme
 @inject ILanguageService Language
 @inject NavigationManager Navigation
 @inject BackNavigator Back
 
 @* The wrapper sets the reading direction (Arabic is right to left) and the language for font choice. *@
 <MudRTLProvider RightToLeft="@Languages.IsRightToLeft(Language.CurrentCode)" lang="@Language.CurrentCode">
-<MudThemeProvider Theme="AppTheme.Theme" />
+<MudThemeProvider Theme="AppTheme.Theme" IsDarkMode="@Theme.IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
@@ -39,9 +41,16 @@ else
             <MudSpacer />
             @if (!IsFormPage)
             {
-                <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Inherit"
-                               aria-label="@Loc["Shell.AddTransaction"]" Class="quick-add-fab"
-                               OnClick="NavigateToAddTransaction" />
+                <MudMenu Icon="@Icons.Material.Filled.Add" Color="Color.Inherit" Class="quick-add-fab"
+                         AriaLabel="@Loc["Shell.AddTransaction"]" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                    <MudMenuItem Icon="@Icons.Material.Filled.ArrowDownward" IconColor="Color.Success" Href="transactions/new?type=PaymentIn">@Loc["TxnType.PaymentIn"]</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.ArrowUpward" IconColor="Color.Error" Href="transactions/new?type=PaymentOut">@Loc["TxnType.PaymentOut"]</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.ReceiptLong" IconColor="Color.Warning" Href="transactions/new?type=Expense">@Loc["Transactions.Type.Expense"]</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Savings" IconColor="Color.Info" Href="transactions/new?type=OtherIncome">@Loc["TxnType.OtherIncome"]</MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.SwapHoriz" Href="transactions/new?type=TransferMoney">@Loc["TxnType.TransferMoney"]</MudMenuItem>
+                    <MudDivider />
+                    <MudMenuItem Icon="@Icons.Material.Filled.PersonAdd" Href="parties/new">@Loc["Parties.AddParty"]</MudMenuItem>
+                </MudMenu>
             }
             <SyncStatusChip />
         </MudAppBar>
@@ -56,7 +65,19 @@ else
 
         <MudMainContent>
             <MudContainer MaxWidth="MaxWidth.Large" Class="@(IsFormPage ? "page-content page-content-form" : "page-content")">
-                @if (Session.IsOffline)
+                @if (Session.IsLocalMode && CurrentPath != "upgrade")
+                {
+                    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+                        <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Spacing="2">
+                            <span>@Loc["Shell.LocalModeBanner"]</span>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small"
+                                       StartIcon="@Icons.Material.Filled.CloudUpload" Href="upgrade">
+                                @Loc["Upgrade.Button"]
+                            </MudButton>
+                        </MudStack>
+                    </MudAlert>
+                }
+                else if (Session.IsOffline)
                 {
                     <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
                         @Loc["Shell.Offline"]
@@ -68,7 +89,7 @@ else
                 }
                 else
                 {
-                    <div @key="Session.CurrentCompany?.CompanyId">@Body</div>
+                    <div @key="BodyKey">@Body</div>
                 }
             </MudContainer>
         </MudMainContent>
@@ -93,13 +114,16 @@ else
 
 @code {
     private bool _drawerOpen = true;
-
     private int _languageVersion;
+    private int _syncVersion;
 
     private string CurrentPath => Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
 
+    /// <summary>The upgrade screen signs in and changes company while it runs: it keeps its progress and errors.</summary>
+    private string BodyKey => CurrentPath == "upgrade" ? "upgrade" : $"{Session.CurrentCompany?.CompanyId}:{_syncVersion}";
+
     /// <summary>Pages that work before the user has a company.</summary>
-    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings" or "settings/security"
+    private bool AllowedWithoutCompany => CurrentPath is "companies/new" or "invite" or "settings" or "settings/security" or "upgrade" or "sync"
         || CurrentPath.StartsWith("shared-report/", StringComparison.Ordinal);
 
     /// <summary>Add and edit forms (…/new, …/edit).</summary>
@@ -110,6 +134,9 @@ else
         Session.Changed += OnSessionChanged;
         Navigation.LocationChanged += OnLocationChanged;
         Language.Changed += OnLanguageChanged;
+        Theme.Changed += OnThemeChanged;
+        Sync.DataChanged += OnSyncDataChanged;
+        await Theme.InitializeAsync();
         await Session.InitializeAsync();
         RequireSignIn();
     }
@@ -118,8 +145,6 @@ else
 
     /// <summary>The previous screen; the dashboard when there is none, never out of the app.</summary>
     private Task GoBackAsync() => Back.HandleAsync(() => Navigation.NavigateTo(""));
-
-    private void NavigateToAddTransaction() => Navigation.NavigateTo("/transactions/new");
 
     private void RequireSignIn()
     {
@@ -145,10 +170,30 @@ else
         StateHasChanged();
     });
 
+    /// <summary>
+    /// Pages that only show the books: rebuilding one loses nothing the user typed. Everything else (forms, settings,
+    /// import, security, upgrade) keeps its state and shows new data when next opened.
+    /// </summary>
+    private bool CanReload => CurrentPath is "" or "parties" or "accounts" or "transactions"
+        || (CurrentPath.Split('/') is ["parties" or "accounts", var id] && Guid.TryParse(id, out _));
+
+    private void OnThemeChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
+
+    private void OnSyncDataChanged(object? sender, EventArgs e) => _ = InvokeAsync(() =>
+    {
+        if (CanReload)
+        {
+            _syncVersion++;
+            StateHasChanged();
+        }
+    });
+
     public void Dispose()
     {
         Session.Changed -= OnSessionChanged;
         Navigation.LocationChanged -= OnLocationChanged;
         Language.Changed -= OnLanguageChanged;
+        Theme.Changed -= OnThemeChanged;
+        Sync.DataChanged -= OnSyncDataChanged;
     }
 }

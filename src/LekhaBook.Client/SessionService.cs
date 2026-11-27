@@ -12,22 +12,26 @@ public sealed class SessionService : ISessionService
 {
     private const string CachedMeKey = "session.me";
     private const string LastCompanyKey = "session.company";
+    private const string LocalModeKey = "session.local_mode";
 
     private readonly LekhaBookApi _api;
     private readonly ITokenStore _tokens;
     private readonly ILocalSettings _settings;
     private readonly IEnumerable<IUserChangeListener> _listeners;
     private readonly IDeviceUnlock? _deviceUnlock;
+    private readonly ILocalSessionProvider? _localProvider;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
     public SessionService(LekhaBookApi api, ITokenStore tokens, ILocalSettings settings,
-        IEnumerable<IUserChangeListener> listeners, IDeviceUnlock? deviceUnlock = null)
+        IEnumerable<IUserChangeListener> listeners, IDeviceUnlock? deviceUnlock = null,
+        ILocalSessionProvider? localProvider = null)
     {
         _api = api;
         _tokens = tokens;
         _settings = settings;
         _listeners = listeners;
         _deviceUnlock = deviceUnlock;
+        _localProvider = localProvider;
         _api.SessionExpired += OnSessionExpired;
     }
 
@@ -51,6 +55,10 @@ public sealed class SessionService : ISessionService
     public bool IsLocked { get; private set; }
 
     public bool IsOffline { get; private set; }
+
+    public bool IsLocalMode { get; private set; }
+
+    public bool SupportsLocalMode => _localProvider is not null;
 
     public MeResponse? Me { get; private set; }
 
@@ -144,10 +152,95 @@ public sealed class SessionService : ISessionService
         }
     }
 
+    public async Task<SignInOutcome> StartLocalModeAsync(string businessName, string calendar = "BS")
+    {
+        if (_localProvider is null)
+        {
+            return new("Offline local mode is available in the installed app.");
+        }
+
+        await _initLock.WaitAsync();
+        try
+        {
+            // Open the local offline SQLite database first.
+            foreach (var listener in _listeners)
+            {
+                await listener.OnUserChangedAsync(_localProvider.LocalUserId);
+            }
+
+            var companies = await _localProvider.ListCompaniesAsync();
+            if (companies.Count == 0)
+            {
+                var name = string.IsNullOrWhiteSpace(businessName) ? "My Business" : businessName.Trim();
+                await _localProvider.CreateCompanyAsync(new CreateCompanyRequest(name, Calendar: calendar));
+                companies = await _localProvider.ListCompaniesAsync();
+            }
+
+            IsLocalMode = true;
+            IsOffline = false;
+            IsLocked = false;
+            Me = new MeResponse(_localProvider.LocalUserId, string.Empty, "Offline User", companies);
+            var lastId = Guid.TryParse(await _settings.GetAsync(LastCompanyKey), out var id) ? id : (Guid?)null;
+            CurrentCompany = companies.FirstOrDefault(c => c.CompanyId == lastId) ?? companies.FirstOrDefault();
+            await _settings.SetAsync(LocalModeKey, "1");
+            if (CurrentCompany is not null)
+            {
+                await _settings.SetAsync(LastCompanyKey, CurrentCompany.CompanyId.ToString());
+            }
+
+            IsInitialized = true;
+        }
+        finally
+        {
+            _initLock.Release();
+        }
+
+        Changed?.Invoke(this, EventArgs.Empty);
+        return new(null);
+    }
+
+    public async Task ReturnToLocalModeAsync()
+    {
+        if (_localProvider is null)
+        {
+            return;
+        }
+
+        await _initLock.WaitAsync();
+        try
+        {
+            // No "signed out" state in between: the screen that asked stays open.
+            _api.SetTokens(null);
+            await _tokens.ClearAsync();
+            await _settings.SetAsync(CachedMeKey, null);
+            if (_deviceUnlock is not null)
+            {
+                await _deviceUnlock.ForgetAsync();
+            }
+
+            CurrentCompany = null;
+            await RestoreLocalModeUnlockedAsync();
+            await _settings.SetAsync(LocalModeKey, "1");
+        }
+        finally
+        {
+            _initLock.Release();
+        }
+
+        Changed?.Invoke(this, EventArgs.Empty);
+    }
+
     private async Task RestoreSavedSessionAsync()
     {
         if (await _tokens.LoadAsync() is not { } saved)
         {
+            // If the user previously chose Offline Local Mode, restore it seamlessly without asking to sign in.
+            if (_localProvider is not null && await _settings.GetAsync(LocalModeKey) == "1")
+            {
+                await RestoreLocalModeUnlockedAsync();
+                return;
+            }
+
             IsLocked = false;
             if (_deviceUnlock is not null)
             {
@@ -166,6 +259,22 @@ public sealed class SessionService : ISessionService
         {
             _api.SetTokens(null);
         }
+    }
+
+    private async Task RestoreLocalModeUnlockedAsync()
+    {
+        foreach (var listener in _listeners)
+        {
+            await listener.OnUserChangedAsync(_localProvider!.LocalUserId);
+        }
+
+        var companies = await _localProvider!.ListCompaniesAsync();
+        IsLocalMode = true;
+        IsOffline = false;
+        IsLocked = false;
+        Me = new MeResponse(_localProvider.LocalUserId, string.Empty, "Offline User", companies);
+        var lastId = Guid.TryParse(await _settings.GetAsync(LastCompanyKey), out var id) ? id : (Guid?)null;
+        CurrentCompany = companies.FirstOrDefault(c => c.CompanyId == lastId) ?? companies.FirstOrDefault();
     }
 
     public async Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl)
@@ -194,6 +303,8 @@ public sealed class SessionService : ISessionService
         }
 
         IsLocked = false;
+        IsLocalMode = false;
+        await _settings.SetAsync(LocalModeKey, null);
         if (_deviceUnlock is not null && !await _deviceUnlock.IsEnabledForAsync(Me!.UserId))
         {
             // A different account must explicitly opt in on this device after its own sign-in.
@@ -216,11 +327,23 @@ public sealed class SessionService : ISessionService
 
     public async Task RefreshAsync()
     {
-        if (IsSignedIn)
+        if (!IsSignedIn)
         {
-            await LoadProfileAsync(allowCached: true);
-            Changed?.Invoke(this, EventArgs.Empty);
+            return;
         }
+
+        if (IsLocalMode && _localProvider is not null)
+        {
+            var companies = await _localProvider.ListCompaniesAsync();
+            Me = Me! with { Companies = companies };
+            var wanted = CurrentCompany?.CompanyId;
+            CurrentCompany = companies.FirstOrDefault(c => c.CompanyId == wanted) ?? companies.FirstOrDefault();
+            Changed?.Invoke(this, EventArgs.Empty);
+            return;
+        }
+
+        await LoadProfileAsync(allowCached: true);
+        Changed?.Invoke(this, EventArgs.Empty);
     }
 
     public bool Can(string permission) =>
@@ -276,11 +399,13 @@ public sealed class SessionService : ISessionService
         var wasSignedIn = Me is not null;
         Me = null;
         IsLocked = false;
+        IsLocalMode = false;
         CurrentCompany = null;
         IsOffline = false;
         _api.SetTokens(null);
         await _settings.SetAsync(CachedMeKey, null);
         await _settings.SetAsync(LastCompanyKey, null);
+        await _settings.SetAsync(LocalModeKey, null);
 
         if (wasSignedIn)
         {

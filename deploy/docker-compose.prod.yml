@@ -1,0 +1,74 @@
+# Production stack for Lekha Books (VPS deployment per Decision D4)
+# Usage:
+#   cp deploy/.env.example deploy/.env   # set real passwords & domains
+#   docker compose -f deploy/docker-compose.prod.yml --env-file deploy/.env up -d --build
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: lekhabook
+      POSTGRES_USER: lekhabook
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in deploy/.env}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lekhabook -d lekhabook"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      ConnectionStrings__LekhaBook: Host=postgres;Port=5432;Database=lekhabook;Username=lekhabook;Password=${POSTGRES_PASSWORD}
+      PublicSite__BaseUrl: https://${WEB_DOMAIN:?Set WEB_DOMAIN in deploy/.env}
+      Database__MigrateOnStartup: ${MIGRATE_ON_STARTUP:-false}
+      RateLimits__AuthPerMinute: ${AUTH_RATE_LIMIT:-30}
+    volumes:
+      - api_attachments:/data/attachments
+      - api_keys:/data/keys
+
+  web:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      Api__BaseUrl: http://api:8080/
+    volumes:
+      - web_keys:/data/keys
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - api
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?Set API_DOMAIN in deploy/.env}
+      WEB_DOMAIN: ${WEB_DOMAIN:?Set WEB_DOMAIN in deploy/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pg_data:
+  api_attachments:
+  api_keys:
+  web_keys:
+  caddy_data:
+  caddy_config:

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -749,7 +749,7 @@
     <value>会社なし</value>
   </data>
   <data name="Shell.Offline" xml:space="preserve">
-    <value>オフラインです。保存済みの会社一覧を表示しています。同期機能に対応するまで、取引先・口座・スタッフの利用には接続が必要です。</value>
+    <value>オフラインです。帳簿の閲覧と取引の入力はできます。サーバーに接続するとアップロードされます。取引先・口座・スタッフ・写真には接続が必要です。</value>
   </data>
   <data name="Shell.Reload" xml:space="preserve">
     <value>再読み込み</value>
@@ -2059,5 +2059,203 @@ Lekha Books にサインイン: {4}</value>
   </data>
   <data name="Adjust.Saved" xml:space="preserve">
     <value>残高を調整しました。</value>
+  </data>
+  <data name="Sync.NotUploaded" xml:space="preserve">
+    <value>未アップロード {0} 件</value>
+  </data>
+  <data name="Sync.ProblemsTitle" xml:space="preserve">
+    <value>アップロードされていない変更</value>
+  </data>
+  <data name="Sync.Discard" xml:space="preserve">
+    <value>破棄</value>
+  </data>
+  <data name="Offline.ContinueLocal" xml:space="preserve">
+    <value>オフラインで続行（無料ローカルモード）</value>
+  </data>
+  <data name="Offline.ContinueLocalHint" xml:space="preserve">
+    <value>インターネットなしでこの端末で使用できます。いつでもオンラインクラウド同期へアップグレード可能です。</value>
+  </data>
+  <data name="Offline.SetupTitle" xml:space="preserve">
+    <value>オフライン帳簿を開始</value>
+  </data>
+  <data name="Offline.DefaultBusinessPlaceholder" xml:space="preserve">
+    <value>マイビジネス</value>
+  </data>
+  <data name="Offline.StartNow" xml:space="preserve">
+    <value>オフラインで開始</value>
+  </data>
+  <data name="Offline.LocalAccountTitle" xml:space="preserve">
+    <value>オフラインローカルモード（この端末のみ）</value>
+  </data>
+  <data name="Offline.LeaveLocal" xml:space="preserve">
+    <value>オフラインモードを終了</value>
+  </data>
+  <data name="Offline.LeaveLocalHelp" xml:space="preserve">
+    <value>サインイン画面に戻ります。オフライン帳簿はこの端末に安全に保存されたままです。</value>
+  </data>
+  <data name="Shell.LocalModeBanner" xml:space="preserve">
+    <value>オフラインローカルモード — 帳簿はこの端末にのみ保存されます。クラウドバックアップと複数端末同期へアップグレードできます。</value>
+  </data>
+  <data name="Sync.LocalOnlyChip" xml:space="preserve">
+    <value>ローカルのみ · アップグレード</value>
+  </data>
+  <data name="Sync.PageTitle" xml:space="preserve">
+    <value>クラウド同期</value>
+  </data>
+  <data name="Sync.LocalOnlyHeading" xml:space="preserve">
+    <value>現在オフラインローカルモードです</value>
+  </data>
+  <data name="Sync.LocalOnlyBody" xml:space="preserve">
+    <value>データはこの端末に保存されています。オンラインクラウドモードへアップグレードすると、バックアップ・複数端末同期・スタッフ招待が利用できます。</value>
+  </data>
+  <data name="Sync.StatusOnline" xml:space="preserve">
+    <value>クラウドに接続済み</value>
+  </data>
+  <data name="Sync.StatusOffline" xml:space="preserve">
+    <value>オフライン動作中</value>
+  </data>
+  <data name="Sync.PendingSummary" xml:space="preserve">
+    <value>{0} 件の変更が同期待ちです</value>
+  </data>
+  <data name="Sync.LastSynced" xml:space="preserve">
+    <value>最終同期：{0}</value>
+  </data>
+  <data name="Sync.SyncNow" xml:space="preserve">
+    <value>今すぐ同期</value>
+  </data>
+  <data name="Sync.NoProblems" xml:space="preserve">
+    <value>すべての変更は正常です。同期の競合はありません。</value>
+  </data>
+  <data name="Upgrade.PageTitle" xml:space="preserve">
+    <value>オンラインモードへアップグレード</value>
+  </data>
+  <data name="Upgrade.Title" xml:space="preserve">
+    <value>オンラインクラウドモードへアップグレード</value>
+  </data>
+  <data name="Upgrade.Subtitle" xml:space="preserve">
+    <value>既存のオフライン取引・取引先・口座・領収書をそのまま引き継ぎ、自動クラウド同期・Webアクセス・スタッフ権限を利用できます。</value>
+  </data>
+  <data name="Upgrade.Button" xml:space="preserve">
+    <value>オンラインへアップグレード</value>
+  </data>
+  <data name="Upgrade.AppOnly" xml:space="preserve">
+    <value>すでにオンラインWeb版をご利用中です。</value>
+  </data>
+  <data name="Upgrade.AlreadyOnline" xml:space="preserve">
+    <value>アカウントはすでにオンラインクラウドモードに接続されており、オフライン・オンライン自動同期が有効です。</value>
+  </data>
+  <data name="Upgrade.SuccessTitle" xml:space="preserve">
+    <value>オンラインクラウドモードへようこそ！</value>
+  </data>
+  <data name="Upgrade.SuccessSummary" xml:space="preserve">
+    <value>{0} 件のビジネス、{1} 件の取引、{2} 件の添付ファイルを安全にクラウドへ移行しました。今後もオフラインで作業でき、自動で同期されます。</value>
+  </data>
+  <data name="Upgrade.GoToBooks" xml:space="preserve">
+    <value>帳簿を開く</value>
+  </data>
+  <data name="Upgrade.DeviceDataTitle" xml:space="preserve">
+    <value>この端末から移行可能なデータ</value>
+  </data>
+  <data name="Upgrade.CountCompanies" xml:space="preserve">
+    <value>{0} ビジネス</value>
+  </data>
+  <data name="Upgrade.CountParties" xml:space="preserve">
+    <value>{0} 取引先</value>
+  </data>
+  <data name="Upgrade.CountAccounts" xml:space="preserve">
+    <value>{0} 口座</value>
+  </data>
+  <data name="Upgrade.CountEntries" xml:space="preserve">
+    <value>{0} 取引</value>
+  </data>
+  <data name="Upgrade.CountAttachments" xml:space="preserve">
+    <value>{0} 添付</value>
+  </data>
+  <data name="Upgrade.PlanLocalTitle" xml:space="preserve">
+    <value>オフラインローカルモード（現在）</value>
+  </data>
+  <data name="Upgrade.PlanLocal1" xml:space="preserve">
+    <value>この端末で100%オフライン動作</value>
+  </data>
+  <data name="Upgrade.PlanLocal2" xml:space="preserve">
+    <value>手動JSONバックアップ対応</value>
+  </data>
+  <data name="Upgrade.PlanLocal3" xml:space="preserve">
+    <value>端末紛失時の自動クラウドバックアップなし</value>
+  </data>
+  <data name="Upgrade.PlanLocal4" xml:space="preserve">
+    <value>単一端末のみ・スタッフ権限なし</value>
+  </data>
+  <data name="Upgrade.PlanCloudTitle" xml:space="preserve">
+    <value>オンラインクラウドモード</value>
+  </data>
+  <data name="Upgrade.PlanCloud1" xml:space="preserve">
+    <value>オフライン動作＋オンライン時自動同期</value>
+  </data>
+  <data name="Upgrade.PlanCloud2" xml:space="preserve">
+    <value>リアルタイムクラウドバックアップ・複数端末対応（スマホ＋PC＋Web）</value>
+  </data>
+  <data name="Upgrade.PlanCloud3" xml:space="preserve">
+    <value>権限付きで経理・マネージャー・入力担当スタッフを招待</value>
+  </data>
+  <data name="Upgrade.PlanCloud4" xml:space="preserve">
+    <value>WhatsAppやメールでライブ明細リンクを共有</value>
+  </data>
+  <data name="Upgrade.NeedInternet" xml:space="preserve">
+    <value>オフライン帳簿をオンラインクラウドモードへアップグレードするにはインターネットに接続してください。</value>
+  </data>
+  <data name="Upgrade.TabNewAccount" xml:space="preserve">
+    <value>新規オンラインアカウント作成</value>
+  </data>
+  <data name="Upgrade.TabExistingAccount" xml:space="preserve">
+    <value>既存アカウントでサインイン</value>
+  </data>
+  <data name="Upgrade.SubmitNew" xml:space="preserve">
+    <value>アカウントを作成してオフラインデータを移行</value>
+  </data>
+  <data name="Upgrade.SubmitExisting" xml:space="preserve">
+    <value>サインインしてオフラインデータを移行</value>
+  </data>
+  <data name="Upgrade.Starting" xml:space="preserve">
+    <value>アップグレードを準備しています…</value>
+  </data>
+  <data name="Upgrade.Failed" xml:space="preserve">
+    <value>アップグレードを完了できませんでした。オフラインデータはこの端末に安全に保持されています。</value>
+  </data>
+  <data name="Upgrade.SettingsCardTitle" xml:space="preserve">
+    <value>オンラインクラウドモードへアップグレード</value>
+  </data>
+  <data name="Upgrade.SettingsCardBody" xml:space="preserve">
+    <value>オフライン帳簿をクラウドにバックアップし、スマホやPCと同期してスタッフを招待できます。</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineTitle" xml:space="preserve">
+    <value>スタッフと権限管理にはオンラインクラウドモードが必要です</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineBody" xml:space="preserve">
+    <value>オフライン帳簿をオンラインクラウドアカウントへアップグレードすると、権限付きで経理やスタッフを招待できます。</value>
+  </data>
+  <data name="Settings.DarkMode" xml:space="preserve">
+    <value>ダークモード</value>
+  </data>
+  <data name="Backup.Title" xml:space="preserve">
+    <value>ローカルバックアップと復元</value>
+  </data>
+  <data name="Backup.Help" xml:space="preserve">
+    <value>このビジネスのデータを安全な保管用JSONバックアップファイルとして書き出します。</value>
+  </data>
+  <data name="Backup.Export" xml:space="preserve">
+    <value>バックアップを書き出す (.json)</value>
+  </data>
+  <data name="Backup.Restore" xml:space="preserve">
+    <value>バックアップから復元</value>
+  </data>
+  <data name="Backup.Exported" xml:space="preserve">
+    <value>バックアップファイルを保存しました。</value>
+  </data>
+  <data name="Backup.Restored" xml:space="preserve">
+    <value>この端末に「{0}」を復元しました。</value>
+  </data>
+  <data name="Backup.Failed" xml:space="preserve">
+    <value>バックアップファイルを処理できませんでした。</value>
   </data>
 </root>

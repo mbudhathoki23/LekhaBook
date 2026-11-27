@@ -69,6 +69,45 @@ else
     @Loc["Auth.SignIn.NewPrompt"] <MudLink Href="@SignUpHref">@Loc["Auth.SignIn.CreateAccount"]</MudLink>
 </MudText>
 
+@if (Session.SupportsLocalMode && !Session.IsLocked)
+{
+    <MudDivider Class="my-5" />
+    @if (!_showOfflineSetup)
+    {
+        <MudButton Variant="Variant.Outlined" Color="Color.Secondary" FullWidth="true" Size="Size.Large"
+                   StartIcon="@Icons.Material.Filled.WifiOff" Disabled="_busy"
+                   OnClick="() => _showOfflineSetup = true">
+            @Loc["Offline.ContinueLocal"]
+        </MudButton>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2" Align="Align.Center">
+            @Loc["Offline.ContinueLocalHint"]
+        </MudText>
+    }
+    else
+    {
+        <form @onsubmit="StartOfflineAsync" @onsubmit:preventDefault="true">
+            <MudStack Spacing="3">
+                <MudText Typo="Typo.subtitle1">@Loc["Offline.SetupTitle"]</MudText>
+                <MudTextField @bind-Value="_offlineBusinessName" Label="@Loc["Companies.Create.BusinessName"]"
+                              Variant="Variant.Outlined" Immediate="true" AutoFocus="true" MaxLength="200"
+                              Placeholder="@Loc["Offline.DefaultBusinessPlaceholder"]" />
+                <MudRadioGroup T="string" @bind-Value="_offlineCalendar" Name="offline-calendar">
+                    <MudRadio Value="@("BS")" Color="Color.Primary">@Loc["Calendar.Bs"]</MudRadio>
+                    <MudRadio Value="@("AD")" Color="Color.Primary">@Loc["Calendar.Ad"]</MudRadio>
+                </MudRadioGroup>
+                <MudStack Row="true" Spacing="2">
+                    <MudButton Variant="Variant.Text" OnClick="() => _showOfflineSetup = false" Disabled="_busy">@Loc["Common.Cancel"]</MudButton>
+                    <MudSpacer />
+                    <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Secondary"
+                               StartIcon="@Icons.Material.Filled.WifiOff" Disabled="_busy">
+                        @Loc["Offline.StartNow"]
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </form>
+    }
+}
+
 @code {
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
@@ -86,6 +125,9 @@ else
     private bool _enableDevice;
     private string _code = string.Empty;
     private DeviceUnlockState? _deviceState;
+    private bool _showOfflineSetup;
+    private string _offlineBusinessName = string.Empty;
+    private string _offlineCalendar = "BS";
 
     protected override async Task OnInitializedAsync() => _deviceState = await DeviceUnlock.GetStateAsync();
 
@@ -149,6 +191,28 @@ else
     private void UseAccountPassword() { _usePassword = true; _error = null; }
     private void ToggleRecovery() { _useRecovery = !_useRecovery; _code = string.Empty; _error = null; }
     private void RestartSignIn() { _requiresTwoFactor = false; _useRecovery = false; _password = _code = string.Empty; _error = null; }
+
+    private async Task StartOfflineAsync()
+    {
+        if (_busy) return;
+        _busy = true;
+        _error = null;
+        try
+        {
+            var outcome = await Session.StartLocalModeAsync(_offlineBusinessName, _offlineCalendar);
+            if (!outcome.Ok)
+            {
+                _error = outcome.Error;
+                return;
+            }
+
+            Navigation.NavigateTo(string.Empty);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
     public void Dispose() => _password = _code = string.Empty;
 
     /// <summary>Only same-app relative paths, never another site.</summary>

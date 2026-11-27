@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -749,7 +749,7 @@
     <value>কোনো কোম্পানি নেই</value>
   </data>
   <data name="Shell.Offline" xml:space="preserve">
-    <value>আপনি অফলাইনে আছেন। সেভ থাকা কোম্পানির তালিকা দেখানো হচ্ছে; সিঙ্ক সুবিধা চালু না হওয়া পর্যন্ত পার্টি, অ্যাকাউন্ট ও স্টাফের জন্য ইন্টারনেট লাগবে।</value>
+    <value>আপনি অফলাইনে আছেন। হিসাব দেখতে ও এন্ট্রি যোগ করতে পারবেন; সার্ভার পাওয়া গেলে আপলোড হবে। পার্টি, অ্যাকাউন্ট, স্টাফ ও ছবির জন্য সংযোগ দরকার।</value>
   </data>
   <data name="Shell.Reload" xml:space="preserve">
     <value>রিলোড</value>
@@ -2059,5 +2059,203 @@ Lekha Books-এ সাইন ইন: {4}</value>
   </data>
   <data name="Adjust.Saved" xml:space="preserve">
     <value>ব্যালেন্স সমন্বয় হয়েছে।</value>
+  </data>
+  <data name="Sync.NotUploaded" xml:space="preserve">
+    <value>{0}টি আপলোড হয়নি</value>
+  </data>
+  <data name="Sync.ProblemsTitle" xml:space="preserve">
+    <value>আপলোড না হওয়া পরিবর্তন</value>
+  </data>
+  <data name="Sync.Discard" xml:space="preserve">
+    <value>বাদ দিন</value>
+  </data>
+  <data name="Offline.ContinueLocal" xml:space="preserve">
+    <value>অফলাইনে চালিয়ে যান (বিনামূল্যে লোকাল মোড)</value>
+  </data>
+  <data name="Offline.ContinueLocalHint" xml:space="preserve">
+    <value>ইন্টারনেট ছাড়াই এই ডিভাইসে লেখা বুকস ব্যবহার করুন। যেকোনো সময় অনলাইন ক্লাউড সিঙ্কে আপগ্রেড করুন।</value>
+  </data>
+  <data name="Offline.SetupTitle" xml:space="preserve">
+    <value>অফলাইন হিসাব শুরু করুন</value>
+  </data>
+  <data name="Offline.DefaultBusinessPlaceholder" xml:space="preserve">
+    <value>আমার ব্যবসা</value>
+  </data>
+  <data name="Offline.StartNow" xml:space="preserve">
+    <value>অফলাইন শুরু করুন</value>
+  </data>
+  <data name="Offline.LocalAccountTitle" xml:space="preserve">
+    <value>অফলাইন লোকাল মোড (শুধু এই ডিভাইস)</value>
+  </data>
+  <data name="Offline.LeaveLocal" xml:space="preserve">
+    <value>অফলাইন মোড থেকে বের হন</value>
+  </data>
+  <data name="Offline.LeaveLocalHelp" xml:space="preserve">
+    <value>সাইন-ইন স্ক্রিনে ফিরে যাবে। আপনার অফলাইন হিসাব এই ডিভাইসে নিরাপদ থাকবে।</value>
+  </data>
+  <data name="Shell.LocalModeBanner" xml:space="preserve">
+    <value>অফলাইন লোকাল মোড — হিসাব শুধু এই ডিভাইসে সংরক্ষিত। ক্লাউড ব্যাকআপ ও মাল্টি-ডিভাইস সিঙ্কের জন্য আপগ্রেড করুন।</value>
+  </data>
+  <data name="Sync.LocalOnlyChip" xml:space="preserve">
+    <value>শুধু লোকাল · আপগ্রেড</value>
+  </data>
+  <data name="Sync.PageTitle" xml:space="preserve">
+    <value>ক্লাউড সিঙ্ক</value>
+  </data>
+  <data name="Sync.LocalOnlyHeading" xml:space="preserve">
+    <value>আপনি অফলাইন লোকাল মোডে আছেন</value>
+  </data>
+  <data name="Sync.LocalOnlyBody" xml:space="preserve">
+    <value>আপনার ডেটা এই ডিভাইসে সংরক্ষিত আছে। ক্লাউড ব্যাকআপ, একাধিক ডিভাইসে সিঙ্ক ও স্টাফ যুক্ত করতে যেকোনো সময় অনলাইন মোডে আপগ্রেড করুন।</value>
+  </data>
+  <data name="Sync.StatusOnline" xml:space="preserve">
+    <value>ক্লাউডে সংযুক্ত</value>
+  </data>
+  <data name="Sync.StatusOffline" xml:space="preserve">
+    <value>অফলাইনে কাজ চলছে</value>
+  </data>
+  <data name="Sync.PendingSummary" xml:space="preserve">
+    <value>{0}টি পরিবর্তন সিঙ্কের অপেক্ষায়</value>
+  </data>
+  <data name="Sync.LastSynced" xml:space="preserve">
+    <value>সর্বশেষ সিঙ্ক: {0}</value>
+  </data>
+  <data name="Sync.SyncNow" xml:space="preserve">
+    <value>এখনই সিঙ্ক করুন</value>
+  </data>
+  <data name="Sync.NoProblems" xml:space="preserve">
+    <value>সব পরিবর্তন সঠিক আছে। কোনো সিঙ্ক দ্বন্দ্ব নেই।</value>
+  </data>
+  <data name="Upgrade.PageTitle" xml:space="preserve">
+    <value>অনলাইন মোডে আপগ্রেড করুন</value>
+  </data>
+  <data name="Upgrade.Title" xml:space="preserve">
+    <value>অনলাইন ক্লাউড মোডে আপগ্রেড করুন</value>
+  </data>
+  <data name="Upgrade.Subtitle" xml:space="preserve">
+    <value>আপনার সব বিদ্যমান অফলাইন এন্ট্রি, পার্টি, অ্যাকাউন্ট ও রসিদ সুরক্ষিত রেখে স্বয়ংক্রিয় ক্লাউড সিঙ্ক, ওয়েব অ্যাক্সেস ও টিম অনুমতি চালু করুন।</value>
+  </data>
+  <data name="Upgrade.Button" xml:space="preserve">
+    <value>অনলাইনে আপগ্রেড করুন</value>
+  </data>
+  <data name="Upgrade.AppOnly" xml:space="preserve">
+    <value>আপনি ইতিমধ্যেই অনলাইন ওয়েব পোর্টাল ব্যবহার করছেন।</value>
+  </data>
+  <data name="Upgrade.AlreadyOnline" xml:space="preserve">
+    <value>আপনার অ্যাকাউন্ট ইতিমধ্যেই স্বয়ংক্রিয় অফলাইন + অনলাইন সিঙ্কসহ অনলাইন ক্লাউড মোডে যুক্ত আছে।</value>
+  </data>
+  <data name="Upgrade.SuccessTitle" xml:space="preserve">
+    <value>অনলাইন ক্লাউড মোডে স্বাগতম!</value>
+  </data>
+  <data name="Upgrade.SuccessSummary" xml:space="preserve">
+    <value>{0}টি ব্যবসা, {1}টি এন্ট্রি ও {2}টি সংযুক্তি নিরাপদে ক্লাউডে স্থানান্তর হয়েছে। আপনি এখনো যেকোনো সময় অফলাইনে কাজ করতে পারবেন।</value>
+  </data>
+  <data name="Upgrade.GoToBooks" xml:space="preserve">
+    <value>আমার হিসাব খুলুন</value>
+  </data>
+  <data name="Upgrade.DeviceDataTitle" xml:space="preserve">
+    <value>এই ডিভাইস থেকে স্থানান্তরের জন্য প্রস্তুত ডেটা</value>
+  </data>
+  <data name="Upgrade.CountCompanies" xml:space="preserve">
+    <value>{0} ব্যবসা</value>
+  </data>
+  <data name="Upgrade.CountParties" xml:space="preserve">
+    <value>{0} পার্টি</value>
+  </data>
+  <data name="Upgrade.CountAccounts" xml:space="preserve">
+    <value>{0} অ্যাকাউন্ট</value>
+  </data>
+  <data name="Upgrade.CountEntries" xml:space="preserve">
+    <value>{0} এন্ট্রি</value>
+  </data>
+  <data name="Upgrade.CountAttachments" xml:space="preserve">
+    <value>{0} সংযুক্তি</value>
+  </data>
+  <data name="Upgrade.PlanLocalTitle" xml:space="preserve">
+    <value>অফলাইন লোকাল মোড (বর্তমান)</value>
+  </data>
+  <data name="Upgrade.PlanLocal1" xml:space="preserve">
+    <value>এই ডিভাইসে ১০০% অফলাইনে চলে</value>
+  </data>
+  <data name="Upgrade.PlanLocal2" xml:space="preserve">
+    <value>ডিভাইসে ম্যানুয়াল JSON ব্যাকআপ</value>
+  </data>
+  <data name="Upgrade.PlanLocal3" xml:space="preserve">
+    <value>ফোন হারালে স্বয়ংক্রিয় ক্লাউড ব্যাকআপ নেই</value>
+  </data>
+  <data name="Upgrade.PlanLocal4" xml:space="preserve">
+    <value>শুধু একটি ডিভাইস, স্টাফ ভূমিকা নেই</value>
+  </data>
+  <data name="Upgrade.PlanCloudTitle" xml:space="preserve">
+    <value>অনলাইন ক্লাউড মোড</value>
+  </data>
+  <data name="Upgrade.PlanCloud1" xml:space="preserve">
+    <value>অফলাইনেও চলে এবং অনলাইনে স্বয়ংক্রিয় সিঙ্ক হয়</value>
+  </data>
+  <data name="Upgrade.PlanCloud2" xml:space="preserve">
+    <value>রিয়েল-টাইম ক্লাউড ব্যাকআপ ও একাধিক ডিভাইসে অ্যাক্সেস (ফোন + পিসি + ওয়েব)</value>
+  </data>
+  <data name="Upgrade.PlanCloud3" xml:space="preserve">
+    <value>অনুমতিসহ হিসাবরক্ষক, ম্যানেজার ও এন্ট্রি স্টাফ আমন্ত্রণ</value>
+  </data>
+  <data name="Upgrade.PlanCloud4" xml:space="preserve">
+    <value>হোয়াটসঅ্যাপ ও ইমেইলে লাইভ স্টেটমেন্ট লিংক শেয়ার করুন</value>
+  </data>
+  <data name="Upgrade.NeedInternet" xml:space="preserve">
+    <value>আপনার অফলাইন হিসাব অনলাইন ক্লাউড মোডে আপগ্রেড করতে ইন্টারনেটে সংযুক্ত হন।</value>
+  </data>
+  <data name="Upgrade.TabNewAccount" xml:space="preserve">
+    <value>নতুন অনলাইন অ্যাকাউন্ট তৈরি করুন</value>
+  </data>
+  <data name="Upgrade.TabExistingAccount" xml:space="preserve">
+    <value>বিদ্যমান অ্যাকাউন্টে সাইন ইন</value>
+  </data>
+  <data name="Upgrade.SubmitNew" xml:space="preserve">
+    <value>অ্যাকাউন্ট তৈরি ও অফলাইন ডেটা আপলোড করুন</value>
+  </data>
+  <data name="Upgrade.SubmitExisting" xml:space="preserve">
+    <value>সাইন ইন ও অফলাইন ডেটা আপলোড করুন</value>
+  </data>
+  <data name="Upgrade.Starting" xml:space="preserve">
+    <value>আপগ্রেড প্রস্তুত হচ্ছে…</value>
+  </data>
+  <data name="Upgrade.Failed" xml:space="preserve">
+    <value>আপগ্রেড সম্পন্ন করা যায়নি। আপনার অফলাইন ডেটা এখনো এই ডিভাইসে নিরাপদ আছে।</value>
+  </data>
+  <data name="Upgrade.SettingsCardTitle" xml:space="preserve">
+    <value>অনলাইন ক্লাউড মোডে আপগ্রেড করুন</value>
+  </data>
+  <data name="Upgrade.SettingsCardBody" xml:space="preserve">
+    <value>আপনার অফলাইন হিসাব ক্লাউডে ব্যাকআপ করুন, ফোন ও পিসিতে সিঙ্ক করুন এবং স্টাফ আমন্ত্রণ জানান।</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineTitle" xml:space="preserve">
+    <value>স্টাফ ও অনুমতির জন্য অনলাইন ক্লাউড মোড প্রয়োজন</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineBody" xml:space="preserve">
+    <value>হিসাবরক্ষক, ম্যানেজার ও এন্ট্রি স্টাফ আমন্ত্রণ জানাতে আপনার অফলাইন হিসাব অনলাইন ক্লাউড অ্যাকাউন্টে আপগ্রেড করুন।</value>
+  </data>
+  <data name="Settings.DarkMode" xml:space="preserve">
+    <value>ডার্ক মোড</value>
+  </data>
+  <data name="Backup.Title" xml:space="preserve">
+    <value>লোকাল ব্যাকআপ ও রিস্টোর</value>
+  </data>
+  <data name="Backup.Help" xml:space="preserve">
+    <value>নিরাপত্তার জন্য এই ব্যবসাটি JSON ব্যাকআপ ফাইল হিসেবে এক্সপোর্ট করুন।</value>
+  </data>
+  <data name="Backup.Export" xml:space="preserve">
+    <value>ব্যাকআপ এক্সপোর্ট (.json)</value>
+  </data>
+  <data name="Backup.Restore" xml:space="preserve">
+    <value>ব্যাকআপ থেকে রিস্টোর</value>
+  </data>
+  <data name="Backup.Exported" xml:space="preserve">
+    <value>ব্যাকআপ ফাইল সংরক্ষিত হয়েছে।</value>
+  </data>
+  <data name="Backup.Restored" xml:space="preserve">
+    <value>এই ডিভাইসে "{0}" রিস্টোর করা হয়েছে।</value>
+  </data>
+  <data name="Backup.Failed" xml:space="preserve">
+    <value>ব্যাকআপ ফাইল প্রক্রিয়া করা যায়নি।</value>
   </data>
 </root>

@@ -33,28 +33,42 @@ public static class ClientServiceCollectionExtensions
         {
             services.AddScoped<IAccountSecurity, AccountSecurity>();
             services.AddScoped<IDeviceUnlock, UnsupportedDeviceUnlock>();
+            services.AddScoped<IOfflineUpgradeService, UnsupportedOfflineUpgradeService>();
+            services.AddScoped<IBackupService, UnsupportedBackupService>();
+            services.AddScoped<IThemeService, LocalThemeService>();
             services.AddScoped(api);
             services.AddScoped<SessionService>();
             services.AddScoped<ISessionService>(sp => sp.GetRequiredService<SessionService>());
-            services.AddScoped<ICompanyApi, CompanyApi>();
-            services.AddScoped<IDataService, ApiDataService>();
-            services.AddScoped<IAttachmentService, ApiAttachmentService>();
+            services.AddScoped<CompanyApi>();
+            services.AddScoped<ICompanyApi>(sp => sp.GetRequiredService<CompanyApi>());
+            services.AddScoped<ApiDataService>();
+            services.AddScoped<IDataService>(sp => sp.GetRequiredService<ApiDataService>());
+            services.AddScoped<ApiAttachmentService>();
+            services.AddScoped<IAttachmentService>(sp => sp.GetRequiredService<ApiAttachmentService>());
             services.AddScoped<IReportLinkApi, ReportLinkApi>();
-            services.AddScoped<IBookExtrasApi, BookExtrasApi>();
+            services.AddScoped<BookExtrasApi>();
+            services.AddScoped<IBookExtrasApi>(sp => sp.GetRequiredService<BookExtrasApi>());
             services.AddScoped<IImportService, ImportApi>();
         }
         else
         {
             services.AddSingleton<IAccountSecurity, AccountSecurity>();
             services.AddSingleton<IDeviceUnlock, UnsupportedDeviceUnlock>();
+            services.AddSingleton<IOfflineUpgradeService, UnsupportedOfflineUpgradeService>();
+            services.AddSingleton<IBackupService, UnsupportedBackupService>();
+            services.AddSingleton<IThemeService, LocalThemeService>();
             services.AddSingleton(api);
             services.AddSingleton<SessionService>();
             services.AddSingleton<ISessionService>(sp => sp.GetRequiredService<SessionService>());
-            services.AddSingleton<ICompanyApi, CompanyApi>();
-            services.AddSingleton<IDataService, ApiDataService>();
-            services.AddSingleton<IAttachmentService, ApiAttachmentService>();
+            services.AddSingleton<CompanyApi>();
+            services.AddSingleton<ICompanyApi>(sp => sp.GetRequiredService<CompanyApi>());
+            services.AddSingleton<ApiDataService>();
+            services.AddSingleton<IDataService>(sp => sp.GetRequiredService<ApiDataService>());
+            services.AddSingleton<ApiAttachmentService>();
+            services.AddSingleton<IAttachmentService>(sp => sp.GetRequiredService<ApiAttachmentService>());
             services.AddSingleton<IReportLinkApi, ReportLinkApi>();
-            services.AddSingleton<IBookExtrasApi, BookExtrasApi>();
+            services.AddSingleton<BookExtrasApi>();
+            services.AddSingleton<IBookExtrasApi>(sp => sp.GetRequiredService<BookExtrasApi>());
             services.AddSingleton<IImportService, ImportApi>();
         }
 

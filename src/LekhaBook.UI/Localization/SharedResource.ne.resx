@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">text/microsoft-resx</resheader>
   <resheader name="version">2.0</resheader>
@@ -821,7 +821,7 @@
     <value>कुनै कम्पनी छैन</value>
   </data>
   <data name="Shell.Offline" xml:space="preserve">
-    <value>तपाईं अफलाइन हुनुहुन्छ। सेभ गरिएको कम्पनी सूची देखाइँदैछ। सिंक नहुँदासम्म पार्टी, खाता र कर्मचारीका लागि इन्टरनेट जडान चाहिन्छ।</value>
+    <value>तपाईं अफलाइन हुनुहुन्छ। हिसाब हेर्न र प्रविष्टि थप्न सकिन्छ; सर्भर भेटिएपछि अपलोड हुन्छ। पार्टी, खाता, कर्मचारी र फोटोका लागि जडान चाहिन्छ।</value>
   </data>
   <data name="Shell.Reload" xml:space="preserve">
     <value>पुन: लोड गर्नुहोस्</value>
@@ -2059,5 +2059,203 @@ Lekha Books मा साइन इन: {4}</value>
   </data>
   <data name="Adjust.Saved" xml:space="preserve">
     <value>बाँकी मिलान भयो।</value>
+  </data>
+  <data name="Sync.NotUploaded" xml:space="preserve">
+    <value>{0} अपलोड भएन</value>
+  </data>
+  <data name="Sync.ProblemsTitle" xml:space="preserve">
+    <value>अपलोड नभएका परिवर्तन</value>
+  </data>
+  <data name="Sync.Discard" xml:space="preserve">
+    <value>हटाउनुहोस्</value>
+  </data>
+  <data name="Offline.ContinueLocal" xml:space="preserve">
+    <value>अफलाइन जारी राख्नुहोस् (निःशुल्क स्थानीय मोड)</value>
+  </data>
+  <data name="Offline.ContinueLocalHint" xml:space="preserve">
+    <value>इन्टरनेट बिना नै यो उपकरणमा लेखा बुक्स प्रयोग गर्नुहोस्। कुनै पनि समयमा अनलाइन क्लाउड सिंकमा अपग्रेड गर्नुहोस्।</value>
+  </data>
+  <data name="Offline.SetupTitle" xml:space="preserve">
+    <value>अफलाइन खाता सुरु गर्नुहोस्</value>
+  </data>
+  <data name="Offline.DefaultBusinessPlaceholder" xml:space="preserve">
+    <value>मेरो व्यवसाय</value>
+  </data>
+  <data name="Offline.StartNow" xml:space="preserve">
+    <value>अफलाइन सुरु गर्नुहोस्</value>
+  </data>
+  <data name="Offline.LocalAccountTitle" xml:space="preserve">
+    <value>अफलाइन स्थानीय मोड (यो उपकरण मात्र)</value>
+  </data>
+  <data name="Offline.LeaveLocal" xml:space="preserve">
+    <value>अफलाइन मोडबाट निस्कनुहोस्</value>
+  </data>
+  <data name="Offline.LeaveLocalHelp" xml:space="preserve">
+    <value>साइन-इन स्क्रिनमा फर्कन्छ। तपाईंका अफलाइन खाताहरू यो उपकरणमा सुरक्षित रहन्छन्।</value>
+  </data>
+  <data name="Shell.LocalModeBanner" xml:space="preserve">
+    <value>अफलाइन स्थानीय मोड — खाताहरू यो उपकरणमा मात्र सुरक्षित छन्। क्लाउड ब्याकअप र बहु-उपकरण सिंकको लागि अपग्रेड गर्नुहोस्।</value>
+  </data>
+  <data name="Sync.LocalOnlyChip" xml:space="preserve">
+    <value>स्थानीय मात्र · अपग्रेड</value>
+  </data>
+  <data name="Sync.PageTitle" xml:space="preserve">
+    <value>क्लाउड सिंक</value>
+  </data>
+  <data name="Sync.LocalOnlyHeading" xml:space="preserve">
+    <value>तपाईं अफलाइन स्थानीय मोडमा हुनुहुन्छ</value>
+  </data>
+  <data name="Sync.LocalOnlyBody" xml:space="preserve">
+    <value>तपाईंको डाटा यो उपकरणमा स्थानीय रूपमा सुरक्षित छ। क्लाउड ब्याकअप, बहु-उपकरण सिंक र कर्मचारी थप्न जुनसुकै बेला अनलाइन मोडमा अपग्रेड गर्नुहोस्।</value>
+  </data>
+  <data name="Sync.StatusOnline" xml:space="preserve">
+    <value>क्लाउडमा जडान भयो</value>
+  </data>
+  <data name="Sync.StatusOffline" xml:space="preserve">
+    <value>अफलाइन काम भइरहेको छ</value>
+  </data>
+  <data name="Sync.PendingSummary" xml:space="preserve">
+    <value>{0} परिवर्तन सिंक हुन बाँकी छ</value>
+  </data>
+  <data name="Sync.LastSynced" xml:space="preserve">
+    <value>अन्तिम सिंक: {0}</value>
+  </data>
+  <data name="Sync.SyncNow" xml:space="preserve">
+    <value>अहिले सिंक गर्नुहोस्</value>
+  </data>
+  <data name="Sync.NoProblems" xml:space="preserve">
+    <value>सबै परिवर्तन ठीक छन्। कुनै सिंक विवाद छैन।</value>
+  </data>
+  <data name="Upgrade.PageTitle" xml:space="preserve">
+    <value>अनलाइन मोडमा अपग्रेड गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.Title" xml:space="preserve">
+    <value>अनलाइन क्लाउड मोडमा अपग्रेड गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.Subtitle" xml:space="preserve">
+    <value>तपाईंका सबै अवस्थित अफलाइन प्रविष्टि, पार्टी, खाता र रसिद सुरक्षित राख्दै स्वचालित क्लाउड सिंक, वेब पहुँच र टिम अनुमति अनलक गर्नुहोस्।</value>
+  </data>
+  <data name="Upgrade.Button" xml:space="preserve">
+    <value>अनलाइनमा अपग्रेड</value>
+  </data>
+  <data name="Upgrade.AppOnly" xml:space="preserve">
+    <value>तपाईं पहिले नै अनलाइन वेब पोर्टल प्रयोग गर्दै हुनुहुन्छ।</value>
+  </data>
+  <data name="Upgrade.AlreadyOnline" xml:space="preserve">
+    <value>तपाईंको खाता पहिले नै स्वचालित अफलाइन + अनलाइन सिंक सहित अनलाइन क्लाउड मोडमा जडान छ।</value>
+  </data>
+  <data name="Upgrade.SuccessTitle" xml:space="preserve">
+    <value>अनलाइन क्लाउड मोडमा स्वागत छ!</value>
+  </data>
+  <data name="Upgrade.SuccessSummary" xml:space="preserve">
+    <value>{0} व्यवसाय, {1} प्रविष्टि र {2} संलग्नक सुरक्षित रूपमा क्लाउडमा सारियो। तपाईं अझै पनि जुनसुकै बेला अफलाइन काम गर्न सक्नुहुन्छ।</value>
+  </data>
+  <data name="Upgrade.GoToBooks" xml:space="preserve">
+    <value>मेरो खाता खोल्नुहोस्</value>
+  </data>
+  <data name="Upgrade.DeviceDataTitle" xml:space="preserve">
+    <value>यो उपकरणबाट सार्न तयार डाटा</value>
+  </data>
+  <data name="Upgrade.CountCompanies" xml:space="preserve">
+    <value>{0} व्यवसाय</value>
+  </data>
+  <data name="Upgrade.CountParties" xml:space="preserve">
+    <value>{0} पार्टी</value>
+  </data>
+  <data name="Upgrade.CountAccounts" xml:space="preserve">
+    <value>{0} खाता</value>
+  </data>
+  <data name="Upgrade.CountEntries" xml:space="preserve">
+    <value>{0} प्रविष्टि</value>
+  </data>
+  <data name="Upgrade.CountAttachments" xml:space="preserve">
+    <value>{0} संलग्नक</value>
+  </data>
+  <data name="Upgrade.PlanLocalTitle" xml:space="preserve">
+    <value>अफलाइन स्थानीय मोड (हालको)</value>
+  </data>
+  <data name="Upgrade.PlanLocal1" xml:space="preserve">
+    <value>यो उपकरणमा १००% अफलाइन चल्छ</value>
+  </data>
+  <data name="Upgrade.PlanLocal2" xml:space="preserve">
+    <value>उपकरणमा म्यानुअल JSON ब्याकअप</value>
+  </data>
+  <data name="Upgrade.PlanLocal3" xml:space="preserve">
+    <value>फोन हराएमा स्वचालित क्लाउड ब्याकअप हुँदैन</value>
+  </data>
+  <data name="Upgrade.PlanLocal4" xml:space="preserve">
+    <value>एउटा उपकरण मात्र, कर्मचारी अनुमति छैन</value>
+  </data>
+  <data name="Upgrade.PlanCloudTitle" xml:space="preserve">
+    <value>अनलाइन क्लाउड मोड</value>
+  </data>
+  <data name="Upgrade.PlanCloud1" xml:space="preserve">
+    <value>अफलाइन पनि चल्छ र अनलाइन हुँदा स्वतः सिंक हुन्छ</value>
+  </data>
+  <data name="Upgrade.PlanCloud2" xml:space="preserve">
+    <value>रियल-टाइम क्लाउड ब्याकअप र बहु-उपकरण पहुँच (फोन + पीसी + वेब)</value>
+  </data>
+  <data name="Upgrade.PlanCloud3" xml:space="preserve">
+    <value>अनुमति सहित लेखापाल, प्रबन्धक र प्रविष्टि कर्मचारी निमन्त्रणा</value>
+  </data>
+  <data name="Upgrade.PlanCloud4" xml:space="preserve">
+    <value>व्हाट्सएप र इमेल मार्फत लाइभ स्टेटमेन्ट लिंक सेयर गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.NeedInternet" xml:space="preserve">
+    <value>आफ्ना अफलाइन खाताहरूलाई अनलाइन क्लाउड मोडमा अपग्रेड गर्न इन्टरनेट जडान गर्नुहोस्।</value>
+  </data>
+  <data name="Upgrade.TabNewAccount" xml:space="preserve">
+    <value>नयाँ अनलाइन खाता बनाउनुहोस्</value>
+  </data>
+  <data name="Upgrade.TabExistingAccount" xml:space="preserve">
+    <value>अवस्थित खातामा साइन इन</value>
+  </data>
+  <data name="Upgrade.SubmitNew" xml:space="preserve">
+    <value>खाता बनाउनुहोस् र अफलाइन डाटा अपलोड गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.SubmitExisting" xml:space="preserve">
+    <value>साइन इन गर्नुहोस् र अफलाइन डाटा अपलोड गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.Starting" xml:space="preserve">
+    <value>अपग्रेड तयार गरिँदै छ…</value>
+  </data>
+  <data name="Upgrade.Failed" xml:space="preserve">
+    <value>अपग्रेड पूरा हुन सकेन। तपाईंको अफलाइन डाटा यो उपकरणमा अझै सुरक्षित छ।</value>
+  </data>
+  <data name="Upgrade.SettingsCardTitle" xml:space="preserve">
+    <value>अनलाइन क्लाउड मोडमा अपग्रेड गर्नुहोस्</value>
+  </data>
+  <data name="Upgrade.SettingsCardBody" xml:space="preserve">
+    <value>आफ्ना अफलाइन खाताहरू क्लाउडमा ब्याकअप गर्नुहोस्, फोन र पीसीमा सिंक गर्नुहोस् र कर्मचारी थप्नुहोस्।</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineTitle" xml:space="preserve">
+    <value>कर्मचारी र अनुमतिहरूको लागि अनलाइन क्लाउड मोड आवश्यक छ</value>
+  </data>
+  <data name="Upgrade.StaffRequiresOnlineBody" xml:space="preserve">
+    <value>लेखापाल, प्रबन्धक र प्रविष्टि कर्मचारी निमन्त्रणा गर्न आफ्ना अफलाइन खाताहरूलाई अनलाइन क्लाउड खातामा अपग्रेड गर्नुहोस्।</value>
+  </data>
+  <data name="Settings.DarkMode" xml:space="preserve">
+    <value>डार्क मोड</value>
+  </data>
+  <data name="Backup.Title" xml:space="preserve">
+    <value>स्थानीय ब्याकअप र पुनर्स्थापना</value>
+  </data>
+  <data name="Backup.Help" xml:space="preserve">
+    <value>सुरक्षाको लागि यो व्यवसायलाई JSON ब्याकअप फाइलको रूपमा निर्यात गर्नुहोस्।</value>
+  </data>
+  <data name="Backup.Export" xml:space="preserve">
+    <value>ब्याकअप निर्यात (.json)</value>
+  </data>
+  <data name="Backup.Restore" xml:space="preserve">
+    <value>ब्याकअपबाट पुनर्स्थापना</value>
+  </data>
+  <data name="Backup.Exported" xml:space="preserve">
+    <value>ब्याकअप फाइल सुरक्षित गरियो।</value>
+  </data>
+  <data name="Backup.Restored" xml:space="preserve">
+    <value>यो उपकरणमा "{0}" पुनर्स्थापना गरियो।</value>
+  </data>
+  <data name="Backup.Failed" xml:space="preserve">
+    <value>ब्याकअप फाइल प्रशोधन गर्न सकिएन।</value>
   </data>
 </root>

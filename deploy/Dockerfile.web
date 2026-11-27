@@ -1,0 +1,32 @@
+# Production multi-stage build for LekhaBook.Web (Blazor Web App, .NET 10)
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+COPY Directory.Build.props Directory.Packages.props global.json ./
+COPY src/LekhaBook.Domain/LekhaBook.Domain.csproj src/LekhaBook.Domain/
+COPY src/LekhaBook.Contracts/LekhaBook.Contracts.csproj src/LekhaBook.Contracts/
+COPY src/LekhaBook.Application/LekhaBook.Application.csproj src/LekhaBook.Application/
+COPY src/LekhaBook.UI/LekhaBook.UI.csproj src/LekhaBook.UI/
+COPY src/LekhaBook.Client/LekhaBook.Client.csproj src/LekhaBook.Client/
+COPY src/LekhaBook.Web/LekhaBook.Web.csproj src/LekhaBook.Web/
+
+RUN dotnet restore src/LekhaBook.Web/LekhaBook.Web.csproj
+
+COPY src/ src/
+RUN dotnet publish src/LekhaBook.Web/LekhaBook.Web.csproj -c Release -o /app/publish --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+RUN mkdir -p /data/keys && chown -R app:app /data /app
+USER app
+
+ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV DataProtection__KeysPath=/data/keys
+ENV Proxy__TrustForwardedHeaders=true
+
+COPY --from=build /app/publish .
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "LekhaBook.Web.dll"]

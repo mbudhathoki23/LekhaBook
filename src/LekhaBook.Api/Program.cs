@@ -99,15 +99,14 @@ if (app.Environment.IsDevelopment())
 {
     // OpenAPI document at /openapi/v1.json
     app.MapOpenApi();
+}
 
-    // Development convenience: bring the local database up to date on start.
-    // Production applies migrations as a deployment step instead.
-    if (app.Configuration.GetValue("Database:MigrateOnStartup", true))
-    {
-        using var scope = app.Services.CreateScope();
-        scope.ServiceProvider.GetRequiredService<PostgresDbContext>().Database.Migrate();
-        scope.ServiceProvider.GetRequiredService<AuthDbContext>().Database.Migrate();
-    }
+// Development defaults to migrating on startup; production opts in via Database:MigrateOnStartup=true.
+if (app.Configuration.GetValue("Database:MigrateOnStartup", app.Environment.IsDevelopment()))
+{
+    using var scope = app.Services.CreateScope();
+    scope.ServiceProvider.GetRequiredService<PostgresDbContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<AuthDbContext>().Database.Migrate();
 }
 
 if (app.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))

@@ -1,3 +1,4 @@
+using LekhaBook.Offline;
 using LekhaBook.UI.Services;
 
 namespace LekhaBook.App.Services;
@@ -13,39 +14,16 @@ public sealed class MauiPlatformInfo : IPlatformInfo
         : "Desktop";
 }
 
-/// <summary>Device network state from MAUI Essentials.</summary>
-public sealed class MauiConnectivityService : IConnectivityService, IDisposable
+/// <summary>Whether the device has any network, from MAUI Essentials. A local network counts: the server may be on it.</summary>
+public sealed class MauiNetworkMonitor : INetworkMonitor, IDisposable
 {
-    public MauiConnectivityService()
-    {
-        Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
-    }
+    public MauiNetworkMonitor() => Connectivity.Current.ConnectivityChanged += OnConnectivityChanged;
 
-    public bool IsOnline => Connectivity.Current.NetworkAccess == NetworkAccess.Internet;
+    public bool HasNetwork => Connectivity.Current.NetworkAccess != NetworkAccess.None;
 
-    public event EventHandler<bool>? OnlineChanged;
+    public event EventHandler? Changed;
 
-    private void OnConnectivityChanged(object? sender, ConnectivityChangedEventArgs e) =>
-        OnlineChanged?.Invoke(this, e.NetworkAccess == NetworkAccess.Internet);
+    private void OnConnectivityChanged(object? sender, ConnectivityChangedEventArgs e) => Changed?.Invoke(this, EventArgs.Empty);
 
     public void Dispose() => Connectivity.Current.ConnectivityChanged -= OnConnectivityChanged;
-}
-
-/// <summary>
-/// Placeholder until the sync engine is built (phase 8): nothing is stored locally yet,
-/// so there is never anything pending.
-/// </summary>
-public sealed class PendingSyncEngine(IConnectivityService connectivity) : ISyncService
-{
-    public SyncState State => connectivity.IsOnline ? SyncState.Synced : SyncState.Offline;
-
-    public int PendingCount => 0;
-
-    public event EventHandler? StateChanged
-    {
-        add { }
-        remove { }
-    }
-
-    public Task SyncNowAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
 }

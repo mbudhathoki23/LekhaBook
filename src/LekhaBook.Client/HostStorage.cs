@@ -1,3 +1,5 @@
+using LekhaBook.Contracts;
+
 namespace LekhaBook.Client;
 
 /// <summary>Tokens from /api/auth/login or /refresh.</summary>
@@ -36,4 +38,14 @@ public interface ILocalSettings
 public interface IUserChangeListener
 {
     Task OnUserChangedAsync(Guid? userId);
+}
+
+/// <summary>Plugs standalone Offline Local Mode (no online account required) into SessionService on native hosts.</summary>
+public interface ILocalSessionProvider
+{
+    Guid LocalUserId { get; }
+
+    Task<IReadOnlyList<CompanySummary>> ListCompaniesAsync();
+
+    Task<CompanySummary> CreateCompanyAsync(CreateCompanyRequest request);
 }

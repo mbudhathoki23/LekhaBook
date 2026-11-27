@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../src/LekhaBook.Api/LekhaBook.Api.csproj" />
+    <ProjectReference Include="../../src/LekhaBook.Offline/LekhaBook.Offline.csproj" />
   </ItemGroup>
 
   <ItemGroup>

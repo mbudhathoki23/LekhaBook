@@ -15,6 +15,7 @@
   <ItemGroup>
     <ProjectReference Include="../../src/LekhaBook.Application/LekhaBook.Application.csproj" />
     <ProjectReference Include="../../src/LekhaBook.Data.Sqlite/LekhaBook.Data.Sqlite.csproj" />
+    <ProjectReference Include="../../src/LekhaBook.Offline/LekhaBook.Offline.csproj" />
   </ItemGroup>
 
   <ItemGroup>

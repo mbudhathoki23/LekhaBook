@@ -1,22 +1,38 @@
+using System.Reflection;
 using System.Text.Json;
 using LekhaBook.Client;
 using LekhaBook.Data.Sqlite;
 
 namespace LekhaBook.App.Services;
 
-/// <summary>Where the app finds LekhaBook.Api.</summary>
+/// <summary>
+/// Where the app finds LekhaBook.Api. A release build is given it: -p:ApiBaseUrl=https://api.yourdomain.com/.
+/// For a test server on the local network: -p:ApiBaseUrl=http://192.168.1.20:5050/ (see the project file).
+/// </summary>
 public static class ApiEndpoint
 {
+    public static Uri BaseAddress { get; } = ResolveBaseAddress();
+
+    private static Uri ResolveBaseAddress()
+    {
+        var configured = typeof(ApiEndpoint).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == "LekhaBook.ApiBaseUrl")?.Value;
+        if (!string.IsNullOrWhiteSpace(configured) && Uri.TryCreate(configured, UriKind.Absolute, out var uri))
+        {
+            return uri;
+        }
 #if DEBUG
-    // Development: the API runs on this PC with the "http" profile. The Android emulator reaches the
-    // host PC at 10.0.2.2 (allowed for plain HTTP by Platforms/Android/Resources/xml/network_security_config.xml).
-    public static Uri BaseAddress { get; } = DeviceInfo.Current.Platform == DevicePlatform.Android
-        ? new Uri("http://10.0.2.2:5050/")
-        : new Uri("http://localhost:5050/");
+        // Development: the API runs on this PC with the "http" profile. The Android emulator reaches the
+        // host PC at 10.0.2.2 (allowed for plain HTTP by Platforms/Android/Resources/xml/network_security_config.xml).
+        return DeviceInfo.Current.Platform == DevicePlatform.Android
+            ? new Uri("http://10.0.2.2:5050/")
+            : new Uri("http://localhost:5050/");
 #else
-    // Set when the production API is deployed (phase 11, decision D4).
-    public static Uri BaseAddress { get; } = new("https://api.lekhabooks.invalid/");
+        // No server is configured: an address that resolves nowhere, so nothing is ever sent to a stranger.
+        return new Uri("https://api.lekhabooks.invalid/");
 #endif
+    }
 }
 
 /// <summary>Tokens in the platform's secure store (Android Keystore, iOS Keychain, Windows DPAPI).</summary>

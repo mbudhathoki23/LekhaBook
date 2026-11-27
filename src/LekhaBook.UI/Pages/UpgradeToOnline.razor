@@ -1,0 +1,267 @@
+@page "/upgrade"
+@implements IDisposable
+@inject ISessionService Session
+@inject IOfflineUpgradeService Upgrade
+@inject IConnectivityService Connectivity
+@inject NavigationManager Navigation
+@inject ISnackbar Snackbar
+
+<PageTitle>@Loc["Upgrade.PageTitle"] · Lekha Books</PageTitle>
+
+<div class="mx-auto" style="max-width: 780px;">
+    <MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Upgrade.Title"]</MudText>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc["Upgrade.Subtitle"]</MudText>
+
+    @if (!Upgrade.IsAvailable)
+    {
+        <MudAlert Severity="Severity.Info">@Loc["Upgrade.AppOnly"]</MudAlert>
+    }
+    else if (!Session.IsLocalMode && _result is null && !_busy)
+    {
+        <MudAlert Severity="Severity.Success" Class="mb-4">@Loc["Upgrade.AlreadyOnline"]</MudAlert>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/">@Loc["Upgrade.GoToBooks"]</MudButton>
+    }
+    else if (_result is { Ok: true } done)
+    {
+        <MudPaper Class="pa-6 mb-4" Elevation="2">
+            <MudStack Spacing="3" AlignItems="AlignItems.Center">
+                <MudIcon Icon="@Icons.Material.Filled.CloudDone" Color="Color.Success" Size="Size.Large" />
+                <MudText Typo="Typo.h5" Align="Align.Center">@Loc["Upgrade.SuccessTitle"]</MudText>
+                <MudText Typo="Typo.body1" Align="Align.Center">
+                    @Loc["Upgrade.SuccessSummary", done.CompaniesMigrated, done.TransactionsMigrated, done.AttachmentsUploaded]
+                </MudText>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" Href="/">
+                    @Loc["Upgrade.GoToBooks"]
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        @if (_summary is not null)
+        {
+            <MudPaper Class="pa-4 mb-4" Elevation="1">
+                <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Upgrade.DeviceDataTitle"]</MudText>
+                <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.Business">
+                        @Loc["Upgrade.CountCompanies", _summary.Companies]
+                    </MudChip>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.People">
+                        @Loc["Upgrade.CountParties", _summary.Parties]
+                    </MudChip>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.AccountBalance">
+                        @Loc["Upgrade.CountAccounts", _summary.MoneyAccounts]
+                    </MudChip>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.Receipt">
+                        @Loc["Upgrade.CountEntries", _summary.Transactions]
+                    </MudChip>
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.AttachFile">
+                        @Loc["Upgrade.CountAttachments", _summary.Attachments]
+                    </MudChip>
+                </MudStack>
+            </MudPaper>
+        }
+
+        <MudGrid Spacing="3" Class="mb-4">
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="pa-4" Elevation="1" Style="height: 100%;">
+                    <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Upgrade.PlanLocalTitle"]</MudText>
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check">@Loc["Upgrade.PlanLocal1"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Check">@Loc["Upgrade.PlanLocal2"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Close" IconColor="Color.Default">@Loc["Upgrade.PlanLocal3"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.Close" IconColor="Color.Default">@Loc["Upgrade.PlanLocal4"]</MudListItem>
+                    </MudList>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudPaper Class="pa-4" Elevation="2" Style="height: 100%; border: 2px solid var(--mud-palette-primary);">
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1" Class="mb-2">
+                        <MudIcon Icon="@Icons.Material.Filled.CloudSync" Color="Color.Primary" />
+                        <MudText Typo="Typo.subtitle1" Color="Color.Primary"><b>@Loc["Upgrade.PlanCloudTitle"]</b></MudText>
+                    </MudStack>
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">@Loc["Upgrade.PlanCloud1"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">@Loc["Upgrade.PlanCloud2"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">@Loc["Upgrade.PlanCloud3"]</MudListItem>
+                        <MudListItem T="string" Icon="@Icons.Material.Filled.CheckCircle" IconColor="Color.Success">@Loc["Upgrade.PlanCloud4"]</MudListItem>
+                    </MudList>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+
+        @if (!Connectivity.IsOnline)
+        {
+            <MudAlert Severity="Severity.Warning" Class="mb-4">@Loc["Upgrade.NeedInternet"]</MudAlert>
+        }
+
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_error</MudAlert>
+        }
+
+        @if (_busy && _progress is not null)
+        {
+            <MudPaper Class="pa-4 mb-4" Elevation="1">
+                <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mb-2" />
+                <MudText Typo="Typo.body2">@_progress</MudText>
+            </MudPaper>
+        }
+
+        <MudPaper Class="pa-4" Elevation="1">
+            <MudTabs Elevation="0" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pt-4" @bind-ActivePanelIndex="_tab">
+                <MudTabPanel Text="@Loc["Upgrade.TabNewAccount"]" Disabled="_busy">
+                    <form @onsubmit="UpgradeNewAsync" @onsubmit:preventDefault="true">
+                        <MudStack Spacing="3">
+                            <MudTextField @bind-Value="_name" Label="@Loc["Auth.SignUp.Name"]" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                            <MudTextField @bind-Value="_email" Label="@Loc["Common.Email"]" InputType="InputType.Email" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                            <MudTextField @bind-Value="_password" Label="@Loc["Common.Password"]" InputType="InputType.Password" Variant="Variant.Outlined" Immediate="true" Required="true" HelperText="@Loc["Auth.SignUp.PasswordHelp"]" Disabled="_busy" />
+                            <MudTextField @bind-Value="_confirm" Label="@Loc["Auth.SignUp.ConfirmPassword"]" InputType="InputType.Password" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                                       FullWidth="true" StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       Disabled="@(_busy || !Connectivity.IsOnline)">
+                                @Loc["Upgrade.SubmitNew"]
+                            </MudButton>
+                        </MudStack>
+                    </form>
+                </MudTabPanel>
+                <MudTabPanel Text="@Loc["Upgrade.TabExistingAccount"]" Disabled="_busy">
+                    <form @onsubmit="UpgradeExistingAsync" @onsubmit:preventDefault="true">
+                        <MudStack Spacing="3">
+                            @if (!_requiresTwoFactor)
+                            {
+                                <MudTextField @bind-Value="_loginEmail" Label="@Loc["Common.Email"]" InputType="InputType.Email" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                                <MudTextField @bind-Value="_loginPassword" Label="@Loc["Common.Password"]" InputType="InputType.Password" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                            }
+                            else
+                            {
+                                <MudText Typo="Typo.body2">@_loginEmail</MudText>
+                                <MudTextField @bind-Value="_twoFactorCode" Label="@Loc["Security.AuthenticatorCode"]" Variant="Variant.Outlined" Immediate="true" Required="true" Disabled="_busy" />
+                            }
+                            <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large"
+                                       FullWidth="true" StartIcon="@Icons.Material.Filled.CloudUpload"
+                                       Disabled="@(_busy || !Connectivity.IsOnline)">
+                                @Loc["Upgrade.SubmitExisting"]
+                            </MudButton>
+                        </MudStack>
+                    </form>
+                </MudTabPanel>
+            </MudTabs>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    private OfflineLocalSummary? _summary;
+    private UpgradeResult? _result;
+    private int _tab;
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private string _confirm = string.Empty;
+    private string _loginEmail = string.Empty;
+    private string _loginPassword = string.Empty;
+    private string _twoFactorCode = string.Empty;
+    private bool _requiresTwoFactor;
+    private bool _busy;
+    private string? _progress;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Connectivity.OnlineChanged += OnOnlineChanged;
+        if (Upgrade.IsAvailable)
+        {
+            _summary = await Upgrade.GetLocalSummaryAsync();
+        }
+    }
+
+    private void OnOnlineChanged(object? sender, bool online) => _ = InvokeAsync(StateHasChanged);
+
+    private void UpdateProgress(string text)
+    {
+        _progress = text;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UpgradeNewAsync()
+    {
+        if (_busy) return;
+        _error = (string.IsNullOrWhiteSpace(_name), string.IsNullOrWhiteSpace(_email), _password.Length < 8, _password != _confirm) switch
+        {
+            (true, _, _, _) => Loc["Auth.SignUp.NameRequired"].Value,
+            (_, true, _, _) => Loc["Auth.SignUp.EmailRequired"].Value,
+            (_, _, true, _) => Loc["Auth.SignUp.PasswordTooShort"].Value,
+            (_, _, _, true) => Loc["Auth.SignUp.PasswordMismatch"].Value,
+            _ => null,
+        };
+        if (_error is not null) return;
+
+        _busy = true;
+        _progress = Loc["Upgrade.Starting"];
+        try
+        {
+            var res = await Upgrade.UpgradeWithNewAccountAsync(_name, _email, _password, UpdateProgress);
+            if (res.Ok)
+            {
+                _result = res;
+                _password = _confirm = string.Empty;
+                Snackbar.Add(Loc["Upgrade.SuccessTitle"], Severity.Success);
+            }
+            else
+            {
+                _error = res.Error ?? Loc["Upgrade.Failed"];
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task UpgradeExistingAsync()
+    {
+        if (_busy) return;
+        if (string.IsNullOrWhiteSpace(_loginEmail) || string.IsNullOrEmpty(_loginPassword))
+        {
+            _error = Loc["Auth.SignIn.CredentialsRequired"];
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _progress = Loc["Upgrade.Starting"];
+        try
+        {
+            var code = _requiresTwoFactor ? AuthenticatorSetup.NormalizeCode(_twoFactorCode) : null;
+            var res = await Upgrade.UpgradeWithExistingAccountAsync(_loginEmail, _loginPassword, code, null, UpdateProgress);
+            if (res.RequiresTwoFactor)
+            {
+                _requiresTwoFactor = true;
+                _twoFactorCode = string.Empty;
+                return;
+            }
+
+            if (res.Ok)
+            {
+                _result = res;
+                _loginPassword = _twoFactorCode = string.Empty;
+                Snackbar.Add(Loc["Upgrade.SuccessTitle"], Severity.Success);
+            }
+            else
+            {
+                _error = res.Error ?? Loc["Upgrade.Failed"];
+            }
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        Connectivity.OnlineChanged -= OnOnlineChanged;
+        _password = _confirm = _loginPassword = _twoFactorCode = string.Empty;
+    }
+}

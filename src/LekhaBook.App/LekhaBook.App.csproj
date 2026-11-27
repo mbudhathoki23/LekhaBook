@@ -21,7 +21,7 @@
     <ApplicationId>com.lekhabook.app</ApplicationId>
 
     <!-- Versions -->
-    <ApplicationDisplayVersion>0.1</ApplicationDisplayVersion>
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
     <ApplicationVersion>1</ApplicationVersion>
 
     <!-- Unpackaged Windows app; switch to MSIX for store release (phase 11). -->
@@ -63,10 +63,44 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(ApiBaseUrl)' != ''">
+    <AssemblyMetadata Include="LekhaBook.ApiBaseUrl" Value="$(ApiBaseUrl)" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="../LekhaBook.UI/LekhaBook.UI.csproj" />
     <ProjectReference Include="../LekhaBook.Client/LekhaBook.Client.csproj" />
     <ProjectReference Include="../LekhaBook.Data.Sqlite/LekhaBook.Data.Sqlite.csproj" />
+    <ProjectReference Include="../LekhaBook.Offline/LekhaBook.Offline.csproj" />
   </ItemGroup>
 
+  <!-- A test build for a server on the local network:
+       dotnet build src/LekhaBook.App -c Release -f net10.0-android -p:ApiBaseUrl=http://192.168.1.20:5050/
+       Plain HTTP is allowed only when the address given starts with http://. Otherwise only HTTPS and the
+       emulator host work. -->
+  <ItemGroup Condition="$(ApiBaseUrl.StartsWith('http://')) And $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <AndroidResource Remove="Platforms\Android\Resources\xml\network_security_config.xml" />
+    <AndroidResource Include="Platforms\Android\TestNetwork\network_security_config.xml"
+                     Link="Platforms\Android\Resources\xml\network_security_config.xml" />
+  </ItemGroup>
+
+  <!-- Which of the two network files applies depends on the address given, but the build only copies a file that is
+       newer than the last copy. Drop a copy that is not the wanted one, so a normal build after a test build is strict
+       again. -->
+  <Target Name="RefreshNetworkSecurityConfig" BeforeTargets="_ComputeAndroidResourcePaths"
+          Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <PropertyGroup>
+      <_NetworkConfigCopy>$(IntermediateOutputPath)res\xml\network_security_config.xml</_NetworkConfigCopy>
+      <_NetworkConfigSource>Platforms\Android\Resources\xml\network_security_config.xml</_NetworkConfigSource>
+      <_NetworkConfigSource Condition="$(ApiBaseUrl.StartsWith('http://'))">Platforms\Android\TestNetwork\network_security_config.xml</_NetworkConfigSource>
+    </PropertyGroup>
+    <GetFileHash Files="$(_NetworkConfigSource)">
+      <Output TaskParameter="Hash" PropertyName="_NetworkConfigWanted" />
+    </GetFileHash>
+    <GetFileHash Files="$(_NetworkConfigCopy)" Condition="Exists('$(_NetworkConfigCopy)')">
+      <Output TaskParameter="Hash" PropertyName="_NetworkConfigHave" />
+    </GetFileHash>
+    <!-- The flag file goes too, or an unchanged build would not copy the resource back. -->
+    <Delete Condition="'$(_NetworkConfigHave)' != '$(_NetworkConfigWanted)'" Files="$(_NetworkConfigCopy);$(_AndroidResFlagFile)" />
+  </Target>
 </Project>

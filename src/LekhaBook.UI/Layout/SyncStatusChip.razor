@@ -1,35 +1,59 @@
 @implements IDisposable
 @inject ISyncService Sync
 @inject IConnectivityService Connectivity
+@inject ISessionService Session
+@inject NavigationManager Navigation
 
 <MudChip T="string" Size="Size.Small" Color="@ChipColor" Icon="@ChipIcon" Class="sync-chip"
-         title="@Label" aria-label="@Label"><span class="sync-label">@Label</span></MudChip>
+         OnClick="OpenStatus" title="@Label" aria-label="@Label">
+    <span class="sync-label">@Label</span>
+</MudChip>
 
 @code {
-    private string Label => (Connectivity.IsOnline, Sync.State) switch
+    private string Label => (Session.IsLocalMode, Connectivity.IsOnline, Sync.State) switch
     {
-        (false, _) when Sync.PendingCount > 0 => Loc["Sync.OfflinePending", Sync.PendingCount],
-        (false, _) => Loc["Sync.Offline"],
-        (_, SyncState.Syncing) => Loc["Sync.Syncing"],
-        (_, SyncState.Error) => Loc["Sync.Error"],
-        (_, SyncState.Pending) => Loc["Sync.Pending", Sync.PendingCount],
+        (true, _, _) => Loc["Sync.LocalOnlyChip"],
+        (_, false, _) when Sync.PendingCount > 0 => Loc["Sync.OfflinePending", Sync.PendingCount],
+        (_, false, _) => Loc["Sync.Offline"],
+        (_, _, SyncState.Syncing) => Loc["Sync.Syncing"],
+        (_, _, SyncState.Error) when Sync.ProblemCount > 0 => Loc["Sync.NotUploaded", Sync.ProblemCount],
+        (_, _, SyncState.Error) => Loc["Sync.Error"],
+        (_, _, SyncState.Pending) => Loc["Sync.Pending", Sync.PendingCount],
         _ => Loc["Sync.OnlineSynced"],
     };
 
-    private Color ChipColor => (Connectivity.IsOnline, Sync.State) switch
+    private Color ChipColor => (Session.IsLocalMode, Connectivity.IsOnline, Sync.State) switch
     {
-        (false, _) => Color.Warning,
-        (_, SyncState.Error) => Color.Error,
-        (_, SyncState.Pending or SyncState.Syncing) => Color.Info,
+        (true, _, _) => Color.Secondary,
+        (_, false, _) => Color.Warning,
+        (_, _, SyncState.Error) => Color.Error,
+        (_, _, SyncState.Pending or SyncState.Syncing) => Color.Info,
         _ => Color.Success,
     };
 
-    private string ChipIcon => Connectivity.IsOnline ? Icons.Material.Filled.CloudDone : Icons.Material.Filled.CloudOff;
+    private string ChipIcon => Session.IsLocalMode
+        ? Icons.Material.Filled.Smartphone
+        : Connectivity.IsOnline
+            ? (Sync.State == SyncState.Error ? Icons.Material.Filled.SyncProblem : Icons.Material.Filled.CloudDone)
+            : Icons.Material.Filled.CloudOff;
 
     protected override void OnInitialized()
     {
         Sync.StateChanged += OnChanged;
         Connectivity.OnlineChanged += OnOnlineChanged;
+        Session.Changed += OnChanged;
+    }
+
+    private void OpenStatus()
+    {
+        if (Session.IsLocalMode)
+        {
+            Navigation.NavigateTo("upgrade");
+        }
+        else
+        {
+            Navigation.NavigateTo("sync");
+        }
     }
 
     private void OnChanged(object? sender, EventArgs e) => _ = InvokeAsync(StateHasChanged);
@@ -40,5 +64,6 @@
     {
         Sync.StateChanged -= OnChanged;
         Connectivity.OnlineChanged -= OnOnlineChanged;
+        Session.Changed -= OnChanged;
     }
 }

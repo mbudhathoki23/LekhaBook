@@ -176,21 +176,18 @@ public static class CompanyEndpoints
             calendar = chosen;
         }
 
-        // Idempotent retry: if this exact company was already migrated by this user, return it cleanly.
-        if (await db.Companies.AsNoTracking().SingleOrDefaultAsync(c => c.Id == request.CompanyId) is { } existingCompany)
+        // A retry (or a second attempt after more entries were made on the device) is checked like a first upload,
+        // then merged into what is already there.
+        var existingCompany = await db.Companies.AsNoTracking().SingleOrDefaultAsync(c => c.Id == request.CompanyId);
+        CompanyMember? returningOwner = null;
+        if (existingCompany is not null)
         {
-            var existingMember = await db.CompanyMembers.AsNoTracking()
+            returningOwner = await db.CompanyMembers.AsNoTracking()
                 .SingleOrDefaultAsync(m => m.CompanyId == existingCompany.Id && m.UserId == userId && m.Status == MemberStatus.Active);
-            if (existingMember is not { Role: CompanyRole.Owner })
+            if (returningOwner is not { Role: CompanyRole.Owner })
             {
                 return TypedResults.Problem("That company id is already in use.", statusCode: StatusCodes.Status409Conflict);
             }
-
-            var existingAccounts = await db.Accounts.CountAsync(a => a.CompanyId == existingCompany.Id && !a.IsDeleted);
-            var existingTxns = await db.Transactions.CountAsync(t => t.CompanyId == existingCompany.Id && !t.IsDeleted);
-            return TypedResults.Ok(new MigrateOfflineCompanyResponse(
-                Summary(existingMember, existingCompany.Name, existingCompany.Calendar),
-                existingAccounts, existingTxns, AlreadyExisted: true));
         }
 
         var categoriesInput = request.PartyCategories ?? [];
@@ -390,6 +387,12 @@ public static class CompanyEndpoints
             transactions.Add(entity);
         }
 
+        if (returningOwner is not null)
+        {
+            return await MergeMigrationAsync(
+                db, existingCompany!, returningOwner, partyCategories, accountMap.Values.ToList(), transactions, userId, now);
+        }
+
         // Guard against any cross-company ID collisions before inserting.
         var accountIds = accountMap.Keys.ToList();
         var catIds = seenCatIds.ToList();
@@ -456,6 +459,119 @@ public static class CompanyEndpoints
         return TypedResults.Created(
             $"/api/companies/{company.Id}",
             new MigrateOfflineCompanyResponse(Summary(owner, company.Name, company.Calendar), activeAccounts, activeTxns, AlreadyExisted: false));
+    }
+
+    /// <summary>
+    /// Adds what the first upload did not have. A record already there takes the device's values only if nobody has
+    /// changed it on the server since (it has no audit entry of its own).
+    /// </summary>
+    private static async Task<Results<Created<MigrateOfflineCompanyResponse>, Ok<MigrateOfflineCompanyResponse>, ValidationProblem, ProblemHttpResult, UnauthorizedHttpResult>> MergeMigrationAsync(
+        PostgresDbContext db, Company company, CompanyMember owner, List<PartyCategory> categories, List<Account> accounts,
+        List<Transaction> transactions, Guid userId, DateTime now)
+    {
+        var categoryIds = categories.Select(c => c.Id).ToList();
+        var accountIds = accounts.Select(a => a.Id).ToList();
+        var transactionIds = transactions.Select(t => t.Id).ToList();
+        var haveCategories = await db.PartyCategories.Where(c => categoryIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id);
+        var haveAccounts = await db.Accounts.Where(a => accountIds.Contains(a.Id)).ToDictionaryAsync(a => a.Id);
+        var haveTransactions = await db.Transactions.Where(t => transactionIds.Contains(t.Id)).ToDictionaryAsync(t => t.Id);
+        if (haveCategories.Values.Any(c => c.CompanyId != company.Id) || haveAccounts.Values.Any(a => a.CompanyId != company.Id)
+            || haveTransactions.Values.Any(t => t.CompanyId != company.Id))
+        {
+            return TypedResults.Problem("One or more record ids already exist on the server.", statusCode: StatusCodes.Status409Conflict);
+        }
+
+        var allIds = categoryIds.Concat(accountIds).Concat(transactionIds).ToList();
+        var editedHere = (await db.AuditLogs.Where(l => l.CompanyId == company.Id && allIds.Contains(l.EntityId))
+            .Select(l => l.EntityId).ToListAsync()).ToHashSet();
+        var hasSystem = await db.Accounts.AnyAsync(a => a.CompanyId == company.Id && a.Type == AccountType.System && !a.IsDeleted);
+        var changed = new List<SyncEntity>();
+
+        foreach (var incoming in categories)
+        {
+            if (!haveCategories.TryGetValue(incoming.Id, out var have))
+            {
+                db.PartyCategories.Add(incoming);
+                changed.Add(incoming);
+            }
+            else if (!editedHere.Contains(have.Id) && (have.Name != incoming.Name || have.IsDeleted != incoming.IsDeleted))
+            {
+                (have.Name, have.IsDeleted) = (incoming.Name, incoming.IsDeleted);
+                changed.Add(have);
+            }
+        }
+
+        foreach (var incoming in accounts)
+        {
+            if (!haveAccounts.TryGetValue(incoming.Id, out var have))
+            {
+                if (incoming.Type != AccountType.System || !hasSystem)
+                {
+                    db.Accounts.Add(incoming);
+                    changed.Add(incoming);
+                }
+            }
+            else if (!editedHere.Contains(have.Id) && !SameValues(db, have, incoming))
+            {
+                CopyValues(db, have, incoming);
+                changed.Add(have);
+            }
+        }
+
+        foreach (var incoming in transactions)
+        {
+            if (!haveTransactions.TryGetValue(incoming.Id, out var have))
+            {
+                db.Transactions.Add(incoming);
+                changed.Add(incoming);
+            }
+            else if (!editedHere.Contains(have.Id) && !SameValues(db, have, incoming))
+            {
+                CopyValues(db, have, incoming);
+                changed.Add(have);
+            }
+        }
+
+        if (changed.Count > 0)
+        {
+            db.AuditLogs.Add(new AuditLog
+            {
+                CompanyId = company.Id,
+                EntityType = nameof(Company),
+                EntityId = company.Id,
+                Action = "MigrateOffline",
+                AfterJson = System.Text.Json.JsonSerializer.Serialize(new { Merged = changed.Count }),
+                UserId = userId,
+                AtUtc = now,
+            });
+            await db.SaveWithVersionsAsync(company.Id, changed, userId, now);
+        }
+
+        return TypedResults.Ok(new MigrateOfflineCompanyResponse(
+            Summary(owner, company.Name, company.Calendar),
+            await db.Accounts.CountAsync(a => a.CompanyId == company.Id && !a.IsDeleted),
+            await db.Transactions.CountAsync(t => t.CompanyId == company.Id && !t.IsDeleted),
+            AlreadyExisted: true));
+    }
+
+    /// <summary>The fields a device owns: not the ids, the server's version, or who and when.</summary>
+    private static IEnumerable<string> DeviceFields(PostgresDbContext db, object row) =>
+        db.Entry(row).Properties.Select(p => p.Metadata.Name).Where(name => name is not (
+            "Id" or "CompanyId" or "Version" or "CreatedAtUtc" or "CreatedBy" or "UpdatedAtUtc" or "UpdatedBy" or "UpdatedOnDevice"
+            or "VoucherNo" or "IsProvisionalNo"));
+
+    private static bool SameValues<T>(PostgresDbContext db, T have, T incoming)
+        where T : class =>
+        DeviceFields(db, have).All(name => Equals(
+            typeof(T).GetProperty(name)!.GetValue(have), typeof(T).GetProperty(name)!.GetValue(incoming)));
+
+    private static void CopyValues<T>(PostgresDbContext db, T have, T incoming)
+        where T : class
+    {
+        foreach (var name in DeviceFields(db, have).ToList())
+        {
+            db.Entry(have).Property(name).CurrentValue = typeof(T).GetProperty(name)!.GetValue(incoming);
+        }
     }
 
     private static async Task<Results<Ok<CompanyDetails>, NotFound>> GetCompany(Guid companyId, PostgresDbContext db)

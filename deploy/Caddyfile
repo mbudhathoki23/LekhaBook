@@ -1,0 +1,21 @@
+# Automatic HTTPS TLS reverse proxy for Lekha Books (Decision D4)
+
+{$API_DOMAIN} {
+    encode gzip zstd
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+    reverse_proxy api:8080
+}
+
+{$WEB_DOMAIN} {
+    encode gzip zstd
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options SAMEORIGIN
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+    reverse_proxy web:8080
+}

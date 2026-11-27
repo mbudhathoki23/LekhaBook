@@ -32,19 +32,45 @@ public enum SyncState
     Syncing,
     Offline,
     Error,
+    LocalOnly,
 }
+
+public sealed record SyncIssueDto(long Id, string EntityType, Guid EntityId, string Operation, int Attempts, string Error, DateTime CreatedAtUtc);
 
 /// <summary>Background sync between the device database and the server.</summary>
 public interface ISyncService
 {
+    /// <summary>Completes once no sync is running, so the device database can be changed under it.</summary>
+    Task WaitUntilIdleAsync(CancellationToken ct = default) => Task.CompletedTask;
+
     SyncState State { get; }
 
     /// <summary>Local changes not yet sent to the server.</summary>
     int PendingCount { get; }
 
+    /// <summary>Changes the server refused, waiting for the user.</summary>
+    int ProblemCount => 0;
+
+    string? LastError => null;
+
+    DateTime? LastSyncedAtUtc => null;
+
     event EventHandler? StateChanged;
 
+    /// <summary>Raised when sync pulls new data from the server so open screens can refresh.</summary>
+    event EventHandler? DataChanged { add { } remove { } }
+
     Task SyncNowAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Notifies the sync engine that a local write occurred and should be pushed soon.</summary>
+    void NotifyLocalWrite() { }
+
+    Task<IReadOnlyList<SyncIssueDto>> GetIssuesAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<SyncIssueDto>>([]);
+
+    Task DiscardIssueAsync(long issueId, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    Task RetryIssueAsync(long issueId, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
 /// <summary>
@@ -64,6 +90,12 @@ public interface ISessionService
     /// <summary>True when signed in from cached data because the server couldn't be reached.</summary>
     bool IsOffline { get; }
 
+    /// <summary>True when running in Offline Local Mode on this device without an online cloud account.</summary>
+    bool IsLocalMode => false;
+
+    /// <summary>True on hosts that support standalone Offline Local Mode (MAUI Android/iOS/Windows).</summary>
+    bool SupportsLocalMode => false;
+
     MeResponse? Me { get; }
 
     CompanySummary? CurrentCompany { get; }
@@ -78,6 +110,10 @@ public interface ISessionService
     /// <summary>Restores a saved session. Safe to call more than once.</summary>
     Task InitializeAsync();
 
+    /// <summary>Enters standalone Offline Local Mode on this device, creating an initial business if none exist yet.</summary>
+    Task<SignInOutcome> StartLocalModeAsync(string businessName, string calendar = "BS") =>
+        Task.FromResult(new SignInOutcome("Offline local mode is available in the installed app."));
+
     /// <summary>
     /// Signs in. On success the caller should go to <paramref name="returnUrl"/> unless
     /// <see cref="SignInOutcome.HostNavigated"/> (the web host reloads the page to set its cookie).
@@ -91,6 +127,9 @@ public interface ISessionService
     Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl);
 
     Task SignOutAsync();
+
+    /// <summary>After an upgrade that could not finish: forgets the online sign-in and reopens the books kept on this device.</summary>
+    Task ReturnToLocalModeAsync() => Task.CompletedTask;
 
     Task SelectCompanyAsync(Guid companyId);
 
@@ -234,4 +273,51 @@ public interface IShareService
 {
     /// <summary>Share a file via platform share target (MAUI) or navigator.share (Browser).</summary>
     Task<ApiResult<bool>> ShareAsync(string title, string text, Stream? fileStream = null, string? fileName = null, CancellationToken ct = default);
+}
+
+public sealed record OfflineLocalSummary(int Companies, int Parties, int MoneyAccounts, int Transactions, int Attachments);
+
+public sealed record UpgradeResult(
+    bool Ok,
+    string? Error = null,
+    bool RequiresTwoFactor = false,
+    int CompaniesMigrated = 0,
+    int TransactionsMigrated = 0,
+    int AttachmentsUploaded = 0);
+
+/// <summary>Upgrades a device's Offline Local Mode books into a synced Online Cloud account.</summary>
+public interface IOfflineUpgradeService
+{
+    bool IsAvailable { get; }
+
+    Task<OfflineLocalSummary> GetLocalSummaryAsync(CancellationToken ct = default);
+
+    Task<UpgradeResult> UpgradeWithNewAccountAsync(
+        string displayName, string email, string password, Action<string>? onProgress = null, CancellationToken ct = default);
+
+    Task<UpgradeResult> UpgradeWithExistingAccountAsync(
+        string email, string password, string? twoFactorCode = null, string? recoveryCode = null,
+        Action<string>? onProgress = null, CancellationToken ct = default);
+}
+
+/// <summary>Portable JSON backup &amp; restore for offline/local companies.</summary>
+public interface IBackupService
+{
+    bool IsAvailable { get; }
+
+    Task<ApiResult<string>> ExportCompanyJsonAsync(Guid companyId, CancellationToken ct = default);
+
+    Task<ApiResult<CompanySummary>> ImportCompanyJsonAsync(string json, CancellationToken ct = default);
+}
+
+/// <summary>Light/dark theme preference stored per device.</summary>
+public interface IThemeService
+{
+    bool IsDarkMode { get; }
+
+    event EventHandler? Changed;
+
+    Task InitializeAsync();
+
+    Task SetDarkModeAsync(bool dark);
 }

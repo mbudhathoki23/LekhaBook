@@ -20,6 +20,22 @@
     }
 </MudStack>
 
+@if (Session.IsLocalMode)
+{
+    <MudPaper Class="pa-5" Elevation="1">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.h6">@Loc["Upgrade.StaffRequiresOnlineTitle"]</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">@Loc["Upgrade.StaffRequiresOnlineBody"]</MudText>
+            <div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.CloudUpload" Href="upgrade">
+                    @Loc["Upgrade.Button"]
+                </MudButton>
+            </div>
+        </MudStack>
+    </MudPaper>
+    return;
+}
+
 @if (!Session.Can(P.StaffView))
 {
     <MudAlert Severity="Severity.Info">@(Loc["Staff.NoPermission", Session.CompanyName ?? string.Empty])</MudAlert>

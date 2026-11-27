@@ -8,6 +8,9 @@ public sealed class CompanyApi(LekhaBookApi api) : ICompanyApi
     public Task<ApiResult<CompanySummary>> CreateCompanyAsync(CreateCompanyRequest request) =>
         api.SendAsync<CompanySummary>(HttpMethod.Post, "/api/companies", request);
 
+    public Task<ApiResult<MigrateOfflineCompanyResponse>> MigrateOfflineCompanyAsync(MigrateOfflineCompanyRequest request) =>
+        api.SendAsync<MigrateOfflineCompanyResponse>(HttpMethod.Post, "/api/companies/migrate", request);
+
     public Task<ApiResult<bool>> UpdateCalendarAsync(Guid companyId, string calendar) =>
         api.SendAsync<bool>(HttpMethod.Put, $"/api/companies/{companyId}/calendar", new UpdateCalendarRequest(calendar));
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Test builds only (ApiBaseUrl starting with http://): the server runs on a computer on the same network, over plain
+  HTTP, and its address is not known in advance. Never used when the address is HTTPS or not given.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

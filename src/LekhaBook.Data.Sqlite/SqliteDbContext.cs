@@ -106,12 +106,21 @@ public sealed class SyncCheckpoint
 /// </summary>
 public sealed class UserDatabaseFactory(string directory) : IDbContextFactory<SqliteDbContext>
 {
+    /// <summary>Fixed user id for the device's Offline Local Mode database (no online account required).</summary>
+    public static readonly Guid LocalOfflineUserId = new("00000000-0000-7000-8000-000000000001");
+
     private readonly Lock _gate = new();
     private DbContextOptions<SqliteDbContext>? _options;
+
+    public string DirectoryPath => directory;
 
     public Guid? UserId { get; private set; }
 
     public static string FileName(Guid userId) => $"lekhabook_{userId:N}.db";
+
+    public string FilePathFor(Guid userId) => Path.Combine(directory, FileName(userId));
+
+    public bool DatabaseExists(Guid userId) => File.Exists(FilePathFor(userId));
 
     /// <summary>Switches to <paramref name="userId"/>'s database (creating or upgrading it), or closes it when null.</summary>
     public void OpenForUser(Guid? userId)
@@ -120,21 +129,34 @@ public sealed class UserDatabaseFactory(string directory) : IDbContextFactory<Sq
         {
             UserId = userId;
             _options = userId is { } id
-                ? new DbContextOptionsBuilder<SqliteDbContext>()
-                    .UseSqlite($"Data Source={Path.Combine(directory, FileName(id))}")
-                    .Options
+                ? BuildOptions(id)
                 : null;
         }
 
         if (_options is not null)
         {
+            Directory.CreateDirectory(directory);
             using var db = CreateDbContext();
             db.Database.Migrate();
         }
     }
 
+    /// <summary>Opens a short-lived context for a specific user's database (used during Offline → Online migration).</summary>
+    public SqliteDbContext CreateDbContextForUser(Guid userId)
+    {
+        Directory.CreateDirectory(directory);
+        var db = new SqliteDbContext(BuildOptions(userId));
+        db.Database.Migrate();
+        return db;
+    }
+
     public SqliteDbContext CreateDbContext() =>
         new(_options ?? throw new InvalidOperationException("No user is signed in, so there is no device database."));
+
+    private DbContextOptions<SqliteDbContext> BuildOptions(Guid userId) =>
+        new DbContextOptionsBuilder<SqliteDbContext>()
+            .UseSqlite($"Data Source={FilePathFor(userId)}")
+            .Options;
 }
 
 /// <summary>Used by `dotnet ef migrations add`; doesn't need a real database.</summary>
