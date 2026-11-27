@@ -1469,4 +1469,292 @@
   <data name="PublicReport.Details" xml:space="preserve">
     <value>详情</value>
   </data>
+  <data name="Import.Title" xml:space="preserve">
+    <value>导入数据</value>
+  </data>
+  <data name="Import.Short" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="Import.Intro" xml:space="preserve">
+    <value>从其他应用导入往来单位和记录。在您核对各行并点击导入之前，不会保存任何内容。</value>
+  </data>
+  <data name="Import.NoPermission" xml:space="preserve">
+    <value>您没有添加往来单位或记录的权限。</value>
+  </data>
+  <data name="Import.KindLabel" xml:space="preserve">
+    <value>要导入什么？</value>
+  </data>
+  <data name="Import.Kind.Parties" xml:space="preserve">
+    <value>往来单位及余额</value>
+  </data>
+  <data name="Import.Kind.Entries" xml:space="preserve">
+    <value>多个单位或类别的记录</value>
+  </data>
+  <data name="Import.Kind.Statement" xml:space="preserve">
+    <value>单个单位或账户的对账单</value>
+  </data>
+  <data name="Import.KindHelp.Parties" xml:space="preserve">
+    <value>客户或供应商列表。余额将作为该单位的期初余额。</value>
+  </data>
+  <data name="Import.KindHelp.Entries" xml:space="preserve">
+    <value>日记账或全部交易报表。仅导入实际发生的收付款：暂不支持赊销和赊购。</value>
+  </data>
+  <data name="Import.KindHelp.Statement" xml:space="preserve">
+    <value>往来明细账或银行对账单。选择文件后再指定归属。</value>
+  </data>
+  <data name="Import.ChooseFile" xml:space="preserve">
+    <value>选择文件</value>
+  </data>
+  <data name="Import.FileHint" xml:space="preserve">
+    <value>支持 CSV、Excel (.xlsx)、HTML 或 PDF，最大 5 MB。无法读取扫描版 PDF。</value>
+  </data>
+  <data name="Import.Reading" xml:space="preserve">
+    <value>正在读取文件</value>
+  </data>
+  <data name="Import.CouldNotRead" xml:space="preserve">
+    <value>无法读取该文件。</value>
+  </data>
+  <data name="Import.FileTooLarge" xml:space="preserve">
+    <value>文件超过 5 MB。</value>
+  </data>
+  <data name="Import.Truncated" xml:space="preserve">
+    <value>仅读取了前 {0} 行。请拆分文件以导入其余部分。</value>
+  </data>
+  <data name="Import.PdfCheck" xml:space="preserve">
+    <value>PDF 的列根据页面布局推断。导入前请仔细核对各行。</value>
+  </data>
+  <data name="Import.BalanceWarning" xml:space="preserve">
+    <value>期初余额已包含更早的记录。如果同时导入这些记录，余额会重复计算。</value>
+  </data>
+  <data name="Import.Sheet" xml:space="preserve">
+    <value>工作表或表格</value>
+  </data>
+  <data name="Import.HeaderRow" xml:space="preserve">
+    <value>标题行</value>
+  </data>
+  <data name="Import.NoHeader" xml:space="preserve">
+    <value>无标题行</value>
+  </data>
+  <data name="Import.RowNumber" xml:space="preserve">
+    <value>第 {0} 行：{1}</value>
+  </data>
+  <data name="Import.Calendar" xml:space="preserve">
+    <value>文件中的日期</value>
+  </data>
+  <data name="Import.Detect" xml:space="preserve">
+    <value>自动识别</value>
+  </data>
+  <data name="Import.DateOrder" xml:space="preserve">
+    <value>日月顺序</value>
+  </data>
+  <data name="Import.DayFirst" xml:space="preserve">
+    <value>日在前 (31/12)</value>
+  </data>
+  <data name="Import.MonthFirst" xml:space="preserve">
+    <value>月在前 (12/31)</value>
+  </data>
+  <data name="Import.StatementOf" xml:space="preserve">
+    <value>这是谁的对账单？</value>
+  </data>
+  <data name="Import.DefaultAccount" xml:space="preserve">
+    <value>行中未指定时的付款方式</value>
+  </data>
+  <data name="Import.DefaultExpense" xml:space="preserve">
+    <value>无匹配时的支出类别</value>
+  </data>
+  <data name="Import.DefaultIncome" xml:space="preserve">
+    <value>无匹配时的收入类别</value>
+  </data>
+  <data name="Import.DefaultType" xml:space="preserve">
+    <value>未注明类型的行按此处理</value>
+  </data>
+  <data name="Import.DefaultTypeAuto" xml:space="preserve">
+    <value>根据每行判断</value>
+  </data>
+  <data name="Import.DefaultPartyType" xml:space="preserve">
+    <value>文件未注明时的类型</value>
+  </data>
+  <data name="Import.NewPartyType" xml:space="preserve">
+    <value>新增单位的类型</value>
+  </data>
+  <data name="Import.AddMissing" xml:space="preserve">
+    <value>添加账簿中尚不存在的单位</value>
+  </data>
+  <data name="Import.Swap" xml:space="preserve">
+    <value>对调收入与支出</value>
+  </data>
+  <data name="Import.Columns" xml:space="preserve">
+    <value>列对应关系</value>
+  </data>
+  <data name="Import.ColumnsHelp" xml:space="preserve">
+    <value>请核对每一列的内容。</value>
+  </data>
+  <data name="Import.Column" xml:space="preserve">
+    <value>第 {0} 列</value>
+  </data>
+  <data name="Import.Field.Skip" xml:space="preserve">
+    <value>不导入</value>
+  </data>
+  <data name="Import.Field.PartyType" xml:space="preserve">
+    <value>客户或供应商</value>
+  </data>
+  <data name="Import.Field.Type" xml:space="preserve">
+    <value>记录类型</value>
+  </data>
+  <data name="Import.Field.ToAccount" xml:space="preserve">
+    <value>转入账户</value>
+  </data>
+  <data name="Import.TypeWords" xml:space="preserve">
+    <value>文件中的类型名称</value>
+  </data>
+  <data name="Import.Preview" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="Import.Show" xml:space="preserve">
+    <value>显示的行</value>
+  </data>
+  <data name="Import.ShowAll" xml:space="preserve">
+    <value>全部（{0}）</value>
+  </data>
+  <data name="Import.Status.Ready" xml:space="preserve">
+    <value>可导入：{0}</value>
+  </data>
+  <data name="Import.Status.Duplicate" xml:space="preserve">
+    <value>已存在：{0}</value>
+  </data>
+  <data name="Import.Status.Skipped" xml:space="preserve">
+    <value>已忽略：{0}</value>
+  </data>
+  <data name="Import.Status.Error" xml:space="preserve">
+    <value>有问题：{0}</value>
+  </data>
+  <data name="Import.NewParties" xml:space="preserve">
+    <value>将先新增的单位：{0}</value>
+  </data>
+  <data name="Import.What" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="Import.SelectRow" xml:space="preserve">
+    <value>导入第 {0} 行</value>
+  </data>
+  <data name="Import.Ready" xml:space="preserve">
+    <value>可导入</value>
+  </data>
+  <data name="Import.Saved" xml:space="preserve">
+    <value>已保存</value>
+  </data>
+  <data name="Import.ShowMore" xml:space="preserve">
+    <value>显示更多（{0}）</value>
+  </data>
+  <data name="Import.Button" xml:space="preserve">
+    <value>导入 {0} 行</value>
+  </data>
+  <data name="Import.Another" xml:space="preserve">
+    <value>选择其他文件</value>
+  </data>
+  <data name="Import.Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Import.Saving" xml:space="preserve">
+    <value>正在保存</value>
+  </data>
+  <data name="Import.SavingCount" xml:space="preserve">
+    <value>正在保存 {0}/{1}</value>
+  </data>
+  <data name="Import.Result" xml:space="preserve">
+    <value>已保存：{0}。失败：{1}。</value>
+  </data>
+  <data name="Import.Stopped" xml:space="preserve">
+    <value>导入未完成即停止。再次点击导入按钮可继续；已保存的行不会重复添加。</value>
+  </data>
+  <data name="Import.ConfirmTitle" xml:space="preserve">
+    <value>导入这些行？</value>
+  </data>
+  <data name="Import.ConfirmMessage" xml:space="preserve">
+    <value>将向 {2} 添加 {0} 行和 {1} 个新单位。导入的记录只能逐条修改或删除。</value>
+  </data>
+  <data name="Import.ConfirmParties" xml:space="preserve">
+    <value>将向 {1} 添加 {0} 个往来单位。</value>
+  </data>
+  <data name="Import.Row.NotData" xml:space="preserve">
+    <value>非数据行</value>
+  </data>
+  <data name="Import.Row.Opening" xml:space="preserve">
+    <value>期初余额：请在单位或账户上设置</value>
+  </data>
+  <data name="Import.Row.PartyExists" xml:space="preserve">
+    <value>同名单位已存在</value>
+  </data>
+  <data name="Import.Row.EntryExists" xml:space="preserve">
+    <value>似乎已录入</value>
+  </data>
+  <data name="Import.Row.Invalid" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Import.Row.BadAmount" xml:space="preserve">
+    <value>无法识别金额：{0}</value>
+  </data>
+  <data name="Import.Row.NoAmount" xml:space="preserve">
+    <value>缺少金额</value>
+  </data>
+  <data name="Import.Row.BothDirections" xml:space="preserve">
+    <value>收入和支出同时填写</value>
+  </data>
+  <data name="Import.Row.NoDate" xml:space="preserve">
+    <value>缺少日期</value>
+  </data>
+  <data name="Import.Row.BadDate" xml:space="preserve">
+    <value>无法识别日期：{0}</value>
+  </data>
+  <data name="Import.Row.FutureDate" xml:space="preserve">
+    <value>日期晚于今天</value>
+  </data>
+  <data name="Import.Row.NoType" xml:space="preserve">
+    <value>请为未注明类型的行选择类型</value>
+  </data>
+  <data name="Import.Row.UnknownType" xml:space="preserve">
+    <value>未知类型：{0}</value>
+  </data>
+  <data name="Import.Row.Unsupported" xml:space="preserve">
+    <value>暂不支持导入：{0}</value>
+  </data>
+  <data name="Import.Row.LeftOut" xml:space="preserve">
+    <value>已按选择忽略：{0}</value>
+  </data>
+  <data name="Import.Row.NoParty" xml:space="preserve">
+    <value>缺少单位名称</value>
+  </data>
+  <data name="Import.Row.NoPartyNamed" xml:space="preserve">
+    <value>没有名为 {0} 的单位</value>
+  </data>
+  <data name="Import.Row.NewParty" xml:space="preserve">
+    <value>将新增单位 {0}</value>
+  </data>
+  <data name="Import.Row.NoAccountNamed" xml:space="preserve">
+    <value>没有名为 {0} 的账户。请先在财务中添加。</value>
+  </data>
+  <data name="Import.Row.ChooseAccount" xml:space="preserve">
+    <value>请选择付款方式</value>
+  </data>
+  <data name="Import.Row.ChooseCategory" xml:space="preserve">
+    <value>请选择默认类别</value>
+  </data>
+  <data name="Import.Row.ChooseStatement" xml:space="preserve">
+    <value>请指定对账单归属</value>
+  </data>
+  <data name="Import.Row.NoDirection" xml:space="preserve">
+    <value>无法判断是收款还是付款</value>
+  </data>
+  <data name="Import.Row.DirectionClash" xml:space="preserve">
+    <value>类型与金额列不一致</value>
+  </data>
+  <data name="Import.Row.StatementTransfer" xml:space="preserve">
+    <value>转账：请通过记录导入或手动添加</value>
+  </data>
+  <data name="Import.Row.SameAccount" xml:space="preserve">
+    <value>转出与转入为同一账户</value>
+  </data>
+  <data name="Import.Row.RemarksShortened" xml:space="preserve">
+    <value>备注将被截短</value>
+  </data>
 </root>

@@ -1469,4 +1469,292 @@
   <data name="PublicReport.Details" xml:space="preserve">
     <value>التفاصيل</value>
   </data>
+  <data name="Import.Title" xml:space="preserve">
+    <value>استيراد البيانات</value>
+  </data>
+  <data name="Import.Short" xml:space="preserve">
+    <value>استيراد</value>
+  </data>
+  <data name="Import.Intro" xml:space="preserve">
+    <value>أحضر الأطراف والقيود من تطبيق آخر. لا يُحفظ شيء حتى تراجع الصفوف وتضغط على استيراد.</value>
+  </data>
+  <data name="Import.NoPermission" xml:space="preserve">
+    <value>ليس لديك إذن لإضافة أطراف أو قيود.</value>
+  </data>
+  <data name="Import.KindLabel" xml:space="preserve">
+    <value>ما الذي تستورده؟</value>
+  </data>
+  <data name="Import.Kind.Parties" xml:space="preserve">
+    <value>الأطراف وأرصدتهم</value>
+  </data>
+  <data name="Import.Kind.Entries" xml:space="preserve">
+    <value>قيود أطراف أو فئات متعددة</value>
+  </data>
+  <data name="Import.Kind.Statement" xml:space="preserve">
+    <value>كشف طرف واحد أو حساب واحد</value>
+  </data>
+  <data name="Import.KindHelp.Parties" xml:space="preserve">
+    <value>قائمة عملاء أو موردين. يصبح الرصيد رصيدًا افتتاحيًا للطرف.</value>
+  </data>
+  <data name="Import.KindHelp.Entries" xml:space="preserve">
+    <value>دفتر يومية أو تقرير بكل المعاملات. أضف فقط الأموال التي تحركت فعلًا: لا يمكن بعد استيراد المبيعات والمشتريات الآجلة.</value>
+  </data>
+  <data name="Import.KindHelp.Statement" xml:space="preserve">
+    <value>دفتر طرف أو كشف حساب مصرفي. حدد صاحبه بعد اختيار الملف.</value>
+  </data>
+  <data name="Import.ChooseFile" xml:space="preserve">
+    <value>اختر ملفًا</value>
+  </data>
+  <data name="Import.FileHint" xml:space="preserve">
+    <value>‏CSV أو Excel (.xlsx) أو HTML أو PDF بحد أقصى 5 MB. لا يمكن قراءة ملفات PDF الممسوحة ضوئيًا.</value>
+  </data>
+  <data name="Import.Reading" xml:space="preserve">
+    <value>جارٍ قراءة الملف</value>
+  </data>
+  <data name="Import.CouldNotRead" xml:space="preserve">
+    <value>تعذرت قراءة الملف.</value>
+  </data>
+  <data name="Import.FileTooLarge" xml:space="preserve">
+    <value>حجم الملف أكبر من 5 MB.</value>
+  </data>
+  <data name="Import.Truncated" xml:space="preserve">
+    <value>قُرئت أول {0} صفًا فقط. قسّم الملف لاستيراد الباقي.</value>
+  </data>
+  <data name="Import.PdfCheck" xml:space="preserve">
+    <value>تُستنتج أعمدة PDF من تخطيط الصفحة. راجع الصفوف بعناية قبل الاستيراد.</value>
+  </data>
+  <data name="Import.BalanceWarning" xml:space="preserve">
+    <value>الرصيد الافتتاحي يشمل القيود الأقدم. إذا استوردت تلك القيود أيضًا فستُحتسب مرتين.</value>
+  </data>
+  <data name="Import.Sheet" xml:space="preserve">
+    <value>الورقة أو الجدول</value>
+  </data>
+  <data name="Import.HeaderRow" xml:space="preserve">
+    <value>صف العناوين</value>
+  </data>
+  <data name="Import.NoHeader" xml:space="preserve">
+    <value>بلا عناوين</value>
+  </data>
+  <data name="Import.RowNumber" xml:space="preserve">
+    <value>الصف {0}: {1}</value>
+  </data>
+  <data name="Import.Calendar" xml:space="preserve">
+    <value>التواريخ في الملف</value>
+  </data>
+  <data name="Import.Detect" xml:space="preserve">
+    <value>اكتشاف تلقائي</value>
+  </data>
+  <data name="Import.DateOrder" xml:space="preserve">
+    <value>ترتيب اليوم والشهر</value>
+  </data>
+  <data name="Import.DayFirst" xml:space="preserve">
+    <value>اليوم أولًا (31/12)</value>
+  </data>
+  <data name="Import.MonthFirst" xml:space="preserve">
+    <value>الشهر أولًا (12/31)</value>
+  </data>
+  <data name="Import.StatementOf" xml:space="preserve">
+    <value>لمن هذا الكشف؟</value>
+  </data>
+  <data name="Import.DefaultAccount" xml:space="preserve">
+    <value>طريقة الدفع إذا خلا منها الصف</value>
+  </data>
+  <data name="Import.DefaultExpense" xml:space="preserve">
+    <value>فئة المصروف إذا لم تتطابق</value>
+  </data>
+  <data name="Import.DefaultIncome" xml:space="preserve">
+    <value>فئة الدخل إذا لم تتطابق</value>
+  </data>
+  <data name="Import.DefaultType" xml:space="preserve">
+    <value>نوع الصفوف التي بلا نوع</value>
+  </data>
+  <data name="Import.DefaultTypeAuto" xml:space="preserve">
+    <value>استنتاجه من كل صف</value>
+  </data>
+  <data name="Import.DefaultPartyType" xml:space="preserve">
+    <value>النوع إذا لم يذكره الملف</value>
+  </data>
+  <data name="Import.NewPartyType" xml:space="preserve">
+    <value>أضف الأطراف الجدد بصفتهم</value>
+  </data>
+  <data name="Import.AddMissing" xml:space="preserve">
+    <value>أضف الأطراف غير الموجودة في الدفاتر</value>
+  </data>
+  <data name="Import.Swap" xml:space="preserve">
+    <value>بدّل بين الأموال الداخلة والخارجة</value>
+  </data>
+  <data name="Import.Columns" xml:space="preserve">
+    <value>الأعمدة</value>
+  </data>
+  <data name="Import.ColumnsHelp" xml:space="preserve">
+    <value>تحقق من محتوى كل عمود.</value>
+  </data>
+  <data name="Import.Column" xml:space="preserve">
+    <value>العمود {0}</value>
+  </data>
+  <data name="Import.Field.Skip" xml:space="preserve">
+    <value>لا تستورد</value>
+  </data>
+  <data name="Import.Field.PartyType" xml:space="preserve">
+    <value>عميل أم مورد</value>
+  </data>
+  <data name="Import.Field.Type" xml:space="preserve">
+    <value>نوع القيد</value>
+  </data>
+  <data name="Import.Field.ToAccount" xml:space="preserve">
+    <value>الحساب المحوَّل إليه</value>
+  </data>
+  <data name="Import.TypeWords" xml:space="preserve">
+    <value>الأنواع المكتوبة في الملف</value>
+  </data>
+  <data name="Import.Preview" xml:space="preserve">
+    <value>معاينة</value>
+  </data>
+  <data name="Import.Show" xml:space="preserve">
+    <value>الصفوف المعروضة</value>
+  </data>
+  <data name="Import.ShowAll" xml:space="preserve">
+    <value>الكل ({0})</value>
+  </data>
+  <data name="Import.Status.Ready" xml:space="preserve">
+    <value>جاهزة: {0}</value>
+  </data>
+  <data name="Import.Status.Duplicate" xml:space="preserve">
+    <value>موجودة مسبقًا: {0}</value>
+  </data>
+  <data name="Import.Status.Skipped" xml:space="preserve">
+    <value>مستبعدة: {0}</value>
+  </data>
+  <data name="Import.Status.Error" xml:space="preserve">
+    <value>بها مشكلات: {0}</value>
+  </data>
+  <data name="Import.NewParties" xml:space="preserve">
+    <value>أطراف جدد ستُضاف أولًا: {0}</value>
+  </data>
+  <data name="Import.What" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="Import.SelectRow" xml:space="preserve">
+    <value>استيراد الصف {0}</value>
+  </data>
+  <data name="Import.Ready" xml:space="preserve">
+    <value>جاهز</value>
+  </data>
+  <data name="Import.Saved" xml:space="preserve">
+    <value>تم الحفظ</value>
+  </data>
+  <data name="Import.ShowMore" xml:space="preserve">
+    <value>عرض المزيد ({0})</value>
+  </data>
+  <data name="Import.Button" xml:space="preserve">
+    <value>استيراد {0} صفًا</value>
+  </data>
+  <data name="Import.Another" xml:space="preserve">
+    <value>اختر ملفًا آخر</value>
+  </data>
+  <data name="Import.Stop" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="Import.Saving" xml:space="preserve">
+    <value>جارٍ الحفظ</value>
+  </data>
+  <data name="Import.SavingCount" xml:space="preserve">
+    <value>جارٍ حفظ {0} من {1}</value>
+  </data>
+  <data name="Import.Result" xml:space="preserve">
+    <value>المحفوظة: {0}. الفاشلة: {1}.</value>
+  </data>
+  <data name="Import.Stopped" xml:space="preserve">
+    <value>توقف الاستيراد قبل اكتماله. اضغط زر الاستيراد مجددًا للمتابعة؛ لن تُضاف الصفوف المحفوظة مرتين.</value>
+  </data>
+  <data name="Import.ConfirmTitle" xml:space="preserve">
+    <value>هل تستورد هذه الصفوف؟</value>
+  </data>
+  <data name="Import.ConfirmMessage" xml:space="preserve">
+    <value>ستُضاف {0} صفًا و{1} طرفًا جديدًا إلى {2}. لا يمكن تعديل القيود المستوردة أو حذفها إلا واحدًا واحدًا.</value>
+  </data>
+  <data name="Import.ConfirmParties" xml:space="preserve">
+    <value>سيُضاف {0} طرفًا إلى {1}.</value>
+  </data>
+  <data name="Import.Row.NotData" xml:space="preserve">
+    <value>ليس صف بيانات</value>
+  </data>
+  <data name="Import.Row.Opening" xml:space="preserve">
+    <value>رصيد افتتاحي: اضبطه في الطرف أو الحساب</value>
+  </data>
+  <data name="Import.Row.PartyExists" xml:space="preserve">
+    <value>يوجد طرف بهذا الاسم</value>
+  </data>
+  <data name="Import.Row.EntryExists" xml:space="preserve">
+    <value>يبدو أنه مُدخل مسبقًا</value>
+  </data>
+  <data name="Import.Row.Invalid" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Import.Row.BadAmount" xml:space="preserve">
+    <value>تعذرت قراءة المبلغ: {0}</value>
+  </data>
+  <data name="Import.Row.NoAmount" xml:space="preserve">
+    <value>لا يوجد مبلغ</value>
+  </data>
+  <data name="Import.Row.BothDirections" xml:space="preserve">
+    <value>حقلا الداخل والخارج مملوءان معًا</value>
+  </data>
+  <data name="Import.Row.NoDate" xml:space="preserve">
+    <value>لا يوجد تاريخ</value>
+  </data>
+  <data name="Import.Row.BadDate" xml:space="preserve">
+    <value>تعذرت قراءة التاريخ: {0}</value>
+  </data>
+  <data name="Import.Row.FutureDate" xml:space="preserve">
+    <value>التاريخ في المستقبل</value>
+  </data>
+  <data name="Import.Row.NoType" xml:space="preserve">
+    <value>اختر نوعًا للصفوف التي بلا نوع</value>
+  </data>
+  <data name="Import.Row.UnknownType" xml:space="preserve">
+    <value>نوع غير معروف: {0}</value>
+  </data>
+  <data name="Import.Row.Unsupported" xml:space="preserve">
+    <value>لا يمكن استيراده بعد: {0}</value>
+  </data>
+  <data name="Import.Row.LeftOut" xml:space="preserve">
+    <value>مستبعد باختيارك: {0}</value>
+  </data>
+  <data name="Import.Row.NoParty" xml:space="preserve">
+    <value>لا يوجد اسم طرف</value>
+  </data>
+  <data name="Import.Row.NoPartyNamed" xml:space="preserve">
+    <value>لا يوجد طرف باسم {0}</value>
+  </data>
+  <data name="Import.Row.NewParty" xml:space="preserve">
+    <value>سيضيف الطرف {0}</value>
+  </data>
+  <data name="Import.Row.NoAccountNamed" xml:space="preserve">
+    <value>لا يوجد حساب باسم {0}. أضفه أولًا ضمن المالية.</value>
+  </data>
+  <data name="Import.Row.ChooseAccount" xml:space="preserve">
+    <value>اختر طريقة الدفع</value>
+  </data>
+  <data name="Import.Row.ChooseCategory" xml:space="preserve">
+    <value>اختر فئة افتراضية</value>
+  </data>
+  <data name="Import.Row.ChooseStatement" xml:space="preserve">
+    <value>اختر صاحب هذا الكشف</value>
+  </data>
+  <data name="Import.Row.NoDirection" xml:space="preserve">
+    <value>تعذر تحديد هل المال داخل أم خارج</value>
+  </data>
+  <data name="Import.Row.DirectionClash" xml:space="preserve">
+    <value>النوع وعمود المبلغ متعارضان</value>
+  </data>
+  <data name="Import.Row.StatementTransfer" xml:space="preserve">
+    <value>تحويل: أضفه عبر استيراد القيود أو يدويًا</value>
+  </data>
+  <data name="Import.Row.SameAccount" xml:space="preserve">
+    <value>الطرفان هما الحساب نفسه</value>
+  </data>
+  <data name="Import.Row.RemarksShortened" xml:space="preserve">
+    <value>ستُختصر الملاحظات</value>
+  </data>
 </root>

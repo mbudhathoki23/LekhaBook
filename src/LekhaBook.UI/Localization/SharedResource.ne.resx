@@ -1469,4 +1469,292 @@ Lekha Books मा साइन इन: {4}</value>
   <data name="PublicReport.Details" xml:space="preserve">
     <value>थप विवरण</value>
   </data>
+  <data name="Import.Title" xml:space="preserve">
+    <value>डाटा आयात</value>
+  </data>
+  <data name="Import.Short" xml:space="preserve">
+    <value>आयात</value>
+  </data>
+  <data name="Import.Intro" xml:space="preserve">
+    <value>अर्को एपबाट पार्टी र प्रविष्टि ल्याउनुहोस्। पङ्क्ति जाँचेर आयात थिच्नुअघि केही पनि सेभ हुँदैन।</value>
+  </data>
+  <data name="Import.NoPermission" xml:space="preserve">
+    <value>तपाईंसँग पार्टी वा प्रविष्टि थप्ने अनुमति छैन।</value>
+  </data>
+  <data name="Import.KindLabel" xml:space="preserve">
+    <value>के आयात गर्दै हुनुहुन्छ?</value>
+  </data>
+  <data name="Import.Kind.Parties" xml:space="preserve">
+    <value>पार्टी र तिनको मौज्दात</value>
+  </data>
+  <data name="Import.Kind.Entries" xml:space="preserve">
+    <value>धेरै पार्टी वा शीर्षकका प्रविष्टि</value>
+  </data>
+  <data name="Import.Kind.Statement" xml:space="preserve">
+    <value>एउटा पार्टी वा खाताको विवरण</value>
+  </data>
+  <data name="Import.KindHelp.Parties" xml:space="preserve">
+    <value>ग्राहक वा आपूर्तिकर्ताको सूची। मौज्दात पार्टीको सुरु मौज्दात बन्छ।</value>
+  </data>
+  <data name="Import.KindHelp.Entries" xml:space="preserve">
+    <value>डे बुक वा सबै कारोबारको प्रतिवेदन। वास्तवमा सरेको रकम मात्र थप्नुहोस्: उधारो बिक्री र खरिद अहिले आयात हुँदैन।</value>
+  </data>
+  <data name="Import.KindHelp.Statement" xml:space="preserve">
+    <value>पार्टी खाता वा बैंक स्टेटमेन्ट। फाइल छानेपछि कसको हो भनी रोज्नुहोस्।</value>
+  </data>
+  <data name="Import.ChooseFile" xml:space="preserve">
+    <value>फाइल छान्नुहोस्</value>
+  </data>
+  <data name="Import.FileHint" xml:space="preserve">
+    <value>CSV, Excel (.xlsx), HTML वा PDF, बढीमा 5 MB। स्क्यान गरिएको PDF पढ्न सकिँदैन।</value>
+  </data>
+  <data name="Import.Reading" xml:space="preserve">
+    <value>फाइल पढ्दै</value>
+  </data>
+  <data name="Import.CouldNotRead" xml:space="preserve">
+    <value>फाइल पढ्न सकिएन।</value>
+  </data>
+  <data name="Import.FileTooLarge" xml:space="preserve">
+    <value>फाइल 5 MB भन्दा ठूलो छ।</value>
+  </data>
+  <data name="Import.Truncated" xml:space="preserve">
+    <value>पहिलो {0} पङ्क्ति मात्र पढियो। बाँकी आयात गर्न फाइल टुक्र्याउनुहोस्।</value>
+  </data>
+  <data name="Import.PdfCheck" xml:space="preserve">
+    <value>PDF का स्तम्भ पृष्ठको बनावटबाट अनुमान गरिन्छ। आयात गर्नुअघि पङ्क्ति राम्ररी जाँच्नुहोस्।</value>
+  </data>
+  <data name="Import.BalanceWarning" xml:space="preserve">
+    <value>सुरु मौज्दातमा पुराना प्रविष्टि पहिले नै समावेश हुन्छन्। ती प्रविष्टि पनि आयात गरे मौज्दातमा दोहोरो गनिन्छ।</value>
+  </data>
+  <data name="Import.Sheet" xml:space="preserve">
+    <value>पाना वा तालिका</value>
+  </data>
+  <data name="Import.HeaderRow" xml:space="preserve">
+    <value>शीर्षक पङ्क्ति</value>
+  </data>
+  <data name="Import.NoHeader" xml:space="preserve">
+    <value>शीर्षक छैन</value>
+  </data>
+  <data name="Import.RowNumber" xml:space="preserve">
+    <value>पङ्क्ति {0}: {1}</value>
+  </data>
+  <data name="Import.Calendar" xml:space="preserve">
+    <value>फाइलका मिति</value>
+  </data>
+  <data name="Import.Detect" xml:space="preserve">
+    <value>स्वतः पत्ता लगाउने</value>
+  </data>
+  <data name="Import.DateOrder" xml:space="preserve">
+    <value>दिन र महिनाको क्रम</value>
+  </data>
+  <data name="Import.DayFirst" xml:space="preserve">
+    <value>पहिले दिन (31/12)</value>
+  </data>
+  <data name="Import.MonthFirst" xml:space="preserve">
+    <value>पहिले महिना (12/31)</value>
+  </data>
+  <data name="Import.StatementOf" xml:space="preserve">
+    <value>यो कसको विवरण हो?</value>
+  </data>
+  <data name="Import.DefaultAccount" xml:space="preserve">
+    <value>पङ्क्तिमा नभए भुक्तानी विधि</value>
+  </data>
+  <data name="Import.DefaultExpense" xml:space="preserve">
+    <value>नमिले खर्च शीर्षक</value>
+  </data>
+  <data name="Import.DefaultIncome" xml:space="preserve">
+    <value>नमिले आम्दानी शीर्षक</value>
+  </data>
+  <data name="Import.DefaultType" xml:space="preserve">
+    <value>प्रकार नभएका पङ्क्तिको प्रकार</value>
+  </data>
+  <data name="Import.DefaultTypeAuto" xml:space="preserve">
+    <value>प्रत्येक पङ्क्तिबाट पत्ता लगाउने</value>
+  </data>
+  <data name="Import.DefaultPartyType" xml:space="preserve">
+    <value>फाइलमा नभए पार्टीको प्रकार</value>
+  </data>
+  <data name="Import.NewPartyType" xml:space="preserve">
+    <value>नयाँ पार्टी थप्ने प्रकार</value>
+  </data>
+  <data name="Import.AddMissing" xml:space="preserve">
+    <value>खातामा नभएका पार्टी थप्ने</value>
+  </data>
+  <data name="Import.Swap" xml:space="preserve">
+    <value>आएको र गएको रकम साट्ने</value>
+  </data>
+  <data name="Import.Columns" xml:space="preserve">
+    <value>स्तम्भ</value>
+  </data>
+  <data name="Import.ColumnsHelp" xml:space="preserve">
+    <value>प्रत्येक स्तम्भमा के छ जाँच्नुहोस्।</value>
+  </data>
+  <data name="Import.Column" xml:space="preserve">
+    <value>स्तम्भ {0}</value>
+  </data>
+  <data name="Import.Field.Skip" xml:space="preserve">
+    <value>आयात नगर्ने</value>
+  </data>
+  <data name="Import.Field.PartyType" xml:space="preserve">
+    <value>ग्राहक वा आपूर्तिकर्ता</value>
+  </data>
+  <data name="Import.Field.Type" xml:space="preserve">
+    <value>प्रविष्टिको प्रकार</value>
+  </data>
+  <data name="Import.Field.ToAccount" xml:space="preserve">
+    <value>रकम जाने खाता</value>
+  </data>
+  <data name="Import.TypeWords" xml:space="preserve">
+    <value>फाइलमा लेखिएका प्रकार</value>
+  </data>
+  <data name="Import.Preview" xml:space="preserve">
+    <value>पूर्वावलोकन</value>
+  </data>
+  <data name="Import.Show" xml:space="preserve">
+    <value>देखाउने पङ्क्ति</value>
+  </data>
+  <data name="Import.ShowAll" xml:space="preserve">
+    <value>सबै ({0})</value>
+  </data>
+  <data name="Import.Status.Ready" xml:space="preserve">
+    <value>तयार: {0}</value>
+  </data>
+  <data name="Import.Status.Duplicate" xml:space="preserve">
+    <value>पहिले नै छ: {0}</value>
+  </data>
+  <data name="Import.Status.Skipped" xml:space="preserve">
+    <value>छाडिएका: {0}</value>
+  </data>
+  <data name="Import.Status.Error" xml:space="preserve">
+    <value>समस्या: {0}</value>
+  </data>
+  <data name="Import.NewParties" xml:space="preserve">
+    <value>पहिले थपिने नयाँ पार्टी: {0}</value>
+  </data>
+  <data name="Import.What" xml:space="preserve">
+    <value>विवरण</value>
+  </data>
+  <data name="Import.SelectRow" xml:space="preserve">
+    <value>पङ्क्ति {0} आयात गर्ने</value>
+  </data>
+  <data name="Import.Ready" xml:space="preserve">
+    <value>तयार</value>
+  </data>
+  <data name="Import.Saved" xml:space="preserve">
+    <value>सेभ भयो</value>
+  </data>
+  <data name="Import.ShowMore" xml:space="preserve">
+    <value>थप देखाउने ({0})</value>
+  </data>
+  <data name="Import.Button" xml:space="preserve">
+    <value>{0} पङ्क्ति आयात गर्ने</value>
+  </data>
+  <data name="Import.Another" xml:space="preserve">
+    <value>अर्को फाइल छान्ने</value>
+  </data>
+  <data name="Import.Stop" xml:space="preserve">
+    <value>रोक्ने</value>
+  </data>
+  <data name="Import.Saving" xml:space="preserve">
+    <value>सेभ गर्दै</value>
+  </data>
+  <data name="Import.SavingCount" xml:space="preserve">
+    <value>{1} मध्ये {0} सेभ गर्दै</value>
+  </data>
+  <data name="Import.Result" xml:space="preserve">
+    <value>सेभ भएका: {0}। असफल: {1}।</value>
+  </data>
+  <data name="Import.Stopped" xml:space="preserve">
+    <value>आयात पूरा हुनुअघि रोकियो। जारी राख्न आयात बटन फेरि थिच्नुहोस्; सेभ भएका पङ्क्ति दोहोरिँदैनन्।</value>
+  </data>
+  <data name="Import.ConfirmTitle" xml:space="preserve">
+    <value>यी पङ्क्ति आयात गर्ने?</value>
+  </data>
+  <data name="Import.ConfirmMessage" xml:space="preserve">
+    <value>{2} मा {0} पङ्क्ति र {1} नयाँ पार्टी थपिनेछन्। आयात भएका प्रविष्टि एक-एक गरी मात्र बदल्न वा हटाउन सकिन्छ।</value>
+  </data>
+  <data name="Import.ConfirmParties" xml:space="preserve">
+    <value>{1} मा {0} पार्टी थपिनेछन्।</value>
+  </data>
+  <data name="Import.Row.NotData" xml:space="preserve">
+    <value>डाटा पङ्क्ति होइन</value>
+  </data>
+  <data name="Import.Row.Opening" xml:space="preserve">
+    <value>सुरु मौज्दात: पार्टी वा खातामा राख्नुहोस्</value>
+  </data>
+  <data name="Import.Row.PartyExists" xml:space="preserve">
+    <value>यो नामको पार्टी पहिले नै छ</value>
+  </data>
+  <data name="Import.Row.EntryExists" xml:space="preserve">
+    <value>पहिले नै प्रविष्ट भएजस्तो</value>
+  </data>
+  <data name="Import.Row.Invalid" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Import.Row.BadAmount" xml:space="preserve">
+    <value>रकम पढ्न सकिएन: {0}</value>
+  </data>
+  <data name="Import.Row.NoAmount" xml:space="preserve">
+    <value>रकम छैन</value>
+  </data>
+  <data name="Import.Row.BothDirections" xml:space="preserve">
+    <value>आएको र गएको दुवै रकम भरिएको छ</value>
+  </data>
+  <data name="Import.Row.NoDate" xml:space="preserve">
+    <value>मिति छैन</value>
+  </data>
+  <data name="Import.Row.BadDate" xml:space="preserve">
+    <value>मिति पढ्न सकिएन: {0}</value>
+  </data>
+  <data name="Import.Row.FutureDate" xml:space="preserve">
+    <value>मिति भविष्यको छ</value>
+  </data>
+  <data name="Import.Row.NoType" xml:space="preserve">
+    <value>प्रकार नभएका पङ्क्तिका लागि प्रकार छान्नुहोस्</value>
+  </data>
+  <data name="Import.Row.UnknownType" xml:space="preserve">
+    <value>अपरिचित प्रकार: {0}</value>
+  </data>
+  <data name="Import.Row.Unsupported" xml:space="preserve">
+    <value>अहिले आयात गर्न मिल्दैन: {0}</value>
+  </data>
+  <data name="Import.Row.LeftOut" xml:space="preserve">
+    <value>तपाईंले छाड्नुभएको: {0}</value>
+  </data>
+  <data name="Import.Row.NoParty" xml:space="preserve">
+    <value>पार्टीको नाम छैन</value>
+  </data>
+  <data name="Import.Row.NoPartyNamed" xml:space="preserve">
+    <value>{0} नामको पार्टी छैन</value>
+  </data>
+  <data name="Import.Row.NewParty" xml:space="preserve">
+    <value>पार्टी {0} थपिनेछ</value>
+  </data>
+  <data name="Import.Row.NoAccountNamed" xml:space="preserve">
+    <value>{0} नामको खाता छैन। पहिले वित्तमा थप्नुहोस्।</value>
+  </data>
+  <data name="Import.Row.ChooseAccount" xml:space="preserve">
+    <value>भुक्तानी विधि छान्नुहोस्</value>
+  </data>
+  <data name="Import.Row.ChooseCategory" xml:space="preserve">
+    <value>पूर्वनिर्धारित शीर्षक छान्नुहोस्</value>
+  </data>
+  <data name="Import.Row.ChooseStatement" xml:space="preserve">
+    <value>यो कसको विवरण हो छान्नुहोस्</value>
+  </data>
+  <data name="Import.Row.NoDirection" xml:space="preserve">
+    <value>रकम आयो कि गयो थाहा भएन</value>
+  </data>
+  <data name="Import.Row.DirectionClash" xml:space="preserve">
+    <value>प्रकार र रकमको स्तम्भ मिलेनन्</value>
+  </data>
+  <data name="Import.Row.StatementTransfer" xml:space="preserve">
+    <value>रकम ट्रान्सफर: प्रविष्टि आयात वा हातले थप्नुहोस्</value>
+  </data>
+  <data name="Import.Row.SameAccount" xml:space="preserve">
+    <value>दुवैतिर एउटै खाता छ</value>
+  </data>
+  <data name="Import.Row.RemarksShortened" xml:space="preserve">
+    <value>कैफियत छोट्याइनेछ</value>
+  </data>
 </root>

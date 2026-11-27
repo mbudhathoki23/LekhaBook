@@ -777,3 +777,35 @@ h1:focus, .mud-typography:focus {
 [dir="rtl"] .rtl-flip-icon .mud-icon-root {
     transform: scaleX(-1);
 }
+
+/* ---------- Import ---------- */
+.import-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+    gap: 8px 12px;
+}
+
+.import-show {
+    max-width: 220px;
+}
+
+.import-chips,
+.import-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.import-scroll {
+    overflow-x: auto;
+}
+
+.import-nowrap,
+.import-amount {
+    white-space: nowrap;
+}
+
+th.import-amount,
+td.import-amount {
+    text-align: end !important;
+}

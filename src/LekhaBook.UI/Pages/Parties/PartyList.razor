@@ -12,6 +12,7 @@
     <MudSpacer />
     @if (CanAdd)
     {
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.UploadFile" Href="import" Class="me-2">@Loc["Import.Short"]</MudButton>
         <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonAdd" Href="@NewPartyHref">@Loc["Parties.AddParty"]</MudButton>
     }
 </div>

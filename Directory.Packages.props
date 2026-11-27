@@ -29,8 +29,13 @@
     <PackageVersion Include="MudBlazor" Version="9.14.0" />
   </ItemGroup>
 
+  <ItemGroup Label="Import">
+    <!-- The API reads imported files with these (D26); tests also use AngleSharp. -->
+    <PackageVersion Include="AngleSharp" Version="1.5.2" />
+    <PackageVersion Include="PdfPig" Version="0.1.16" />
+  </ItemGroup>
+
   <ItemGroup Label="Tests">
-    <PackageVersion Include="AngleSharp" Version="1.4.0" />
     <PackageVersion Include="bunit" Version="1.40.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />

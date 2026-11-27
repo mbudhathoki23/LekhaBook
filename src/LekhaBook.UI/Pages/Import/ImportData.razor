@@ -1,0 +1,713 @@
+@page "/import"
+@implements IDisposable
+@using LekhaBook.Application
+@using LekhaBook.Application.Import
+@using LekhaBook.Domain
+@inject IDataService Data
+@inject IImportService Importer
+@inject ICompanyApi Companies
+@inject ISessionService Session
+@inject IDialogService Dialogs
+
+@* Import from other apps (D26): pick a file, check what each column and row means, then save the selected rows. *@
+<PageTitle>@Loc["Import.Title"] · Lekha Books</PageTitle>
+
+<MudText Typo="Typo.h5" Class="mb-1" tabindex="-1">@Loc["Import.Title"]</MudText>
+<MudText Typo="Typo.body2" Class="mud-text-secondary mb-4">@Loc["Import.Intro"]</MudText>
+
+@if (!CanParties && !CanEntries)
+{
+    <MudAlert Severity="Severity.Info">@Loc["Import.NoPermission"]</MudAlert>
+}
+else
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Class="mb-2">@Loc["Import.KindLabel"]</MudText>
+        <MudRadioGroup T="ImportKind" Value="_kind" ValueChanged="ChangeKind" Name="import-kind" Disabled="Locked">
+            @if (CanParties)
+            {
+                <MudRadio Value="ImportKind.Parties" Color="Color.Primary">@Loc["Import.Kind.Parties"]</MudRadio>
+            }
+            @if (CanEntries)
+            {
+                <MudRadio Value="ImportKind.Entries" Color="Color.Primary">@Loc["Import.Kind.Entries"]</MudRadio>
+                <MudRadio Value="ImportKind.Statement" Color="Color.Primary">@Loc["Import.Kind.Statement"]</MudRadio>
+            }
+        </MudRadioGroup>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-3">@Loc[$"Import.KindHelp.{_kind}"]</MudText>
+
+        <label for="import-file" class="attachment-label">@Loc["Import.ChooseFile"]</label>
+        <InputFile @key="_inputVersion" id="import-file" OnChange="OnFileSelected" disabled="@(_reading || _saving)"
+                   accept=".csv,.tsv,.txt,.xlsx,.xls,.html,.htm,.pdf" />
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-1">@Loc["Import.FileHint"]</MudText>
+        @if (_reading)
+        {
+            <MudProgressLinear Indeterminate="true" Color="Color.Primary" Class="mt-2" aria-label="@Loc["Import.Reading"]" />
+        }
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Class="mt-3" role="alert">@_error</MudAlert>
+        }
+    </MudPaper>
+}
+
+@if (_file is not null && _books is not null)
+{
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <MudText Typo="Typo.subtitle1" Class="mb-1">@_fileName</MudText>
+        @if (_file.Truncated)
+        {
+            <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-2">@Loc["Import.Truncated", ImportLimits.MaxRows]</MudAlert>
+        }
+        @if (_file.Format == "pdf")
+        {
+            <MudAlert Severity="Severity.Info" Dense="true" Class="mb-2">@Loc["Import.PdfCheck"]</MudAlert>
+        }
+        <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">@Loc["Import.BalanceWarning"]</MudAlert>
+
+        <div class="import-options">
+            @if (_file.Tables.Count > 1)
+            {
+                <MudSelect T="int" Value="_table" ValueChanged="ChangeTable" Label="@Loc["Import.Sheet"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @for (var i = 0; i < _file.Tables.Count; i++)
+                    {
+                        var index = i;
+                        <MudSelectItem T="int" Value="index">@_file.Tables[index].Name (@_file.Tables[index].Rows.Count)</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            <MudSelect T="int" Value="_options.HeaderRow" ValueChanged="ChangeHeaderRow" Label="@Loc["Import.HeaderRow"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                <MudSelectItem T="int" Value="-1">@Loc["Import.NoHeader"]</MudSelectItem>
+                @for (var i = 0; i < Math.Min(Rows.Count, 30); i++)
+                {
+                    var index = i;
+                    <MudSelectItem T="int" Value="index">@Loc["Import.RowNumber", index + 1, Short(string.Join(" · ", Rows[index].Where(c => c.Length > 0)))]</MudSelectItem>
+                }
+            </MudSelect>
+            <MudSelect T="ImportCalendar" Value="_options.Calendar" ValueChanged="v => Change(_options with { Calendar = v })" Label="@Loc["Import.Calendar"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                <MudSelectItem T="ImportCalendar" Value="ImportCalendar.Auto">@Loc["Import.Detect"]</MudSelectItem>
+                <MudSelectItem T="ImportCalendar" Value="ImportCalendar.BS">@Loc["Calendar.Bs"]</MudSelectItem>
+                <MudSelectItem T="ImportCalendar" Value="ImportCalendar.AD">@Loc["Calendar.Ad"]</MudSelectItem>
+            </MudSelect>
+            <MudSelect T="ImportDateOrder" Value="_options.DateOrder" ValueChanged="v => Change(_options with { DateOrder = v })" Label="@Loc["Import.DateOrder"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                <MudSelectItem T="ImportDateOrder" Value="ImportDateOrder.Auto">@Loc["Import.Detect"]</MudSelectItem>
+                <MudSelectItem T="ImportDateOrder" Value="ImportDateOrder.DayFirst">@Loc["Import.DayFirst"]</MudSelectItem>
+                <MudSelectItem T="ImportDateOrder" Value="ImportDateOrder.MonthFirst">@Loc["Import.MonthFirst"]</MudSelectItem>
+            </MudSelect>
+
+            @if (_kind == ImportKind.Statement)
+            {
+                <MudSelect T="Guid?" Value="_options.StatementAccountId" ValueChanged="v => Change(_options with { StatementAccountId = v })" Label="@Loc["Import.StatementOf"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @foreach (var account in _books.Accounts)
+                    {
+                        <MudSelectItem T="Guid?" Value="account.Id">@account.Name</MudSelectItem>
+                    }
+                    @foreach (var party in _books.Parties)
+                    {
+                        <MudSelectItem T="Guid?" Value="party.Id">@party.Name (@Loc[$"Parties.Type.{party.PartyType}"])</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            @if (_kind != ImportKind.Parties)
+            {
+                <MudSelect T="Guid?" Value="_options.DefaultMoneyAccountId" ValueChanged="v => Change(_options with { DefaultMoneyAccountId = v })" Label="@Loc["Import.DefaultAccount"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @foreach (var account in _books.Accounts)
+                    {
+                        <MudSelectItem T="Guid?" Value="account.Id">@account.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="Guid?" Value="_options.DefaultExpenseId" ValueChanged="v => Change(_options with { DefaultExpenseId = v })" Label="@Loc["Import.DefaultExpense"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @foreach (var head in _books.Categories.Where(c => c.Type == "Expense"))
+                    {
+                        <MudSelectItem T="Guid?" Value="head.Id">@head.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="Guid?" Value="_options.DefaultIncomeId" ValueChanged="v => Change(_options with { DefaultIncomeId = v })" Label="@Loc["Import.DefaultIncome"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @foreach (var head in _books.Categories.Where(c => c.Type == "Income"))
+                    {
+                        <MudSelectItem T="Guid?" Value="head.Id">@head.Name</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudSelect T="TransactionType?" Value="_options.DefaultType" ValueChanged="v => Change(_options with { DefaultType = v })" Label="@Loc["Import.DefaultType"]" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    <MudSelectItem T="TransactionType?" Value="null">@Loc["Import.DefaultTypeAuto"]</MudSelectItem>
+                    @foreach (var type in ImportPlanner.EntryTypes.Where(t => t != TransactionType.TransferMoney))
+                    {
+                        <MudSelectItem T="TransactionType?" Value="type">@TypeName(type)</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+            @if (CanParties)
+            {
+                <MudSelect T="PartyType" Value="_options.DefaultPartyType" ValueChanged="v => Change(_options with { DefaultPartyType = v })" Label="@(_kind == ImportKind.Parties ? Loc["Import.DefaultPartyType"] : Loc["Import.NewPartyType"])" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    @foreach (var type in PartyTypes)
+                    {
+                        <MudSelectItem T="PartyType" Value="type">@Loc[$"Parties.Type.{type}"]</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+        </div>
+
+        @if (_kind != ImportKind.Parties)
+        {
+            @if (CanParties)
+            {
+                <MudCheckBox T="bool" Value="_options.AddMissingParties" ValueChanged="v => Change(_options with { AddMissingParties = v })" Label="@Loc["Import.AddMissing"]" Color="Color.Primary" Disabled="Locked" />
+            }
+            <MudCheckBox T="bool" Value="_options.SwapInOut" ValueChanged="v => Change(_options with { SwapInOut = v })" Label="@Loc["Import.Swap"]" Color="Color.Primary" Disabled="Locked" />
+        }
+
+        <MudText Typo="Typo.subtitle2" Class="mt-4">@Loc["Import.Columns"]</MudText>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-2">@Loc["Import.ColumnsHelp"]</MudText>
+        <div class="import-options">
+            @for (var i = 0; i < _options.Columns.Count; i++)
+            {
+                var column = i;
+                <MudSelect T="ImportField" Value="_options.Columns[column]" ValueChanged="v => ChangeColumn(column, v)" Label="@ColumnTitle(column)"
+                           HelperText="@Sample(column)" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                    <MudSelectItem T="ImportField" Value="ImportField.Skip">@Loc["Import.Field.Skip"]</MudSelectItem>
+                    @foreach (var field in ImportColumns.FieldsFor(_kind))
+                    {
+                        <MudSelectItem T="ImportField" Value="field">@Loc[FieldKey(field)]</MudSelectItem>
+                    }
+                </MudSelect>
+            }
+        </div>
+
+        @if (_plan.UnknownTypes.Count > 0)
+        {
+            <MudText Typo="Typo.subtitle2" Class="mt-4 mb-2">@Loc["Import.TypeWords"]</MudText>
+            <div class="import-options">
+                @foreach (var word in _plan.UnknownTypes)
+                {
+                    <MudSelect T="string" Value="@ChoiceOf(word)" ValueChanged="v => ChooseType(word, v)" Label="@word" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="Locked">
+                        <MudSelectItem T="string" Value="@("")">@Loc["Import.DefaultTypeAuto"]</MudSelectItem>
+                        <MudSelectItem T="string" Value="@LeaveOut">@Loc["Import.Field.Skip"]</MudSelectItem>
+                        @foreach (var type in ImportPlanner.EntryTypes)
+                        {
+                            <MudSelectItem T="string" Value="@type.ToString()">@TypeName(type)</MudSelectItem>
+                        }
+                    </MudSelect>
+                }
+            </div>
+        }
+    </MudPaper>
+
+    <MudPaper Class="pa-4 mb-4" Elevation="1">
+        <div class="page-header">
+            <MudText Typo="Typo.subtitle1">@Loc["Import.Preview"]</MudText>
+            <MudSpacer />
+            <MudSelect T="string" @bind-Value="_show" Variant="Variant.Outlined" Margin="Margin.Dense" Class="import-show" aria-label="@Loc["Import.Show"]">
+                <MudSelectItem T="string" Value="@("all")">@Loc["Import.ShowAll", _plan.Rows.Count]</MudSelectItem>
+                @foreach (var status in Enum.GetValues<ImportRowStatus>())
+                {
+                    <MudSelectItem T="string" Value="@status.ToString()">@Loc[$"Import.Status.{status}", _plan.Rows.Count(r => r.Status == status)]</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+        <div class="import-chips mb-2">
+            <MudChip T="string" Color="Color.Success" Size="Size.Small">@Loc["Import.Status.Ready", Count(ImportRowStatus.Ready)]</MudChip>
+            <MudChip T="string" Color="Color.Warning" Size="Size.Small">@Loc["Import.Status.Duplicate", Count(ImportRowStatus.Duplicate)]</MudChip>
+            <MudChip T="string" Color="Color.Error" Size="Size.Small">@Loc["Import.Status.Error", Count(ImportRowStatus.Error)]</MudChip>
+            <MudChip T="string" Size="Size.Small">@Loc["Import.Status.Skipped", Count(ImportRowStatus.Skipped)]</MudChip>
+        </div>
+        @if (NewPartyCount > 0)
+        {
+            <MudText Typo="Typo.body2" Class="mb-2">@Loc["Import.NewParties", NewPartyCount]</MudText>
+        }
+
+        <div class="import-scroll">
+            <MudSimpleTable Dense="true" Hover="true">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>#</th>
+                        <th>@Loc["Common.Date"]</th>
+                        <th>@Loc[_kind == ImportKind.Parties ? "Common.Name" : "Import.What"]</th>
+                        <th class="import-amount">@Loc[_kind == ImportKind.Parties ? "Common.Balance" : "Common.Amount"]</th>
+                        <th>@Loc["Common.Status"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Shown.Take(PageSize * _pages))
+                    {
+                        <tr @key="row">
+                            <td>
+                                <input type="checkbox" checked="@row.Selected" disabled="@(!row.CanSelect || Locked)"
+                                       @onchange="e => row.Selected = e.Value is true" aria-label="@Loc["Import.SelectRow", row.Line]" />
+                            </td>
+                            <td>@row.Line</td>
+                            <td class="import-nowrap">@(row.Date is { } date ? Session.FormatDate(date) : "")</td>
+                            <td>
+                                @if (row.Type is { } type)
+                                {
+                                    <b>@TypeName(type)</b> <br />
+                                }
+                                @row.Title
+                                @if (!string.IsNullOrEmpty(row.Detail))
+                                {
+                                    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">@Short(row.Detail)</MudText>
+                                }
+                            </td>
+                            <td class="import-amount">@AmountText(row)</td>
+                            <td>
+                                @if (row.Saved)
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Success">@Loc["Import.Saved"]</MudText>
+                                }
+                                else if (row.SaveError is not null)
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Error">@row.SaveError</MudText>
+                                }
+                                else if (row.Note is { } note)
+                                {
+                                    <MudText Typo="Typo.caption" Color="@(row.Status == ImportRowStatus.Error ? Color.Error : Color.Default)">@Loc[note.Key, note.Args]</MudText>
+                                }
+                                else
+                                {
+                                    <MudText Typo="Typo.caption">@Loc["Import.Ready"]</MudText>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </MudSimpleTable>
+        </div>
+        @if (Shown.Count() > PageSize * _pages)
+        {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Class="mt-2" OnClick="() => _pages++">@Loc["Import.ShowMore", Shown.Count() - PageSize * _pages]</MudButton>
+        }
+
+        @if (_saving)
+        {
+            <MudProgressLinear Color="Color.Primary" Class="mt-3" Value="@Progress" aria-label="@Loc["Import.Saving"]" />
+            <MudText Typo="Typo.body2" Class="mt-1" role="status">@Loc["Import.SavingCount", _done, _total]</MudText>
+        }
+        else if (_finished is { } finished)
+        {
+            <MudAlert Severity="@(finished && Failed == 0 ? Severity.Success : Severity.Warning)" Class="mt-3" role="status">
+                @Loc["Import.Result", Saved, Failed]
+                @if (!finished)
+                {
+                    <div>@Loc["Import.Stopped"]</div>
+                }
+            </MudAlert>
+        }
+
+        <div class="import-actions mt-3">
+            @if (_saving)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _cancel?.Cancel()">@Loc["Import.Stop"]</MudButton>
+            }
+            else
+            {
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ImportAsync" Disabled="@(ToSave == 0)">@Loc["Import.Button", ToSave]</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="Reset">@Loc["Import.Another"]</MudButton>
+            }
+        </div>
+    </MudPaper>
+}
+
+@code {
+    private const int PageSize = 100;
+    private const string LeaveOut = "skip";
+
+    private ImportKind _kind;
+    private bool _reading;
+    private bool _saving;
+    private string? _error;
+    private int _inputVersion;
+
+    private ImportFileDto? _file;
+    private string? _fileName;
+    private ImportBooks? _books;
+    private int _table;
+    private ImportOptions _options = new();
+    private ImportPlan _plan = ImportPlan.Empty;
+    private string _show = "all";
+    private int _pages = 1;
+
+    private bool? _finished;
+    private int _done;
+    private int _total;
+    private CancellationTokenSource? _cancel;
+
+    private Guid CompanyId => Session.CurrentCompany?.CompanyId ?? Guid.Empty;
+
+    private IEnumerable<PartyType> PartyTypes =>
+        Enum.GetValues<PartyType>().Where(t => Session.Can(MasterRules.PartyPermission(t, EntryAction.Create)));
+
+    private bool CanParties => PartyTypes.Any();
+
+    private bool CanEntries => Session.Can(Permission.AccountsView)
+        && ImportPlanner.EntryTypes.Any(t => Session.Can(EntryRules.PermissionFor(t, EntryAction.Create)));
+
+    /// <summary>Choices are fixed while saving, and afterwards, so a retry saves exactly the same rows.</summary>
+    private bool Locked => _saving || _finished is not null;
+
+    private IReadOnlyList<IReadOnlyList<string>> Rows => _file!.Tables[_table].Rows;
+
+    private IEnumerable<ImportRow> Shown =>
+        _show == "all" ? _plan.Rows : _plan.Rows.Where(r => r.Status.ToString() == _show);
+
+    private int ToSave => _plan.Rows.Count(r => r.Selected && !r.Saved);
+
+    private int Saved => _plan.Rows.Count(r => r.Saved);
+
+    private int Failed => _plan.Rows.Count(r => r.SaveError is not null);
+
+    private int NewPartyCount => _plan.Rows.Where(r => r.Selected && r.NewPartyId is not null).Select(r => r.NewPartyId).Distinct().Count();
+
+    private double Progress => _total == 0 ? 0 : _done * 100d / _total;
+
+    protected override void OnInitialized() => _kind = CanParties ? ImportKind.Parties : ImportKind.Entries;
+
+    private void ChangeKind(ImportKind kind)
+    {
+        _kind = kind;
+        if (_file is not null)
+        {
+            Detect();
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        Clear();
+        if (file.Size > ImportLimits.MaxFileBytes)
+        {
+            _error = Loc["Import.FileTooLarge"];
+            return;
+        }
+
+        var company = CompanyId;
+        _reading = true;
+        try
+        {
+            await using var stream = file.OpenReadStream(ImportLimits.MaxFileBytes);
+            var read = await Importer.ReadFileAsync(company, stream, file.Name);
+            if (!read.Ok)
+            {
+                _error = read.Error;
+                return;
+            }
+
+            // Read afresh for every file, so rows saved by an earlier import show up as already there.
+            if (await LoadBooksAsync(company) is not { } books)
+            {
+                return;
+            }
+
+            (_file, _fileName, _books) = (read.Value!, file.Name, books);
+            _options = new ImportOptions
+            {
+                DefaultPartyType = PartyTypes.FirstOrDefault(),
+                AddMissingParties = CanParties,
+                DefaultMoneyAccountId = (books.Accounts.FirstOrDefault(a => a.Type == "Cash") ?? books.Accounts.FirstOrDefault())?.Id,
+                DefaultExpenseId = DefaultHead(books, "Expense", "General"),
+                DefaultIncomeId = DefaultHead(books, "Income", null),
+            };
+            // The sheet with the most rows is the likely data sheet.
+            _table = Enumerable.Range(0, _file.Tables.Count).MaxBy(i => _file.Tables[i].Rows.Count);
+            Detect();
+        }
+        catch (IOException)
+        {
+            _error = Loc["Import.CouldNotRead"];
+        }
+        finally
+        {
+            _reading = false;
+        }
+    }
+
+    private static Guid? DefaultHead(ImportBooks books, string type, string? preferred)
+    {
+        var heads = books.Categories.Where(c => c.Type == type).ToList();
+        return (heads.FirstOrDefault(c => c.Name == preferred) ?? heads.FirstOrDefault())?.Id;
+    }
+
+    /// <summary>What the rows are checked against; null (with the error shown) when it can't be loaded.</summary>
+    private async Task<ImportBooks?> LoadBooksAsync(Guid company)
+    {
+        List<PartyDto> parties = [];
+        List<MoneyAccountDto> accounts = [];
+        List<CategoryDto> categories = [];
+        List<TransactionDto> entries = [];
+
+        if (Session.Can(Permission.CustomersView) || Session.Can(Permission.SuppliersView))
+        {
+            var result = await Data.GetPartiesAsync(company);
+            if (!Ok(result))
+            {
+                return null;
+            }
+            parties = result.Value!;
+        }
+
+        if (Session.Can(Permission.AccountsView))
+        {
+            var result = await Data.GetMoneyAccountsAsync(company);
+            if (!Ok(result))
+            {
+                return null;
+            }
+            accounts = result.Value!;
+        }
+
+        if (Session.Can(Permission.IncomeExpenseView))
+        {
+            var result = await Data.GetCategoriesAsync(company);
+            if (!Ok(result))
+            {
+                return null;
+            }
+            categories = result.Value!;
+        }
+
+        var transactions = await Data.GetTransactionsAsync(company);
+        if (!Ok(transactions))
+        {
+            return null;
+        }
+        entries = transactions.Value!;
+
+        var details = await Companies.GetCompanyAsync(company);
+        if (!Ok(details))
+        {
+            return null;
+        }
+
+        return new ImportBooks(parties, accounts, categories, entries, CompanyClock.Today(details.Value!.TimeZoneId, TimeProvider.System));
+    }
+
+    private bool Ok<T>(ApiResult<T> result)
+    {
+        if (!result.Ok)
+        {
+            _error = result.Error;
+        }
+
+        return result.Ok;
+    }
+
+    /// <summary>Guesses the heading row and columns again, for a new file, sheet or kind of import.</summary>
+    private void Detect()
+    {
+        var header = ImportColumns.DetectHeaderRow(Rows, _kind, HeaderWords());
+        SetHeaderRow(header, _options with { Kind = _kind, TypeChoices = new Dictionary<string, TransactionType?>() });
+    }
+
+    private void SetHeaderRow(int header, ImportOptions options)
+    {
+        var width = Rows.Count == 0 ? 0 : Rows.Max(r => r.Count);
+        var guessed = header >= 0 ? ImportColumns.Guess(Rows[header], _kind, HeaderWords()) : [];
+        Change(options with
+        {
+            HeaderRow = header,
+            Columns = Enumerable.Range(0, width).Select(i => i < guessed.Count ? guessed[i] : ImportField.Skip).ToArray(),
+        });
+    }
+
+    private void ChangeTable(int table)
+    {
+        _table = table;
+        Detect();
+    }
+
+    private void ChangeHeaderRow(int header) => SetHeaderRow(header, _options);
+
+    private void ChangeColumn(int column, ImportField field)
+    {
+        var columns = _options.Columns.ToArray();
+        // A field comes from one column, so it moves here from wherever it was.
+        for (var i = 0; i < columns.Length; i++)
+        {
+            if (columns[i] == field && field != ImportField.Skip)
+            {
+                columns[i] = ImportField.Skip;
+            }
+        }
+
+        columns[column] = field;
+        Change(_options with { Columns = columns });
+    }
+
+    private string ChoiceOf(string word) =>
+        _options.TypeChoices.TryGetValue(word, out var type) ? type?.ToString() ?? LeaveOut : "";
+
+    private void ChooseType(string word, string choice)
+    {
+        var choices = new Dictionary<string, TransactionType?>(_options.TypeChoices);
+        if (choice.Length == 0)
+        {
+            choices.Remove(word);
+        }
+        else
+        {
+            choices[word] = choice == LeaveOut ? null : Enum.Parse<TransactionType>(choice);
+        }
+
+        Change(_options with { TypeChoices = choices });
+    }
+
+    private void Change(ImportOptions options)
+    {
+        _options = options with
+        {
+            TypeNames = TypeWords(),
+            Text = (key, args) => Loc[key, args],
+        };
+        _plan = ImportPlanner.Build(Rows, _options, _books!);
+        _pages = 1;
+    }
+
+    /// <summary>This app's own headings in the screen's language, so its exports can be read back.</summary>
+    private Dictionary<string, ImportField> HeaderWords()
+    {
+        var words = new Dictionary<string, ImportField>();
+        void Add(string key, ImportField field) => words[ImportValues.Normalize(Loc[key])] = field;
+
+        Add("Common.Date", ImportField.Date);
+        Add("Common.Name", ImportField.Name);
+        Add("Common.Party", ImportField.Name);
+        Add("Common.Phone", ImportField.Phone);
+        Add("Common.Email", ImportField.Email);
+        Add("Common.Category", ImportField.Category);
+        Add("Common.Amount", ImportField.Amount);
+        Add("Common.Remarks", ImportField.Remarks);
+        Add("PublicReport.Details", ImportField.Remarks);
+        Add("Common.Balance", ImportField.Balance);
+        Add("PartySide.ToReceive", ImportField.ToReceive);
+        Add("PartySide.ToGive", ImportField.ToGive);
+        Add("Ledger.GaveAdded", ImportField.MoneyOut);
+        Add("Ledger.GotReduced", ImportField.MoneyIn);
+        Add("Accounts.Detail.MoneyIn", ImportField.MoneyIn);
+        Add("Accounts.Detail.MoneyOut", ImportField.MoneyOut);
+        Add("Transactions.Form.ChequeNoLabel", ImportField.ChequeNo);
+        Add("Transactions.Form.PaymentMethod", ImportField.Account);
+        return words;
+    }
+
+    private Dictionary<string, TransactionType> TypeWords()
+    {
+        var words = new Dictionary<string, TransactionType>();
+        foreach (var type in Enum.GetValues<TransactionType>())
+        {
+            words[ImportValues.Normalize(TypeName(type))] = type;
+        }
+
+        return words;
+    }
+
+    private async Task ImportAsync()
+    {
+        var count = ToSave;
+        var message = _kind == ImportKind.Parties
+            ? Loc["Import.ConfirmParties", count, Session.CompanyName ?? ""]
+            : Loc["Import.ConfirmMessage", count, NewPartyCount, Session.CompanyName ?? ""];
+        var confirmed = await Dialogs.ShowMessageBoxAsync(
+            Loc["Import.ConfirmTitle"], message, yesText: Loc["Import.Title"], cancelText: Loc["Common.Cancel"]);
+        if (confirmed != true || _saving)
+        {
+            return;
+        }
+
+        var company = CompanyId;
+        var plan = _plan;
+        (_saving, _finished, _done, _total) = (true, null, 0, count);
+        _cancel = new CancellationTokenSource();
+        try
+        {
+            _finished = await ImportRunner.RunAsync(
+                plan,
+                async party => Reply(await Data.AddPartyAsync(company, party)),
+                async entry => Reply(await Data.AddTransactionAsync(company, entry)),
+                () =>
+                {
+                    _done++;
+                    StateHasChanged();
+                },
+                _cancel.Token);
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    /// <summary>A lost connection, an expired sign-in or a failing server would fail every later row too.</summary>
+    private static ImportReply Reply<T>(ApiResult<T> result) =>
+        result.Ok ? new ImportReply() : new ImportReply(result.Error, result.IsNetworkError || result.StatusCode is 401 or >= 500);
+
+    private void Reset()
+    {
+        Clear();
+        _inputVersion++;
+    }
+
+    private void Clear()
+    {
+        (_file, _fileName, _books, _error, _finished) = (null, null, null, null, null);
+        _plan = ImportPlan.Empty;
+        _show = "all";
+        _pages = 1;
+    }
+
+    private int Count(ImportRowStatus status) => _plan.Rows.Count(r => r.Status == status);
+
+    private string TypeName(TransactionType type) => Loc[MasterLabels.TransactionType(type.ToString())];
+
+    private string AmountText(ImportRow row)
+    {
+        if (row.Amount is not { } amount)
+        {
+            return "";
+        }
+
+        if (_kind != ImportKind.Parties || amount == 0)
+        {
+            return Money.Format(amount);
+        }
+
+        return $"{Money.Format(Math.Abs(amount))} {Loc[amount > 0 ? "PartySide.ToReceive" : "PartySide.ToGive"]}";
+    }
+
+    private string ColumnTitle(int column)
+    {
+        var header = _options.HeaderRow >= 0 && column < Rows[_options.HeaderRow].Count ? Rows[_options.HeaderRow][column] : "";
+        return header.Length > 0 ? Short(header) : Loc["Import.Column", column + 1];
+    }
+
+    /// <summary>The first value found under the heading, to show what the column holds.</summary>
+    private string? Sample(int column) =>
+        Rows.Skip(_options.HeaderRow + 1).Where(r => column < r.Count && r[column].Length > 0).Select(r => Short(r[column])).FirstOrDefault();
+
+    private static string Short(string text) => text.Length <= 60 ? text : text[..59] + "…";
+
+    private static string FieldKey(ImportField field) => field switch
+    {
+        ImportField.Date => "Common.Date",
+        ImportField.Name => "Common.Party",
+        ImportField.PartyType => "Import.Field.PartyType",
+        ImportField.Phone => "Common.Phone",
+        ImportField.Email => "Common.Email",
+        ImportField.Address => "Parties.Form.AddressLabel",
+        ImportField.Pan => "Parties.Form.PanLabel",
+        ImportField.Balance => "Common.Balance",
+        ImportField.ToReceive => "PartySide.ToReceive",
+        ImportField.ToGive => "PartySide.ToGive",
+        ImportField.Type => "Import.Field.Type",
+        ImportField.Amount => "Common.Amount",
+        ImportField.MoneyIn => "Accounts.Detail.MoneyIn",
+        ImportField.MoneyOut => "Accounts.Detail.MoneyOut",
+        ImportField.Account => "Transactions.Form.PaymentMethod",
+        ImportField.ToAccount => "Import.Field.ToAccount",
+        ImportField.Category => "Common.Category",
+        ImportField.Remarks => "Common.Remarks",
+        ImportField.ChequeNo => "Transactions.Form.ChequeNoLabel",
+        _ => "Import.Field.Skip",
+    };
+
+    public void Dispose() => _cancel?.Cancel();
+}

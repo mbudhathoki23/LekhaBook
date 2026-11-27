@@ -103,6 +103,7 @@ app.MapMasterEndpoints();
 app.MapTransactionEndpoints();
 app.MapSyncEndpoints();
 app.MapReportLinkEndpoints();
+app.MapImportEndpoints();
 
 app.Run();
 

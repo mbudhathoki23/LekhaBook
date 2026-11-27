@@ -1469,4 +1469,292 @@ Lekha Books にサインイン: {4}</value>
   <data name="PublicReport.Details" xml:space="preserve">
     <value>詳細</value>
   </data>
+  <data name="Import.Title" xml:space="preserve">
+    <value>データの取り込み</value>
+  </data>
+  <data name="Import.Short" xml:space="preserve">
+    <value>取り込み</value>
+  </data>
+  <data name="Import.Intro" xml:space="preserve">
+    <value>他のアプリから取引先と記録を取り込みます。行を確認して取り込みを押すまで、何も保存されません。</value>
+  </data>
+  <data name="Import.NoPermission" xml:space="preserve">
+    <value>取引先や記録を追加する権限がありません。</value>
+  </data>
+  <data name="Import.KindLabel" xml:space="preserve">
+    <value>何を取り込みますか？</value>
+  </data>
+  <data name="Import.Kind.Parties" xml:space="preserve">
+    <value>取引先と残高</value>
+  </data>
+  <data name="Import.Kind.Entries" xml:space="preserve">
+    <value>複数の取引先や費目の記録</value>
+  </data>
+  <data name="Import.Kind.Statement" xml:space="preserve">
+    <value>1つの取引先または口座の明細</value>
+  </data>
+  <data name="Import.KindHelp.Parties" xml:space="preserve">
+    <value>顧客や仕入先の一覧です。残高は取引先の期首残高になります。</value>
+  </data>
+  <data name="Import.KindHelp.Entries" xml:space="preserve">
+    <value>日記帳や全取引の一覧です。実際にお金が動いた記録のみ追加してください。掛け売りと掛け仕入はまだ取り込めません。</value>
+  </data>
+  <data name="Import.KindHelp.Statement" xml:space="preserve">
+    <value>取引先元帳や銀行の明細です。ファイルを選んでから対象を指定します。</value>
+  </data>
+  <data name="Import.ChooseFile" xml:space="preserve">
+    <value>ファイルを選択</value>
+  </data>
+  <data name="Import.FileHint" xml:space="preserve">
+    <value>CSV、Excel (.xlsx)、HTML、PDF（5 MB まで）。スキャンした PDF は読み取れません。</value>
+  </data>
+  <data name="Import.Reading" xml:space="preserve">
+    <value>ファイルを読み込み中</value>
+  </data>
+  <data name="Import.CouldNotRead" xml:space="preserve">
+    <value>ファイルを読み込めませんでした。</value>
+  </data>
+  <data name="Import.FileTooLarge" xml:space="preserve">
+    <value>ファイルが 5 MB を超えています。</value>
+  </data>
+  <data name="Import.Truncated" xml:space="preserve">
+    <value>最初の {0} 行のみ読み込みました。残りはファイルを分割してください。</value>
+  </data>
+  <data name="Import.PdfCheck" xml:space="preserve">
+    <value>PDF の列はページの配置から推定します。取り込む前に行をよく確認してください。</value>
+  </data>
+  <data name="Import.BalanceWarning" xml:space="preserve">
+    <value>期首残高には過去の記録が含まれています。その記録も取り込むと残高が二重に計上されます。</value>
+  </data>
+  <data name="Import.Sheet" xml:space="preserve">
+    <value>シートまたは表</value>
+  </data>
+  <data name="Import.HeaderRow" xml:space="preserve">
+    <value>見出し行</value>
+  </data>
+  <data name="Import.NoHeader" xml:space="preserve">
+    <value>見出しなし</value>
+  </data>
+  <data name="Import.RowNumber" xml:space="preserve">
+    <value>{0} 行目: {1}</value>
+  </data>
+  <data name="Import.Calendar" xml:space="preserve">
+    <value>ファイル内の日付</value>
+  </data>
+  <data name="Import.Detect" xml:space="preserve">
+    <value>自動判定</value>
+  </data>
+  <data name="Import.DateOrder" xml:space="preserve">
+    <value>日と月の順序</value>
+  </data>
+  <data name="Import.DayFirst" xml:space="preserve">
+    <value>日が先 (31/12)</value>
+  </data>
+  <data name="Import.MonthFirst" xml:space="preserve">
+    <value>月が先 (12/31)</value>
+  </data>
+  <data name="Import.StatementOf" xml:space="preserve">
+    <value>誰の明細ですか？</value>
+  </data>
+  <data name="Import.DefaultAccount" xml:space="preserve">
+    <value>行に指定がない場合の支払方法</value>
+  </data>
+  <data name="Import.DefaultExpense" xml:space="preserve">
+    <value>一致しない場合の費用科目</value>
+  </data>
+  <data name="Import.DefaultIncome" xml:space="preserve">
+    <value>一致しない場合の収入科目</value>
+  </data>
+  <data name="Import.DefaultType" xml:space="preserve">
+    <value>種類のない行の扱い</value>
+  </data>
+  <data name="Import.DefaultTypeAuto" xml:space="preserve">
+    <value>行ごとに判定</value>
+  </data>
+  <data name="Import.DefaultPartyType" xml:space="preserve">
+    <value>ファイルに指定がない場合の区分</value>
+  </data>
+  <data name="Import.NewPartyType" xml:space="preserve">
+    <value>新しい取引先の区分</value>
+  </data>
+  <data name="Import.AddMissing" xml:space="preserve">
+    <value>帳簿にない取引先を追加する</value>
+  </data>
+  <data name="Import.Swap" xml:space="preserve">
+    <value>入金と出金を入れ替える</value>
+  </data>
+  <data name="Import.Columns" xml:space="preserve">
+    <value>列</value>
+  </data>
+  <data name="Import.ColumnsHelp" xml:space="preserve">
+    <value>各列の内容を確認してください。</value>
+  </data>
+  <data name="Import.Column" xml:space="preserve">
+    <value>{0} 列目</value>
+  </data>
+  <data name="Import.Field.Skip" xml:space="preserve">
+    <value>取り込まない</value>
+  </data>
+  <data name="Import.Field.PartyType" xml:space="preserve">
+    <value>顧客か仕入先</value>
+  </data>
+  <data name="Import.Field.Type" xml:space="preserve">
+    <value>記録の種類</value>
+  </data>
+  <data name="Import.Field.ToAccount" xml:space="preserve">
+    <value>振替先口座</value>
+  </data>
+  <data name="Import.TypeWords" xml:space="preserve">
+    <value>ファイルに記載の種類</value>
+  </data>
+  <data name="Import.Preview" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="Import.Show" xml:space="preserve">
+    <value>表示する行</value>
+  </data>
+  <data name="Import.ShowAll" xml:space="preserve">
+    <value>すべて（{0}）</value>
+  </data>
+  <data name="Import.Status.Ready" xml:space="preserve">
+    <value>取り込み可: {0}</value>
+  </data>
+  <data name="Import.Status.Duplicate" xml:space="preserve">
+    <value>登録済み: {0}</value>
+  </data>
+  <data name="Import.Status.Skipped" xml:space="preserve">
+    <value>対象外: {0}</value>
+  </data>
+  <data name="Import.Status.Error" xml:space="preserve">
+    <value>エラー: {0}</value>
+  </data>
+  <data name="Import.NewParties" xml:space="preserve">
+    <value>先に追加する新規取引先: {0}</value>
+  </data>
+  <data name="Import.What" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="Import.SelectRow" xml:space="preserve">
+    <value>{0} 行目を取り込む</value>
+  </data>
+  <data name="Import.Ready" xml:space="preserve">
+    <value>取り込み可</value>
+  </data>
+  <data name="Import.Saved" xml:space="preserve">
+    <value>保存済み</value>
+  </data>
+  <data name="Import.ShowMore" xml:space="preserve">
+    <value>さらに表示（{0}）</value>
+  </data>
+  <data name="Import.Button" xml:space="preserve">
+    <value>{0} 行を取り込む</value>
+  </data>
+  <data name="Import.Another" xml:space="preserve">
+    <value>別のファイルを選ぶ</value>
+  </data>
+  <data name="Import.Stop" xml:space="preserve">
+    <value>中止</value>
+  </data>
+  <data name="Import.Saving" xml:space="preserve">
+    <value>保存中</value>
+  </data>
+  <data name="Import.SavingCount" xml:space="preserve">
+    <value>保存中 {0}/{1}</value>
+  </data>
+  <data name="Import.Result" xml:space="preserve">
+    <value>保存: {0}、失敗: {1}。</value>
+  </data>
+  <data name="Import.Stopped" xml:space="preserve">
+    <value>取り込みが途中で止まりました。もう一度取り込みボタンを押すと続行します。保存済みの行は重複しません。</value>
+  </data>
+  <data name="Import.ConfirmTitle" xml:space="preserve">
+    <value>これらの行を取り込みますか？</value>
+  </data>
+  <data name="Import.ConfirmMessage" xml:space="preserve">
+    <value>{2} に {0} 行と新規取引先 {1} 件を追加します。取り込んだ記録の変更や削除は1件ずつになります。</value>
+  </data>
+  <data name="Import.ConfirmParties" xml:space="preserve">
+    <value>{1} に取引先 {0} 件を追加します。</value>
+  </data>
+  <data name="Import.Row.NotData" xml:space="preserve">
+    <value>データ行ではありません</value>
+  </data>
+  <data name="Import.Row.Opening" xml:space="preserve">
+    <value>期首残高: 取引先か口座で設定してください</value>
+  </data>
+  <data name="Import.Row.PartyExists" xml:space="preserve">
+    <value>同じ名前の取引先があります</value>
+  </data>
+  <data name="Import.Row.EntryExists" xml:space="preserve">
+    <value>登録済みのようです</value>
+  </data>
+  <data name="Import.Row.Invalid" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Import.Row.BadAmount" xml:space="preserve">
+    <value>金額を読み取れません: {0}</value>
+  </data>
+  <data name="Import.Row.NoAmount" xml:space="preserve">
+    <value>金額がありません</value>
+  </data>
+  <data name="Import.Row.BothDirections" xml:space="preserve">
+    <value>入金と出金の両方に値があります</value>
+  </data>
+  <data name="Import.Row.NoDate" xml:space="preserve">
+    <value>日付がありません</value>
+  </data>
+  <data name="Import.Row.BadDate" xml:space="preserve">
+    <value>日付を読み取れません: {0}</value>
+  </data>
+  <data name="Import.Row.FutureDate" xml:space="preserve">
+    <value>未来の日付です</value>
+  </data>
+  <data name="Import.Row.NoType" xml:space="preserve">
+    <value>種類のない行の扱いを選んでください</value>
+  </data>
+  <data name="Import.Row.UnknownType" xml:space="preserve">
+    <value>不明な種類: {0}</value>
+  </data>
+  <data name="Import.Row.Unsupported" xml:space="preserve">
+    <value>まだ取り込めません: {0}</value>
+  </data>
+  <data name="Import.Row.LeftOut" xml:space="preserve">
+    <value>選択により除外: {0}</value>
+  </data>
+  <data name="Import.Row.NoParty" xml:space="preserve">
+    <value>取引先名がありません</value>
+  </data>
+  <data name="Import.Row.NoPartyNamed" xml:space="preserve">
+    <value>{0} という取引先はありません</value>
+  </data>
+  <data name="Import.Row.NewParty" xml:space="preserve">
+    <value>取引先 {0} を追加します</value>
+  </data>
+  <data name="Import.Row.NoAccountNamed" xml:space="preserve">
+    <value>{0} という口座はありません。先に「財務」で追加してください。</value>
+  </data>
+  <data name="Import.Row.ChooseAccount" xml:space="preserve">
+    <value>支払方法を選んでください</value>
+  </data>
+  <data name="Import.Row.ChooseCategory" xml:space="preserve">
+    <value>既定の科目を選んでください</value>
+  </data>
+  <data name="Import.Row.ChooseStatement" xml:space="preserve">
+    <value>明細の対象を選んでください</value>
+  </data>
+  <data name="Import.Row.NoDirection" xml:space="preserve">
+    <value>入金か出金か判断できません</value>
+  </data>
+  <data name="Import.Row.DirectionClash" xml:space="preserve">
+    <value>種類と金額の列が一致しません</value>
+  </data>
+  <data name="Import.Row.StatementTransfer" xml:space="preserve">
+    <value>振替: 記録の取り込みか手入力で追加してください</value>
+  </data>
+  <data name="Import.Row.SameAccount" xml:space="preserve">
+    <value>振替元と振替先が同じです</value>
+  </data>
+  <data name="Import.Row.RemarksShortened" xml:space="preserve">
+    <value>備考は短縮されます</value>
+  </data>
 </root>

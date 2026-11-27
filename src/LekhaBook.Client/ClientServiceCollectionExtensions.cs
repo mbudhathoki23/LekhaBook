@@ -33,6 +33,7 @@ public static class ClientServiceCollectionExtensions
             services.AddScoped<IDataService, ApiDataService>();
             services.AddScoped<IAttachmentService, ApiAttachmentService>();
             services.AddScoped<IReportLinkApi, ReportLinkApi>();
+            services.AddScoped<IImportService, ImportApi>();
         }
         else
         {
@@ -43,6 +44,7 @@ public static class ClientServiceCollectionExtensions
             services.AddSingleton<IDataService, ApiDataService>();
             services.AddSingleton<IAttachmentService, ApiAttachmentService>();
             services.AddSingleton<IReportLinkApi, ReportLinkApi>();
+            services.AddSingleton<IImportService, ImportApi>();
         }
 
         return services;

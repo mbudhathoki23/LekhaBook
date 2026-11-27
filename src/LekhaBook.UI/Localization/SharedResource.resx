@@ -1397,4 +1397,292 @@ Sign in to Lekha Books: {4}</value>
   <data name="PublicReport.Details" xml:space="preserve">
     <value>Details</value>
   </data>
+  <data name="Import.Title" xml:space="preserve">
+    <value>Import data</value>
+  </data>
+  <data name="Import.Short" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="Import.Intro" xml:space="preserve">
+    <value>Bring in parties and entries from another app. Nothing is saved until you check the rows and press Import.</value>
+  </data>
+  <data name="Import.NoPermission" xml:space="preserve">
+    <value>You don't have permission to add parties or entries.</value>
+  </data>
+  <data name="Import.KindLabel" xml:space="preserve">
+    <value>What are you importing?</value>
+  </data>
+  <data name="Import.Kind.Parties" xml:space="preserve">
+    <value>Parties and their balances</value>
+  </data>
+  <data name="Import.Kind.Entries" xml:space="preserve">
+    <value>Entries of many parties or categories</value>
+  </data>
+  <data name="Import.Kind.Statement" xml:space="preserve">
+    <value>One party's or account's statement</value>
+  </data>
+  <data name="Import.KindHelp.Parties" xml:space="preserve">
+    <value>A customer or supplier list. A balance becomes the party's opening balance.</value>
+  </data>
+  <data name="Import.KindHelp.Entries" xml:space="preserve">
+    <value>A day book or all-transactions report. Add only money that actually moved: credit sales and purchases can't be imported yet.</value>
+  </data>
+  <data name="Import.KindHelp.Statement" xml:space="preserve">
+    <value>A party ledger or a bank statement. Choose whose it is after picking the file.</value>
+  </data>
+  <data name="Import.ChooseFile" xml:space="preserve">
+    <value>Choose file</value>
+  </data>
+  <data name="Import.FileHint" xml:space="preserve">
+    <value>CSV, Excel (.xlsx), HTML or PDF, up to 5 MB. Scanned PDFs can't be read.</value>
+  </data>
+  <data name="Import.Reading" xml:space="preserve">
+    <value>Reading the file</value>
+  </data>
+  <data name="Import.CouldNotRead" xml:space="preserve">
+    <value>The file couldn't be read.</value>
+  </data>
+  <data name="Import.FileTooLarge" xml:space="preserve">
+    <value>The file is larger than 5 MB.</value>
+  </data>
+  <data name="Import.Truncated" xml:space="preserve">
+    <value>Only the first {0} rows were read. Split the file to import the rest.</value>
+  </data>
+  <data name="Import.PdfCheck" xml:space="preserve">
+    <value>PDF columns are worked out from the page layout. Check the rows carefully before importing.</value>
+  </data>
+  <data name="Import.BalanceWarning" xml:space="preserve">
+    <value>An opening balance already includes older entries. If you also import those entries, the balance counts them twice.</value>
+  </data>
+  <data name="Import.Sheet" xml:space="preserve">
+    <value>Sheet or table</value>
+  </data>
+  <data name="Import.HeaderRow" xml:space="preserve">
+    <value>Heading row</value>
+  </data>
+  <data name="Import.NoHeader" xml:space="preserve">
+    <value>No headings</value>
+  </data>
+  <data name="Import.RowNumber" xml:space="preserve">
+    <value>Row {0}: {1}</value>
+  </data>
+  <data name="Import.Calendar" xml:space="preserve">
+    <value>Dates in the file</value>
+  </data>
+  <data name="Import.Detect" xml:space="preserve">
+    <value>Detect</value>
+  </data>
+  <data name="Import.DateOrder" xml:space="preserve">
+    <value>Day and month order</value>
+  </data>
+  <data name="Import.DayFirst" xml:space="preserve">
+    <value>Day first (31/12)</value>
+  </data>
+  <data name="Import.MonthFirst" xml:space="preserve">
+    <value>Month first (12/31)</value>
+  </data>
+  <data name="Import.StatementOf" xml:space="preserve">
+    <value>Whose statement is this?</value>
+  </data>
+  <data name="Import.DefaultAccount" xml:space="preserve">
+    <value>Payment method when a row has none</value>
+  </data>
+  <data name="Import.DefaultExpense" xml:space="preserve">
+    <value>Expense category when none matches</value>
+  </data>
+  <data name="Import.DefaultIncome" xml:space="preserve">
+    <value>Income category when none matches</value>
+  </data>
+  <data name="Import.DefaultType" xml:space="preserve">
+    <value>Type of rows without one</value>
+  </data>
+  <data name="Import.DefaultTypeAuto" xml:space="preserve">
+    <value>Work out from each row</value>
+  </data>
+  <data name="Import.DefaultPartyType" xml:space="preserve">
+    <value>Type when the file doesn't say</value>
+  </data>
+  <data name="Import.NewPartyType" xml:space="preserve">
+    <value>Add new parties as</value>
+  </data>
+  <data name="Import.AddMissing" xml:space="preserve">
+    <value>Add parties that aren't in the books yet</value>
+  </data>
+  <data name="Import.Swap" xml:space="preserve">
+    <value>Swap money in and money out</value>
+  </data>
+  <data name="Import.Columns" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="Import.ColumnsHelp" xml:space="preserve">
+    <value>Check what each column holds.</value>
+  </data>
+  <data name="Import.Column" xml:space="preserve">
+    <value>Column {0}</value>
+  </data>
+  <data name="Import.Field.Skip" xml:space="preserve">
+    <value>Don't import</value>
+  </data>
+  <data name="Import.Field.PartyType" xml:space="preserve">
+    <value>Customer or supplier</value>
+  </data>
+  <data name="Import.Field.Type" xml:space="preserve">
+    <value>Entry type</value>
+  </data>
+  <data name="Import.Field.ToAccount" xml:space="preserve">
+    <value>Transfer to account</value>
+  </data>
+  <data name="Import.TypeWords" xml:space="preserve">
+    <value>Types written in the file</value>
+  </data>
+  <data name="Import.Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Import.Show" xml:space="preserve">
+    <value>Rows to show</value>
+  </data>
+  <data name="Import.ShowAll" xml:space="preserve">
+    <value>All ({0})</value>
+  </data>
+  <data name="Import.Status.Ready" xml:space="preserve">
+    <value>Ready: {0}</value>
+  </data>
+  <data name="Import.Status.Duplicate" xml:space="preserve">
+    <value>Already there: {0}</value>
+  </data>
+  <data name="Import.Status.Skipped" xml:space="preserve">
+    <value>Left out: {0}</value>
+  </data>
+  <data name="Import.Status.Error" xml:space="preserve">
+    <value>Problems: {0}</value>
+  </data>
+  <data name="Import.NewParties" xml:space="preserve">
+    <value>New parties to be added first: {0}</value>
+  </data>
+  <data name="Import.What" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="Import.SelectRow" xml:space="preserve">
+    <value>Import row {0}</value>
+  </data>
+  <data name="Import.Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Import.Saved" xml:space="preserve">
+    <value>Saved</value>
+  </data>
+  <data name="Import.ShowMore" xml:space="preserve">
+    <value>Show more ({0})</value>
+  </data>
+  <data name="Import.Button" xml:space="preserve">
+    <value>Import {0} rows</value>
+  </data>
+  <data name="Import.Another" xml:space="preserve">
+    <value>Choose another file</value>
+  </data>
+  <data name="Import.Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Import.Saving" xml:space="preserve">
+    <value>Saving</value>
+  </data>
+  <data name="Import.SavingCount" xml:space="preserve">
+    <value>Saving {0} of {1}</value>
+  </data>
+  <data name="Import.Result" xml:space="preserve">
+    <value>Saved: {0}. Failed: {1}.</value>
+  </data>
+  <data name="Import.Stopped" xml:space="preserve">
+    <value>The import stopped before the end. Press the import button again to continue; saved rows aren't added twice.</value>
+  </data>
+  <data name="Import.ConfirmTitle" xml:space="preserve">
+    <value>Import these rows?</value>
+  </data>
+  <data name="Import.ConfirmMessage" xml:space="preserve">
+    <value>{0} rows and {1} new parties will be added to {2}. Imported entries can be changed or removed one at a time only.</value>
+  </data>
+  <data name="Import.ConfirmParties" xml:space="preserve">
+    <value>{0} parties will be added to {1}.</value>
+  </data>
+  <data name="Import.Row.NotData" xml:space="preserve">
+    <value>Not a data row</value>
+  </data>
+  <data name="Import.Row.Opening" xml:space="preserve">
+    <value>Opening balance: set it on the party or account</value>
+  </data>
+  <data name="Import.Row.PartyExists" xml:space="preserve">
+    <value>A party with this name already exists</value>
+  </data>
+  <data name="Import.Row.EntryExists" xml:space="preserve">
+    <value>Looks already entered</value>
+  </data>
+  <data name="Import.Row.Invalid" xml:space="preserve">
+    <value>{0}</value>
+  </data>
+  <data name="Import.Row.BadAmount" xml:space="preserve">
+    <value>Amount can't be read: {0}</value>
+  </data>
+  <data name="Import.Row.NoAmount" xml:space="preserve">
+    <value>No amount</value>
+  </data>
+  <data name="Import.Row.BothDirections" xml:space="preserve">
+    <value>Both money in and money out are filled</value>
+  </data>
+  <data name="Import.Row.NoDate" xml:space="preserve">
+    <value>No date</value>
+  </data>
+  <data name="Import.Row.BadDate" xml:space="preserve">
+    <value>Date can't be read: {0}</value>
+  </data>
+  <data name="Import.Row.FutureDate" xml:space="preserve">
+    <value>The date is in the future</value>
+  </data>
+  <data name="Import.Row.NoType" xml:space="preserve">
+    <value>Choose a type for rows without one</value>
+  </data>
+  <data name="Import.Row.UnknownType" xml:space="preserve">
+    <value>Unknown type: {0}</value>
+  </data>
+  <data name="Import.Row.Unsupported" xml:space="preserve">
+    <value>Can't be imported yet: {0}</value>
+  </data>
+  <data name="Import.Row.LeftOut" xml:space="preserve">
+    <value>Left out by choice: {0}</value>
+  </data>
+  <data name="Import.Row.NoParty" xml:space="preserve">
+    <value>No party name</value>
+  </data>
+  <data name="Import.Row.NoPartyNamed" xml:space="preserve">
+    <value>No party called {0}</value>
+  </data>
+  <data name="Import.Row.NewParty" xml:space="preserve">
+    <value>Adds the party {0}</value>
+  </data>
+  <data name="Import.Row.NoAccountNamed" xml:space="preserve">
+    <value>No account called {0}. Add it under Finance first.</value>
+  </data>
+  <data name="Import.Row.ChooseAccount" xml:space="preserve">
+    <value>Choose a payment method</value>
+  </data>
+  <data name="Import.Row.ChooseCategory" xml:space="preserve">
+    <value>Choose a default category</value>
+  </data>
+  <data name="Import.Row.ChooseStatement" xml:space="preserve">
+    <value>Choose whose statement this is</value>
+  </data>
+  <data name="Import.Row.NoDirection" xml:space="preserve">
+    <value>Can't tell whether money came in or went out</value>
+  </data>
+  <data name="Import.Row.DirectionClash" xml:space="preserve">
+    <value>The type and the amount column disagree</value>
+  </data>
+  <data name="Import.Row.StatementTransfer" xml:space="preserve">
+    <value>Transfer: add it with the entries import or by hand</value>
+  </data>
+  <data name="Import.Row.SameAccount" xml:space="preserve">
+    <value>Both sides are the same account</value>
+  </data>
+  <data name="Import.Row.RemarksShortened" xml:space="preserve">
+    <value>The remarks will be shortened</value>
+  </data>
 </root>
