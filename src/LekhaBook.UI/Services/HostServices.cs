@@ -40,9 +40,6 @@ public sealed record SyncIssueDto(long Id, string EntityType, Guid EntityId, str
 /// <summary>Background sync between the device database and the server.</summary>
 public interface ISyncService
 {
-    /// <summary>Completes once no sync is running, so the device database can be changed under it.</summary>
-    Task WaitUntilIdleAsync(CancellationToken ct = default) => Task.CompletedTask;
-
     SyncState State { get; }
 
     /// <summary>Local changes not yet sent to the server.</summary>
@@ -127,9 +124,6 @@ public interface ISessionService
     Task<SignInOutcome> RegisterAsync(string displayName, string email, string password, string? returnUrl);
 
     Task SignOutAsync();
-
-    /// <summary>After an upgrade that could not finish: forgets the online sign-in and reopens the books kept on this device.</summary>
-    Task ReturnToLocalModeAsync() => Task.CompletedTask;
 
     Task SelectCompanyAsync(Guid companyId);
 
