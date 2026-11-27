@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- The device side of offline use: server reachability, the local database and sync. The phone and
+       Windows apps use it; the web app does not. Plain net10.0, so it is tested without a device. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../LekhaBook.Application/LekhaBook.Application.csproj" />
+    <ProjectReference Include="../LekhaBook.Client/LekhaBook.Client.csproj" />
+    <ProjectReference Include="../LekhaBook.Data.Sqlite/LekhaBook.Data.Sqlite.csproj" />
+  </ItemGroup>
+
+</Project>

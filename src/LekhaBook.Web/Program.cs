@@ -5,9 +5,29 @@ using LekhaBook.UI.Services;
 using LekhaBook.Web.Components;
 using LekhaBook.Web.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Configuration["DataProtection:KeysPath"] is { Length: > 0 } keysPath)
+{
+    Directory.CreateDirectory(keysPath);
+    builder.Services.AddDataProtection()
+        .SetApplicationName("LekhaBook.Web")
+        .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+}
+
+if (builder.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(o =>
+    {
+        o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        o.KnownIPNetworks.Clear();
+        o.KnownProxies.Clear();
+    });
+}
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -46,13 +66,21 @@ builder.Services.AddPublicReports(); // public report links, see PublicReports
 
 var app = builder.Build();
 
+if (app.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    app.UseForwardedHeaders();
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
 app.UseStatusCodePagesWithReExecute("/not-found", createScopeForStatusCodePages: true);
-app.UseHttpsRedirection();
+if (!app.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    app.UseHttpsRedirection();
+}
 
 // English unless the culture cookie (set by /culture/set) asks for another language.
 // CultureFor keeps Gregorian dates and "." decimals in every language.

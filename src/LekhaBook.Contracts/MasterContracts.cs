@@ -174,6 +174,14 @@ public sealed record SyncUpdatePayload(Guid Id, UpdateTransactionRequest Entry);
 
 public sealed record SyncVoidPayload(Guid Id);
 
+public sealed record SyncPartyUpdatePayload(Guid Id, SavePartyRequest Party);
+
+public sealed record SyncMoneyAccountUpdatePayload(Guid Id, SaveMoneyAccountRequest Account);
+
+public sealed record SyncDeletePayload(Guid Id);
+
+public sealed record SyncAdjustmentPayload(Guid AccountId, AdjustBalanceRequest Adjustment);
+
 /// <summary>Result of processing one push item.</summary>
 public sealed record PushItemResult(
     string IdempotencyKey,

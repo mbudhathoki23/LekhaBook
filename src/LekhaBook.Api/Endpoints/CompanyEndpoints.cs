@@ -18,6 +18,7 @@ public static class CompanyEndpoints
         api.MapGet("/me", GetMe);
         api.MapPut("/me", UpdateMe);
         api.MapPost("/companies", CreateCompany);
+        api.MapPost("/companies/migrate", MigrateOfflineCompany);
         api.MapPost("/invitations/accept", AcceptInvitation);
 
         // Everything under a company: members only, checked before the request body is read.
@@ -140,6 +141,321 @@ public static class CompanyEndpoints
         await db.SaveChangesAsync();
 
         return TypedResults.Created($"/api/companies/{company.Id}", Summary(owner, company.Name, company.Calendar));
+    }
+
+    /// <summary>
+    /// Upgrades an offline local company into a synced online company, preserving client UUIDs so all account
+    /// and transaction links stay intact. Idempotent by CompanyId so a retry after a network drop never duplicates data.
+    /// </summary>
+    private static async Task<Results<Created<MigrateOfflineCompanyResponse>, Ok<MigrateOfflineCompanyResponse>, ValidationProblem, ProblemHttpResult, UnauthorizedHttpResult>> MigrateOfflineCompany(
+        MigrateOfflineCompanyRequest request, HttpContext http, AuthDbContext auth, PostgresDbContext db, TimeProvider clock)
+    {
+        if (CompanyAccess.UserId(http.User) is not { } userId || await auth.Users.FindAsync(userId) is not { } user)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        if (request.CompanyId == Guid.Empty)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["companyId"] = ["A company id is required."] });
+        }
+
+        if (Invalid(request.Name, 200, "name") is { } nameProblem)
+        {
+            return nameProblem;
+        }
+
+        var calendar = CalendarMode.BS;
+        if (!string.IsNullOrWhiteSpace(request.Calendar))
+        {
+            if (ParseCalendar(request.Calendar) is not { } chosen)
+            {
+                return CalendarProblem();
+            }
+
+            calendar = chosen;
+        }
+
+        // Idempotent retry: if this exact company was already migrated by this user, return it cleanly.
+        if (await db.Companies.AsNoTracking().SingleOrDefaultAsync(c => c.Id == request.CompanyId) is { } existingCompany)
+        {
+            var existingMember = await db.CompanyMembers.AsNoTracking()
+                .SingleOrDefaultAsync(m => m.CompanyId == existingCompany.Id && m.UserId == userId && m.Status == MemberStatus.Active);
+            if (existingMember is not { Role: CompanyRole.Owner })
+            {
+                return TypedResults.Problem("That company id is already in use.", statusCode: StatusCodes.Status409Conflict);
+            }
+
+            var existingAccounts = await db.Accounts.CountAsync(a => a.CompanyId == existingCompany.Id && !a.IsDeleted);
+            var existingTxns = await db.Transactions.CountAsync(t => t.CompanyId == existingCompany.Id && !t.IsDeleted);
+            return TypedResults.Ok(new MigrateOfflineCompanyResponse(
+                Summary(existingMember, existingCompany.Name, existingCompany.Calendar),
+                existingAccounts, existingTxns, AlreadyExisted: true));
+        }
+
+        var categoriesInput = request.PartyCategories ?? [];
+        var accountsInput = request.Accounts ?? [];
+        var txnsInput = request.Transactions ?? [];
+
+        if (categoriesInput.Count > 500 || accountsInput.Count > 5000 || txnsInput.Count > 25000)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["company"] = ["Offline snapshot exceeds migration size limits."] });
+        }
+
+        var now = clock.GetUtcNow().UtcDateTime;
+        var zoneId = string.IsNullOrWhiteSpace(request.TimeZoneId) ? CompanyClock.DefaultTimeZoneId : request.TimeZoneId.Trim();
+        var fyStart = request.FiscalYearStartMonth is >= 1 and <= 12 ? request.FiscalYearStartMonth : 4;
+        var currency = string.IsNullOrWhiteSpace(request.Currency) || request.Currency.Trim().Length > 10 ? "NPR" : request.Currency.Trim();
+
+        var company = new Company
+        {
+            Id = request.CompanyId,
+            Name = request.Name.Trim(),
+            Phone = request.Phone?.Trim(),
+            Address = request.Address?.Trim(),
+            Pan = request.Pan?.Trim(),
+            Calendar = calendar,
+            FiscalYearStartMonth = fyStart,
+            Currency = currency,
+            TimeZoneId = zoneId,
+            CreatedAtUtc = now,
+            UpdatedAtUtc = now,
+        };
+
+        // Build & validate PartyCategories
+        var seenCatIds = new HashSet<Guid>();
+        var partyCategories = new List<PartyCategory>(categoriesInput.Count);
+        foreach (var c in categoriesInput)
+        {
+            if (c.Id == Guid.Empty || !seenCatIds.Add(c.Id) || string.IsNullOrWhiteSpace(c.Name) || c.Name.Trim().Length > 100)
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["partyCategories"] = ["Invalid party category in offline snapshot."] });
+            }
+
+            partyCategories.Add(new PartyCategory
+            {
+                Id = c.Id,
+                CompanyId = company.Id,
+                Name = c.Name.Trim(),
+                IsDeleted = c.IsDeleted,
+                CreatedAtUtc = now,
+                UpdatedAtUtc = now,
+                CreatedBy = userId,
+                UpdatedBy = userId,
+            });
+        }
+
+        // Build & validate Accounts
+        var accountMap = new Dictionary<Guid, Account>(accountsInput.Count);
+        foreach (var a in accountsInput)
+        {
+            if (a.Id == Guid.Empty || accountMap.ContainsKey(a.Id) || string.IsNullOrWhiteSpace(a.Name) || a.Name.Trim().Length > 200)
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["accounts"] = ["Invalid account in offline snapshot."] });
+            }
+
+            if (!Enum.TryParse<AccountType>(a.Type, ignoreCase: true, out var accType) || !Enum.IsDefined(accType))
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["accounts"] = [$"Unknown account type '{a.Type}'."] });
+            }
+
+            if (!Enum.TryParse<BalanceSide>(a.OpeningSide, ignoreCase: true, out var openSide) || !Enum.IsDefined(openSide))
+            {
+                openSide = BalanceSide.Debit;
+            }
+
+            PartyType? partyType = null;
+            if (accType == AccountType.Party)
+            {
+                if (!Enum.TryParse<PartyType>(a.PartyType, ignoreCase: true, out var parsedPt) || !Enum.IsDefined(parsedPt))
+                {
+                    return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["accounts"] = [$"Party '{a.Name}' needs a valid PartyType."] });
+                }
+
+                partyType = parsedPt;
+            }
+
+            if (a.OpeningBalance < 0 || decimal.Round(a.OpeningBalance, 2) != a.OpeningBalance)
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["accounts"] = [$"Account '{a.Name}' has an invalid opening balance."] });
+            }
+
+            var catId = a.PartyCategoryId is { } cid && seenCatIds.Contains(cid) ? cid : (Guid?)null;
+            var acc = new Account
+            {
+                Id = a.Id,
+                CompanyId = company.Id,
+                Name = a.Name.Trim(),
+                Type = accType,
+                IsSystem = a.IsSystem,
+                IsActive = a.IsActive,
+                OpeningBalance = a.OpeningBalance,
+                OpeningSide = openSide,
+                OpeningAsOf = a.OpeningAsOf,
+                PartyType = partyType,
+                Phone = a.Phone?.Trim(),
+                Email = a.Email?.Trim(),
+                Address = a.Address?.Trim(),
+                Pan = a.Pan?.Trim(),
+                PartyCategoryId = catId,
+                AccountHolderName = a.AccountHolderName?.Trim(),
+                AccountNumber = a.AccountNumber?.Trim(),
+                IsDeleted = a.IsDeleted,
+                CreatedAtUtc = now,
+                UpdatedAtUtc = now,
+                CreatedBy = userId,
+                UpdatedBy = userId,
+            };
+            accountMap[acc.Id] = acc;
+        }
+
+        // Ensure core seeded accounts exist if the offline snapshot had none (defensive).
+        if (accountMap.Count == 0)
+        {
+            foreach (var seeded in CompanySeeder.DefaultAccounts(company.Id, now, userId))
+            {
+                accountMap[seeded.Id] = seeded;
+            }
+        }
+        else if (!accountMap.Values.Any(a => a.Type == AccountType.System && !a.IsDeleted))
+        {
+            var adj = new Account
+            {
+                CompanyId = company.Id,
+                Name = CompanySeeder.AdjustmentAccountName,
+                Type = AccountType.System,
+                IsSystem = true,
+                CreatedAtUtc = now,
+                UpdatedAtUtc = now,
+                CreatedBy = userId,
+                UpdatedBy = userId,
+            };
+            accountMap[adj.Id] = adj;
+        }
+
+        // Build & validate Transactions against domain PostingRules
+        var seenTxnIds = new HashSet<Guid>();
+        var transactions = new List<Transaction>(txnsInput.Count);
+        foreach (var t in txnsInput)
+        {
+            if (t.Id == Guid.Empty || !seenTxnIds.Add(t.Id))
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transactions"] = ["Duplicate or missing transaction id."] });
+            }
+
+            if (!Enum.TryParse<TransactionType>(t.Type, ignoreCase: true, out var txnType) || !Enum.IsDefined(txnType))
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transactions"] = [$"Unknown transaction type '{t.Type}'."] });
+            }
+
+            if (!Enum.TryParse<TransactionStatus>(t.Status, ignoreCase: true, out var status) || !Enum.IsDefined(status))
+            {
+                status = TransactionStatus.Posted;
+            }
+
+            if (!accountMap.TryGetValue(t.FromAccountId, out var from) || !accountMap.TryGetValue(t.ToAccountId, out var to))
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transactions"] = ["A transaction references an account not included in this company."] });
+            }
+
+            var entity = new Transaction
+            {
+                Id = t.Id,
+                CompanyId = company.Id,
+                Type = txnType,
+                VoucherNo = string.IsNullOrWhiteSpace(t.VoucherNo) ? t.Id.ToString() : t.VoucherNo.Trim(),
+                IsManualNo = t.IsManualNo,
+                IsProvisionalNo = t.IsProvisionalNo,
+                Date = t.Date,
+                Amount = t.Amount,
+                FromAccountId = t.FromAccountId,
+                ToAccountId = t.ToAccountId,
+                Remarks = t.Remarks?.Trim(),
+                ChequeNo = t.ChequeNo?.Trim(),
+                ChequeDate = t.ChequeDate,
+                Status = status,
+                IsDeleted = t.IsDeleted,
+                CreatedAtUtc = now,
+                UpdatedAtUtc = now,
+                CreatedBy = userId,
+                UpdatedBy = userId,
+            };
+
+            var postingErrors = PostingRules.Validate(entity, from, to);
+            if (postingErrors.Count > 0)
+            {
+                return TypedResults.ValidationProblem(new Dictionary<string, string[]> { ["transactions"] = [.. postingErrors] });
+            }
+
+            transactions.Add(entity);
+        }
+
+        // Guard against any cross-company ID collisions before inserting.
+        var accountIds = accountMap.Keys.ToList();
+        var catIds = seenCatIds.ToList();
+        var txnIds = seenTxnIds.ToList();
+        if ((accountIds.Count > 0 && await db.Accounts.AnyAsync(a => accountIds.Contains(a.Id)))
+            || (catIds.Count > 0 && await db.PartyCategories.AnyAsync(c => catIds.Contains(c.Id)))
+            || (txnIds.Count > 0 && await db.Transactions.AnyAsync(t => txnIds.Contains(t.Id))))
+        {
+            return TypedResults.Problem("One or more record ids already exist on the server.", statusCode: StatusCodes.Status409Conflict);
+        }
+
+        // Stamp monotonic versions in commit order: Categories -> Accounts -> Transactions -> Company
+        long version = 0;
+        foreach (var c in partyCategories)
+        {
+            c.Version = ++version;
+        }
+
+        var allAccounts = accountMap.Values.ToList();
+        foreach (var a in allAccounts)
+        {
+            a.Version = ++version;
+        }
+
+        foreach (var t in transactions)
+        {
+            t.Version = ++version;
+        }
+
+        company.Version = ++version;
+
+        var owner = new CompanyMember
+        {
+            CompanyId = company.Id,
+            UserId = userId,
+            DisplayName = user.DisplayName ?? user.Email!,
+            Role = CompanyRole.Owner,
+            JoinedAtUtc = now,
+            UpdatedAtUtc = now,
+        };
+
+        await using var tx = await db.Database.BeginTransactionAsync();
+        db.Companies.Add(company);
+        db.PartyCategories.AddRange(partyCategories);
+        db.Accounts.AddRange(allAccounts);
+        db.Transactions.AddRange(transactions);
+        db.CompanySyncStates.Add(new CompanySyncState { CompanyId = company.Id, LastVersion = version });
+        db.CompanyMembers.Add(owner);
+        db.AuditLogs.Add(new AuditLog
+        {
+            CompanyId = company.Id,
+            EntityType = nameof(Company),
+            EntityId = company.Id,
+            Action = "MigrateOffline",
+            AfterJson = System.Text.Json.JsonSerializer.Serialize(new { company.Name, Accounts = allAccounts.Count, Transactions = transactions.Count }),
+            UserId = userId,
+            AtUtc = now,
+        });
+        await db.SaveChangesAsync();
+        await tx.CommitAsync();
+
+        var activeAccounts = allAccounts.Count(a => !a.IsDeleted);
+        var activeTxns = transactions.Count(t => !t.IsDeleted);
+        return TypedResults.Created(
+            $"/api/companies/{company.Id}",
+            new MigrateOfflineCompanyResponse(Summary(owner, company.Name, company.Calendar), activeAccounts, activeTxns, AlreadyExisted: false));
     }
 
     private static async Task<Results<Ok<CompanyDetails>, NotFound>> GetCompany(Guid companyId, PostgresDbContext db)

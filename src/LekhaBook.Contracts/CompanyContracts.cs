@@ -40,3 +40,62 @@ public sealed record InvitationDto(Guid InvitationId, string Email, string Displ
 public sealed record AcceptInvitationRequest(string Token);
 
 public sealed record UpdateMemberRequest(string Role, IReadOnlyList<string>? CustomPermissions = null);
+
+// Offline-to-online cloud upgrade: uploads a local offline company snapshot atomically and idempotently.
+
+public sealed record MigratePartyCategoryDto(Guid Id, string Name, bool IsDeleted = false);
+
+public sealed record MigrateAccountDto(
+    Guid Id,
+    string Name,
+    string Type,
+    bool IsSystem,
+    bool IsActive,
+    decimal OpeningBalance,
+    string OpeningSide,
+    DateOnly? OpeningAsOf,
+    string? PartyType,
+    string? Phone,
+    string? Email,
+    string? Address,
+    string? Pan,
+    Guid? PartyCategoryId,
+    string? AccountHolderName,
+    string? AccountNumber,
+    bool IsDeleted = false);
+
+public sealed record MigrateTransactionDto(
+    Guid Id,
+    string Type,
+    string VoucherNo,
+    bool IsManualNo,
+    bool IsProvisionalNo,
+    DateOnly Date,
+    decimal Amount,
+    Guid FromAccountId,
+    Guid ToAccountId,
+    string? Remarks,
+    string? ChequeNo,
+    DateOnly? ChequeDate,
+    string Status,
+    bool IsDeleted = false);
+
+public sealed record MigrateOfflineCompanyRequest(
+    Guid CompanyId,
+    string Name,
+    string? Phone,
+    string? Address,
+    string? Pan,
+    string Calendar,
+    int FiscalYearStartMonth,
+    string Currency,
+    string TimeZoneId,
+    IReadOnlyList<MigratePartyCategoryDto> PartyCategories,
+    IReadOnlyList<MigrateAccountDto> Accounts,
+    IReadOnlyList<MigrateTransactionDto> Transactions);
+
+public sealed record MigrateOfflineCompanyResponse(
+    CompanySummary Company,
+    int AccountsMigrated,
+    int TransactionsMigrated,
+    bool AlreadyExisted);

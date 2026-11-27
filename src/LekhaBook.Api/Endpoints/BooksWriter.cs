@@ -268,6 +268,402 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
         return new WriteResult(WriteStatus.Created, category);
     }
 
+    // ---------------- Parties (for sync push, same rules as MasterEndpoints) ----------------
+
+    public async Task<WriteResult> CreatePartyAsync(SavePartyRequest request)
+    {
+        if (MasterValidation.Validate(request) is { Count: > 0 } errors)
+        {
+            return WriteResult.Invalid(errors);
+        }
+
+        var type = MasterValidation.ParsePartyType(request.PartyType)!.Value;
+        var (_, today) = await TodayAsync();
+        var asOf = request.OpeningAsOf ?? today;
+        if (MasterRules.CheckCreateParty(member, type, request.OpeningBalance, asOf, today) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        if (request.Id is { } requestedId && await db.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Id == requestedId) is { } existing)
+        {
+            return existing.CompanyId == companyId && existing.Type == AccountType.Party && !existing.IsDeleted
+                ? new WriteResult(WriteStatus.Replayed, existing)
+                : WriteResult.Conflict("That id is already in use.");
+        }
+
+        if (request.CategoryId is { } catId && !await db.PartyCategories.AnyAsync(c => c.Id == catId && c.CompanyId == companyId && !c.IsDeleted))
+        {
+            return WriteResult.Invalid("categoryId", "That party category doesn't exist.");
+        }
+
+        var party = new Account
+        {
+            Id = request.Id ?? Guid.CreateVersion7(),
+            CompanyId = companyId,
+            Name = request.Name.Trim(),
+            Type = AccountType.Party,
+            PartyType = type,
+            Phone = MasterValidation.Clean(request.Phone),
+            Email = MasterValidation.Clean(request.Email),
+            Address = MasterValidation.Clean(request.Address),
+            Pan = MasterValidation.Clean(request.Pan),
+            PartyCategoryId = request.CategoryId,
+            OpeningBalance = request.OpeningBalance,
+            OpeningSide = MasterValidation.ParseOpeningSide(request.OpeningSide)!.Value,
+            OpeningAsOf = asOf,
+        };
+        db.Accounts.Add(party);
+        AuditAccount(party, "Create", before: null);
+        await SaveAsync(party);
+        return new WriteResult(WriteStatus.Created, party);
+    }
+
+    public async Task<WriteResult> UpdatePartyAsync(Guid partyId, SavePartyRequest request, long? expectedVersion)
+    {
+        var party = await db.Accounts.SingleOrDefaultAsync(a => a.Id == partyId && a.CompanyId == companyId && a.Type == AccountType.Party && !a.IsDeleted);
+        if (party is null)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That party doesn't exist.");
+        }
+
+        if (MasterValidation.Validate(request) is { Count: > 0 } errors)
+        {
+            return WriteResult.Invalid(errors);
+        }
+
+        var newType = MasterValidation.ParsePartyType(request.PartyType)!.Value;
+        var side = MasterValidation.ParseOpeningSide(request.OpeningSide)!.Value;
+        var (_, today) = await TodayAsync();
+        var amountChanged = party.OpeningBalance != request.OpeningBalance || party.OpeningSide != side;
+        var asOf = request.OpeningAsOf ?? (amountChanged ? today : party.OpeningAsOf ?? today);
+        var openingChanged = amountChanged || party.OpeningAsOf != asOf;
+        if (MasterRules.CheckEditParty(member, party.PartyType!.Value, newType, openingChanged, request.OpeningBalance, asOf, today) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        // D8 / AGENT_PLAN § 6.3: opening balance fields are money, so concurrent edits go to conflict review.
+        // Non-money master fields use last-writer-wins with the previous value recorded in AuditLog.
+        var basedOn = party.Version;
+        if (expectedVersion is { } expected && expected != basedOn && openingChanged)
+        {
+            return WriteResult.Conflict("This party's opening balance was changed elsewhere since you opened it.");
+        }
+
+        if (request.CategoryId is { } catId && !await db.PartyCategories.AnyAsync(c => c.Id == catId && c.CompanyId == companyId && !c.IsDeleted))
+        {
+            return WriteResult.Invalid("categoryId", "That party category doesn't exist.");
+        }
+
+        var before = SnapshotAccount(party);
+        party.Name = request.Name.Trim();
+        party.PartyType = newType;
+        party.Phone = MasterValidation.Clean(request.Phone);
+        party.Email = MasterValidation.Clean(request.Email);
+        party.Address = MasterValidation.Clean(request.Address);
+        party.Pan = MasterValidation.Clean(request.Pan);
+        party.PartyCategoryId = request.CategoryId;
+        party.OpeningBalance = request.OpeningBalance;
+        party.OpeningSide = side;
+        party.OpeningAsOf = asOf;
+        AuditAccount(party, expectedVersion is not null && expectedVersion != basedOn ? "ConflictLost" : "Update", before);
+        await SaveAsync(party);
+        return new WriteResult(WriteStatus.Saved, party);
+    }
+
+    public async Task<WriteResult> DeletePartyAsync(Guid partyId, long? expectedVersion)
+    {
+        var party = await db.Accounts.SingleOrDefaultAsync(a => a.Id == partyId && a.CompanyId == companyId && a.Type == AccountType.Party);
+        if (party is null)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That party doesn't exist.");
+        }
+
+        if (MasterRules.CheckDeleteParty(member, party.PartyType!.Value) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        if (party.IsDeleted)
+        {
+            return new WriteResult(WriteStatus.Replayed, party);
+        }
+
+        if (expectedVersion is { } expected && expected != party.Version)
+        {
+            return WriteResult.Conflict("This party was changed elsewhere before deletion.");
+        }
+
+        if (await db.Transactions.AnyAsync(t => t.CompanyId == companyId && !t.IsDeleted && (t.FromAccountId == partyId || t.ToAccountId == partyId)))
+        {
+            return WriteResult.Conflict(MasterRules.PartyInUse);
+        }
+
+        var before = SnapshotAccount(party);
+        party.IsDeleted = true;
+        AuditAccount(party, "Delete", before);
+        await SaveAsync(party);
+        return new WriteResult(WriteStatus.Saved, party);
+    }
+
+    // ---------------- Money accounts (for sync push, same rules as MasterEndpoints) ----------------
+
+    public async Task<WriteResult> CreateMoneyAccountAsync(SaveMoneyAccountRequest request)
+    {
+        if (!member.Has(Permission.AccountsAdd))
+        {
+            return WriteResult.Forbidden("You don't have permission to add accounts.");
+        }
+
+        if (MasterValidation.Validate(request, isNew: true) is { Count: > 0 } errors)
+        {
+            return WriteResult.Invalid(errors);
+        }
+
+        var (_, today) = await TodayAsync();
+        var asOf = request.OpeningAsOf ?? today;
+        if (MasterRules.CheckMoneyAccountOpening(member, request.OpeningBalance, asOf, today) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        if (request.Id is { } requestedId && await db.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Id == requestedId) is { } existing)
+        {
+            return existing.CompanyId == companyId && existing.IsMoneyAccount && !existing.IsDeleted
+                ? new WriteResult(WriteStatus.Replayed, existing)
+                : WriteResult.Conflict("That id is already in use.");
+        }
+
+        var type = MasterValidation.ParseMoneyType(request.Type)!.Value;
+        var hasBankDetails = type is AccountType.Bank or AccountType.Wallet;
+        var account = new Account
+        {
+            Id = request.Id ?? Guid.CreateVersion7(),
+            CompanyId = companyId,
+            Name = request.Name.Trim(),
+            Type = type,
+            AccountHolderName = hasBankDetails ? MasterValidation.Clean(request.AccountHolderName) : null,
+            AccountNumber = hasBankDetails ? MasterValidation.Clean(request.AccountNumber) : null,
+            OpeningBalance = Math.Abs(request.OpeningBalance),
+            OpeningSide = request.OpeningBalance < 0 ? BalanceSide.Credit : BalanceSide.Debit,
+            OpeningAsOf = asOf,
+        };
+        db.Accounts.Add(account);
+        AuditAccount(account, "Create", before: null);
+        await SaveAsync(account);
+        return new WriteResult(WriteStatus.Created, account);
+    }
+
+    public async Task<WriteResult> UpdateMoneyAccountAsync(Guid accountId, SaveMoneyAccountRequest request, long? expectedVersion)
+    {
+        if (!member.Has(Permission.AccountsEdit))
+        {
+            return WriteResult.Forbidden("You don't have permission to edit accounts.");
+        }
+
+        var account = await db.Accounts.SingleOrDefaultAsync(a => a.Id == accountId && a.CompanyId == companyId && !a.IsDeleted
+            && (a.Type == AccountType.Cash || a.Type == AccountType.Bank || a.Type == AccountType.Cheque || a.Type == AccountType.Wallet));
+        if (account is null)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That account doesn't exist.");
+        }
+
+        if (MasterValidation.Validate(request, isNew: false) is { Count: > 0 } errors)
+        {
+            return WriteResult.Invalid(errors);
+        }
+
+        var type = MasterValidation.ParseMoneyType(request.Type)!.Value;
+        if (type != account.Type && (account.IsSystem || !MasterValidation.AddableMoneyTypes.Contains(type)))
+        {
+            return WriteResult.Invalid("type", "This account's type can't be changed.");
+        }
+
+        var (_, today) = await TodayAsync();
+        var amountChanged = Balances.SignedOpening(account) != request.OpeningBalance;
+        var asOf = request.OpeningAsOf ?? (amountChanged ? today : account.OpeningAsOf ?? today);
+        var openingChanged = amountChanged || account.OpeningAsOf != asOf;
+        if (openingChanged && MasterRules.CheckMoneyAccountOpening(member, request.OpeningBalance, asOf, today) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        var basedOn = account.Version;
+        if (expectedVersion is { } expected && expected != basedOn && openingChanged)
+        {
+            return WriteResult.Conflict("This account's opening balance was changed elsewhere since you opened it.");
+        }
+
+        var before = SnapshotAccount(account);
+        var hasBankDetails = type is AccountType.Bank or AccountType.Wallet;
+        account.Name = request.Name.Trim();
+        account.Type = type;
+        account.AccountHolderName = hasBankDetails ? MasterValidation.Clean(request.AccountHolderName) : null;
+        account.AccountNumber = hasBankDetails ? MasterValidation.Clean(request.AccountNumber) : null;
+        account.OpeningBalance = Math.Abs(request.OpeningBalance);
+        account.OpeningSide = request.OpeningBalance < 0 ? BalanceSide.Credit : BalanceSide.Debit;
+        account.OpeningAsOf = asOf;
+        AuditAccount(account, expectedVersion is not null && expectedVersion != basedOn ? "ConflictLost" : "Update", before);
+        await SaveAsync(account);
+        return new WriteResult(WriteStatus.Saved, account);
+    }
+
+    public async Task<WriteResult> DeleteMoneyAccountAsync(Guid accountId, long? expectedVersion)
+    {
+        if (!member.Has(Permission.AccountsDelete))
+        {
+            return WriteResult.Forbidden("You don't have permission to delete accounts.");
+        }
+
+        var account = await db.Accounts.SingleOrDefaultAsync(a => a.Id == accountId && a.CompanyId == companyId
+            && (a.Type == AccountType.Cash || a.Type == AccountType.Bank || a.Type == AccountType.Cheque || a.Type == AccountType.Wallet));
+        if (account is null)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That account doesn't exist.");
+        }
+
+        if (account.IsDeleted)
+        {
+            return new WriteResult(WriteStatus.Replayed, account);
+        }
+
+        if (expectedVersion is { } expected && expected != account.Version)
+        {
+            return WriteResult.Conflict("This account was changed elsewhere before deletion.");
+        }
+
+        var inUse = await db.Transactions.AnyAsync(t => t.CompanyId == companyId && !t.IsDeleted && (t.FromAccountId == accountId || t.ToAccountId == accountId));
+        if (MasterRules.CheckDeleteMoneyAccount(account, inUse) is { } blocked)
+        {
+            return WriteResult.Conflict(blocked);
+        }
+
+        var before = SnapshotAccount(account);
+        account.IsDeleted = true;
+        AuditAccount(account, "Delete", before);
+        await SaveAsync(account);
+        return new WriteResult(WriteStatus.Saved, account);
+    }
+
+    // ---------------- Income / Expense heads & Adjustments ----------------
+
+    public async Task<WriteResult> CreateHeadCategoryAsync(SaveCategoryRequest request)
+    {
+        if (!member.Has(Permission.SettingsFeatures))
+        {
+            return WriteResult.Forbidden("You don't have permission to add categories.");
+        }
+
+        var name = request.Name?.Trim() ?? string.Empty;
+        if (name.Length is 0 or > 100)
+        {
+            return WriteResult.Invalid("name", "Enter a name of up to 100 characters.");
+        }
+
+        AccountType? type = request.Type switch
+        {
+            nameof(AccountType.Expense) => AccountType.Expense,
+            nameof(AccountType.Income) => AccountType.Income,
+            _ => null,
+        };
+        if (type is not { } headType)
+        {
+            return WriteResult.Invalid("type", "Choose Expense or Income.");
+        }
+
+        if (request.Id == Guid.Empty)
+        {
+            return WriteResult.Invalid("id", "A new category needs an id.");
+        }
+
+        if (await db.Accounts.AsNoTracking().SingleOrDefaultAsync(a => a.Id == request.Id) is { } existing)
+        {
+            return existing.CompanyId == companyId && existing.Type == headType && !existing.IsDeleted
+                ? new WriteResult(WriteStatus.Replayed, existing)
+                : WriteResult.Conflict("That id is already in use.");
+        }
+
+        var names = await db.Accounts.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && !a.IsDeleted && a.Type == headType)
+            .Select(a => a.Name)
+            .ToListAsync();
+        if (names.Contains(name, StringComparer.CurrentCultureIgnoreCase))
+        {
+            return WriteResult.Conflict("There is already a category with that name.");
+        }
+
+        var account = new Account { Id = request.Id, CompanyId = companyId, Name = name, Type = headType };
+        db.Accounts.Add(account);
+        AuditAccount(account, "Create", before: null);
+        await SaveAsync(account);
+        return new WriteResult(WriteStatus.Created, account);
+    }
+
+    public async Task<WriteResult> CreateAdjustmentAsync(Guid accountId, AdjustBalanceRequest request)
+    {
+        var account = await db.Accounts.AsNoTracking()
+            .SingleOrDefaultAsync(a => a.Id == accountId && a.CompanyId == companyId && !a.IsDeleted);
+        if (account is null || !(account.Type == AccountType.Party || account.IsMoneyAccount))
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That account doesn't exist.");
+        }
+
+        var view = account.Type == AccountType.Party
+            ? MasterRules.PartyViewPermission(account.PartyType ?? PartyType.Customer)
+            : Permission.AccountsView;
+        if (!member.Has(view))
+        {
+            return WriteResult.Forbidden("You don't have permission to view this account.");
+        }
+
+        var system = await db.Accounts.AsNoTracking()
+            .Where(a => a.CompanyId == companyId && !a.IsDeleted && a.Type == AccountType.System)
+            .Select(a => (Guid?)a.Id)
+            .FirstOrDefaultAsync();
+        if (system is not { } adjustment)
+        {
+            return WriteResult.Conflict("This company has no adjustment account.");
+        }
+
+        var type = account.Type == AccountType.Party
+            ? request.Increase ? TransactionType.PartyAdjustAdd : TransactionType.PartyAdjustReduce
+            : request.Increase ? TransactionType.AddMoney : TransactionType.ReduceMoney;
+        var (from, to) = request.Increase ? (adjustment, account.Id) : (account.Id, adjustment);
+
+        return await CreateTransactionAsync(new CreateTransactionRequest(
+            type.ToString(), request.Date, request.Amount, from, to, request.Remarks, null, null, request.Id));
+    }
+
+    public async Task<WriteResult> DeleteAttachmentAsync(Guid attachmentId)
+    {
+        var attachment = await db.Attachments.SingleOrDefaultAsync(a => a.Id == attachmentId && a.CompanyId == companyId);
+        if (attachment is null)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That attachment doesn't exist.");
+        }
+
+        if (attachment.IsDeleted)
+        {
+            return new WriteResult(WriteStatus.Replayed, attachment);
+        }
+
+        if (attachment.TransactionId is not { } txnId || await FindTransactionAsync(txnId) is not { } txn)
+        {
+            return new WriteResult(WriteStatus.NotFound, Error: "That entry doesn't exist.");
+        }
+
+        var (zone, today) = await TodayAsync();
+        if (EntryRules.CheckChange(member, txn, EntryAction.Edit, null, today, zone) is { } denied)
+        {
+            return WriteResult.Forbidden(denied);
+        }
+
+        attachment.IsDeleted = true;
+        await SaveAsync(attachment);
+        return new WriteResult(WriteStatus.Saved, attachment);
+    }
+
     // ---------------- Helpers ----------------
 
     private async Task<WriteResult?> SaveTransactionAsync(Transaction transaction, bool checkDuplicates, long? version = null)
@@ -388,6 +784,26 @@ internal sealed class BooksWriter(PostgresDbContext db, TimeProvider clock, Guid
             Action = action,
             BeforeJson = before,
             AfterJson = Snapshot(transaction),
+            UserId = member.UserId,
+            AtUtc = clock.GetUtcNow().UtcDateTime,
+        });
+
+    private static string SnapshotAccount(Account a) => JsonSerializer.Serialize(new
+    {
+        a.Name, Type = a.Type.ToString(), PartyType = a.PartyType?.ToString(), a.Phone, a.Email, a.Address, a.Pan,
+        a.PartyCategoryId, a.OpeningBalance, OpeningSide = a.OpeningSide.ToString(), a.OpeningAsOf,
+        a.AccountHolderName, a.AccountNumber, a.IsDeleted,
+    });
+
+    private void AuditAccount(Account account, string action, string? before) =>
+        db.AuditLogs.Add(new AuditLog
+        {
+            CompanyId = companyId,
+            EntityType = nameof(Account),
+            EntityId = account.Id,
+            Action = action,
+            BeforeJson = before,
+            AfterJson = action == "Delete" ? null : SnapshotAccount(account),
             UserId = member.UserId,
             AtUtc = clock.GetUtcNow().UtcDateTime,
         });

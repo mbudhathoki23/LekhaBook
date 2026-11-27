@@ -93,6 +93,51 @@ public static class SyncEndpoints
                     ? WriteResult.Invalid("id", "A new category needs an id.")
                     : await writer.CreateCategoryAsync(category);
 
+            case ("Party", "Create"):
+                var partyCreate = Read<SavePartyRequest>(item);
+                return partyCreate.Id is null || partyCreate.Id == Guid.Empty
+                    ? WriteResult.Invalid("id", "A new party needs an id.")
+                    : await writer.CreatePartyAsync(partyCreate);
+
+            case ("Party", "Update"):
+                var partyUpdate = Read<SyncPartyUpdatePayload>(item);
+                return partyUpdate.Party is null
+                    ? WriteResult.Invalid("party", "The change is missing.")
+                    : await writer.UpdatePartyAsync(partyUpdate.Id, partyUpdate.Party, item.BaseVersion);
+
+            case ("Party", "Delete"):
+                return await writer.DeletePartyAsync(Read<SyncDeletePayload>(item).Id, item.BaseVersion);
+
+            case ("MoneyAccount", "Create"):
+                var accountCreate = Read<SaveMoneyAccountRequest>(item);
+                return accountCreate.Id is null || accountCreate.Id == Guid.Empty
+                    ? WriteResult.Invalid("id", "A new account needs an id.")
+                    : await writer.CreateMoneyAccountAsync(accountCreate);
+
+            case ("MoneyAccount", "Update"):
+                var accountUpdate = Read<SyncMoneyAccountUpdatePayload>(item);
+                return accountUpdate.Account is null
+                    ? WriteResult.Invalid("account", "The change is missing.")
+                    : await writer.UpdateMoneyAccountAsync(accountUpdate.Id, accountUpdate.Account, item.BaseVersion);
+
+            case ("MoneyAccount", "Delete"):
+                return await writer.DeleteMoneyAccountAsync(Read<SyncDeletePayload>(item).Id, item.BaseVersion);
+
+            case ("Category", "Create"):
+                var head = Read<SaveCategoryRequest>(item);
+                return head.Id == Guid.Empty
+                    ? WriteResult.Invalid("id", "A new category needs an id.")
+                    : await writer.CreateHeadCategoryAsync(head);
+
+            case ("Adjustment", "Create"):
+                var adj = Read<SyncAdjustmentPayload>(item);
+                return adj.Adjustment is null || adj.Adjustment.Id == Guid.Empty
+                    ? WriteResult.Invalid("id", "An adjustment needs an id.")
+                    : await writer.CreateAdjustmentAsync(adj.AccountId, adj.Adjustment);
+
+            case ("Attachment", "Delete"):
+                return await writer.DeleteAttachmentAsync(Read<SyncDeletePayload>(item).Id);
+
             default:
                 // Attachments in particular: their rows come only from the upload endpoint, which names the file.
                 return WriteResult.Invalid("entityType", "This kind of change can't be synced.");

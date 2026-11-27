@@ -18,8 +18,19 @@ internal static class FileStore
 
     public static readonly string[] LogoContentTypes = ["image/jpeg", "image/png", "image/webp"];
 
+    private static string _rootPath = Path.Combine(AppContext.BaseDirectory, "attachments");
+
+    /// <summary>Sets the durable root directory for attachments and company logos (configured from Storage:RootPath in production).</summary>
+    public static void ConfigureRootPath(string? rootPath)
+    {
+        if (!string.IsNullOrWhiteSpace(rootPath))
+        {
+            _rootPath = Path.GetFullPath(rootPath);
+        }
+    }
+
     public static string CompanyFolder(Guid companyId) =>
-        Path.Combine(AppContext.BaseDirectory, "attachments", companyId.ToString());
+        Path.Combine(_rootPath, companyId.ToString());
 
     /// <summary>
     /// Where a stored file lives, or null if the key isn't a plain file name: a path (absolute or with "..") must

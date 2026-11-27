@@ -3,16 +3,39 @@ using LekhaBook.Api.Endpoints;
 using LekhaBook.Api.Security;
 using LekhaBook.Data.Postgres;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+FileStore.ConfigureRootPath(builder.Configuration["Storage:RootPath"]);
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton(TimeProvider.System);
+
+// Persist data-protection keys in production (D4/D10) so bearer tokens survive restarts.
+if (builder.Configuration["DataProtection:KeysPath"] is { Length: > 0 } keysPath)
+{
+    Directory.CreateDirectory(keysPath);
+    builder.Services.AddDataProtection()
+        .SetApplicationName("LekhaBook.Api")
+        .PersistKeysToFileSystem(new DirectoryInfo(keysPath));
+}
+
+if (builder.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    builder.Services.Configure<ForwardedHeadersOptions>(o =>
+    {
+        o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        o.KnownIPNetworks.Clear();
+        o.KnownProxies.Clear();
+    });
+}
 
 // PostgreSQL (books + Identity). In development the connection string comes from user secrets (README).
 // Read when first needed, so later configuration sources (tests, hosting) win.
@@ -87,13 +110,25 @@ if (app.Environment.IsDevelopment())
     }
 }
 
+if (app.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    app.UseForwardedHeaders();
+}
+
 app.UseExceptionHandler();
-app.UseHttpsRedirection();
+if (!app.Configuration.GetValue("Proxy:TrustForwardedHeaders", false))
+{
+    app.UseHttpsRedirection();
+}
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapHealthChecks("/health");
+app.MapGet("/health/ready", async (PostgresDbContext db) =>
+    await db.Database.CanConnectAsync()
+        ? Results.Ok(new { status = "ready" })
+        : Results.StatusCode(StatusCodes.Status503ServiceUnavailable));
 
 // /api/auth/register, /login, /refresh, /manage/info, …
 var auth = app.MapGroup("/api/auth");
